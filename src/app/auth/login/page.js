@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", enrollmentNumber: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,17 +31,26 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+      <h1 className="text-3xl font-bold mb-6">Welcome Back 👋</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
-        <h1 className="text-2xl font-bold text-center">Welcome Back</h1>
+        <h1 className="text-2xl font-bold text-center">Login</h1>
 
         <input
           type="email"
           name="email"
           placeholder="Email"
           value={form.email}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded focus:outline-none"
+        />
+
+        <input
+          type="text"
+          placeholder="Enrollment Number"
+          value={form.enrollmentNumber}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
         />
