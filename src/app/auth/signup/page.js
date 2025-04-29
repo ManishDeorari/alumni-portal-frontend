@@ -28,13 +28,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white px-4">
       <h1 className="text-3xl font-bold mb-6">Join Alumni Portal 🚀</h1>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
-        <h1 className="text-2xl font-bold text-center">Create Your Account</h1>
+        <h2 className="text-2xl font-bold text-center">Create Your Account</h2>
 
         <input
           type="text"

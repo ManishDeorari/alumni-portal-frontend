@@ -30,13 +30,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white px-4">
       <h1 className="text-3xl font-bold mb-6">Welcome Back 👋</h1>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
-        <h1 className="text-2xl font-bold text-center">Login</h1>
+        <h2 className="text-2xl font-bold text-center">Login</h2>
 
         <input
           type="email"
@@ -49,6 +50,7 @@ export default function LoginPage() {
 
         <input
           type="text"
+          name="enrollmentNumber"
           placeholder="Enrollment Number"
           value={form.enrollmentNumber}
           onChange={handleChange}
