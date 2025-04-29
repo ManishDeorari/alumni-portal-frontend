@@ -1,108 +1,93 @@
-
 "use client";
-
+import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    enrollmentNumber: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", password: "", enrollmentNumber: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSignup = async (e) => {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
 
-    try {
-      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Signup failed");
-      }
-
+    setLoading(false);
+    if (res.ok) {
       router.push("/auth/login");
-    } catch (err) {
-      console.error("❌ Signup error:", err.message);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    } else {
+      alert("❌ Signup failed");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex flex-col justify-center items-center text-white">
-      <h1 className="text-3xl font-bold mb-6">Join Alumni Portal 🚀</h1>
-      <form onSubmit={handleSignup} className="bg-white p-8 rounded-lg shadow-md w-80 text-black">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
+      >
+        <h1 className="text-2xl font-bold text-center">Create Your Account</h1>
+
         <input
           type="text"
-          placeholder="Name"
+          name="name"
+          placeholder="Full Name"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="input mb-4"
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="input mb-4"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Enrollment Number"
-          value={form.enrollmentNumber}
-          onChange={(e) => setForm({ ...form, enrollmentNumber: e.target.value })}
-          className="input mb-4"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="input mb-4"
-          required
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded focus:outline-none"
         />
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        <input
+          type="text"
+          name="enrollmentNumber"
+          placeholder="Enrollment Number"
+          value={form.enrollmentNumber}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded focus:outline-none"
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded focus:outline-none"
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded focus:outline-none"
+        />
 
         <button
           type="submit"
           disabled={loading}
-          className="btn w-full"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
         >
-          {loading ? (
-            <div className="flex justify-center items-center">
-              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-              Signing Up...
-            </div>
-          ) : (
-            "Sign Up"
-          )}
+          {loading ? "Signing Up..." : "Sign Up"}
         </button>
-      </form>
 
-      <p className="mt-4 text-sm">
+        <p className="mt-4 text-sm text-center">
           Already have an account?{" "}
           <Link href="/auth/login" className="text-blue-600 underline">Login</Link>
         </p>
-        <Link href="/" className="block mt-4 text-blue-600 text-sm">
+
+        <Link href="/" className="block mt-2 text-center text-blue-600 text-sm">
           ← Back to Home
         </Link>
+      </form>
     </div>
   );
 }
