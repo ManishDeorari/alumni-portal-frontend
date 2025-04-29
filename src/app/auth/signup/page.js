@@ -1,89 +1,99 @@
 "use client";
+
 import React, { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
-    enrollmentNumber: "",
     password: "",
+    enrollmentNumber: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
-      if (res.ok) {
-        alert("Signup successful!");
-        window.location.href = "/auth/login";
-      } else {
-        alert(data.message || "Signup failed");
+
+      if (!res.ok) {
+        throw new Error(data.message || "Signup failed");
       }
+
+      router.push("/auth/login");
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error("❌ Signup error:", err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] max-w-md text-center">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6">Sign Up</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={form.name}
-            onChange={handleChange}
-            className="input"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            className="input"
-          />
-          <input
-            type="text"
-            name="enrollmentNumber"
-            placeholder="Enrollment Number"
-            value={form.enrollmentNumber}
-            onChange={handleChange}
-            className="input"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="input"
-          />
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex flex-col justify-center items-center text-white">
+      <h1 className="text-3xl font-bold mb-6">Join Alumni Portal 🚀</h1>
+      <form onSubmit={handleSignup} className="bg-white p-8 rounded-lg shadow-md w-80 text-black">
+        <input
+          type="text"
+          placeholder="Name"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="input mb-4"
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="input mb-4"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Enrollment Number"
+          value={form.enrollmentNumber}
+          onChange={(e) => setForm({ ...form, enrollmentNumber: e.target.value })}
+          className="input mb-4"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          className="input mb-4"
+          required
+        />
 
-          <button type="submit" className="btn w-full mt-2">Create Account</button>
-        </form>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <p className="mt-4 text-sm">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-blue-600 underline">Login</Link>
-        </p>
-        <Link href="/" className="block mt-4 text-blue-600 text-sm">
-          ← Back to Home
-        </Link>
-      </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn w-full"
+        >
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+              Signing Up...
+            </div>
+          ) : (
+            "Sign Up"
+          )}
+        </button>
+      </form>
     </div>
   );
 }
