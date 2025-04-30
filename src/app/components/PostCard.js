@@ -1,42 +1,62 @@
 "use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
+import { likePost, commentOnPost } from "@/api/dashboard";
 
 export default function PostCard({ post }) {
   const [likes, setLikes] = useState(post.likes?.length || 0);
-  const [liked, setLiked] = useState(false);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState(post.comments || []);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes(likes + (liked ? -1 : 1));
-    // TODO: Later send request to backend
+  const handleLike = async () => {
+    const res = await likePost(post._id);
+    setLikes(res.likes);
+  };
+
+  const handleComment = async () => {
+    if (!comment.trim()) return;
+    const updated = await commentOnPost(post._id, comment);
+    setComments(updated);
+    setComment("");
   };
 
   return (
-    <div className="bg-white text-gray-800 rounded-lg p-4 shadow space-y-2">
+    <div className="bg-white text-black rounded-lg shadow p-4 space-y-3">
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-          {post.author?.charAt(0) || "U"}
-        </div>
-        <h2 className="font-semibold">{post.author || "Unknown User"}</h2>
+        {post.author?.profilePic && (
+          <img
+            src={post.author.profilePic}
+            alt="profile"
+            className="w-10 h-10 rounded-full"
+          />
+        )}
+        <h3 className="font-semibold">{post.author?.name}</h3>
       </div>
-      <p className="text-sm">{post.content}</p>
+      <p>{post.content}</p>
+      <div className="flex items-center gap-4 text-sm text-gray-600">
+        <button onClick={handleLike}>👍 {likes} Like</button>
+        <span>💬 {comments.length} Comments</span>
+      </div>
 
-      <div className="flex gap-4 pt-2">
-        <button
-          onClick={handleLike}
-          className={`text-sm ${liked ? "text-blue-600 font-bold" : "text-gray-600"}`}
-        >
-          👍 {likes} Like
-        </button>
-
-        <button
-          className="text-sm text-gray-600"
-          // TODO: Handle comment popup later
-        >
-          💬 Comment
+      {/* Comment Box */}
+      <div className="flex gap-2 items-center mt-2">
+        <input
+          type="text"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Add a comment..."
+          className="flex-grow border rounded px-3 py-1 text-sm"
+        />
+        <button onClick={handleComment} className="text-sm text-blue-600 hover:underline">
+          Post
         </button>
       </div>
+
+      {/* Comments */}
+      {comments.map((c, i) => (
+        <p key={i} className="text-sm text-gray-700">
+          • {c.text}
+        </p>
+      ))}
     </div>
   );
 }
