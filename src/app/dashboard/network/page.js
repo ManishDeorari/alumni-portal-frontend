@@ -1,7 +1,6 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar"; // ✅ Add this
+import Link from "next/link";
 
 export default function NetworkPage() {
   const [alumni, setAlumni] = useState([]);
@@ -11,7 +10,7 @@ export default function NetworkPage() {
     const fetchAlumni = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/user/all", {
+        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/user/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -32,10 +31,8 @@ export default function NetworkPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
-      <Sidebar /> {/* ✅ Sidebar added at top */}
-      
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 p-6 text-white">
+      <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-center mb-6">My Network</h1>
 
         <input
@@ -50,7 +47,19 @@ export default function NetworkPage() {
           {filtered.length > 0 ? (
             filtered.map((user) => (
               <div key={user._id} className="bg-white text-gray-800 rounded p-4 shadow space-y-2">
-                <h2 className="text-xl font-semibold">{user.name}</h2>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={user.profilePic || "/default-user.jpg"}
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <Link href={`/dashboard/profile/${user._id}`}>
+                      <h2 className="text-lg font-semibold text-blue-600 hover:underline">{user.name}</h2>
+                    </Link>
+                    <p className="text-sm text-gray-500">{user.course || "Course not set"}</p>
+                  </div>
+                </div>
                 <p className="text-sm">Enrollment: {user.enrollmentNumber}</p>
                 <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                   Connect

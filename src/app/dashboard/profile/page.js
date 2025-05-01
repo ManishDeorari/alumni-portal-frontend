@@ -6,8 +6,10 @@ import Sidebar from "../../components/Sidebar";
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
+  const [imageFile, setImageFile] = useState(null);
+  const CLOUDINARY_UPLOAD_PRESET = "your_preset_name";
+  const CLOUDINARY_CLOUD_NAME = "your_cloud_name";
 
-  // ✅ Fetch user profile
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -22,39 +24,43 @@ export default function ProfilePage() {
     }
   };
 
-  // ✅ Upload image to Cloudinary
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleUploadImage = async () => {
+    if (!imageFile) return null;
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("file", imageFile);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-    const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
       method: "POST",
       body: formData,
     });
 
     const data = await res.json();
-    if (data.secure_url) {
-      setProfile({ ...profile, imageUrl: data.secure_url });
-    } else {
-      alert("❌ Image upload failed");
-    }
+    return data.secure_url;
   };
 
-  // ✅ Save updated profile
   const updateProfile = async () => {
     try {
       const token = localStorage.getItem("token");
+      let imageUrl = profile.profileImage;
+
+      if (imageFile) {
+        const uploaded = await handleUploadImage();
+        if (uploaded) imageUrl = uploaded;
+      }
+
+      const updatedProfile = { ...profile, profileImage: imageUrl };
       await fetch("https://alumni-backend-d9k9.onrender.com/api/user/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(profile),
+        body: JSON.stringify(updatedProfile),
       });
-      alert("✅ Profile updated!");
+
+      alert("✅ Profile updated successfully!");
+      fetchProfile(); // refresh
     } catch (error) {
       console.error("❌ Error updating profile:", error.message);
     }
@@ -69,49 +75,40 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
       <Sidebar />
+      <div className="p-6 max-w-xl mx-auto space-y-4">
+        <h1 className="text-3xl font-bold mb-4 text-center">Your Profile</h1>
 
-      <div className="p-6 max-w-xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-center">Your Profile</h1>
+        {/* Profile Image Preview */}
+        {profile.profileImage && (
+          <img
+            src={profile.profileImage}
+            alt="Profile"
+            className="w-28 h-28 rounded-full object-cover mx-auto mb-2 border"
+          />
+        )}
 
-        {/* Profile image */}
-        <div className="flex flex-col items-center">
-          {profile.imageUrl ? (
-            <img
-              src={profile.imageUrl}
-              alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border mb-2"
-            />
-          ) : (
-            <div className="w-28 h-28 rounded-full bg-white text-gray-400 flex items-center justify-center mb-2 text-sm border">
-              No Image
-            </div>
-          )}
-          <label className="text-sm font-medium text-white text-center">
-            Upload Photo
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="block mt-1 text-white text-sm text-center"
-            />
-          </label>
-        </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImageFile(e.target.files[0])}
+          className="block w-full text-sm text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-white file:text-blue-700 hover:file:bg-gray-100"
+        />
 
-        {/* Form Fields */}
+        {/* Inputs */}
         <input
           type="text"
           placeholder="Name"
           value={profile.name || ""}
           onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-          className="w-full p-3 bg-white text-gray-700 rounded-lg shadow border focus:outline-none"
+          className="w-full p-3 bg-white text-gray-700 rounded shadow border focus:outline-none"
         />
 
         <input
-          type="email"
+          type="text"
           placeholder="Email"
           value={profile.email || ""}
           disabled
-          className="w-full p-3 bg-gray-200 text-gray-600 rounded-lg shadow border"
+          className="w-full p-3 bg-gray-300 text-gray-700 rounded shadow border focus:outline-none"
         />
 
         <input
@@ -119,7 +116,7 @@ export default function ProfilePage() {
           placeholder="Enrollment Number"
           value={profile.enrollmentNumber || ""}
           disabled
-          className="w-full p-3 bg-gray-200 text-gray-600 rounded-lg shadow border"
+          className="w-full p-3 bg-gray-300 text-gray-700 rounded shadow border focus:outline-none"
         />
 
         <input
@@ -127,12 +124,37 @@ export default function ProfilePage() {
           placeholder="Bio"
           value={profile.bio || ""}
           onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-          className="w-full p-3 bg-white text-gray-700 rounded-lg shadow border focus:outline-none"
+          className="w-full p-3 bg-white text-gray-700 rounded shadow border focus:outline-none"
+        />
+
+        {/* Additional Fields */}
+        <input
+          type="text"
+          placeholder="Job Title"
+          value={profile.job || ""}
+          onChange={(e) => setProfile({ ...profile, job: e.target.value })}
+          className="w-full p-3 bg-white text-gray-700 rounded shadow border focus:outline-none"
+        />
+
+        <input
+          type="text"
+          placeholder="Course"
+          value={profile.course || ""}
+          onChange={(e) => setProfile({ ...profile, course: e.target.value })}
+          className="w-full p-3 bg-white text-gray-700 rounded shadow border focus:outline-none"
+        />
+
+        <input
+          type="text"
+          placeholder="Graduation Year"
+          value={profile.graduationYear || ""}
+          onChange={(e) => setProfile({ ...profile, graduationYear: e.target.value })}
+          className="w-full p-3 bg-white text-gray-700 rounded shadow border focus:outline-none"
         />
 
         <button
           onClick={updateProfile}
-          className="bg-white text-blue-700 px-6 py-2 rounded-lg hover:bg-gray-100 transition"
+          className="bg-white text-blue-700 px-6 py-2 rounded-lg hover:bg-gray-100 transition w-full"
         >
           Save Profile
         </button>

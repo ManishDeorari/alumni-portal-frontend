@@ -1,46 +1,56 @@
 "use client";
-import { useState } from "react";
-import { createPost } from "@/api/dashboard";
+
+import React, { useState } from "react";
 
 export default function CreatePost() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!content.trim()) return;
-    setLoading(true);
+  const handlePost = async () => {
+    if (!content.trim()) return alert("Please write something before posting.");
 
     try {
-      await createPost(content);
-      setContent("");
-      window.location.reload(); // Refresh post feed after posting
-    } catch (err) {
-      console.error("❌ Post creation failed:", err.message);
-      alert("Failed to post. Try again.");
-    }
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    setLoading(false);
+      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (res.ok) {
+        setContent("");
+        window.location.reload(); // refresh to see new post
+      } else {
+        alert("❌ Failed to create post");
+      }
+    } catch (err) {
+      console.error("❌ Post error:", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white text-black rounded-lg shadow p-4 mb-4"
-    >
+    <div className="bg-white text-black p-4 rounded-lg shadow space-y-2">
       <textarea
+        rows="3"
+        placeholder="Share your thoughts with alumni..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="What's on your mind?"
-        className="w-full h-20 p-2 rounded border focus:outline-none resize-none"
-      ></textarea>
+        className="w-full p-2 border rounded focus:outline-none"
+      />
       <button
-        type="submit"
+        onClick={handlePost}
         disabled={loading}
-        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
       >
         {loading ? "Posting..." : "Post"}
       </button>
-    </form>
+    </div>
   );
 }
