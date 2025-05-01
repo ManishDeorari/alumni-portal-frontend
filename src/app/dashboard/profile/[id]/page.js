@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../../components/Sidebar";
 
 export default function OtherProfilePage() {
   const { id } = useParams();
