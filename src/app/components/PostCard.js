@@ -1,98 +1,124 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaHeart, FaRegHeart, FaComment } from "react-icons/fa";
+import { FaRegHeart, FaHeart, FaRegComment } from "react-icons/fa";
 
-export default function PostCard({ post, currentUser }) {
-  const [liked, setLiked] = useState(post.likes?.includes(currentUser?._id));
-  const [likes, setLikes] = useState(post.likes?.length || 0);
+export default function PostCard({ post, user }) {
+  const [likes, setLikes] = useState(post.likes || []);
   const [comments, setComments] = useState(post.comments || []);
-  const [commentText, setCommentText] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
+
+  const hasLiked = likes.includes(user?._id);
 
   const handleLike = async () => {
     const token = localStorage.getItem("token");
-
-    const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res.ok) {
-      setLiked(!liked);
-      setLikes((prev) => (liked ? prev - 1 : prev + 1));
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updatedPost = await res.json();
+      setLikes(updatedPost.likes);
+    } catch (err) {
+      console.error("❌ Error liking post:", err.message);
     }
   };
 
   const handleComment = async () => {
-    if (!commentText.trim()) return;
+    if (!newComment.trim()) return;
+
     const token = localStorage.getItem("token");
-
-    const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ text: commentText }),
-    });
-
-    if (res.ok) {
-      const newComment = await res.json();
-      setComments([...comments, newComment]);
-      setCommentText("");
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: newComment }),
+        }
+      );
+      const updatedPost = await res.json();
+      setComments(updatedPost.comments);
+      setNewComment("");
+    } catch (err) {
+      console.error("❌ Error adding comment:", err.message);
     }
   };
 
   return (
-    <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-2">
-      {/* Author Info */}
-      <div className="flex items-center gap-3 mb-2">
+    <div className="bg-white text-gray-800 rounded-lg shadow-md p-4 space-y-2">
+      {/* Header: Profile Image + Name */}
+      <div className="flex items-center gap-3">
         <img
-          src={post.author?.profileImage || "/default-avatar.png"}
+          src={post.user?.profilePic || "/default-profile.png"}
+          alt="profile"
           className="w-10 h-10 rounded-full object-cover"
-          alt="User"
         />
         <div>
-          <p className="font-semibold">{post.author?.name}</p>
-          <p className="text-xs text-gray-500">{post.author?.email}</p>
+          <h2 className="font-semibold">{post.user?.name || "Unknown User"}</h2>
+          <p className="text-sm text-gray-500">
+            {new Date(post.createdAt).toLocaleString()}
+          </p>
         </div>
       </div>
 
       {/* Post Content */}
-      <p className="text-gray-800">{post.content}</p>
+      <p className="text-lg">{post.content}</p>
 
-      {/* Actions */}
-      <div className="flex items-center gap-4 mt-2">
-        <button onClick={handleLike} className="flex items-center gap-1 text-red-500">
-          {liked ? <FaHeart /> : <FaRegHeart />} {likes}
+      {/* Like & Comment Buttons */}
+      <div className="flex items-center gap-4 text-sm mt-2">
+        <button onClick={handleLike} className="flex items-center gap-1">
+          {hasLiked ? (
+            <FaHeart className="text-red-600" />
+          ) : (
+            <FaRegHeart className="text-gray-600" />
+          )}
+          <span>{likes.length}</span>
         </button>
-        <span className="flex items-center gap-1 text-blue-600">
-          <FaComment /> {comments.length}
-        </span>
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="flex items-center gap-1"
+        >
+          <FaRegComment />
+          <span>{comments.length}</span>
+        </button>
       </div>
 
-      {/* Comments */}
-      <div className="mt-3 space-y-2">
-        {comments.map((c, i) => (
-          <div key={i} className="bg-gray-100 rounded p-2 text-sm">
-            <strong>{c.user?.name || "Anonymous"}:</strong> {c.text}
+      {/* Comments Section */}
+      {showComments && (
+        <div className="mt-3 border-t pt-3 space-y-3">
+          {comments.map((c, i) => (
+            <div key={i}>
+              <p className="text-sm font-semibold">{c.name || "Anonymous"}</p>
+              <p className="text-sm text-gray-700">{c.text}</p>
+            </div>
+          ))}
+
+          {/* Add Comment */}
+          <div className="flex gap-2 mt-2">
+            <input
+              type="text"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="flex-grow px-3 py-2 border rounded focus:outline-none"
+            />
+            <button
+              onClick={handleComment}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Send
+            </button>
           </div>
-        ))}
-      </div>
-
-      {/* Add Comment */}
-      <div className="mt-3 flex gap-2">
-        <input
-          type="text"
-          placeholder="Write a comment..."
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          className="flex-grow px-3 py-2 border rounded focus:outline-none text-black"
-        />
-        <button onClick={handleComment} className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Comment
-        </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

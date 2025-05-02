@@ -7,12 +7,12 @@ export default function CreatePost() {
   const [loading, setLoading] = useState(false);
 
   const handlePost = async () => {
-    if (!content.trim()) return alert("Please write something before posting.");
+    if (!content.trim()) return alert("Write something to post!");
+
+    setLoading(true);
+    const token = localStorage.getItem("token");
 
     try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-
       const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts", {
         method: "POST",
         headers: {
@@ -22,35 +22,36 @@ export default function CreatePost() {
         body: JSON.stringify({ content }),
       });
 
-      if (res.ok) {
-        setContent("");
-        window.location.reload(); // refresh to see new post
-      } else {
-        alert("❌ Failed to create post");
-      }
+      if (!res.ok) throw new Error("Post creation failed");
+
+      setContent("");
+      window.location.reload(); // Optional: Replace with live state update
     } catch (err) {
-      console.error("❌ Post error:", err.message);
+      console.error("❌ Error creating post:", err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white text-black p-4 rounded-lg shadow space-y-2">
+    <div className="bg-white rounded-lg shadow-md p-4 mb-6 text-gray-800">
       <textarea
-        rows="3"
-        placeholder="Share your thoughts with alumni..."
+        rows={3}
+        placeholder="What's on your mind?"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full p-2 border rounded focus:outline-none"
+        className="w-full p-3 border rounded resize-none focus:outline-none"
       />
-      <button
-        onClick={handlePost}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        {loading ? "Posting..." : "Post"}
-      </button>
+
+      <div className="text-right">
+        <button
+          onClick={handlePost}
+          disabled={loading}
+          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition"
+        >
+          {loading ? "Posting..." : "Post"}
+        </button>
+      </div>
     </div>
   );
 }
