@@ -1,8 +1,7 @@
 "use client";
-
 import React, { useState } from "react";
 
-export default function CreatePost() {
+export default function CreatePost({ setPosts }) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -22,10 +21,9 @@ export default function CreatePost() {
         body: JSON.stringify({ content }),
       });
 
-      if (!res.ok) throw new Error("Post creation failed");
-
+      const newPost = await res.json();
       setContent("");
-      window.location.reload(); // Optional: Replace with live state update
+      setPosts((prev) => [newPost, ...prev]); // ✅ Add to top of feed
     } catch (err) {
       console.error("❌ Error creating post:", err.message);
     } finally {

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Sidebar from "../../components/Sidebar"; // ✅ Sidebar imported
 import Link from "next/link";
 
 export default function MessagesPage() {
@@ -40,6 +41,8 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white p-6">
+      <Sidebar /> {/* ✅ Sidebar added */}
+    
       <h1 className="text-3xl font-bold mb-4">Messages</h1>
 
       <div className="flex gap-6">
