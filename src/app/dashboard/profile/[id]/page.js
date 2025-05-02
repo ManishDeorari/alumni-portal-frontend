@@ -1,56 +1,60 @@
+// src/app/dashboard/profile/[id]/page.js
+
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 
-export default function OtherProfilePage() {
+export default function PublicProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/user/${id}`);
+      const data = await res.json();
+      setUser(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("❌ Error fetching public profile:", error.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/user/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setUser(data);
-      } catch (error) {
-        console.error("❌ Error loading profile:", error.message);
-      }
-    };
-
     fetchProfile();
   }, [id]);
 
-  if (!user) return <div className="text-white text-center p-10">Loading...</div>;
+  if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
       <Sidebar />
-      <div className="max-w-xl mx-auto p-6 space-y-4">
-        <h1 className="text-3xl font-bold text-center mb-6">{user.name}'s Profile</h1>
+      <div className="p-6 max-w-xl mx-auto space-y-4">
+        <h1 className="text-3xl font-bold text-center">Alumni Profile</h1>
 
-        <img
-          src={user.profilePic || "/default-user.jpg"}
-          alt="Profile"
-          className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white"
-        />
+        <p className="text-sm text-gray-300 text-center mt-2">
+          This is {user.name}&apos;s public profile
+        </p>
 
-        {[
-          { label: "Email", value: user.email },
-          { label: "Enrollment No", value: user.enrollmentNumber },
-          { label: "Bio", value: user.bio || "No bio added" },
-          { label: "Job", value: user.job || "Not updated" },
-          { label: "Course", value: user.course || "Not updated" },
-          { label: "Year", value: user.year || "Not updated" },
-        ].map((field, i) => (
-          <div key={i}>
-            <label className="font-semibold">{field.label}</label>
-            <p className="bg-white text-gray-800 p-3 rounded shadow">{field.value}</p>
-          </div>
-        ))}
+        <div className="flex justify-center">
+          <img
+            src={user.profilePicture || "/default-profile.png"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-2 border-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <p><strong>Name:</strong> {user.name}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Enrollment Number:</strong> {user.enrollmentNumber}</p>
+          {user.bio && <p><strong>Bio:</strong> {user.bio}</p>}
+          {user.jobTitle && <p><strong>Job:</strong> {user.jobTitle}</p>}
+          {user.course && <p><strong>Course:</strong> {user.course}</p>}
+          {user.year && <p><strong>Year:</strong> {user.year}</p>}
+        </div>
       </div>
     </div>
   );
