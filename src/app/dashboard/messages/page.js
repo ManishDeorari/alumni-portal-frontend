@@ -42,7 +42,7 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white p-6">
       <Sidebar /> {/* ✅ Sidebar added */}
-      <div className="p-8">
+    
       <h1 className="text-3xl font-bold mb-4">Messages</h1>
 
       <div className="flex gap-6">
@@ -85,7 +85,6 @@ export default function MessagesPage() {
             </button>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

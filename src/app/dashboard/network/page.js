@@ -37,7 +37,7 @@ export default function NetworkPage() {
 
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-center mb-6">My Network</h1>
-        <div className="p-8"></div>
+        
         <input
           type="text"
           placeholder="Search alumni by name or enrollment number"
@@ -73,7 +73,6 @@ export default function NetworkPage() {
             <p className="text-center col-span-2">No alumni found.</p>
           )}
         </div>
-      </div>
       </div>
     </div>
   );
