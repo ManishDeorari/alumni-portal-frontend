@@ -1,61 +1,83 @@
-// src/app/dashboard/profile/[id]/page.js
-
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Sidebar from "../../../components/Sidebar";
+import { fetchUserById } from "@/api/profile";
+import {
+  sendConnectionRequest,
+  acceptConnectionRequest,
+  removeConnection,
+  getConnectionStatus,
+} from "@/api/connect";
+import Image from "next/image";
 
-export default function PublicProfilePage() {
-  const { id } = useParams();
+export default function ProfilePage({ params }) {
+  const { id } = params;
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchProfile = async () => {
-    try {
-      const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/user/${id}`);
-      const data = await res.json();
-      setUser(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("❌ Error fetching public profile:", error.message);
-    }
-  };
+  const [status, setStatus] = useState(null);
 
   useEffect(() => {
-    fetchProfile();
+    const fetchData = async () => {
+      const res = await fetchUserById(id);
+      const connectionRes = await getConnectionStatus(id);
+      setUser(res);
+      setStatus(connectionRes.status);
+    };
+    fetchData();
   }, [id]);
 
-  if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
+  const handleConnect = async () => {
+    await sendConnectionRequest(id);
+    setStatus("pending");
+  };
+
+  const handleAccept = async () => {
+    await acceptConnectionRequest(id);
+    setStatus("connected");
+  };
+
+  const handleRemove = async () => {
+    await removeConnection(id);
+    setStatus(null);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
-      <Sidebar />
-      <div className="p-6 max-w-xl mx-auto space-y-4">
-        <h1 className="text-3xl font-bold text-center">Alumni Profile</h1>
+    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-600 to-purple-700 text-white flex flex-col items-center">
+      {user && (
+        <div className="bg-white text-black rounded-2xl shadow-xl p-6 w-full max-w-xl space-y-4">
+          <div className="flex items-center gap-4">
+            <Image
+              src={user.profileImage || "/default-profile.png"}
+              alt="Profile"
+              width={64}
+              height={64}
+              className="rounded-full object-cover"
+            />
+            <div>
+              <h2 className="text-xl font-bold">{user.name}</h2>
+              <p className="text-sm text-gray-500">{user.enrollmentNumber}</p>
+            </div>
+          </div>
 
-        <p className="text-sm text-gray-300 text-center mt-2">
-          This is {user.name}&apos;s public profile
-        </p>
+          <p>{user.bio}</p>
 
-        <div className="flex justify-center">
-          <img
-            src={user.profilePicture || "/default-profile.png"}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border-2 border-white"
-          />
+          {status === "none" && (
+            <button onClick={handleConnect} className="btn btn-primary">
+              Connect
+            </button>
+          )}
+          {status === "pending" && <p>⏳ Request sent</p>}
+          {status === "incoming" && (
+            <button onClick={handleAccept} className="btn btn-success">
+              Accept Request
+            </button>
+          )}
+          {status === "connected" && (
+            <button onClick={handleRemove} className="btn btn-danger">
+              Remove Connection
+            </button>
+          )}
         </div>
-
-        <div className="space-y-2">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Enrollment Number:</strong> {user.enrollmentNumber}</p>
-          {user.bio && <p><strong>Bio:</strong> {user.bio}</p>}
-          {user.jobTitle && <p><strong>Job:</strong> {user.jobTitle}</p>}
-          {user.course && <p><strong>Course:</strong> {user.course}</p>}
-          {user.year && <p><strong>Year:</strong> {user.year}</p>}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
