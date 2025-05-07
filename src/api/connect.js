@@ -1,9 +1,7 @@
 // src/api/connect.js
-
 const BASE_URL = "https://alumni-backend-d9k9.onrender.com";
 const getToken = () => localStorage.getItem("token");
 
-// Send a connection request
 export async function sendConnectionRequest(toUserId) {
   const res = await fetch(`${BASE_URL}/api/connect/request`, {
     method: "POST",
@@ -19,7 +17,6 @@ export async function sendConnectionRequest(toUserId) {
   return data;
 }
 
-// Accept a connection request
 export async function acceptConnectionRequest(fromUserId) {
   const res = await fetch(`${BASE_URL}/api/connect/accept`, {
     method: "POST",
@@ -35,7 +32,6 @@ export async function acceptConnectionRequest(fromUserId) {
   return data;
 }
 
-// Get pending requests
 export async function getPendingRequests() {
   const res = await fetch(`${BASE_URL}/api/connect/pending`, {
     headers: {
@@ -45,18 +41,5 @@ export async function getPendingRequests() {
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Fetch pending failed");
-  return data;
-}
-
-// (Optional) Get all connections of current user
-export async function getMyConnections() {
-  const res = await fetch(`${BASE_URL}/api/connect/my`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Fetch connections failed");
   return data;
 }
