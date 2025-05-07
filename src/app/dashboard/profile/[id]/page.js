@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchUserById } from "@/api/profile";
+import { fetchUserById } from "../api/profile";
 import {
   sendConnectionRequest,
   acceptConnectionRequest,
   removeConnection,
   getConnectionStatus,
-} from "@/api/connect";
+} from "../api/connect";
 import Image from "next/image";
 
 export default function ProfilePage({ params }) {
