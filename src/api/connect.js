@@ -40,3 +40,51 @@ export const getMyConnections = async () => {
   });
   return await res.json();
 };
+
+// api/connect.js
+export async function sendConnectionRequest(toUserId) {
+  const token = localStorage.getItem("token");
+  const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/connect/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ toUserId }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Request failed");
+  return data;
+}
+
+// api/connect.js
+
+export async function acceptConnectionRequest(fromUserId) {
+  const token = localStorage.getItem("token");
+  const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/connect/accept", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ fromUserId }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Accept failed");
+  return data;
+}
+
+export async function getPendingRequests() {
+  const token = localStorage.getItem("token");
+  const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/connect/pending", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Fetch pending failed");
+  return data;
+}

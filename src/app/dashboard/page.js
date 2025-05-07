@@ -5,6 +5,7 @@ import { fetchPosts, fetchUser } from "@/api/dashboard";
 import Sidebar from "../components/Sidebar";
 import PostCard from "../components/PostCard";
 import CreatePost from "../components/CreatePost";
+import Leaderboard from "@/components/Leaderboard";
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -53,6 +54,9 @@ export default function DashboardPage() {
           <p>No posts yet.</p>
         )}
       </main>
+      <section className="mt-10">
+        <Leaderboard />
+      </section>
     </div>
   );
 }

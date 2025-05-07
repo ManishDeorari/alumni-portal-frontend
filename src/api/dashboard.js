@@ -14,7 +14,12 @@ export const createPost = async (content) => {
     },
     body: JSON.stringify({ content }),
   });
-  return res.json();
+
+  const data = await res.json();
+
+  // Award points for post creation (+5)
+  await updatePoints(5);
+  return data;
 };
 
 export const likePost = async (postId) => {
@@ -24,7 +29,12 @@ export const likePost = async (postId) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
-  return res.json();
+
+  const data = await res.json();
+
+  // Award points for liking a post (+2)
+  await updatePoints(2);
+  return data;
 };
 
 export const commentOnPost = async (postId, text) => {
@@ -36,5 +46,21 @@ export const commentOnPost = async (postId, text) => {
     },
     body: JSON.stringify({ text }),
   });
-  return res.json();
+
+  const data = await res.json();
+
+  // Award points for commenting on a post (+3)
+  await updatePoints(3);
+  return data;
+};
+
+export const updatePoints = async (amount) => {
+  await fetch(`${BASE}/user/points/add`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ amount }),
+  });
 };
