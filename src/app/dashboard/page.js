@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchPosts, fetchUser } from "../api/dashboard";
+import { fetchPosts, fetchUser } from "@/api/dashboard";
 import Sidebar from "../components/Sidebar";
 import PostCard from "../components/PostCard";
 import CreatePost from "../components/CreatePost";
-import Leaderboard from "../components/Leaderboard";
+import Leaderboard from "@/components/Leaderboard";
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
