@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { sendConnectionRequest, acceptConnectionRequest, getPendingRequests } from "@/api/connect";
 import Sidebar from "../../components/Sidebar";
@@ -61,6 +62,7 @@ const NetworkPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 p-6 text-white">
       <Sidebar />
+
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-center mb-6">My Network</h1>
 
@@ -106,7 +108,7 @@ const NetworkPage = () => {
           {alumni
             .filter((user) => user._id !== currentUserId)
             .map((user) => (
-              <div key={user._id} className="bg-white rounded-lg p-6 shadow-md space-y-2">
+              <div key={user._id} className="bg-white rounded-lg p-6 shadow-md space-y-2 text-gray-800">
                 <div className="flex items-center gap-4">
                   <img
                     src={user.profilePic || "/default-profile.png"}
