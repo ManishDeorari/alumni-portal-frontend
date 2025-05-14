@@ -5,14 +5,19 @@ export const fetchPosts = async () => {
   return res.json();
 };
 
-export const createPost = async (content) => {
+export const createPost = async (content, image, video) => {
+  const formData = new FormData();
+  formData.append("content", content);
+
+  if (image) formData.append("image", image);
+  if (video) formData.append("video", video);
+
   const res = await fetch(`${BASE}/posts`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({ content }),
+    body: formData,
   });
 
   const data = await res.json();

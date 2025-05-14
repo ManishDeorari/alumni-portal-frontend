@@ -40,20 +40,33 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white">
-      <Sidebar />
-      <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        <CreatePost setPosts={setPosts} />
-        {posts.length > 0 ? (
-          posts
-            .slice()
-            .reverse()
-            .map((post) => (
-              <PostCard key={post._id} post={post} currentUser={user} setPosts={setPosts} />
-            ))
-        ) : (
-          <p>No posts yet.</p>
-        )}
-      </main>
+      <header className="fixed top-0 left-0 w-full bg-purple-700 p-4 z-10">
+        <h1 className="text-xl font-bold text-white">Alumni Portal</h1>
+      </header>
+      
+      <div className="flex pt-16"> {/* Added pt-16 to offset header */}
+        {/* Left Sidebar - Alumni List */}
+        <div className="w-1/4 bg-purple-800 p-6">
+          <Sidebar />
+        </div>
+
+        {/* Right Section - Posts and Leaderboard */}
+        <main className="flex-1 max-w-3xl mx-auto px-4 py-8 space-y-6">
+          <CreatePost setPosts={setPosts} />
+          
+          {posts.length > 0 ? (
+            posts
+              .slice()
+              .reverse()
+              .map((post) => (
+                <PostCard key={post._id} post={post} currentUser={user} setPosts={setPosts} />
+              ))
+          ) : (
+            <p>No posts yet.</p>
+          )}
+        </main>
+      </div>
+      
       <section className="mt-10">
         <Leaderboard />
       </section>

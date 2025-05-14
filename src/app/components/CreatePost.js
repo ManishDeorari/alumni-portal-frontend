@@ -1,55 +1,88 @@
-"use client";
 import React, { useState } from "react";
+import axios from "axios";
 
-export default function CreatePost({ setPosts }) {
+const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handlePost = async () => {
-    if (!content.trim()) return alert("Write something to post!");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
-    setLoading(true);
-    const token = localStorage.getItem("token");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!content.trim() && !image) return;
+
+    const formData = new FormData();
+    formData.append("content", content);
+    if (image) formData.append("image", image);
 
     try {
-      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content }),
-      });
-
-      const newPost = await res.json();
+      setLoading(true);
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/posts`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       setContent("");
-      setPosts((prev) => [newPost, ...prev]); // ✅ Add to top of feed
+      setImage(null);
+      setPreview(null);
+      if (onPostCreated) onPostCreated(res.data);
     } catch (err) {
-      console.error("❌ Error creating post:", err.message);
+      console.error("Error creating post:", err);
+      alert("Failed to create post");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6 text-gray-800">
-      <textarea
-        rows={3}
-        placeholder="What's on your mind?"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="w-full p-3 border rounded resize-none focus:outline-none"
-      />
-
-      <div className="text-right">
-        <button
-          onClick={handlePost}
-          disabled={loading}
-          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition"
-        >
-          {loading ? "Posting..." : "Post"}
-        </button>
-      </div>
+    <div className="bg-white rounded-2xl p-4 shadow mb-4">
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What's on your mind?"
+          className="w-full border rounded-lg p-2 resize-none"
+          rows="3"
+        />
+        <div className="flex items-center justify-between mt-2">
+          <label className="cursor-pointer text-blue-600">
+            📷 Add Photo
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+            disabled={loading}
+          >
+            {loading ? "Posting..." : "Post"}
+          </button>
+        </div>
+        {preview && (
+          <img
+            src={preview}
+            alt="preview"
+            className="mt-2 max-h-64 rounded-lg object-cover"
+          />
+        )}
+      </form>
     </div>
   );
-}
+};
+
+export default CreatePost;
