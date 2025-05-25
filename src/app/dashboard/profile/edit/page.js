@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from '../../../components/ui/input';
+import { Button } from '../../../components/ui/button';
+import { Textarea } from '../../../components/ui/textarea';
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 

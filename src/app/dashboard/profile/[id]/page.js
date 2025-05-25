@@ -9,7 +9,7 @@ import {
   getConnectionStatus,
 } from "@/api/connect";
 import Image from "next/image";
-import Sidebar from "../../components/Sidebar"; // ✅ Sidebar as header
+import Sidebar from "../../../components/Sidebar"; // ✅ Sidebar as header
 
 export default function ProfilePage({ params }) {
   const { id } = params;
