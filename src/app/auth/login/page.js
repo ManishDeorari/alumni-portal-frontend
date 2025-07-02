@@ -15,10 +15,12 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
       const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // ✅ Use for cookies/session
         body: JSON.stringify(form),
       });
 
@@ -28,11 +30,14 @@ export default function LoginPage() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.token);
 
-      // ✅ Redirect to the dashboard (make sure it exists!)
+      // ✅ Store token if needed (commented out if using cookies)
+      // localStorage.setItem("token", data.token);
+
+      // ✅ Redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
+      console.error("Login Error:", err);
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -58,6 +63,7 @@ export default function LoginPage() {
           value={form.email}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <input
@@ -67,6 +73,7 @@ export default function LoginPage() {
           value={form.enrollmentNumber}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <input
@@ -76,6 +83,7 @@ export default function LoginPage() {
           value={form.password}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <button

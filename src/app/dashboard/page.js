@@ -16,7 +16,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/api/user/me");
+        const response = await axios.get("/api/user/me", { withCredentials: true });
         setUser(response.data.user);
       } catch (error) {
         console.error("User fetch failed:", error);
