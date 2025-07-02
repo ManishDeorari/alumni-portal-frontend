@@ -7,23 +7,31 @@ export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({ name: "", email: "", password: "", enrollmentNumber: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setLoading(false);
-    if (res.ok) {
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Signup failed");
+      }
+
       router.push("/auth/login");
-    } else {
-      alert("❌ Signup failed");
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,6 +44,8 @@ export default function SignupPage() {
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
         <h2 className="text-2xl font-bold text-center">Create Your Account</h2>
+
+        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
         <input
           type="text"

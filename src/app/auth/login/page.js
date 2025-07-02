@@ -7,25 +7,35 @@ export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "", enrollmentNumber: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setLoading(false);
-    if (res.ok) {
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Login failed");
+      }
+
       const data = await res.json();
       localStorage.setItem("token", data.token);
+
+      // ✅ Redirect to the dashboard (make sure it exists!)
       router.push("/dashboard");
-    } else {
-      alert("❌ Login failed");
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +48,8 @@ export default function LoginPage() {
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
         <h2 className="text-2xl font-bold text-center">Login</h2>
+
+        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
         <input
           type="email"
