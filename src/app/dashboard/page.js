@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import CreatePost from "../../components/CreatePost";
-import PostCard from "../../components/PostCard";
+import CreatePost from "../components/CreatePost";
+import PostCard from "../components/PostCard";
 
 export default function DashboardPage() {
   const router = useRouter();
