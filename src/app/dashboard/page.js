@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
+import { fetchWithToken } from "@/utils/api";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/api/user/me", { withCredentials: true });
+        const response = await fetchWithToken("https://alumni-backend-d9k9.onrender.com/api/user/me");
         setUser(response.data.user);
       } catch (error) {
         console.error("User fetch failed:", error);

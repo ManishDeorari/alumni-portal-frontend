@@ -32,7 +32,13 @@ export default function LoginPage() {
       const data = await res.json();
 
       // ✅ Store token if needed (commented out if using cookies)
-      // localStorage.setItem("token", data.token);
+      if (data.token) {
+        localStorage.setItem("token", data.token); // ✅ Save token
+        router.push("/dashboard");
+      } else {
+        throw new Error("Token not received");
+      }
+
 
       // ✅ Redirect to dashboard
       router.push("/dashboard");
