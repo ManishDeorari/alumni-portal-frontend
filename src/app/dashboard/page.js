@@ -1,78 +1,136 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { fetchPosts, fetchUser } from "@/api/dashboard";
-import Sidebar from "../components/Sidebar";
-import PostCard from "../components/PostCard";
-import CreatePost from "../components/CreatePost";
-import Leaderboard from "@/app/components/Leaderboard";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import CreatePost from "@/components/CreatePost";
+import PostCard from "@/components/PostCard";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch logged-in user
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUser = async () => {
       try {
-        const userRes = await fetchUser();
-        const postRes = await fetchPosts();
-
-        setUser(userRes);
-        setPosts(postRes);
-        setLoading(false);
+        const response = await axios.get("/api/user/me");
+        setUser(response.data.user);
       } catch (error) {
-        console.error("❌ Error fetching dashboard data:", error.message);
+        console.error("User fetch failed:", error);
+        router.push("/login");
+      } finally {
         setLoading(false);
       }
     };
+    fetchUser();
+  }, [router]);
 
-    fetchData();
+  // Fetch posts from backend
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
+        const data = await res.json();
+        setPosts(data);
+      } catch (error) {
+        console.error("Failed to load posts", error);
+      }
+    };
+    fetchPosts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white border-opacity-50" />
-      </div>
-    );
-  }
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white">
-      {/* Top header (your "Sidebar" component used as header) */}
-      <header className="fixed top-0 left-0 w-full z-50">
-        <Sidebar />
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 className="text-xl font-bold">Alumni Dashboard</h1>
+        <div className="flex items-center space-x-4">
+          <img
+            src={user.profilePic || "/default-avatar.png"}
+            alt="Profile"
+            className="w-10 h-10 rounded-full object-cover"
+          />
+          <span>{user.fullName}</span>
+        </div>
       </header>
 
-      {/* Main content below header */}
-      <div className="flex pt-16 min-h-screen px-4 gap-6">
-        {/* Left: Leaderboard - 30% width, white background for contrast */}
-        <aside className="w-3/10 min-w-[280px] bg-white p-6 rounded-md shadow-md text-black sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-          <h2 className="text-2xl font-semibold mb-4">Alumni Award Leaderboard</h2>
-          <Leaderboard />
-        </aside>
+      <main className="p-6 space-y-8">
+        {/* USER WELCOME */}
+        <section className="bg-white p-6 rounded-xl shadow-md mb-6">
+          <h2 className="text-lg font-semibold mb-2">Welcome, {user.fullName}</h2>
+          <p className="text-sm text-gray-700">
+            Your enrollment number: <strong>{user.enrollmentNumber}</strong>
+          </p>
+          <p className="text-sm text-gray-700">
+            Email: <strong>{user.email}</strong>
+          </p>
+        </section>
 
-        {/* Right: Posts section - 70% width */}
-        <main className="flex-1 max-w-4xl space-y-6 text-white">
-          <CreatePost setPosts={setPosts} />
-          {posts.length > 0 ? (
-            posts
-              .slice()
-              .reverse()
-              .map((post) => (
-                <PostCard
-                  key={post._id}
-                  post={post}
-                  currentUser={user}
-                  setPosts={setPosts}
-                />
-              ))
+        {/* DASHBOARD LINKS */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link href="/dashboard/profile">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">👤 My Profile</h3>
+              <p className="text-sm text-gray-600 mt-1">View and manage your profile</p>
+            </div>
+          </Link>
+          <Link href="/dashboard/posts">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">📝 Posts</h3>
+              <p className="text-sm text-gray-600 mt-1">Create and view alumni posts</p>
+            </div>
+          </Link>
+          <Link href="/dashboard/network">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">🌐 Network</h3>
+              <p className="text-sm text-gray-600 mt-1">Connect with other alumni</p>
+            </div>
+          </Link>
+          <Link href="/dashboard/messages">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">💬 Messages</h3>
+              <p className="text-sm text-gray-600 mt-1">Chat with connections</p>
+            </div>
+          </Link>
+          <Link href="/dashboard/points">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">🏆 Points & Awards</h3>
+              <p className="text-sm text-gray-600 mt-1">Track your profile score</p>
+            </div>
+          </Link>
+          <Link href="/">
+            <div className="bg-white p-4 rounded-xl shadow hover:bg-gray-50 cursor-pointer">
+              <h3 className="font-medium text-md">🔙 Home</h3>
+              <p className="text-sm text-gray-600 mt-1">Back to homepage</p>
+            </div>
+          </Link>
+        </section>
+
+        {/* CREATE + DISPLAY POSTS */}
+        <section className="max-w-2xl mx-auto w-full space-y-4">
+          <h2 className="text-xl font-bold">📢 Create a Post</h2>
+          <CreatePost setPosts={setPosts} currentUser={user} />
+
+          <h2 className="text-xl font-bold mt-6">📰 Latest Posts</h2>
+          {posts.length === 0 ? (
+            <p className="text-center text-gray-500">No posts yet.</p>
           ) : (
-            <p>No posts yet.</p>
+            posts.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                currentUser={user}
+                setPosts={setPosts}
+              />
+            ))
           )}
-        </main>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

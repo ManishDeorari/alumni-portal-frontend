@@ -17,29 +17,44 @@ const CreatePost = ({ onPostCreated }) => {
     e.preventDefault();
     if (!content.trim() && !image) return;
 
-    const formData = new FormData();
-    formData.append("content", content);
-    if (image) formData.append("image", image);
+    setLoading(true);
+    let imageUrl = "";
 
     try {
-      setLoading(true);
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/posts`,
-        formData,
+      // 1. Upload to Cloudinary if image exists
+      if (image) {
+        const imageData = new FormData();
+        imageData.append("file", image);
+        imageData.append("upload_preset", "your_upload_preset"); // Replace with real
+        imageData.append("cloud_name", "your_cloud_name"); // Replace with real
+
+        const cloudinaryRes = await axios.post(
+          "https://api.cloudinary.com/v1_1/your_cloud_name/image/upload",
+          imageData
+        );
+
+        imageUrl = cloudinaryRes.data.secure_url;
+      }
+
+      // 2. Post to backend
+      const postRes = await axios.post(
+        "https://alumni-backend-d9k9.onrender.com/api/posts",
+        { content, imageUrl },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
+
+      // 3. Reset
       setContent("");
       setImage(null);
       setPreview(null);
-      if (onPostCreated) onPostCreated(res.data);
+      if (onPostCreated) onPostCreated(postRes.data);
     } catch (err) {
-      console.error("Error creating post:", err);
-      alert("Failed to create post");
+      console.error("Post failed:", err);
+      alert("Post failed. Try again.");
     } finally {
       setLoading(false);
     }
