@@ -20,7 +20,7 @@ export default function DashboardPage() {
         setUser(response.data.user);
       } catch (error) {
         console.error("User fetch failed:", error);
-        router.push("/login");
+        router.push("/auth/login");
       } finally {
         setLoading(false);
       }
