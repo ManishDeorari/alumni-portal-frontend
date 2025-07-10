@@ -14,34 +14,52 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   // Fetch logged-in user
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetchWithToken("https://alumni-backend-d9k9.onrender.com/api/user/me");
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("User fetch failed:", error);
-        router.push("/auth/login");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [router]);
+useEffect(() => {
+  const fetchUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/login");
+      return;
+    }
 
-  // Fetch posts from backend
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
-        const data = await res.json();
-        setPosts(data);
-      } catch (error) {
-        console.error("Failed to load posts", error);
+    try {
+      const response = await fetch("https://alumni-backend-d9k9.onrender.com/api/user/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
       }
-    };
-    fetchPosts();
-  }, []);
+
+      const data = await response.json();
+      setUser(data.user);
+    } catch (error) {
+      console.error("User fetch failed:", error);
+      router.push("/auth/login");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchUser();
+}, [router]);
+
+// Fetch posts from backend
+useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
+      const data = await res.json();
+      setPosts(data);
+    } catch (error) {
+      console.error("Failed to load posts", error);
+    }
+  };
+  fetchPosts();
+}, []);
+
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (!user) return null;
