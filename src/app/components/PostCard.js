@@ -4,7 +4,7 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 
 function getEmojiFromUnified(unified) {
-  return String.fromCodePoint(...unified.split('-').map(u => '0x' + u));
+  return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
 }
 
 export default function PostCard({ post, currentUser, setPosts }) {
@@ -46,8 +46,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleComment = async () => {
-    if (!checkAuth()) return;
-    if (!comment.trim()) return;
+    if (!checkAuth() || !comment.trim()) return;
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`,
       {
@@ -61,6 +60,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
     );
     const updated = await res.json();
     setComment("");
+    setShowCommentEmoji(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
   };
 
@@ -82,8 +82,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleDelete = async () => {
-    if (!checkAuth()) return;
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    if (!checkAuth() || !confirm("Are you sure you want to delete this post?")) return;
     await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
       {
@@ -97,11 +96,11 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const toggleEdit = () => {
     setEditing(!editing);
     setEditContent(post.content);
+    setShowEditEmoji(false);
   };
 
   const handleEditSave = async () => {
-    if (!checkAuth()) return;
-    if (!editContent.trim()) return alert("Content cannot be empty");
+    if (!checkAuth() || !editContent.trim()) return alert("Content cannot be empty");
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
       {
@@ -116,6 +115,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
     const updated = await res.json();
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     setEditing(false);
+    setShowEditEmoji(false);
   };
 
   const handleLoadMore = () => {
@@ -183,7 +183,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
           </button>
         </>
       ) : (
-        <p>{post.content}</p>
+        <p className="whitespace-pre-wrap">{post.content}</p>
       )}
 
       {/* Media */}
