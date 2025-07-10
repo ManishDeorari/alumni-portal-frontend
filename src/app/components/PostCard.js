@@ -187,19 +187,26 @@ export default function PostCard({ post, currentUser, setPosts }) {
       )}
 
       {/* Media */}
-      {post.image && (
-        <img
-          src={post.image}
-          alt="post"
-          className="rounded max-h-96 w-full object-contain"
-        />
-      )}
-      {post.video && (
-        <video controls className="rounded w-full max-h-96">
-          <source src={post.video} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      )}
+{(post.image || post.video) && (
+  <div className="mt-2">
+    {post.image && (
+      <img
+        src={post.image}
+        alt="post"
+        className="rounded-lg max-h-96 w-full object-contain border"
+      />
+    )}
+    {post.video && (
+      <video
+        controls
+        className="rounded-lg w-full max-h-96 border mt-2"
+      >
+        <source src={post.video} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    )}
+  </div>
+)}
 
       {/* Reactions */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
