@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <h1 className="text-xl font-bold">Alumni Dashboard</h1>
         <div className="flex items-center space-x-4">
           <img
-            src={user?.profilePic || "/default-avatar.png"}
+            src={user?.profilePic || "/default-profile.png"}
             alt="Profile"
             className="w-10 h-10 rounded-full object-cover"
           />

@@ -9,8 +9,22 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
   const hasLiked = post.likes.includes(currentUser._id);
 
-  // Handle Like
+  const getReactionCount = (emoji) =>
+    post.reactions?.[emoji]?.length || 0;
+
+  const userReacted = (emoji) =>
+    post.reactions?.[emoji]?.includes(currentUser._id);
+
+  const checkAuth = () => {
+    if (!token) {
+      alert("Please log in to interact with posts.");
+      return false;
+    }
+    return true;
+  };
+
   const handleLike = async () => {
+    if (!checkAuth()) return;
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
       {
@@ -22,8 +36,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
   };
 
-  // Handle Comment
   const handleComment = async () => {
+    if (!checkAuth()) return;
     if (!comment.trim()) return;
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`,
@@ -41,8 +55,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
   };
 
-  // Handle React with emoji
   const handleReact = async (emoji) => {
+    if (!checkAuth()) return;
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
       {
@@ -58,8 +72,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
   };
 
-  // Handle Delete Post
   const handleDelete = async () => {
+    if (!checkAuth()) return;
     if (!confirm("Are you sure you want to delete this post?")) return;
     await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
@@ -71,14 +85,13 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setPosts((prev) => prev.filter((p) => p._id !== post._id));
   };
 
-  // Handle Edit Toggle
   const toggleEdit = () => {
     setEditing(!editing);
     setEditContent(post.content);
   };
 
-  // Handle Edit Save
   const handleEditSave = async () => {
+    if (!checkAuth()) return;
     if (!editContent.trim()) return alert("Content cannot be empty");
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
@@ -95,14 +108,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     setEditing(false);
   };
-
-  // Get reaction count helper
-  const getReactionCount = (emoji) =>
-    post.reactions?.[emoji]?.length || 0;
-
-  // Check if user reacted with emoji
-  const userReacted = (emoji) =>
-    post.reactions?.[emoji]?.includes(currentUser._id);
 
   return (
     <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3">
@@ -174,14 +179,15 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </button>
 
         <button
-          onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
+          onClick={() =>
+            document.getElementById(`comment-input-${post._id}`)?.focus()
+          }
           className="font-semibold text-gray-600"
         >
           💬 Comment ({post.comments.length})
         </button>
       </div>
 
-      {/* Reaction emojis */}
       <div className="flex gap-3 mt-2">
         {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
           <button
@@ -190,14 +196,13 @@ export default function PostCard({ post, currentUser, setPosts }) {
             className={`text-2xl ${
               userReacted(emoji) ? "scale-110" : ""
             } transition-transform`}
-            title={`${getReactionCount(emoji)} reacted`}
+            title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
           >
             {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
           </button>
         ))}
       </div>
 
-      {/* Comments list */}
       <div className="space-y-2 pt-3 border-t border-gray-200 max-h-56 overflow-y-auto">
         {post.comments.map((c) => (
           <div key={c._id} className="flex items-start gap-2">
@@ -217,7 +222,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
         ))}
       </div>
 
-      {/* Add Comment */}
       <div className="pt-2 border-t border-gray-200 flex gap-2 items-center">
         <input
           id={`comment-input-${post._id}`}
