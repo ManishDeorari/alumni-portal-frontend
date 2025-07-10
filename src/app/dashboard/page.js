@@ -41,7 +41,7 @@ export default function DashboardPage() {
           throw new Error("User fetch failed or user not returned");
         }
 
-        setUser(data.user);
+        setUser(data);
       } catch (error) {
         console.error("User fetch error:", error.message);
         router.push("/auth/login");
