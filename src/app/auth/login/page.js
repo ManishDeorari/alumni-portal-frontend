@@ -17,6 +17,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      console.log("Form data:", form);
       const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
