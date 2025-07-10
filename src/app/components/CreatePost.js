@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { createPost } from "./dashboard"; // adjust path as needed
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
@@ -28,28 +29,10 @@ const CreatePost = ({ onPostCreated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!content.trim() && !image && !video) return;
-
     setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("content", content);
-      if (image) formData.append("image", image);
-      if (video) formData.append("video", video);
-
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Post failed");
-
+      const result = await createPost(content, image, video);
       setContent("");
       setImage(null);
       setVideo(null);
