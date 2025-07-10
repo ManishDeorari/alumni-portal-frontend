@@ -37,11 +37,11 @@ export default function DashboardPage() {
         const data = await response.json();
         console.log("✅ User fetched:", data);
 
-        if (!response.ok || !data.user) {
-          throw new Error("User fetch failed or user not returned");
+        if (!response.ok) {
+          throw new Error("User fetch failed");
         }
 
-        setUser(data);
+        setUser(data); // ✅ CORRECTED LINE
       } catch (error) {
         console.error("User fetch error:", error.message);
         router.push("/auth/login");
