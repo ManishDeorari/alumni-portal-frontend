@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { createPost } from "./dashboard"; // adjust path as needed
+import { createPost } from "../../api/dashboard"; // adjust path as needed
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
