@@ -4,66 +4,60 @@ import React, { useState } from "react";
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setPreview(URL.createObjectURL(file));
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideo(file);
+      setPreviewVideo(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !image) return;
+    if (!content.trim() && !image && !video) return;
 
     setLoading(true);
-    let imageUrl = "";
 
     try {
-      if (image) {
-        const imageData = new FormData();
-        imageData.append("file", image);
-        imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET); // ✅ From .env
-        imageData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME); // ✅ From .env
-
-        const cloudinaryRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME}/image/upload`,
-          {
-            method: "POST",
-            body: imageData,
-          }
-        );
-
-        const cloudinaryJson = await cloudinaryRes.json();
-        if (!cloudinaryJson.secure_url) {
-          throw new Error("Image upload failed");
-        }
-        imageUrl = cloudinaryJson.secure_url;
-      }
+      const formData = new FormData();
+      formData.append("content", content);
+      if (image) formData.append("image", image);
+      if (video) formData.append("video", video);
 
       const token = localStorage.getItem("token");
 
-      const response = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ content, image: imageUrl }),
+        body: formData,
       });
 
-      if (!response.ok) throw new Error("Failed to create post");
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || "Post failed");
 
-      const result = await response.json();
       setContent("");
       setImage(null);
-      setPreview(null);
+      setVideo(null);
+      setPreviewImage(null);
+      setPreviewVideo(null);
       if (onPostCreated) onPostCreated(result);
     } catch (err) {
-      console.error("Post failed:", err);
+      console.error("Post error:", err);
       alert("Post failed. Try again.");
     } finally {
       setLoading(false);
@@ -80,7 +74,7 @@ const CreatePost = ({ onPostCreated }) => {
           className="w-full border rounded-lg p-2 resize-none"
           rows="3"
         />
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
             📷 Add Photo
             <input
@@ -90,6 +84,17 @@ const CreatePost = ({ onPostCreated }) => {
               className="hidden"
             />
           </label>
+
+          <label className="cursor-pointer text-purple-600">
+            🎥 Add Video
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleVideoChange}
+              className="hidden"
+            />
+          </label>
+
           <button
             type="submit"
             className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
@@ -98,11 +103,21 @@ const CreatePost = ({ onPostCreated }) => {
             {loading ? "Posting..." : "Post"}
           </button>
         </div>
-        {preview && (
+
+        {/* Media previews */}
+        {previewImage && (
           <img
-            src={preview}
+            src={previewImage}
             alt="preview"
-            className="mt-2 max-h-64 rounded-lg object-cover"
+            className="mt-3 max-h-64 rounded-lg object-cover"
+          />
+        )}
+
+        {previewVideo && (
+          <video
+            src={previewVideo}
+            controls
+            className="mt-3 max-h-64 rounded-lg"
           />
         )}
       </form>

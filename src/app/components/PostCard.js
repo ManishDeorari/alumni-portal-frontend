@@ -1,12 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
-  const token = localStorage.getItem("token");
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [showCommentEmojiPicker, setShowCommentEmojiPicker] = useState(false);
+  const commentInputRef = useRef(null);
 
+  const token = localStorage.getItem("token");
   const hasLiked = post.likes.includes(currentUser._id);
 
   const getReactionCount = (emoji) =>
@@ -63,12 +68,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}` },
         body: JSON.stringify({ emoji }),
       }
     );
     const updated = await res.json();
+    setShowReactionPicker(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
   };
 
@@ -99,8 +104,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}` },
         body: JSON.stringify({ content: editContent }),
       }
     );
@@ -186,21 +190,42 @@ export default function PostCard({ post, currentUser, setPosts }) {
         >
           💬 Comment ({post.comments.length})
         </button>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowReactionPicker((prev) => !prev)}
+            className="text-purple-600 text-sm underline"
+          >
+            😊 React
+          </button>
+          {showReactionPicker && (
+            <div className="absolute z-50">
+              <Picker
+                data={data}
+                onEmojiSelect={(emoji) => handleReact(emoji.native)}
+                theme="light"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex gap-3 mt-2">
-        {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
-          <button
-            key={emoji}
-            onClick={() => handleReact(emoji)}
-            className={`text-2xl ${
-              userReacted(emoji) ? "scale-110" : ""
-            } transition-transform`}
-            title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
-          >
-            {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
-          </button>
-        ))}
+      <div className="flex gap-3 mt-2 flex-wrap">
+        {post.reactions &&
+          Object.entries(post.reactions).map(([emoji, users]) => (
+            <button
+              key={emoji}
+              onClick={() => handleReact(emoji)}
+              className={`text-2xl px-2 py-1 rounded-full border ${
+                userReacted(emoji)
+                  ? "bg-blue-100 border-blue-400"
+                  : "bg-gray-100 border-gray-300"
+              }`}
+              title={`${users.length} reacted`}
+            >
+              {emoji} {users.length}
+            </button>
+          ))}
       </div>
 
       <div className="space-y-2 pt-3 border-t border-gray-200 max-h-56 overflow-y-auto">
@@ -222,16 +247,37 @@ export default function PostCard({ post, currentUser, setPosts }) {
         ))}
       </div>
 
-      <div className="pt-2 border-t border-gray-200 flex gap-2 items-center">
+      <div className="pt-2 border-t border-gray-200 flex gap-2 items-center relative">
         <input
           id={`comment-input-${post._id}`}
           type="text"
+          ref={commentInputRef}
           placeholder="Write a comment..."
           className="flex-grow border rounded px-3 py-1"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleComment()}
         />
+        <button
+          onClick={() => setShowCommentEmojiPicker((prev) => !prev)}
+          className="text-2xl"
+          title="Add emoji"
+        >
+          😊
+        </button>
+        {showCommentEmojiPicker && (
+          <div className="absolute bottom-12 right-0 z-50">
+            <Picker
+              data={data}
+              onEmojiSelect={(emoji) => {
+                setComment((prev) => prev + emoji.native);
+                setShowCommentEmojiPicker(false);
+                setTimeout(() => commentInputRef.current?.focus(), 0);
+              }}
+              theme="light"
+            />
+          </div>
+        )}
         <button
           onClick={handleComment}
           className="bg-blue-600 text-white px-3 py-1 rounded"
