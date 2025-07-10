@@ -1,7 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { Picker } from "emoji-mart";
-import "emoji-mart/css/emoji-mart.css";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+
+function getEmojiFromUnified(unified) {
+  return String.fromCodePoint(...unified.split('-').map(u => '0x' + u));
+}
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [comment, setComment] = useState("");
@@ -162,7 +166,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
             </button>
             {showEditEmoji && (
               <div className="absolute z-50">
-                <Picker onSelect={(emoji) => setEditContent(editContent + emoji.native)} />
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji) =>
+                    setEditContent(editContent + getEmojiFromUnified(emoji.unified))
+                  }
+                />
               </div>
             )}
           </div>
@@ -268,7 +277,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </button>
         {showCommentEmoji && (
           <div className="absolute bottom-10 right-0 z-50">
-            <Picker onSelect={(emoji) => setComment(comment + emoji.native)} />
+            <Picker
+              data={data}
+              onEmojiSelect={(emoji) =>
+                setComment(comment + getEmojiFromUnified(emoji.unified))
+              }
+            />
           </div>
         )}
         <button
