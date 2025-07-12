@@ -100,7 +100,7 @@ const CreatePost = ({ onPostCreated }) => {
 
         {/* Media previews */}
         {previewImage && (
-          <Image
+          <img
             src={previewImage}
             alt="preview"
             className="mt-3 max-h-64 rounded-lg object-cover"

@@ -263,7 +263,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
       {(post.image || post.video) && (
         <div className="mt-2">
           {post.image && (
-            <Image
+            <img
               src={post.image}
               alt="post"
               width={600}
