@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { createPost } from "../../api/dashboard"; // adjust path as needed
+import toast from "react-hot-toast";
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
@@ -39,9 +40,15 @@ const CreatePost = ({ onPostCreated }) => {
       setPreviewImage(null);
       setPreviewVideo(null);
       if (onPostCreated) onPostCreated(result);
+      toast.success("🎉 Post uploaded successfully!");
+      setContent("");           // Reset text input
+      setImage(null);           // Reset image
+      setVideo(null);           // Reset video
+      setPreviewImage(null);    // Reset preview
+      setPreviewVideo(null);    // Reset preview
     } catch (err) {
       console.error("Post error:", err);
-      alert("Post failed. Try again.");
+      toast.error("❌ Post failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -80,11 +87,14 @@ const CreatePost = ({ onPostCreated }) => {
 
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
             disabled={loading}
+            className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+            }`}
           >
             {loading ? "Posting..." : "Post"}
           </button>
+
         </div>
 
         {/* Media previews */}

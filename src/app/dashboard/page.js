@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -100,14 +101,23 @@ export default function DashboardPage() {
           {posts.length === 0 ? (
             <p className="text-center text-gray-500">No posts yet.</p>
           ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                currentUser={user}
-                setPosts={setPosts}
-              />
-            ))
+            <AnimatePresence>
+              {posts.map((post) => (
+                <motion.div
+                  key={post._id}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <PostCard
+                    post={post}
+                    currentUser={user}
+                    setPosts={setPosts}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           )}
         </section>
       </main>

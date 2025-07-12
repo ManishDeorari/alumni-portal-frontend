@@ -12,42 +12,42 @@ export const createPost = async (content, image, video) => {
   let videoUrl = "";
 
   // ✅ Upload image to Cloudinary if provided
-  if (image) {
-    const imageData = new FormData();
-    imageData.append("file", image);
-    imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+if (image) {
+  const imageData = new FormData();
+  imageData.append("file", image);
+  imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
 
-    const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL, {
-      method: "POST",
-      body: imageData,
-    });
+  const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
+    method: "POST",
+    body: imageData,
+  });
 
-    const uploadJson = await uploadRes.json();
-    if (uploadJson.secure_url) {
-      imageUrl = uploadJson.secure_url;
-    } else {
-      console.warn("Image upload failed:", uploadJson);
-    }
+  const uploadJson = await uploadRes.json();
+  if (uploadJson.secure_url) {
+    imageUrl = uploadJson.secure_url;
+  } else {
+    console.warn("Image upload failed:", uploadJson);
   }
+}
 
-  // ✅ Upload video to Cloudinary if provided
-  if (video) {
-    const videoData = new FormData();
-    videoData.append("file", video);
-    videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+// ✅ Upload video to Cloudinary if provided
+if (video) {
+  const videoData = new FormData();
+  videoData.append("file", video);
+  videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
 
-    const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL, {
-      method: "POST",
-      body: videoData,
-    });
+  const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
+    method: "POST",
+    body: videoData,
+  });
 
-    const uploadJson = await uploadRes.json();
-    if (uploadJson.secure_url) {
-      videoUrl = uploadJson.secure_url;
-    } else {
-      console.warn("Video upload failed:", uploadJson);
-    }
+  const uploadJson = await uploadRes.json();
+  if (uploadJson.secure_url) {
+    videoUrl = uploadJson.secure_url;
+  } else {
+    console.warn("Video upload failed:", uploadJson);
   }
+}
 
   // ✅ Submit the post with uploaded media URLs
   const res = await fetch(`${BASE}/posts`, {
