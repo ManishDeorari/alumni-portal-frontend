@@ -4,6 +4,7 @@ import { sendConnectionRequest, acceptConnectionRequest, getPendingRequests } fr
 import Sidebar from "../../components/Sidebar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const NetworkPage = () => {
   const [alumni, setAlumni] = useState([]);

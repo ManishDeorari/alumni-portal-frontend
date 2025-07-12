@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
@@ -36,7 +37,7 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold text-center text-blue-700">Your Profile</h1>
 
         <div className="flex flex-col items-center space-y-2">
-          <img
+          <Image
             src={profile.profileImage || "/default-profile.png"}
             alt="Profile"
             className="w-28 h-28 rounded-full object-cover border"

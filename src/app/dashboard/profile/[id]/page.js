@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchUserById } from "../../../../api/profile";
+import { getProfileById } from "../../../../api/profile";
 import {
   sendConnectionRequest,
   acceptConnectionRequest,
@@ -18,7 +18,7 @@ export default function ProfilePage({ params }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetchUserById(id);
+      const res = await getProfileById(id);
       const connectionRes = await getConnectionStatus(id);
       setUser(res);
       setStatus(connectionRes.status);

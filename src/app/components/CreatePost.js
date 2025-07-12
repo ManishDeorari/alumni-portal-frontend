@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { createPost } from "../../api/dashboard"; // adjust path as needed
 import toast from "react-hot-toast";
+import Image from 'next/image';
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
@@ -99,7 +100,7 @@ const CreatePost = ({ onPostCreated }) => {
 
         {/* Media previews */}
         {previewImage && (
-          <img
+          <Image
             src={previewImage}
             alt="preview"
             className="mt-3 max-h-64 rounded-lg object-cover"

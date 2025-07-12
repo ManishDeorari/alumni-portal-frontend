@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 function getEmojiFromUnified(unified) {
   return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
@@ -203,7 +204,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
 {(post.image || post.video) && (
   <div className="mt-2">
     {post.image && (
-      <img
+      <Image
         src={post.image}
         alt="post"
         className="rounded-lg max-h-96 w-full object-contain border"
@@ -257,7 +258,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
       <div className="space-y-2 pt-3 border-t border-gray-200 max-h-56 overflow-y-auto">
         {post.comments.slice(0, visibleComments).map((c) => (
           <div key={c._id} className="flex items-start gap-2">
-            <img
+            <Image
               src={c.user?.profilePic || "/default-profile.png"}
               alt="commenter"
               className="w-8 h-8 rounded-full mt-1"

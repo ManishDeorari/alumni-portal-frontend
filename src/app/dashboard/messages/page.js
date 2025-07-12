@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar"; // ✅ Sidebar imported
 import Link from "next/link";
+import Image from "next/image";
 
 export default function MessagesPage() {
   const [connectedUsers, setConnectedUsers] = useState([]);
@@ -55,7 +56,7 @@ export default function MessagesPage() {
               }`}
               onClick={() => setSelectedUser(user)}
             >
-              <img
+              <Image
                 src={user.profilePic || "/default-user.jpg"}
                 className="w-10 h-10 rounded-full object-cover"
                 alt={user.name}

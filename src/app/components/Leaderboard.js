@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Leaderboard() {
   const [users, setUsers] = useState([]);
@@ -30,7 +31,7 @@ export default function Leaderboard() {
                 <span className="text-lg font-bold text-gray-700 w-6">
                   {index + 1}.
                 </span>
-                <img
+                <Image
                   src={user.profilePicture || "/default-profile.png"}
                   alt={user.name}
                   className="w-10 h-10 rounded-full object-cover border border-gray-300"
