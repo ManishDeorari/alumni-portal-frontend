@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 function getEmojiFromUnified(unified) {
   return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
@@ -18,8 +19,20 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [visibleComments, setVisibleComments] = useState(2);
 
   const token = localStorage.getItem("token");
-  const hasLiked = post.likes.includes(currentUser._id);
+  const textareaRef = useRef(null);
 
+  const toggleEdit = () => {
+    setEditing((prev) => !prev);
+    setShowEditEmoji(false);
+  };
+
+  useEffect(() => {
+    if (editing && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [editing]);
+
+  const hasLiked = post.likes.includes(currentUser._id);
   const checkAuth = () => {
     if (!token) {
       alert("Please log in to interact with posts.");
@@ -48,29 +61,28 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleComment = async () => {
-  if (!checkAuth() || !comment.trim()) return;
-  try {
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: comment }),
-      }
-    );
-    const updated = await res.json();
-    setComment("");
-    setShowCommentEmoji(false);
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-    toast.success("💬 Comment added");
-  } catch (err) {
-    toast.error("❌ Failed to add comment");
-  }
-};
-
+    if (!checkAuth() || !comment.trim()) return;
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: comment }),
+        }
+      );
+      const updated = await res.json();
+      setComment("");
+      setShowCommentEmoji(false);
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      toast.success("💬 Comment added");
+    } catch (err) {
+      toast.error("❌ Failed to add comment");
+    }
+  };
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;
@@ -106,31 +118,49 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   };
 
+  const editKey = `draft-${post._id}`;
+    useEffect(() => {
+      const saved = localStorage.getItem(editKey);
+      if (saved && !post.content.includes(saved)) {
+        setEditContent(saved);
+      }
+    }, []);
+
+    useEffect(() => {
+      if (editing && textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, [editing]);
+
+    const handleBlurSave = () => {
+      localStorage.setItem(editKey, editContent);
+      toast("💾 Draft saved", { icon: "💾" });
+    };
 
   const handleEditSave = async () => {
-    if (!checkAuth() || !editContent.trim()) return alert("Content cannot be empty");
-    try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content: editContent }),
-        }
-      );
-      const updated = await res.json();
-      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-      setEditing(false);
-      setShowEditEmoji(false);
-      toast.success("✏️ Post updated");
-    } catch (err) {
-      toast.error("❌ Failed to update post");
-    }
-  };
-
+  if (!checkAuth() || !editContent.trim()) return alert("Content cannot be empty");
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: editContent }),
+      }
+    );
+    const updated = await res.json();
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    setEditing(false);
+    setShowEditEmoji(false);
+    localStorage.removeItem(editKey);
+    toast.success("✏️ Post updated");
+  } catch (err) {
+    toast.error("❌ Failed to update post");
+  }
+};
 
   const handleLoadMore = () => {
     setVisibleComments((prev) => prev + 3);
@@ -164,63 +194,91 @@ export default function PostCard({ post, currentUser, setPosts }) {
       </div>
 
       {/* Content */}
-      {editing ? (
-        <>
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-          <div className="relative">
-            <button
-              onClick={() => setShowEditEmoji(!showEditEmoji)}
-              className="text-lg"
+      <AnimatePresence mode="wait">
+          {editing ? (
+            <motion.div
+              key="editor"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-2"
             >
-              😊
-            </button>
-            {showEditEmoji && (
-              <div className="absolute z-50">
-                <Picker
-                  data={data}
-                  onEmojiSelect={(emoji) =>
-                    setEditContent(editContent + getEmojiFromUnified(emoji.unified))
-                  }
-                />
+              <textarea
+                ref={textareaRef}
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                onBlur={handleBlurSave}
+                rows={3}
+                className="w-full border rounded p-2"
+                placeholder="Edit your post..."
+              />
+              <div className="relative">
+                <button
+                  onClick={() => setShowEditEmoji(!showEditEmoji)}
+                  className="text-xl"
+                >
+                  😊
+                </button>
+                {showEditEmoji && (
+                  <div className="absolute z-50">
+                    <Picker
+                      data={data}
+                      onEmojiSelect={(emoji) =>
+                        setEditContent(editContent + getEmojiFromUnified(emoji.unified))
+                      }
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <button
-            onClick={handleEditSave}
-            className="bg-green-600 text-white px-4 py-1 rounded"
-          >
-            Save
-          </button>
-        </>
-      ) : (
-        <p className="whitespace-pre-wrap">{post.content}</p>
-      )}
+
+              {/* 🔍 Live Preview */}
+              <div className="p-2 border border-gray-300 rounded bg-gray-50">
+                <p className="text-sm text-gray-500 font-semibold">Preview:</p>
+                <p className="whitespace-pre-wrap">{editContent}</p>
+              </div>
+
+              <button
+                onClick={handleEditSave}
+                className="bg-green-600 text-white px-4 py-1 rounded"
+              >
+                Save
+              </button>
+            </motion.div>
+          ) : (
+            <motion.p
+              key="view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="whitespace-pre-wrap"
+            >
+              {post.content}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
 
       {/* Media */}
-{(post.image || post.video) && (
-  <div className="mt-2">
-    {post.image && (
-      <Image
-        src={post.image}
-        alt="post"
-        className="rounded-lg max-h-96 w-full object-contain border"
-      />
-    )}
-    {post.video && (
-      <video
-        controls
-        className="rounded-lg w-full max-h-96 border mt-2"
-      >
-        <source src={post.video} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    )}
-  </div>
-)}
+      {(post.image || post.video) && (
+        <div className="mt-2">
+          {post.image && (
+            <Image
+              src={post.image}
+              alt="post"
+              width={600}
+              height={400}
+              className="rounded-lg max-h-96 w-full object-contain border"
+            />
+          )}
+          {post.video && (
+            <video controls className="rounded-lg w-full max-h-96 border mt-2">
+              <source src={post.video} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
+        </div>
+      )}
 
       {/* Reactions */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
@@ -262,6 +320,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
               src={c.user?.profilePic || "/default-profile.png"}
               alt="commenter"
               className="w-8 h-8 rounded-full mt-1"
+              width={32}
+              height={32}
             />
             <div>
               <p className="text-sm font-semibold">{c.user?.name}</p>
