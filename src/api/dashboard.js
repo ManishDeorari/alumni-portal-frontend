@@ -1,6 +1,7 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL + "/api";
 
 export const fetchPosts = async () => {
+  console.log("Posting to:", `${BASE}/posts`);
   const res = await fetch(`${BASE}/posts`);
   if (!res.ok) throw new Error("Failed to fetch posts");
   return res.json();
