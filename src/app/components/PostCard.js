@@ -49,8 +49,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const hasLiked = (post.likes || []).includes(currentUser._id);
-  const getReactionCount = (emoji) => (post.reactions?.[emoji] || []).length;
-  const userReacted = (emoji) => (post.reactions?.[emoji] || []).includes(currentUser._id);
+
+  const getReactionCount = (emoji) => {
+  const users = post.reactions?.[emoji];
+  return Array.isArray(users) ? users.length : 0;
+  };
+
+  const userReacted = (emoji) => {
+  const users = post.reactions?.[emoji];
+  return Array.isArray(users) ? users.includes(currentUser._id) : false;
+  };
 
   const handleLike = async () => {
     if (!checkAuth()) return;
@@ -158,6 +166,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setVisibleComments((prev) => prev + 3);
   };
 
+  console.log("Debug Reactions:", post.reactions); // 👈 add this
+  
   return (
     <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
       {/* Header */}
@@ -269,7 +279,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
       {/* Reaction Summary */}
       {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
         <div className="flex gap-3 mt-1 flex-wrap">
-          {Object.entries(post.reactions).map(([emoji, users]) => {
+          {Object.entries(post.reactions || {}).map(([emoji, users]) => {
             if (!Array.isArray(users) || users.length === 0) return null;
             return (
               <div
@@ -278,10 +288,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
                   userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
                 }`}
               >
-                {emoji}{" "}
-                <span className="text-sm text-gray-600">
-                  x{users.length}
-                </span>
+                {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
               </div>
             );
           })}
