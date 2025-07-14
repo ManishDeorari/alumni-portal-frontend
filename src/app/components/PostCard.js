@@ -267,20 +267,24 @@ export default function PostCard({ post, currentUser, setPosts }) {
       )}
 
       {/* Reaction Summary */}
-      {post.reactions && Object.entries(post.reactions || {}).length > 0 && (
+      {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
         <div className="flex gap-3 mt-1 flex-wrap">
-          {Object.entries(post.reactions || {}).map(([emoji, users]) => (
-            Array.isArray(users) && users.length > 0 && (
+          {Object.entries(post.reactions).map(([emoji, users]) => {
+            if (!Array.isArray(users) || users.length === 0) return null;
+            return (
               <div
                 key={emoji}
                 className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
                   userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
                 }`}
               >
-                {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
+                {emoji}{" "}
+                <span className="text-sm text-gray-600">
+                  x{users.length}
+                </span>
               </div>
-            )
-          ))}
+            );
+          })}
         </div>
       )}
 
