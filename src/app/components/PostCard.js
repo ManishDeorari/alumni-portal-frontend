@@ -266,6 +266,24 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </div>
       )}
 
+      {/* Reaction Summary */}
+      {post.reactions && Object.keys(post.reactions).length > 0 && (
+        <div className="flex gap-3 mt-1 flex-wrap">
+          {Object.entries(post.reactions).map(([emoji, users]) => (
+            users.length > 0 && (
+              <div
+                key={emoji}
+                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
+                  userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
+                }`}
+              >
+                {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
+              </div>
+            )
+          ))}
+        </div>
+      )}
+
       {/* Likes & Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
