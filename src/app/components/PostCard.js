@@ -48,9 +48,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
     return true;
   };
 
-  const hasLiked = post.likes.includes(currentUser._id);
-  const getReactionCount = (emoji) => post.reactions?.[emoji]?.length || 0;
-  const userReacted = (emoji) => post.reactions?.[emoji]?.includes(currentUser._id);
+  const hasLiked = (post.likes || []).includes(currentUser._id);
+  const getReactionCount = (emoji) => (post.reactions?.[emoji] || []).length;
+  const userReacted = (emoji) => (post.reactions?.[emoji] || []).includes(currentUser._id);
 
   const handleLike = async () => {
     if (!checkAuth()) return;
