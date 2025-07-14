@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 function getEmojiFromUnified(unified) {
@@ -17,14 +16,18 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [showEditEmoji, setShowEditEmoji] = useState(false);
   const [showCommentEmoji, setShowCommentEmoji] = useState(false);
   const [visibleComments, setVisibleComments] = useState(2);
+  const [showThread, setShowThread] = useState(false);
 
   const token = localStorage.getItem("token");
   const textareaRef = useRef(null);
+  const editKey = `draft-${post._id}`;
 
-  const toggleEdit = () => {
-    setEditing((prev) => !prev);
-    setShowEditEmoji(false);
-  };
+  useEffect(() => {
+    const saved = localStorage.getItem(editKey);
+    if (saved && !post.content.includes(saved)) {
+      setEditContent(saved);
+    }
+  }, []);
 
   useEffect(() => {
     if (editing && textareaRef.current) {
@@ -32,7 +35,11 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   }, [editing]);
 
-  const hasLiked = post.likes.includes(currentUser._id);
+  const toggleEdit = () => {
+    setEditing((prev) => !prev);
+    setShowEditEmoji(false);
+  };
+
   const checkAuth = () => {
     if (!token) {
       alert("Please log in to interact with posts.");
@@ -41,11 +48,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
     return true;
   };
 
-  const getReactionCount = (emoji) =>
-    post.reactions?.[emoji]?.length || 0;
-
-  const userReacted = (emoji) =>
-    post.reactions?.[emoji]?.includes(currentUser._id);
+  const hasLiked = post.likes.includes(currentUser._id);
+  const getReactionCount = (emoji) => post.reactions?.[emoji]?.length || 0;
+  const userReacted = (emoji) => post.reactions?.[emoji]?.includes(currentUser._id);
 
   const handleLike = async () => {
     if (!checkAuth()) return;
@@ -54,6 +59,24 @@ export default function PostCard({ post, currentUser, setPosts }) {
       {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const updated = await res.json();
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+  };
+
+  const handleReact = async (emoji) => {
+    if (!checkAuth()) return;
+    const action = userReacted(emoji) ? "remove" : "add";
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ emoji, action }),
       }
     );
     const updated = await res.json();
@@ -84,21 +107,29 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   };
 
-  const handleReact = async (emoji) => {
-    if (!checkAuth()) return;
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ emoji }),
-      }
-    );
-    const updated = await res.json();
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+  const handleEditSave = async () => {
+    if (!checkAuth() || !editContent.trim()) return alert("Content cannot be empty");
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content: editContent }),
+        }
+      );
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      setEditing(false);
+      setShowEditEmoji(false);
+      localStorage.removeItem(editKey);
+      toast.success("✏️ Post updated");
+    } catch (err) {
+      toast.error("❌ Failed to update post");
+    }
   };
 
   const handleDelete = async () => {
@@ -118,56 +149,17 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   };
 
-  const editKey = `draft-${post._id}`;
-    useEffect(() => {
-      const saved = localStorage.getItem(editKey);
-      if (saved && !post.content.includes(saved)) {
-        setEditContent(saved);
-      }
-    }, []);
-
-    useEffect(() => {
-      if (editing && textareaRef.current) {
-        textareaRef.current.focus();
-      }
-    }, [editing]);
-
-    const handleBlurSave = () => {
-      localStorage.setItem(editKey, editContent);
-      toast("💾 Draft saved", { icon: "💾" });
-    };
-
-  const handleEditSave = async () => {
-  if (!checkAuth() || !editContent.trim()) return alert("Content cannot be empty");
-  try {
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: editContent }),
-      }
-    );
-    const updated = await res.json();
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-    setEditing(false);
-    setShowEditEmoji(false);
-    localStorage.removeItem(editKey);
-    toast.success("✏️ Post updated");
-  } catch (err) {
-    toast.error("❌ Failed to update post");
-  }
-};
+  const handleBlurSave = () => {
+    localStorage.setItem(editKey, editContent);
+    toast("💾 Draft saved", { icon: "💾" });
+  };
 
   const handleLoadMore = () => {
     setVisibleComments((prev) => prev + 3);
   };
 
   return (
-    <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3">
+    <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
       {/* Header */}
       <div className="flex items-center gap-3">
         <img
@@ -195,69 +187,65 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
       {/* Content */}
       <AnimatePresence mode="wait">
-          {editing ? (
-            <motion.div
-              key="editor"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-2"
-            >
-              <textarea
-                ref={textareaRef}
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                onBlur={handleBlurSave}
-                rows={3}
-                className="w-full border rounded p-2"
-                placeholder="Edit your post..."
-              />
-              <div className="relative">
-                <button
-                  onClick={() => setShowEditEmoji(!showEditEmoji)}
-                  className="text-xl"
-                >
-                  😊
-                </button>
-                {showEditEmoji && (
-                  <div className="absolute z-50">
-                    <Picker
-                      data={data}
-                      onEmojiSelect={(emoji) =>
-                        setEditContent(editContent + getEmojiFromUnified(emoji.unified))
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* 🔍 Live Preview */}
-              <div className="p-2 border border-gray-300 rounded bg-gray-50">
-                <p className="text-sm text-gray-500 font-semibold">Preview:</p>
-                <p className="whitespace-pre-wrap">{editContent}</p>
-              </div>
-
+        {editing ? (
+          <motion.div
+            key="editor"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-2"
+          >
+            <textarea
+              ref={textareaRef}
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              onBlur={handleBlurSave}
+              rows={3}
+              className="w-full border rounded p-2"
+              placeholder="Edit your post..."
+            />
+            <div className="relative">
               <button
-                onClick={handleEditSave}
-                className="bg-green-600 text-white px-4 py-1 rounded"
+                onClick={() => setShowEditEmoji(!showEditEmoji)}
+                className="text-xl"
               >
-                Save
+                😊
               </button>
-            </motion.div>
-          ) : (
-            <motion.p
-              key="view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="whitespace-pre-wrap"
+              {showEditEmoji && (
+                <div className="absolute right-0 z-50">
+                  <Picker
+                    data={data}
+                    onEmojiSelect={(emoji) =>
+                      setEditContent(editContent + getEmojiFromUnified(emoji.unified))
+                    }
+                  />
+                </div>
+              )}
+            </div>
+            <div className="p-2 border border-gray-300 rounded bg-gray-50">
+              <p className="text-sm text-gray-500 font-semibold">Preview:</p>
+              <p className="whitespace-pre-wrap">{editContent}</p>
+            </div>
+            <button
+              onClick={handleEditSave}
+              className="bg-green-600 text-white px-4 py-1 rounded"
             >
-              {post.content}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
+              Save
+            </button>
+          </motion.div>
+        ) : (
+          <motion.p
+            key="view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="whitespace-pre-wrap"
+          >
+            {post.content}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       {/* Media */}
       {(post.image || post.video) && (
@@ -266,8 +254,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
             <img
               src={post.image}
               alt="post"
-              width={600}
-              height={400}
               className="rounded-lg max-h-96 w-full object-contain border"
             />
           )}
@@ -280,7 +266,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </div>
       )}
 
-      {/* Reactions */}
+      {/* Likes & Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
           onClick={handleLike}
@@ -301,14 +287,17 @@ export default function PostCard({ post, currentUser, setPosts }) {
       {/* Emoji Reactions */}
       <div className="flex gap-3 mt-2">
         {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
-          <button
+          <motion.button
+            whileTap={{ scale: 1.3 }}
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 300 }}
             key={emoji}
             onClick={() => handleReact(emoji)}
-            className={`text-2xl ${userReacted(emoji) ? "scale-110" : ""} transition-transform`}
+            className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
             title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
           >
             {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -316,12 +305,10 @@ export default function PostCard({ post, currentUser, setPosts }) {
       <div className="space-y-2 pt-3 border-t border-gray-200 max-h-56 overflow-y-auto">
         {post.comments.slice(0, visibleComments).map((c) => (
           <div key={c._id} className="flex items-start gap-2">
-            <Image
+            <img
               src={c.user?.profilePic || "/default-profile.png"}
               alt="commenter"
               className="w-8 h-8 rounded-full mt-1"
-              width={32}
-              height={32}
             />
             <div>
               <p className="text-sm font-semibold">{c.user?.name}</p>
@@ -373,6 +360,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
           Send
         </button>
       </div>
+
+      {/* Separator */}
+      <hr className="my-4 border-gray-300" />
     </div>
   );
 }

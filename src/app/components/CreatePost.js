@@ -100,20 +100,45 @@ const CreatePost = ({ onPostCreated }) => {
 
         {/* Media previews */}
         {previewImage && (
-          <img
-            src={previewImage}
-            alt="preview"
-            className="mt-3 max-h-64 rounded-lg object-cover"
-          />
+          <div className="relative mt-3 max-h-64">
+            <img
+              src={previewImage}
+              alt="preview"
+              className="rounded-lg object-cover max-h-64 w-full"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setImage(null);
+                setPreviewImage(null);
+              }}
+              className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-sm"
+            >
+              ❌
+            </button>
+          </div>
         )}
 
         {previewVideo && (
-          <video
-            src={previewVideo}
-            controls
-            className="mt-3 max-h-64 rounded-lg"
-          />
+          <div className="relative mt-3 max-h-64">
+            <video
+              src={previewVideo}
+              controls
+              className="rounded-lg max-h-64 w-full"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setVideo(null);
+                setPreviewVideo(null);
+              }}
+              className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-sm"
+            >
+              ❌
+            </button>
+          </div>
         )}
+
       </form>
     </div>
   );

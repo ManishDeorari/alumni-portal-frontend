@@ -13,7 +13,7 @@
     "@emoji-mart/react": "^1.1.1",
     "axios": "^1.9.0",
     "emoji-mart": "^5.6.0",
-    "emoji-picker-react": "^4.12.3",
+    "emoji-picker-react": "^4.13.1",
     "framer-motion": "^12.23.3",
     "next": "15.2.1",
     "react": "^18.3.1",
