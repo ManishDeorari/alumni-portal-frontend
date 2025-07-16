@@ -8,10 +8,6 @@ import io from "socket.io-client";
 import CommentCard from "./commentCard";
 import socket from "../../utils/socket";
 
-const socket = io("https://alumni-backend-d9k9.onrender.com", {
-  transports: ["websocket"],
-});
-
 function getEmojiFromUnified(unified) {
   return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
 }
