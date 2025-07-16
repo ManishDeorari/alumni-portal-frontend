@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Picker } from "emoji-mart";
-import "emoji-mart/css/emoji-mart.css"; // Required CSS
+import Picker from '@emoji-mart/react';
 
 export default function ReplyBox({ parentId, onSubmit }) {
   const [replyText, setReplyText] = useState("");
