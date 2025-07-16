@@ -50,25 +50,37 @@ export default function DashboardPage() {
 
   // ✅ Fetch posts
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
-        const data = await res.json();
-        setPosts(data);
-      } catch (error) {
-        console.error("❌ Failed to load posts", error);
-      }
-    };
-    fetchPosts();
-  }, []);
+      const fetchPosts = async () => {
+        try {
+          const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
+          const data = await res.json();
+          setPosts(data);
+        } catch (error) {
+          console.error("❌ Failed to load posts", error);
+        }
+      };
+      fetchPosts();
+    }, []);
 
-  if (loading) return <div className="text-center mt-10 text-white">Loading...</div>;
-  if (!user)
-    return (
-      <div className="text-center mt-10 text-red-200">
-        User not found or unauthorized.
-      </div>
-    );
+    if (loading) return <div className="text-center mt-10 text-white">Loading...</div>;
+    if (!user)
+      return (
+        <div className="text-center mt-10 text-red-200">
+          User not found or unauthorized.
+        </div>
+      );
+
+      useEffect(() => {
+    if (!socket) return;
+
+    socket.on("postUpdated", (updatedPost) => {
+      setPosts((prevPosts) =>
+        prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      );
+    });
+
+    return () => socket.off("postUpdated");
+  }, [socket]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">

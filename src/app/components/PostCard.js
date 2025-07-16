@@ -4,6 +4,13 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import io from "socket.io-client";
+import CommentCard from "./commentCard";
+import socket from "../../utils/socket";
+
+const socket = io("https://alumni-backend-d9k9.onrender.com", {
+  transports: ["websocket"],
+});
 
 function getEmojiFromUnified(unified) {
   return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
@@ -11,12 +18,16 @@ function getEmojiFromUnified(unified) {
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [comment, setComment] = useState("");
+  const [replies, setReplies] = useState({});
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [showEditEmoji, setShowEditEmoji] = useState(false);
   const [showCommentEmoji, setShowCommentEmoji] = useState(false);
   const [visibleComments, setVisibleComments] = useState(2);
+  const [reactionEffect, setReactionEffect] = useState(null);
   const [showThread, setShowThread] = useState(false);
+  const [someoneTyping, setSomeoneTyping] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const token = localStorage.getItem("token");
   const textareaRef = useRef(null);
@@ -35,9 +46,45 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   }, [editing]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("postUpdated", (updatedPost) => {
+      setPosts((prev) =>
+        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      );
+    });
+
+    return () => {
+      socket.off("postUpdated");
+    };
+  }, [socket, setPosts]);
+
+  useEffect(() => {
+    socket.on("typing", ({ postId, user }) => {
+      if (postId === post._id && user !== currentUser._id) {
+        setSomeoneTyping(true);
+        setTimeout(() => setSomeoneTyping(false), 3000);
+      }
+    });
+    return () => socket.off("typing");
+  }, [post._id]);
+
   const toggleEdit = () => {
     setEditing((prev) => !prev);
     setShowEditEmoji(false);
+  };
+
+  const hasLiked = (post.likes || []).includes(currentUser._id);
+
+  const getReactionCount = (emoji) => {
+    const users = post.reactions?.[emoji];
+    return Array.isArray(users) ? users.length : 0;
+  };
+
+  const userReacted = (emoji) => {
+    const users = post.reactions?.[emoji];
+    return Array.isArray(users) ? users.includes(currentUser._id) : false;
   };
 
   const checkAuth = () => {
@@ -48,16 +95,27 @@ export default function PostCard({ post, currentUser, setPosts }) {
     return true;
   };
 
-  const hasLiked = (post.likes || []).includes(currentUser._id);
+  const triggerReactionEffect = (emoji) => {
+    const container = document.createElement("div");
+    container.className = "fixed text-3xl pointer-events-none z-50";
+    container.style.left = `${Math.random() * 80 + 10}%`;
+    container.style.top = "70%";
+    container.textContent = emoji;
 
-  const getReactionCount = (emoji) => {
-  const users = post.reactions?.[emoji];
-  return Array.isArray(users) ? users.length : 0;
-  };
+    document.body.appendChild(container);
 
-  const userReacted = (emoji) => {
-  const users = post.reactions?.[emoji];
-  return Array.isArray(users) ? users.includes(currentUser._id) : false;
+    const animation = container.animate(
+      [
+        { transform: "translateY(0)", opacity: 1 },
+        { transform: "translateY(-100px)", opacity: 0 }
+      ],
+      {
+        duration: 1000,
+        easing: "ease-out"
+      }
+    );
+
+    animation.onfinish = () => container.remove();
   };
 
   const handleLike = async () => {
@@ -71,6 +129,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
     );
     const updated = await res.json();
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    socket.emit("updatePost", updated);
   };
 
   const handleReact = async (emoji) => {
@@ -89,6 +148,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     );
     const updated = await res.json();
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    triggerReactionEffect(emoji);
+    socket.emit("updatePost", updated);
   };
 
   const handleComment = async () => {
@@ -109,9 +170,48 @@ export default function PostCard({ post, currentUser, setPosts }) {
       setComment("");
       setShowCommentEmoji(false);
       setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      socket.emit("updatePost", updated);
       toast.success("💬 Comment added");
     } catch (err) {
       toast.error("❌ Failed to add comment");
+    }
+  };
+
+   const handleReply = async (parentCommentId, replyText) => {
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ parentCommentId, text: replyText }),
+        }
+      );
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => p._id === post._id ? updated : p));
+      socket.emit("updatePost", updated);
+    } catch (err) {
+      toast.error("❌ Failed to reply");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => p._id === post._id ? updated : p));
+      socket.emit("updatePost", updated);
+    } catch (err) {
+      toast.error("❌ Failed to delete comment");
     }
   };
 
@@ -166,8 +266,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setVisibleComments((prev) => prev + 3);
   };
 
-  console.log("Debug Reactions:", post.reactions); // 👈 add this
-  
   return (
     <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
       {/* Header */}
@@ -216,10 +314,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
               placeholder="Edit your post..."
             />
             <div className="relative">
-              <button
-                onClick={() => setShowEditEmoji(!showEditEmoji)}
-                className="text-xl"
-              >
+              <button onClick={() => setShowEditEmoji(!showEditEmoji)} className="text-xl">
                 😊
               </button>
               {showEditEmoji && (
@@ -245,15 +340,20 @@ export default function PostCard({ post, currentUser, setPosts }) {
             </button>
           </motion.div>
         ) : (
-          <motion.p
+          <motion.div
             key="view"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="whitespace-pre-wrap"
           >
-            {post.content}
-          </motion.p>
+            <p className="whitespace-pre-wrap">{post.content}</p>
+            <div
+              onClick={() => setShowFullPost(true)}
+              className="cursor-pointer text-sm text-blue-600 underline mt-1"
+            >
+              View full post
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -295,61 +395,64 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </div>
       )}
 
-      {/* Likes & Comment Buttons */}
+      {/* Likes & Comments */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
           onClick={handleLike}
           className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600"}`}
         >
-          👍 Like ({post.likes.length})
+          👍 Like ({(post.likes || []).length})
         </button>
         <button
-          onClick={() =>
-            document.getElementById(`comment-input-${post._id}`)?.focus()
-          }
+          onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
           className="font-semibold text-gray-600"
         >
-          💬 Comment ({post.comments.length})
+          💬 Comment ({(post.comments || []).length})
         </button>
       </div>
 
       {/* Emoji Reactions */}
       <div className="flex gap-3 mt-2">
         {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
-          <motion.button
-            whileTap={{ scale: 1.3 }}
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 300 }}
+          <motion.div
             key={emoji}
-            onClick={() => handleReact(emoji)}
-            className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
-            title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+            className="relative flex items-center"
+            onMouseEnter={() => setReactionEffect(emoji)}
+            onMouseLeave={() => setReactionEffect(null)}
           >
-            {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
-          </motion.button>
+            <motion.button
+              whileTap={{ scale: 1.3 }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              onClick={() => handleReact(emoji)}
+              className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
+              title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+            >
+              {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
+            </motion.button>
+            {reactionEffect === emoji && (
+              <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
+                {emoji}
+              </div>
+            )}
+          </motion.div>
         ))}
       </div>
 
-      {/* Comments */}
-      <div className="space-y-2 pt-3 border-t border-gray-200 max-h-56 overflow-y-auto">
-        {post.comments.slice(0, visibleComments).map((c) => (
-          <div key={c._id} className="flex items-start gap-2">
-            <img
-              src={c.user?.profilePic || "/default-profile.png"}
-              alt="commenter"
-              className="w-8 h-8 rounded-full mt-1"
-            />
-            <div>
-              <p className="text-sm font-semibold">{c.user?.name}</p>
-              <p>{c.text}</p>
-              <p className="text-xs text-gray-400">
-                {new Date(c.createdAt).toLocaleString()}
-              </p>
-            </div>
-          </div>
+      {/* Comments (Threaded View) */}
+      <div className="pt-2 border-t border-gray-200 space-y-2">
+        {(post.comments || []).slice(0, visibleComments).map((c) => (
+          <CommentCard
+            key={c._id}
+            comment={c}
+            currentUser={currentUser}
+            onReply={handleReply}
+            onDelete={handleDeleteComment}
+            replies={c.replies || []}
+          />
         ))}
-        {post.comments.length > visibleComments && (
-          <button onClick={handleLoadMore} className="text-sm text-blue-600">
+        {(post.comments || []).length > visibleComments && (
+          <button onClick={handleLoadMore} className="mt-2 text-sm text-blue-600">
             Load more comments
           </button>
         )}
@@ -363,9 +466,19 @@ export default function PostCard({ post, currentUser, setPosts }) {
           placeholder="Write a comment..."
           className="flex-grow border rounded px-3 py-1"
           value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          onChange={(e) => {
+            setComment(e.target.value);
+            socket.emit("typing", { postId: post._id, user: currentUser._id });
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleComment()}
         />
+
+        {someoneTyping && (
+          <p className="text-sm text-gray-500 italic mt-1 animate-pulse">
+            Someone is typing...
+          </p>
+        )}
+
         <button
           onClick={() => setShowCommentEmoji(!showCommentEmoji)}
           className="text-lg"
@@ -390,8 +503,124 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </button>
       </div>
 
-      {/* Separator */}
-      <hr className="my-4 border-gray-300" />
+      {/* Black Separator */}
+      <hr className="my-6 border-black" />
+
+      {/* Modal for Full Post View */}
+      <AnimatePresence>
+        {showFullPost && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white rounded-lg p-6 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowFullPost(false)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
+              >
+                ✖
+              </button>
+
+              {/* Post Header */}
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src={post.user?.profilePic || "/default-profile.png"}
+                  alt="profile"
+                  className="w-10 h-10 rounded-full"
+                />
+                <div>
+                  <p className="font-semibold">{post.user?.name || "Unknown"}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(post.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                {post.user?._id === currentUser._id && (
+                  <button
+                    onClick={toggleEdit}
+                    className="ml-auto text-blue-600 text-sm hover:underline"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {/* Post Content */}
+              <p className="whitespace-pre-wrap mb-4">{post.content}</p>
+
+              {/* Post Media */}
+              {post.image && (
+                <img
+                  src={post.image}
+                  alt="post"
+                  className="rounded w-full max-h-[400px] object-contain border mb-4"
+                />
+              )}
+              {post.video && (
+                <video controls className="w-full max-h-[400px] border mb-4">
+                  <source src={post.video} type="video/mp4" />
+                </video>
+              )}
+
+              {/* Likes and Comments Count */}
+              <div className="text-sm text-gray-600 flex gap-6 mb-3">
+                <span>👍 {post.likes?.length || 0} Likes</span>
+                <span>💬 {post.comments?.length || 0} Comments</span>
+              </div>
+
+              {/* Emoji Reactions */}
+              <div className="flex gap-3 mb-4">
+                {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+                  <motion.div
+                    key={emoji}
+                    className="relative flex items-center"
+                    onMouseEnter={() => setReactionEffect(emoji)}
+                    onMouseLeave={() => setReactionEffect(null)}
+                  >
+                    <motion.button
+                      whileTap={{ scale: 1.3 }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      onClick={() => handleReact(emoji)}
+                      className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
+                      title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+                    >
+                      {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
+                    </motion.button>
+                    {reactionEffect === emoji && (
+                      <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
+                        {emoji}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Full Comment Thread */}
+              <div className="space-y-3 border-t pt-3">
+                {(post.comments || []).map((c) => (
+                  <CommentCard
+                    key={c._id}
+                    comment={c}
+                    currentUser={currentUser}
+                    onReply={handleReply}
+                    onDelete={handleDeleteComment}
+                    replies={c.replies || []}
+                    showReplyCount
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
