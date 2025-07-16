@@ -452,12 +452,11 @@ export default function PostCard({ post, currentUser, setPosts }) {
       )}
     </div>
 
-    {/* Typing Indicator */}
-    {isTyping && (
-      <div className="text-sm text-gray-500 mt-2 animate-pulse">
-        Someone is typing...
-      </div>
-    )}
+    {someoneTyping && (
+    <div className="text-sm text-gray-500 mt-2 animate-pulse">
+      Someone is typing...
+    </div>
+  )}
 
     {/* Comment Input */}
     <div className="pt-2 border-t border-gray-200 flex gap-2 items-center relative">
@@ -509,7 +508,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
     {/* Modal */}
     <AnimatePresence>
-      {showFullPost && (
+      {showModal && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -523,7 +522,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
             className="bg-white rounded-lg p-6 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
           >
             <button
-              onClick={() => setShowFullPost(false)}
+              onClick={() => setShowModal(false)}
               className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
             >
               ✖
@@ -605,17 +604,26 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
             {/* Full Comment Thread */}
             <div className="space-y-3 border-t pt-3">
-              {(post.comments || []).map((c) => (
-                <CommentCard
-                  key={c._id}
-                  comment={c}
-                  currentUser={currentUser}
-                  onReply={handleReply}
-                  onDelete={handleDeleteComment}
-                  replies={c.replies || []}
-                  showReplyCount
-                />
-              ))}
+              {showThread ? (
+                (post.comments || []).map((c) => (
+                  <CommentCard
+                    key={c._id}
+                    comment={c}
+                    currentUser={currentUser}
+                    onReply={handleReply}
+                    onDelete={handleDeleteComment}
+                    replies={c.replies || []}
+                    showReplyCount
+                  />
+                ))
+              ) : (
+                <button
+                  className="text-blue-600 hover:underline text-sm"
+                  onClick={() => setShowThread(true)}
+                >
+                  View full thread ({post.comments?.length || 0} comments)
+                </button>
+              )}
             </div>
           </motion.div>
         </motion.div>
