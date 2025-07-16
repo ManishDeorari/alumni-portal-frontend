@@ -4,7 +4,6 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import io from "socket.io-client";
 import CommentCard from "./commentCard";
 import socket from "../../utils/socket";
 
@@ -14,7 +13,6 @@ function getEmojiFromUnified(unified) {
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [comment, setComment] = useState("");
-  const [replies, setReplies] = useState({});
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [showEditEmoji, setShowEditEmoji] = useState(false);
@@ -263,360 +261,366 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   return (
-    <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <img
-          src={post.user?.profilePic || "/default-profile.png"}
-          alt="profile"
-          className="w-10 h-10 rounded-full"
-        />
-        <div>
-          <p className="font-semibold">{post.user?.name || "Unknown"}</p>
-          <p className="text-xs text-gray-500">
-            {new Date(post.createdAt).toLocaleString()}
-          </p>
-        </div>
-        {post.user?._id === currentUser._id && (
-          <div className="ml-auto flex gap-2">
-            <button onClick={toggleEdit} className="text-blue-600 text-sm hover:underline">
-              {editing ? "Cancel" : "Edit"}
-            </button>
-            <button onClick={handleDelete} className="text-red-600 text-sm hover:underline">
-              Delete
-            </button>
-          </div>
-        )}
+  <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
+    {/* Header */}
+    <div className="flex items-center gap-3">
+      <img
+        src={post.user?.profilePic || "/default-profile.png"}
+        alt="profile"
+        className="w-10 h-10 rounded-full"
+      />
+      <div>
+        <p className="font-semibold">{post.user?.name || "Unknown"}</p>
+        <p className="text-xs text-gray-500">
+          {new Date(post.createdAt).toLocaleString()}
+        </p>
       </div>
-
-      {/* Content */}
-      <AnimatePresence mode="wait">
-        {editing ? (
-          <motion.div
-            key="editor"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-2"
-          >
-            <textarea
-              ref={textareaRef}
-              value={editContent}
-              onChange={(e) => setEditContent(e.target.value)}
-              onBlur={handleBlurSave}
-              rows={3}
-              className="w-full border rounded p-2"
-              placeholder="Edit your post..."
-            />
-            <div className="relative">
-              <button onClick={() => setShowEditEmoji(!showEditEmoji)} className="text-xl">
-                😊
-              </button>
-              {showEditEmoji && (
-                <div className="absolute right-0 z-50">
-                  <Picker
-                    data={data}
-                    onEmojiSelect={(emoji) =>
-                      setEditContent(editContent + getEmojiFromUnified(emoji.unified))
-                    }
-                  />
-                </div>
-              )}
-            </div>
-            <div className="p-2 border border-gray-300 rounded bg-gray-50">
-              <p className="text-sm text-gray-500 font-semibold">Preview:</p>
-              <p className="whitespace-pre-wrap">{editContent}</p>
-            </div>
-            <button
-              onClick={handleEditSave}
-              className="bg-green-600 text-white px-4 py-1 rounded"
-            >
-              Save
-            </button>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="view"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <p className="whitespace-pre-wrap">{post.content}</p>
-            <div
-              onClick={() => setShowFullPost(true)}
-              className="cursor-pointer text-sm text-blue-600 underline mt-1"
-            >
-              View full post
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Media */}
-      {(post.image || post.video) && (
-        <div className="mt-2">
-          {post.image && (
-            <img
-              src={post.image}
-              alt="post"
-              className="rounded-lg max-h-96 w-full object-contain border"
-            />
-          )}
-          {post.video && (
-            <video controls className="rounded-lg w-full max-h-96 border mt-2">
-              <source src={post.video} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          )}
+      {post.user?._id === currentUser._id && (
+        <div className="ml-auto flex gap-2">
+          <button onClick={toggleEdit} className="text-blue-600 text-sm hover:underline">
+            {editing ? "Cancel" : "Edit"}
+          </button>
+          <button onClick={handleDelete} className="text-red-600 text-sm hover:underline">
+            Delete
+          </button>
         </div>
       )}
+    </div>
 
-      {/* Reaction Summary */}
-      {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
-        <div className="flex gap-3 mt-1 flex-wrap">
-          {Object.entries(post.reactions || {}).map(([emoji, users]) => {
-            if (!Array.isArray(users) || users.length === 0) return null;
-            return (
-              <div
-                key={emoji}
-                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
-                  userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
-                }`}
-              >
-                {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Likes & Comments */}
-      <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
-        <button
-          onClick={handleLike}
-          className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600"}`}
+    {/* Content */}
+    <AnimatePresence mode="wait">
+      {editing ? (
+        <motion.div
+          key="editor"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-2"
         >
-          👍 Like ({(post.likes || []).length})
-        </button>
-        <button
-          onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
-          className="font-semibold text-gray-600"
-        >
-          💬 Comment ({(post.comments || []).length})
-        </button>
-      </div>
-
-      {/* Emoji Reactions */}
-      <div className="flex gap-3 mt-2">
-        {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
-          <motion.div
-            key={emoji}
-            className="relative flex items-center"
-            onMouseEnter={() => setReactionEffect(emoji)}
-            onMouseLeave={() => setReactionEffect(null)}
-          >
-            <motion.button
-              whileTap={{ scale: 1.3 }}
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              onClick={() => handleReact(emoji)}
-              className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
-              title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
-            >
-              {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
-            </motion.button>
-            {reactionEffect === emoji && (
-              <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
-                {emoji}
+          <textarea
+            ref={textareaRef}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            onBlur={handleBlurSave}
+            rows={3}
+            className="w-full border rounded p-2"
+            placeholder="Edit your post..."
+          />
+          <div className="relative">
+            <button onClick={() => setShowEditEmoji(!showEditEmoji)} className="text-xl">
+              😊
+            </button>
+            {showEditEmoji && (
+              <div className="absolute right-0 z-50">
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji) =>
+                    setEditContent(editContent + getEmojiFromUnified(emoji.unified))
+                  }
+                />
               </div>
             )}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Comments (Threaded View) */}
-      <div className="pt-2 border-t border-gray-200 space-y-2">
-        {(post.comments || []).slice(0, visibleComments).map((c) => (
-          <CommentCard
-            key={c._id}
-            comment={c}
-            currentUser={currentUser}
-            onReply={handleReply}
-            onDelete={handleDeleteComment}
-            replies={c.replies || []}
-          />
-        ))}
-        {(post.comments || []).length > visibleComments && (
-          <button onClick={handleLoadMore} className="mt-2 text-sm text-blue-600">
-            Load more comments
-          </button>
-        )}
-      </div>
-
-      {/* Comment Input */}
-      <div className="pt-2 border-t border-gray-200 flex gap-2 items-center relative">
-        <input
-          id={`comment-input-${post._id}`}
-          type="text"
-          placeholder="Write a comment..."
-          className="flex-grow border rounded px-3 py-1"
-          value={comment}
-          onChange={(e) => {
-            setComment(e.target.value);
-            socket.emit("typing", { postId: post._id, user: currentUser._id });
-          }}
-          onKeyDown={(e) => e.key === "Enter" && handleComment()}
-        />
-
-        {someoneTyping && (
-          <p className="text-sm text-gray-500 italic mt-1 animate-pulse">
-            Someone is typing...
-          </p>
-        )}
-
-        <button
-          onClick={() => setShowCommentEmoji(!showCommentEmoji)}
-          className="text-lg"
-        >
-          😊
-        </button>
-        {showCommentEmoji && (
-          <div className="absolute bottom-10 right-0 z-50">
-            <Picker
-              data={data}
-              onEmojiSelect={(emoji) =>
-                setComment(comment + getEmojiFromUnified(emoji.unified))
-              }
-            />
           </div>
-        )}
-        <button
-          onClick={handleComment}
-          className="bg-blue-600 text-white px-3 py-1 rounded"
-        >
-          Send
-        </button>
-      </div>
-
-      {/* Black Separator */}
-      <hr className="my-6 border-black" />
-
-      {/* Modal for Full Post View */}
-      <AnimatePresence>
-        {showFullPost && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+          <div className="p-2 border border-gray-300 rounded bg-gray-50">
+            <p className="text-sm text-gray-500 font-semibold">Preview:</p>
+            <p className="whitespace-pre-wrap">{editContent}</p>
+          </div>
+          <button
+            onClick={handleEditSave}
+            className="bg-green-600 text-white px-4 py-1 rounded"
           >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="bg-white rounded-lg p-6 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setShowFullPost(false)}
-                className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
-              >
-                ✖
-              </button>
+            Save
+          </button>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="view"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <p className="whitespace-pre-wrap">{post.content}</p>
+          <div
+            onClick={() => setShowFullPost(true)}
+            className="cursor-pointer text-sm text-blue-600 underline mt-1"
+          >
+            View full post
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
 
-              {/* Post Header */}
-              <div className="flex items-center gap-3 mb-3">
-                <img
-                  src={post.user?.profilePic || "/default-profile.png"}
-                  alt="profile"
-                  className="w-10 h-10 rounded-full"
-                />
-                <div>
-                  <p className="font-semibold">{post.user?.name || "Unknown"}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(post.createdAt).toLocaleString()}
-                  </p>
-                </div>
-                {post.user?._id === currentUser._id && (
-                  <button
-                    onClick={toggleEdit}
-                    className="ml-auto text-blue-600 text-sm hover:underline"
-                  >
-                    Edit
-                  </button>
-                )}
-              </div>
-
-              {/* Post Content */}
-              <p className="whitespace-pre-wrap mb-4">{post.content}</p>
-
-              {/* Post Media */}
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt="post"
-                  className="rounded w-full max-h-[400px] object-contain border mb-4"
-                />
-              )}
-              {post.video && (
-                <video controls className="w-full max-h-[400px] border mb-4">
-                  <source src={post.video} type="video/mp4" />
-                </video>
-              )}
-
-              {/* Likes and Comments Count */}
-              <div className="text-sm text-gray-600 flex gap-6 mb-3">
-                <span>👍 {post.likes?.length || 0} Likes</span>
-                <span>💬 {post.comments?.length || 0} Comments</span>
-              </div>
-
-              {/* Emoji Reactions */}
-              <div className="flex gap-3 mb-4">
-                {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
-                  <motion.div
-                    key={emoji}
-                    className="relative flex items-center"
-                    onMouseEnter={() => setReactionEffect(emoji)}
-                    onMouseLeave={() => setReactionEffect(null)}
-                  >
-                    <motion.button
-                      whileTap={{ scale: 1.3 }}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      onClick={() => handleReact(emoji)}
-                      className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
-                      title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
-                    >
-                      {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
-                    </motion.button>
-                    {reactionEffect === emoji && (
-                      <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
-                        {emoji}
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Full Comment Thread */}
-              <div className="space-y-3 border-t pt-3">
-                {(post.comments || []).map((c) => (
-                  <CommentCard
-                    key={c._id}
-                    comment={c}
-                    currentUser={currentUser}
-                    onReply={handleReply}
-                    onDelete={handleDeleteComment}
-                    replies={c.replies || []}
-                    showReplyCount
-                  />
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
+    {/* Media */}
+    {(post.image || post.video) && (
+      <div className="mt-2">
+        {post.image && (
+          <img
+            src={post.image}
+            alt="post"
+            className="rounded-lg max-h-96 w-full object-contain border"
+          />
         )}
-      </AnimatePresence>
+        {post.video && (
+          <video controls className="rounded-lg w-full max-h-96 border mt-2">
+            <source src={post.video} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
+      </div>
+    )}
+
+    {/* Reaction Summary */}
+    {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
+      <div className="flex gap-3 mt-1 flex-wrap">
+        {Object.entries(post.reactions || {}).map(([emoji, users]) => {
+          if (!Array.isArray(users) || users.length === 0) return null;
+          return (
+            <div
+              key={emoji}
+              className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
+                userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
+              }`}
+            >
+              {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    {/* Likes & Comments */}
+    <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
+      <button
+        onClick={handleLike}
+        className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600"}`}
+      >
+        👍 Like ({(post.likes || []).length})
+      </button>
+      <button
+        onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
+        className="font-semibold text-gray-600"
+      >
+        💬 Comment ({(post.comments || []).length})
+      </button>
     </div>
-  );
+
+    {/* Emoji Reactions */}
+    <div className="flex gap-3 mt-2">
+      {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+        <motion.div
+          key={emoji}
+          className="relative flex items-center"
+          onMouseEnter={() => setReactionEffect(emoji)}
+          onMouseLeave={() => setReactionEffect(null)}
+        >
+          <motion.button
+            whileTap={{ scale: 1.3 }}
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            onClick={() => handleReact(emoji)}
+            className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
+            title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+          >
+            {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
+          </motion.button>
+          {reactionEffect === emoji && (
+            <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
+              {emoji}
+            </div>
+          )}
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Comments Section */}
+    <div className="pt-2 border-t border-gray-200 space-y-2">
+      {(post.comments || []).slice(0, visibleComments).map((c) => (
+        <CommentCard
+          key={c._id}
+          comment={c}
+          currentUser={currentUser}
+          onReply={handleReply}
+          onDelete={handleDeleteComment}
+          replies={c.replies || []}
+        />
+      ))}
+      {(post.comments || []).length > visibleComments && (
+        <button onClick={handleLoadMore} className="mt-2 text-sm text-blue-600">
+          Load more comments
+        </button>
+      )}
+    </div>
+
+    {/* Typing Indicator */}
+    {isTyping && (
+      <div className="text-sm text-gray-500 mt-2 animate-pulse">
+        Someone is typing...
+      </div>
+    )}
+
+    {/* Comment Input */}
+    <div className="pt-2 border-t border-gray-200 flex gap-2 items-center relative">
+      <input
+        id={`comment-input-${post._id}`}
+        type="text"
+        placeholder="Write a comment..."
+        className="flex-grow border rounded px-3 py-1"
+        value={comment}
+        onChange={(e) => {
+          setComment(e.target.value);
+          socket.emit("typing", { postId: post._id, user: currentUser._id });
+        }}
+        onKeyDown={(e) => e.key === "Enter" && handleComment()}
+      />
+
+      {someoneTyping && (
+        <p className="text-sm text-gray-500 italic mt-1 animate-pulse">
+          Someone is typing...
+        </p>
+      )}
+
+      <button
+        onClick={() => setShowCommentEmoji(!showCommentEmoji)}
+        className="text-lg"
+      >
+        😊
+      </button>
+      {showCommentEmoji && (
+        <div className="absolute bottom-10 right-0 z-50">
+          <Picker
+            data={data}
+            onEmojiSelect={(emoji) =>
+              setComment(comment + getEmojiFromUnified(emoji.unified))
+            }
+          />
+        </div>
+      )}
+      <button
+        onClick={handleComment}
+        className="bg-blue-600 text-white px-3 py-1 rounded"
+      >
+        Send
+      </button>
+    </div>
+
+    {/* Separator */}
+    <hr className="my-6 border-black" />
+
+    {/* Modal */}
+    <AnimatePresence>
+      {showFullPost && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.9 }}
+            className="bg-white rounded-lg p-6 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
+          >
+            <button
+              onClick={() => setShowFullPost(false)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
+            >
+              ✖
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-3">
+              <img
+                src={post.user?.profilePic || "/default-profile.png"}
+                alt="profile"
+                className="w-10 h-10 rounded-full"
+              />
+              <div>
+                <p className="font-semibold">{post.user?.name || "Unknown"}</p>
+                <p className="text-xs text-gray-500">
+                  {new Date(post.createdAt).toLocaleString()}
+                </p>
+              </div>
+              {post.user?._id === currentUser._id && (
+                <button
+                  onClick={toggleEdit}
+                  className="ml-auto text-blue-600 text-sm hover:underline"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+
+            {/* Content */}
+            <p className="whitespace-pre-wrap mb-4">{post.content}</p>
+
+            {/* Media */}
+            {post.image && (
+              <img
+                src={post.image}
+                alt="post"
+                className="rounded w-full max-h-[400px] object-contain border mb-4"
+              />
+            )}
+            {post.video && (
+              <video controls className="w-full max-h-[400px] border mb-4">
+                <source src={post.video} type="video/mp4" />
+              </video>
+            )}
+
+            {/* Reaction Counts */}
+            <div className="text-sm text-gray-600 flex gap-6 mb-3">
+              <span>👍 {post.likes?.length || 0} Likes</span>
+              <span>💬 {post.comments?.length || 0} Comments</span>
+            </div>
+
+            {/* Emoji Reactions */}
+            <div className="flex gap-3 mb-4">
+              {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+                <motion.div
+                  key={emoji}
+                  className="relative flex items-center"
+                  onMouseEnter={() => setReactionEffect(emoji)}
+                  onMouseLeave={() => setReactionEffect(null)}
+                >
+                  <motion.button
+                    whileTap={{ scale: 1.3 }}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    onClick={() => handleReact(emoji)}
+                    className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
+                    title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+                  >
+                    {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
+                  </motion.button>
+                  {reactionEffect === emoji && (
+                    <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
+                      {emoji}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Full Comment Thread */}
+            <div className="space-y-3 border-t pt-3">
+              {(post.comments || []).map((c) => (
+                <CommentCard
+                  key={c._id}
+                  comment={c}
+                  currentUser={currentUser}
+                  onReply={handleReply}
+                  onDelete={handleDeleteComment}
+                  replies={c.replies || []}
+                  showReplyCount
+                />
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
 }
