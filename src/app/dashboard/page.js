@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
 import { motion, AnimatePresence } from "framer-motion";
+import socket from "../../utils/socket";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -62,18 +62,12 @@ export default function DashboardPage() {
       fetchPosts();
     }, []);
 
-    if (loading) return <div className="text-center mt-10 text-white">Loading...</div>;
-    if (!user)
-      return (
-        <div className="text-center mt-10 text-red-200">
-          User not found or unauthorized.
-        </div>
-      );
-
-      useEffect(() => {
+  // ✅ Must be declared before any conditional return
+  useEffect(() => {
     if (!socket) return;
-
+    socket.off("postUpdated");
     socket.on("postUpdated", (updatedPost) => {
+      console.log("✅ Connected to socket server:", socket.id);
       setPosts((prevPosts) =>
         prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
       );
@@ -81,6 +75,14 @@ export default function DashboardPage() {
 
     return () => socket.off("postUpdated");
   }, [socket]);
+
+  if (loading) return <div className="text-center mt-10 text-white">Loading...</div>;
+  if (!user)
+    return (
+      <div className="text-center mt-10 text-red-200">
+        User not found or unauthorized.
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
