@@ -4,7 +4,7 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import CommentCard from "..commentCard";
+import CommentCard from "../commentCard";
 import socket from "../../../utils/socket";
 import ImageGallery from "./ImageGallery";
 import FullImageViewer from "./FullImageViewer";
