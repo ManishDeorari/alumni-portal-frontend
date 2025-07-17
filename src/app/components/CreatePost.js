@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import { createPost } from "../../api/dashboard"; // adjust path as needed
 import toast from "react-hot-toast";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
 const CreatePost = ({ onPostCreated }) => {
