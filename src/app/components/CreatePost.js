@@ -84,6 +84,12 @@ const CreatePost = ({ onPostCreated }) => {
         {showEmojiPicker && (
           <div className="mt-2">
             <Picker onSelect={handleEmojiSelect} />
+            <button
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            className="text-sm text-yellow-500"
+          >
+            😊 Emoji
+          </button>
           </div>
         )}
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
@@ -106,12 +112,7 @@ const CreatePost = ({ onPostCreated }) => {
               className="hidden"
             />
           </label>
-          <button
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
-            className="text-sm text-yellow-500"
-          >
-            😊 Emoji
-          </button>
+          
           <button
             type="submit"
             disabled={loading}
