@@ -13,14 +13,18 @@ const CreatePost = ({ onPostCreated }) => {
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setPreviewImage(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (files.length + images.length > 6) {
+      setError("You can upload up to 6 images");
+      return;
     }
+    setError("");
+    setImages([...images, ...files]);
+    setVideo(null); // Disable video if images selected
   };
 
   const handleVideoChange = (e) => {
+    setImages([]); // Clear images
     const file = e.target.files[0];
     if (file) {
       setVideo(file);
@@ -28,9 +32,16 @@ const CreatePost = ({ onPostCreated }) => {
     }
   };
 
+  const handleEmojiSelect = (emoji) => {
+    setContent((prev) => prev + emoji.native);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !image && !video) return;
+    if (!content.trim() && !image && !video) {
+      setError("Post must contain text, image, or video.");
+      return;
+  }
     setLoading(true);
 
     try {
@@ -47,6 +58,7 @@ const CreatePost = ({ onPostCreated }) => {
       setVideo(null);           // Reset video
       setPreviewImage(null);    // Reset preview
       setPreviewVideo(null);    // Reset preview
+      onPostCreated?.(newPost); // refresh feed
     } catch (err) {
       console.error("Post error:", err);
       toast.error("❌ Post failed. Try again.");
@@ -65,6 +77,11 @@ const CreatePost = ({ onPostCreated }) => {
           className="w-full border rounded-lg p-2 resize-none"
           rows="3"
         />
+        {showEmojiPicker && (
+          <div className="mt-2">
+            <Picker onSelect={handleEmojiSelect} />
+          </div>
+        )}
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
             📷 Add Photo
@@ -85,7 +102,12 @@ const CreatePost = ({ onPostCreated }) => {
               className="hidden"
             />
           </label>
-
+          <button
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            className="text-sm text-yellow-500"
+          >
+            😊 Emoji
+          </button>
           <button
             type="submit"
             disabled={loading}

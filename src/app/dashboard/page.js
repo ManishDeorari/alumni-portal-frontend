@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import CreatePost from "../components/CreatePost";
-import PostCard from "../components/PostCard";
+import PostCard from "../components/Post/PostCard";
 import { motion, AnimatePresence } from "framer-motion";
 import socket from "../../utils/socket";
 
@@ -83,6 +83,19 @@ export default function DashboardPage() {
     });
 
     return () => socket.off("postUpdated");
+  }, []);
+
+  // ✅ Setup socket for new post creation
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.off("postCreated");
+    socket.on("postCreated", (newPost) => {
+      console.log("🆕 Socket postCreated:", newPost);
+      setPosts((prevPosts) => [newPost, ...prevPosts]);
+    });
+
+    return () => socket.off("postCreated");
   }, []);
 
   if (loading)

@@ -5,7 +5,9 @@ import data from "@emoji-mart/data";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import CommentCard from "./commentCard";
-import socket from "../../utils/socket";
+import socket from "../../../utils/socket";
+import ImageGallery from "./ImageGallery";
+import FullImageViewer from "./FullImageViewer";
 
 function getEmojiFromUnified(unified) {
   return String.fromCodePoint(...unified.split("-").map((u) => "0x" + u));
@@ -22,6 +24,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [showThread, setShowThread] = useState(false);
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showViewer, setShowViewer] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const token = localStorage.getItem("token");
   const textareaRef = useRef(null);
@@ -88,6 +93,11 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
     return true;
   };
+  
+  const openImage = (i) => {
+      setStartIndex(i);
+      setShowViewer(true);
+    };
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -351,24 +361,36 @@ export default function PostCard({ post, currentUser, setPosts }) {
       )}
     </AnimatePresence>
 
-    {/* Media */}
-    {(post.image || post.video) && (
-      <div className="mt-2">
-        {post.image && (
-          <img
-            src={post.image}
-            alt="post"
-            className="rounded-lg max-h-96 w-full object-contain border"
-          />
-        )}
-        {post.video && (
-          <video controls className="rounded-lg w-full max-h-96 border mt-2">
-            <source src={post.video} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        )}
-      </div>
-    )}
+    {/* Media Section */}
+      {(post.images?.length > 0 || post.video) && (
+        <div className="mt-2">
+          {/* Multiple Images */}
+          {post.images?.length > 0 && (
+            <ImageGallery images={post.images} onImageClick={setSelectedImage} />
+          )}
+
+          {/* Single fallback image (if using old post.image) */}
+          {!post.images?.length && post.image && (
+            <img
+              src={post.image}
+              alt="post"
+              className="rounded-lg max-h-96 w-full object-contain border"
+            />
+          )}
+
+          {/* Video */}
+          {post.video && (
+            <video controls className="rounded-lg w-full max-h-96 border mt-2">
+              <source src={post.video} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
+        </div>
+      )}
+
+      {/* Full Image Viewer Modal */}
+      <FullImageViewer imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
+
 
     {/* Reaction Summary */}
     {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
@@ -629,6 +651,14 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </motion.div>
       )}
     </AnimatePresence>
+    {/* ✅ Image Full Viewer */}
+      {showViewer && (
+        <FullImageViewer
+          images={post.images}
+          startIndex={startIndex}
+          onClose={() => setShowViewer(false)}
+        />
+      )}
   </div>
 );
 }
