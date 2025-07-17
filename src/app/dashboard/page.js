@@ -112,26 +112,30 @@ export default function DashboardPage() {
         {/* POSTS */}
         <section className="bg-white text-gray-900 p-6 rounded-xl shadow-md space-y-6">
           <h2 className="text-xl font-bold">📰 Latest Posts</h2>
-          {posts.length === 0 ? (
-            <p className="text-center text-gray-500">No posts yet.</p>
+          {Array.isArray(posts) ? (
+            posts.length === 0 ? (
+              <p className="text-center text-gray-500">No posts yet.</p>
+            ) : (
+              <AnimatePresence>
+                {posts.map((post) => (
+                  <motion.div
+                    key={post._id}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <PostCard
+                      post={post}
+                      currentUser={user}
+                      setPosts={setPosts}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )
           ) : (
-            <AnimatePresence>
-              {posts.map((post) => (
-                <motion.div
-                  key={post._id}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <PostCard
-                    post={post}
-                    currentUser={user}
-                    setPosts={setPosts}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            <p className="text-red-500">⚠️ Failed to load posts.</p>
           )}
         </section>
       </main>
