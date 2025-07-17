@@ -14,6 +14,7 @@ const CreatePost = ({ onPostCreated }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
