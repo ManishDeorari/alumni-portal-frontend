@@ -50,33 +50,44 @@ export default function DashboardPage() {
 
   // ✅ Fetch posts
   useEffect(() => {
-      const fetchPosts = async () => {
-        try {
-          const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
-          const data = await res.json();
-          setPosts(data);
-        } catch (error) {
-          console.error("❌ Failed to load posts", error);
-        }
-      };
-      fetchPosts();
-    }, []);
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
+        const data = await res.json();
+        console.log("📦 Posts fetched:", data);
 
-  // ✅ Must be declared before any conditional return
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          console.error("❌ Unexpected posts format:", data);
+          setPosts([]); // fallback to empty array to avoid crash
+        }
+      } catch (error) {
+        console.error("🔥 Failed to fetch posts:", error.message);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  // ✅ Setup socket for post updates
   useEffect(() => {
     if (!socket) return;
+
     socket.off("postUpdated");
     socket.on("postUpdated", (updatedPost) => {
-      console.log("✅ Connected to socket server:", socket.id);
+      console.log("✅ Socket postUpdated:", updatedPost);
       setPosts((prevPosts) =>
         prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
       );
     });
 
     return () => socket.off("postUpdated");
-  }, [socket]);
+  }, []);
 
-  if (loading) return <div className="text-center mt-10 text-white">Loading...</div>;
+  if (loading)
+    return <div className="text-center mt-10 text-white">Loading...</div>;
+
   if (!user)
     return (
       <div className="text-center mt-10 text-red-200">
@@ -86,7 +97,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
-      <Sidebar /> {/* ✅ Fixed sidebar/header */}
+      <Sidebar />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
         {/* USER INFO */}
@@ -95,8 +106,7 @@ export default function DashboardPage() {
             Welcome, {user?.fullName || "Alumni"}
           </h2>
           <p className="text-sm">
-            Enrollment Number:{" "}
-            <strong>{user?.enrollmentNumber || "N/A"}</strong>
+            Enrollment Number: <strong>{user?.enrollmentNumber || "N/A"}</strong>
           </p>
           <p className="text-sm">
             Email: <strong>{user?.email || "N/A"}</strong>
