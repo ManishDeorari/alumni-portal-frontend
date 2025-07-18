@@ -70,15 +70,15 @@ export const createPost = async (content, image, video) => {
   await updatePoints(5);
 
   // ✅ Extract posts array correctly
-  if (Array.isArray(data.posts)) {
-  setPosts(data.posts);
-  setTotal(data.total);
-  return data;
-} else {
-  console.error("Unexpected posts format:", data);
-}
-
-  
+    if (Array.isArray(data.posts)) {
+      setPosts(data.posts);
+      setTotal(data.total || data.posts.length);
+    } else if (data.post) {
+      setPosts(prev => [data.post, ...prev]);
+      setTotal(prev => prev + 1);
+    } else {
+      console.error("❌ Unexpected post format:", data);
+    }
 };
 
 // ================== COMMENT ON POST ==================
