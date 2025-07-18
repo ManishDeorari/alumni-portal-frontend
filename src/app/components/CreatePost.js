@@ -5,26 +5,27 @@ import toast from "react-hot-toast";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from 'next/image';
+import Image from "next/image";
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState("");
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + images.length > 6) {
-      setError("You can upload up to 6 images");
+      setError("You can upload up to 6 images.");
       return;
     }
     setError("");
     setImages([...images, ...files]);
     setVideo(null); // Disable video if images selected
+    setPreviewVideo(null);
   };
 
   const handleVideoChange = (e) => {
@@ -34,6 +35,7 @@ const CreatePost = ({ onPostCreated }) => {
       setVideo(file);
       setPreviewVideo(URL.createObjectURL(file));
     }
+    setError("");
   };
 
   const handleEmojiSelect = (emoji) => {
@@ -42,27 +44,22 @@ const CreatePost = ({ onPostCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !image && !video) {
+    if (!content.trim() && images.length === 0 && !video) {
       setError("Post must contain text, image, or video.");
       return;
-  }
+    }
+
     setLoading(true);
+    setError("");
 
     try {
-      const result = await createPost(content, image, video);
+      const result = await createPost(content, images, video);
       setContent("");
-      setImage(null);
       setVideo(null);
-      setPreviewImage(null);
       setPreviewVideo(null);
-      if (onPostCreated) onPostCreated(result);
+      setImages([]);
       toast.success("🎉 Post uploaded successfully!");
-      setContent("");           // Reset text input
-      setImage(null);           // Reset image
-      setVideo(null);           // Reset video
-      setPreviewImage(null);    // Reset preview
-      setPreviewVideo(null);    // Reset preview
-      onPostCreated?.(newPost); // refresh feed
+      onPostCreated?.(result); // Notify parent
     } catch (err) {
       console.error("Post error:", err);
       toast.error("❌ Post failed. Try again.");
@@ -81,17 +78,27 @@ const CreatePost = ({ onPostCreated }) => {
           className="w-full border rounded-lg p-2 resize-none"
           rows="3"
         />
+        <button
+          type="button"
+          onClick={() => setShowEmojiPicker((prev) => !prev)}
+          className="text-2xl mt-1"
+        >
+          😀
+        </button>
+
         {showEmojiPicker && (
           <div className="mt-2">
-            <Picker onSelect={handleEmojiSelect} />
+            <Picker data={data} onEmojiSelect={handleEmojiSelect} />
           </div>
         )}
+
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
             📷 Add Photo
             <input
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageChange}
               className="hidden"
             />
@@ -106,7 +113,7 @@ const CreatePost = ({ onPostCreated }) => {
               className="hidden"
             />
           </label>
-          
+
           <button
             type="submit"
             disabled={loading}
@@ -116,27 +123,32 @@ const CreatePost = ({ onPostCreated }) => {
           >
             {loading ? "Posting..." : "Post"}
           </button>
-
         </div>
 
-        {/* Media previews */}
-        {previewImage && (
-          <div className="relative mt-3 max-h-64">
-            <img
-              src={previewImage}
-              alt="preview"
-              className="rounded-lg object-cover max-h-64 w-full"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setImage(null);
-                setPreviewImage(null);
-              }}
-              className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-sm"
-            >
-              ❌
-            </button>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+        {/* Media Previews */}
+        {images.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-3">
+            {images.map((img, index) => (
+              <div key={index} className="relative w-28 h-28">
+                <img
+                  src={URL.createObjectURL(img)}
+                  alt={`preview-${index}`}
+                  className="rounded-lg object-cover w-full h-full"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = images.filter((_, i) => i !== index);
+                    setImages(updated);
+                  }}
+                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white px-1 rounded-full text-xs"
+                >
+                  ❌
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
@@ -159,7 +171,6 @@ const CreatePost = ({ onPostCreated }) => {
             </button>
           </div>
         )}
-
       </form>
     </div>
   );
