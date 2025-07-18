@@ -3,7 +3,7 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Picker from "@emoji-mart/react"; // assuming you use emoji-mart v3+
 import data from "@emoji-mart/data";   // make sure this is installed
-import { getEmojiFromUnified } from "@/lib/emojiUtils"; // update path as needed
+import { getEmojiFromUnified } from "../../../lib/emojiUtils"; // update path as needed
 
 export default function PostContent({
   editing,
