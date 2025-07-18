@@ -53,8 +53,8 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
     try {
       const result = await createPost(content, images, video);
-
-      const newPost = result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
+      console.log("✅ Post created result:", result);
+      const newPost = result?.data || result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
 
       setContent("");
       setVideo(null);
@@ -67,7 +67,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
       if (newPost && setPosts) {
         setPosts(prev => [newPost, ...prev]);
       } else {
-        console.warn("Unexpected post format or missing setPosts:", result);
+        console.warn("❌ Unexpected post format:", result); // This triggered your error
       }
     } catch (err) {
       console.error("Post error:", err);
