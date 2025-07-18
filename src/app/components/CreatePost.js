@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import EmojiPickerToggle from "./EmojiPickerToggle";
 
-const CreatePost = ({ onPostCreated }) => {
+const CreatePost = ({ setPosts, currentUser }) => {
   const [content, setContent] = useState("");
   const [video, setVideo] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
@@ -23,6 +23,7 @@ const CreatePost = ({ onPostCreated }) => {
     setImages([...images, ...files]);
     setVideo(null); // Disable video if images selected
     setPreviewVideo(null);
+    e.target.value = ""; 
   };
 
   const handleVideoChange = (e) => {
@@ -33,6 +34,7 @@ const CreatePost = ({ onPostCreated }) => {
       setPreviewVideo(URL.createObjectURL(file));
     }
     setError("");
+    e.target.value = ""; 
   };
 
   const handleEmojiSelect = (emoji) => {
@@ -51,12 +53,22 @@ const CreatePost = ({ onPostCreated }) => {
 
     try {
       const result = await createPost(content, images, video);
+
+      const newPost = result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
+
       setContent("");
       setVideo(null);
       setPreviewVideo(null);
       setImages([]);
+
       toast.success("🎉 Post uploaded successfully!");
-      onPostCreated?.(result); // Notify parent
+
+      // Update post list
+      if (newPost && setPosts) {
+        setPosts(prev => [newPost, ...prev]);
+      } else {
+        console.warn("Unexpected post format or missing setPosts:", result);
+      }
     } catch (err) {
       console.error("Post error:", err);
       toast.error("❌ Post failed. Try again.");
@@ -107,9 +119,11 @@ const CreatePost = ({ onPostCreated }) => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (!content.trim() && images.length === 0 && !video)} // ✅ Disable if no content/media
             className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              loading || (!content.trim() && images.length === 0 && !video)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
             }`}
           >
             {loading ? "Posting..." : "Post"}
