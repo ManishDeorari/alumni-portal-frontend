@@ -1,22 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { createPost } from "../../api/dashboard"; // adjust path as needed
+import { createPost } from "../../api/dashboard"; // adjust path
 import toast from "react-hot-toast";
-import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
-import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useRef, useEffect } from "react";
+import EmojiPickerToggle from "@/components/EmojiPickerToggle";
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
   const [video, setVideo] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
-  
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -43,28 +38,6 @@ const CreatePost = ({ onPostCreated }) => {
   const handleEmojiSelect = (emoji) => {
     setContent((prev) => prev + emoji.native);
   };
-
-  const emojiRef = useRef();
-  const emojiButtonRef = useRef();
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        emojiRef.current &&
-        !emojiRef.current.contains(event.target) &&
-        !emojiButtonRef.current.contains(event.target)
-      ) {
-        setShowEmojiPicker(false);
-      }
-    };
-    if (showEmojiPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showEmojiPicker]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,38 +75,13 @@ const CreatePost = ({ onPostCreated }) => {
           className="w-full border rounded-lg p-2 resize-none"
           rows="3"
         />
-        {/* Emoji Toggle Button */}
-        <button
-          type="button"
-          ref={emojiButtonRef}
-          onClick={() => setShowEmojiPicker((prev) => !prev)}
-          className="text-2xl mt-1"
-        >
-          😀
-        </button>
 
-          {/* Animated Picker near the icon */}
-          <AnimatePresence>
-            {showEmojiPicker && (
-              <motion.div
-                key="emoji-picker"
-                ref={emojiRef}
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className="absolute z-50 mt-2"
-              >
-                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-        {showEmojiPicker && (
-          <div className="mt-2 relative z-10" ref={emojiRef}>
-            <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-          </div>
-        )}
+        <EmojiPickerToggle
+          onEmojiSelect={handleEmojiSelect}
+          icon="😀"
+          iconSize="text-2xl"
+          cursorPositioned={true}
+        />
 
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
