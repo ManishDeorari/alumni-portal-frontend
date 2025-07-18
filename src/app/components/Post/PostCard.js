@@ -229,7 +229,34 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   };
 
-  const handleEditCommentSave = async (commentId, newText) => {
+  const handleEditSave = async () => {
+  if (!checkAuth() || !editContent.trim()) return;
+
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: editContent }),
+      }
+    );
+
+    const updated = await res.json();
+    setEditing(false);
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    socket.emit("updatePost", updated);
+    toast.success("✅ Post updated");
+  } catch (err) {
+    console.error(err);
+    toast.error("❌ Failed to update post");
+  }
+};
+
+  const handleEditComment = async (commentId, newText) => {
   if (!checkAuth() || !newText.trim()) {
     return alert("Comment cannot be empty");
   }

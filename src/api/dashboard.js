@@ -68,6 +68,10 @@ export const createPost = async (content, image, video) => {
 
   const data = await res.json();
   await updatePoints(5);
+
+  // ✅ Extract posts array correctly
+  setPosts(data.posts); // <--- FIX THIS
+  setTotal(data.total); // if needed
   return data;
 };
 
