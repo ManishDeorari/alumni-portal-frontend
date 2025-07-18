@@ -53,14 +53,14 @@ export default function DashboardPage() {
     const fetchPosts = async () => {
       try {
         const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/posts");
-        const data = await res.json();
-        console.log("📦 Posts fetched:", data);
+        const { posts, total } = await res.json();
+        console.log("📦 Posts fetched:", posts, "Total:", total);
 
-        if (Array.isArray(data)) {
-          setPosts(data);
+        if (Array.isArray(posts)) {
+          setPosts(posts);
         } else {
-          console.error("❌ Unexpected posts format:", data);
-          setPosts([]); // fallback to empty array to avoid crash
+          console.error("❌ Unexpected posts format:", posts);
+          setPosts([]); // fallback
         }
       } catch (error) {
         console.error("🔥 Failed to fetch posts:", error.message);
