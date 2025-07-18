@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { createPost } from "../../api/dashboard"; // adjust path
 import toast from "react-hot-toast";
 import Image from "next/image";
-import EmojiPickerToggle from "@/components/EmojiPickerToggle";
+import EmojiPickerToggle from "./EmojiPickerToggle";
 
 const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
