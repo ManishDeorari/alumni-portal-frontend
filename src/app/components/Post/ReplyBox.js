@@ -54,9 +54,9 @@ export default function ReplyBox({ parentId, onSubmit }) {
       )}
 
       {isTyping && (
-        <p className="text-xs text-gray-400 absolute -bottom-5 left-0 animate-pulse">
-          Typing...
-        </p>
+        <div className="absolute -bottom-5 left-2 text-[11px] text-blue-500 animate-pulse italic">
+        ✍️ typing...
+      </div>
       )}
     </div>
   );

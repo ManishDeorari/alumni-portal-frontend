@@ -8,17 +8,12 @@ const EmojiPickerToggle = ({
   onEmojiSelect,
   iconSize = "text-xl",
   icon = "😀",
-  cursorPositioned = true,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
   const pickerRef = useRef(null);
 
   const togglePicker = (e) => {
     e.stopPropagation();
-    if (cursorPositioned) {
-      setCoords({ x: e.clientX, y: e.clientY });
-    }
     setShowPicker((prev) => !prev);
   };
 
@@ -49,20 +44,11 @@ const EmojiPickerToggle = ({
         {showPicker && (
           <motion.div
             ref={pickerRef}
-            className="z-50 absolute"
+            className="z-50 absolute top-full mt-2"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            style={
-              cursorPositioned
-                ? {
-                    top: coords.y + 10,
-                    left: coords.x,
-                    position: "fixed",
-                  }
-                : {}
-            }
           >
             <Picker data={data} onEmojiSelect={onEmojiSelect} theme="light" />
           </motion.div>

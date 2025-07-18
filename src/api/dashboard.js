@@ -1,17 +1,18 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL + "/api";
 
+// ================== FETCH POSTS ==================
 export const fetchPosts = async () => {
-  console.log("Posting to:", `${BASE}/posts`);
   const res = await fetch(`${BASE}/posts`);
   if (!res.ok) throw new Error("Failed to fetch posts");
   return res.json();
 };
 
+// ================== CREATE POST ==================
 export const createPost = async (content, image, video) => {
   let imageUrls = [];
   let videoUrl = "";
 
-  // ✅ Upload multiple images to Cloudinary
+  // Upload multiple images to Cloudinary
   if (image && image.length > 0) {
     for (let img of image) {
       const imageData = new FormData();
@@ -32,7 +33,7 @@ export const createPost = async (content, image, video) => {
     }
   }
 
-  // ✅ Upload video to Cloudinary if provided
+  // Upload video to Cloudinary if provided
   if (video) {
     const videoData = new FormData();
     videoData.append("file", video);
@@ -51,7 +52,7 @@ export const createPost = async (content, image, video) => {
     }
   }
 
-  // ✅ Submit the post with media URLs
+  // Submit the post with media URLs
   const res = await fetch(`${BASE}/posts`, {
     method: "POST",
     headers: {
@@ -60,65 +61,95 @@ export const createPost = async (content, image, video) => {
     },
     body: JSON.stringify({
       content,
-      images: imageUrls, // array of URLs
+      images: imageUrls,
       video: videoUrl,
     }),
   });
 
   const data = await res.json();
-
-  // ✅ Award points for post creation
   await updatePoints(5);
   return data;
 };
 
-
-export const reactToPost = async (postId, emoji) => {
-  const res = await fetch(`${BASE}/posts/${postId}/react`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify({ emoji }),
-  });
-
-  const data = await res.json();
-  return data;
-};
-
-export const likePost = async (postId) => {
-  const res = await fetch(`${BASE}/posts/${postId}/like`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
-
-  const data = await res.json();
-
-  // ✅ Award points for liking a post (+2)
-  await updatePoints(2);
-  return data;
-};
-
+// ================== COMMENT ON POST ==================
 export const commentOnPost = async (postId, text) => {
-  const res = await fetch(`${BASE}/posts/${postId}/comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify({ text }),
-  });
+  try {
+    const res = await fetch(`${BASE}/posts/${postId}/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ comment: text }), // ✅ fixed here
+    });
 
-  const data = await res.json();
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Comment failed:", errText);
+      throw new Error("Comment API failed");
+    }
 
-  // ✅ Award points for commenting on a post (+3)
-  await updatePoints(3);
-  return data;
+    const data = await res.json();
+    await updatePoints(3);
+    return data;
+  } catch (error) {
+    console.error("commentOnPost() error:", error.message);
+    throw error;
+  }
 };
 
+// ================== LIKE POST ==================
+export const likePost = async (postId) => {
+  try {
+    const res = await fetch(`${BASE}/posts/${postId}/like`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Like failed:", errText);
+      throw new Error("Like API failed");
+    }
+
+    const data = await res.json();
+    await updatePoints(2);
+    return data;
+  } catch (error) {
+    console.error("likePost() error:", error.message);
+    throw error;
+  }
+};
+
+// ================== REACT TO POST ==================
+export const reactToPost = async (postId, emoji) => {
+  try {
+    const res = await fetch(`${BASE}/posts/${postId}/react`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ emoji }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Reaction failed:", errText);
+      throw new Error("React API failed");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("reactToPost() error:", error.message);
+    throw error;
+  }
+};
+
+// ================== UPDATE POINTS ==================
 export const updatePoints = async (amount) => {
   await fetch(`${BASE}/user/points/add`, {
     method: "PATCH",
@@ -128,4 +159,24 @@ export const updatePoints = async (amount) => {
     },
     body: JSON.stringify({ amount }),
   });
+};
+
+// ================== EDIT COMMENT ==================
+export const editComment = async (postId, commentId, newText) => {
+  try {
+    const res = await fetch(`${BASE}/posts/${postId}/comment/${commentId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ comment: newText }),
+    });
+
+    if (!res.ok) throw new Error("Edit comment failed");
+    return await res.json();
+  } catch (error) {
+    console.error("editComment() error:", error.message);
+    throw error;
+  }
 };
