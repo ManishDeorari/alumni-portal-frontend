@@ -28,15 +28,20 @@ const CreatePost = ({ setPosts, currentUser }) => {
   };
 
   const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setVideo(file);
-      setPreviewVideo(URL.createObjectURL(file));
-      setImages([]);
+  const file = e.target.files[0];
+  if (file) {
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("❌ Please upload a video smaller than 50MB.");
+      e.target.value = "";
+      return;
     }
+    setVideo(file);
+    setPreviewVideo(URL.createObjectURL(file));
+    setImages([]);
     setError("");
-    e.target.value = "";
-  };
+  }
+  e.target.value = "";
+};
 
   const handleEmojiSelect = (emoji) => {
     setContent((prev) => prev + emoji.native);
