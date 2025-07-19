@@ -15,12 +15,14 @@ export const createPost = async (content, image, video) => {
     return { message: "Failed to create post - No text or emoji." };
   }
 
-  // Upload multiple images
+  // ✅ Upload multiple images
   if (image && image.length > 0) {
+    console.group("📤 Uploading Images to Cloudinary");
     for (let img of image) {
       const imageData = new FormData();
       imageData.append("file", img);
       imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      imageData.append("folder", "alumni/images"); // Optional folder for better management
 
       const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
         method: "POST",
@@ -28,44 +30,54 @@ export const createPost = async (content, image, video) => {
       });
 
       const uploadJson = await uploadRes.json();
-      if (uploadJson.secure_url && uploadJson.public_id) {
+      if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
         imageObjects.push({
           url: uploadJson.secure_url,
           public_id: uploadJson.public_id,
         });
-        console.log("✅ Uploaded image:", uploadJson.secure_url);
+        console.log("✅ Image uploaded:", uploadJson.secure_url);
+        console.log("🆔 Cloudinary Asset ID:", uploadJson.asset_id);
+        console.log("📦 Public ID:", uploadJson.public_id);
+        console.log("📅 Created At:", uploadJson.created_at);
       } else {
-        console.warn("Image upload failed:", uploadJson);
+        console.error("❌ Image upload failed:", uploadJson);
       }
     }
+    console.groupEnd();
   }
 
-  // Upload video
+  // ✅ Upload video
   if (video) {
+    console.group("🎥 Uploading Video to Cloudinary");
     const videoData = new FormData();
     videoData.append("file", video);
     videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+    videoData.append("folder", "alumni/videos");
 
     const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
       method: "POST",
       body: videoData,
     });
-    
+
     const uploadJson = await uploadRes.json();
-    if (uploadJson.secure_url && uploadJson.public_id) {
+    if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
       videoObject = {
         url: uploadJson.secure_url,
         public_id: uploadJson.public_id,
       };
-      console.log("Cloudinary resource_type:", uploadJson.resource_type);
-      console.log("✅ Uploaded video:", uploadJson.secure_url);
-      console.log("🎥 Video Upload Details:", uploadJson);
+      console.log("✅ Video uploaded:", uploadJson.secure_url);
+      console.log("🎬 Resource Type:", uploadJson.resource_type);
+      console.log("🆔 Asset ID:", uploadJson.asset_id);
+      console.log("📦 Public ID:", uploadJson.public_id);
+      console.log("📅 Created At:", uploadJson.created_at);
+      console.log("📍 Version:", uploadJson.version_id);
     } else {
-      console.warn("Video upload failed:", uploadJson);
+      console.error("❌ Video upload failed:", uploadJson);
     }
+    console.groupEnd();
   }
 
-  // Send to backend
+  // ✅ Send to backend
   const res = await fetch(`${BASE}/posts`, {
     method: "POST",
     headers: {
@@ -80,9 +92,13 @@ export const createPost = async (content, image, video) => {
   });
 
   const data = await res.json();
+
+  // ✅ Add content contribution points
   await updatePoints(5);
+
   return data;
 };
+
 
 // ================== COMMENT ON POST ==================
 export const commentOnPost = async (postId, text) => {
