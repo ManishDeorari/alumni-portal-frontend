@@ -50,6 +50,7 @@ export const createPost = async (content, image, video) => {
       method: "POST",
       body: videoData,
     });
+    console.log("Cloudinary resource_type:", uploadJson.resource_type);
 
     const uploadJson = await uploadRes.json();
     if (uploadJson.secure_url && uploadJson.public_id) {
