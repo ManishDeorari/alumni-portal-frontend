@@ -236,7 +236,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
