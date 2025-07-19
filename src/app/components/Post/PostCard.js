@@ -261,7 +261,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
   }
 };
 
-
   const handleEditComment = async (commentId, newText) => {
   if (!checkAuth() || !newText.trim()) {
     return alert("Comment cannot be empty");
