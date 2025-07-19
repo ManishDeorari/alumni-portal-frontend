@@ -65,9 +65,13 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
       // Update post list
       if (newPost && setPosts) {
-        setPosts(prev => [newPost, ...prev]);
+        setPosts(prev => {
+          const exists = prev.some((p) => p._id === newPost._id);
+          if (exists) return prev;
+          return [newPost, ...prev];
+        });
       } else {
-        console.warn("❌ Unexpected post format:", result); // This triggered your error
+        console.warn("❌ Unexpected post format:", result);
       }
     } catch (err) {
       console.error("Post error:", err);

@@ -352,8 +352,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
           }}
         />
 
-      
-
       {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
         <div className="flex gap-3 mt-1 flex-wrap">
           {Object.entries(post.reactions || {}).map(([emoji, users]) => {
