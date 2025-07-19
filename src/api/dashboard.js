@@ -58,6 +58,7 @@ export const createPost = async (content, image, video) => {
         public_id: uploadJson.public_id,
       };
       console.log("✅ Uploaded video:", uploadJson.secure_url);
+      console.log("🎥 Video Upload Details:", uploadJson);
     } else {
       console.warn("Video upload failed:", uploadJson);
     }
