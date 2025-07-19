@@ -17,6 +17,9 @@ export default function PostModal({
   setShowThread,
   handleReply,
   handleDeleteComment,
+  // ✅ Add these two
+  setShowViewer,
+  setStartIndex,
 }) {
   return (
     <AnimatePresence>
@@ -74,7 +77,11 @@ export default function PostModal({
                     key={idx}
                     src={img}
                     alt={`post-${idx}`}
-                    className="rounded w-full max-h-[400px] object-contain border mb-4"
+                    className="rounded w-full max-h-[400px] object-contain border mb-4 cursor-pointer"
+                    onClick={() => {
+                      setStartIndex(idx);
+                      setShowViewer(true);
+                    }}
                   />
                 ))}
               </div>

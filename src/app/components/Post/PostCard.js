@@ -352,7 +352,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
           }}
         />
 
-      <FullImageViewer imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
+      
 
       {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
         <div className="flex gap-3 mt-1 flex-wrap">
@@ -437,6 +437,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
               setShowThread,
               handleReply,
               handleDeleteComment,
+              // ✅ ADD THESE for FullImageViewer support
+              setShowViewer,
+              setStartIndex,
             }}
           />
         )}
