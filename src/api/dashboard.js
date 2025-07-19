@@ -7,12 +7,10 @@ export const fetchPosts = async () => {
   return res.json();
 };
 
-// ================== CREATE POST ==================
 export const createPost = async (content, image, video) => {
   let imageObjects = [];
   let videoObject = null;
 
-  // 🚫 Skip if only media and no content (if you want to enforce this)
   if (!content.trim()) {
     return { message: "Failed to create post - No text or emoji." };
   }
@@ -42,7 +40,7 @@ export const createPost = async (content, image, video) => {
     }
   }
 
-  // Upload video if present
+  // Upload video
   if (video) {
     const videoData = new FormData();
     videoData.append("file", video);
@@ -74,14 +72,13 @@ export const createPost = async (content, image, video) => {
     },
     body: JSON.stringify({
       content,
-      images: imageObjects, // now has public_id too
-      video: videoObject,    // now has url + public_id
+      images: imageObjects,
+      video: videoObject,
     }),
   });
-  console.log("💾 Video Upload JSON:", uploadJson);
+
   const data = await res.json();
   await updatePoints(5);
-
   return data;
 };
 

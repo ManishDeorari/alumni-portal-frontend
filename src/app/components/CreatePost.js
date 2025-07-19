@@ -30,8 +30,8 @@ const CreatePost = ({ setPosts, currentUser }) => {
   const handleVideoChange = (e) => {
   const file = e.target.files[0];
   if (file) {
-    if (file.size > 50 * 1024 * 1024) {
-      toast.error("❌ Please upload a video smaller than 50MB.");
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error("❌ Please upload a video smaller than 100MB.");
       e.target.value = "";
       return;
     }
