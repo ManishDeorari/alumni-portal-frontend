@@ -44,7 +44,11 @@ const EmojiPickerToggle = ({
         {showPicker && (
           <motion.div
             ref={pickerRef}
-            className="z-50 absolute top-full mt-2"
+            className="z-50 absolute"
+            style={{
+              top: "-320px",        // move picker upward
+              left: "-100px",       // shift picker to the left
+            }}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
