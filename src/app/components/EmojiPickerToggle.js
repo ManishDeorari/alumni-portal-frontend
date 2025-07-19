@@ -46,7 +46,7 @@ const EmojiPickerToggle = ({
             ref={pickerRef}
             className="z-50 absolute"
             style={{
-              top: "-320px",        // move picker upward
+              top: "-180px",        // move picker upward
               left: "-100px",       // shift picker to the left
             }}
             initial={{ opacity: 0, scale: 0.85 }}
