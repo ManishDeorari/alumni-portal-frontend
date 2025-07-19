@@ -10,7 +10,9 @@ const EmojiPickerToggle = ({
   icon = "😀",
 }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [pickerPosition, setPickerPosition] = useState({ top: "40px", left: "0px" });
   const pickerRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const togglePicker = (e) => {
     e.stopPropagation();
@@ -18,7 +20,12 @@ const EmojiPickerToggle = ({
   };
 
   const handleClickOutside = (e) => {
-    if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+    if (
+      pickerRef.current &&
+      !pickerRef.current.contains(e.target) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(e.target)
+    ) {
       setShowPicker(false);
     }
   };
@@ -26,9 +33,24 @@ const EmojiPickerToggle = ({
   useEffect(() => {
     if (showPicker) {
       document.addEventListener("mousedown", handleClickOutside);
+
+      // Wait for next paint to measure
+      setTimeout(() => {
+        if (buttonRef.current) {
+          const rect = buttonRef.current.getBoundingClientRect();
+          const tooCloseToBottom = window.innerHeight - rect.bottom < 350;
+          const tooCloseToRight = window.innerWidth - rect.left < 350;
+
+          setPickerPosition({
+            top: tooCloseToBottom ? "-320px" : "40px",
+            left: tooCloseToRight ? "-250px" : "0px",
+          });
+        }
+      }, 0);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -36,7 +58,7 @@ const EmojiPickerToggle = ({
 
   return (
     <div className="relative inline-block">
-      <button type="button" className={iconSize} onClick={togglePicker}>
+      <button ref={buttonRef} type="button" className={iconSize} onClick={togglePicker}>
         {icon}
       </button>
 
@@ -45,10 +67,7 @@ const EmojiPickerToggle = ({
           <motion.div
             ref={pickerRef}
             className="z-50 absolute"
-            style={{
-              top: "-180px",        // move picker upward
-              left: "-100px",       // shift picker to the left
-            }}
+            style={pickerPosition}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
