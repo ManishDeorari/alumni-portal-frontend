@@ -78,7 +78,7 @@ export const createPost = async (content, image, video) => {
       video: videoObject,    // now has url + public_id
     }),
   });
-
+  console.log("💾 Video Upload JSON:", uploadJson);
   const data = await res.json();
   await updatePoints(5);
 
