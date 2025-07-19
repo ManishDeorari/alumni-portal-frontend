@@ -26,12 +26,12 @@ export default function PostMedia({ post, setSelectedImage }) {
       )}
 
       {/* Video */}
-      {post.video && (
+      {post.video?.url && (
         <video
           controls
           className="rounded-lg w-full max-h-96 border mt-2"
         >
-          <source src={post.video} type="video/mp4" />
+          <source src={post.video.url} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       )}
