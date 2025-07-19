@@ -42,8 +42,8 @@ const EmojiPickerToggle = ({
           const tooCloseToRight = window.innerWidth - rect.left < 350;
 
           setPickerPosition({
-            top: tooCloseToBottom ? "-320px" : "40px",
-            left: tooCloseToRight ? "-250px" : "0px",
+            top: tooCloseToBottom ? "-180px" : "60px",
+            left: tooCloseToRight ? "-240px" : "60px",
           });
         }
       }, 0);
