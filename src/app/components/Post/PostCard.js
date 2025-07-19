@@ -303,7 +303,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
 };
 
   const handleDelete = async () => {
-    if (!checkAuth() || !confirm("Are you sure you want to delete this post?")) return;
+    if (!checkAuth()) {
+    toast.error("Please login to delete posts");
+    return;
+  }
+  const confirmed = confirm("Are you sure you want to delete this post?");
+  if (!confirmed) return;
     try {
       await fetch(
         `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
@@ -312,6 +317,10 @@ export default function PostCard({ post, currentUser, setPosts }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Server error");
+    }
       setPosts((prev) => prev.filter((p) => p._id !== post._id));
       toast.success("🗑️ Post deleted");
     } catch (err) {
