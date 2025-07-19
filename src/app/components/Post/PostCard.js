@@ -297,7 +297,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
   }
 };
 
-
   const handleDelete = async () => {
     if (!checkAuth() || !confirm("Are you sure you want to delete this post?")) return;
     try {
