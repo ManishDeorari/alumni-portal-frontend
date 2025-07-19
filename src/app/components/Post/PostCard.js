@@ -245,16 +245,22 @@ export default function PostCard({ post, currentUser, setPosts }) {
       }
     );
 
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText);
+    }
+
     const updated = await res.json();
     setEditing(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     socket.emit("updatePost", updated);
     toast.success("✅ Post updated");
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error editing post:", error?.message || error); // 👈 LOG ERROR
     toast.error("❌ Failed to update post");
   }
 };
+
 
   const handleEditComment = async (commentId, newText) => {
   if (!checkAuth() || !newText.trim()) {
