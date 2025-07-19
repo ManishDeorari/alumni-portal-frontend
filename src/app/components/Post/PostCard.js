@@ -303,30 +303,37 @@ export default function PostCard({ post, currentUser, setPosts }) {
 };
 
   const handleDelete = async () => {
-    if (!checkAuth()) {
+  if (!checkAuth()) {
     toast.error("Please login to delete posts");
     return;
   }
+
   const confirmed = confirm("Are you sure you want to delete this post?");
   if (!confirmed) return;
-    try {
-      await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.message || "Server error");
+
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Server error");
     }
-      setPosts((prev) => prev.filter((p) => p._id !== post._id));
-      toast.success("🗑️ Post deleted");
-    } catch (err) {
-      toast.error("❌ Failed to delete post");
-    }
-  };
+
+    setPosts((prev) => prev.filter((p) => p._id !== post._id));
+    toast.success("🗑️ Post deleted");
+  } catch (err) {
+    console.error("❌ Delete error:", err.message);
+    toast.error("❌ Failed to delete post");
+  }
+};
+
 
   const handleBlurSave = () => {
     localStorage.setItem(editKey, editContent);
