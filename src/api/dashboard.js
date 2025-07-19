@@ -9,10 +9,10 @@ export const fetchPosts = async () => {
 
 // ================== CREATE POST ==================
 export const createPost = async (content, image, video) => {
-  let imageUrls = [];
-  let videoUrl = "";
+  let imageObjects = [];
+  let videoObject = null;
 
-  // 🚫 Skip media upload if no content
+  // 🚫 Skip if only media and no content (if you want to enforce this)
   if (!content.trim()) {
     return { message: "Failed to create post - No text or emoji." };
   }
@@ -30,16 +30,19 @@ export const createPost = async (content, image, video) => {
       });
 
       const uploadJson = await uploadRes.json();
-      if (uploadJson.secure_url) {
-        imageUrls.push(uploadJson.secure_url);
-        console.log("✅ Uploaded image URLs:", imageUrls);
+      if (uploadJson.secure_url && uploadJson.public_id) {
+        imageObjects.push({
+          url: uploadJson.secure_url,
+          public_id: uploadJson.public_id,
+        });
+        console.log("✅ Uploaded image:", uploadJson.secure_url);
       } else {
         console.warn("Image upload failed:", uploadJson);
       }
     }
   }
 
-  // Upload video if any
+  // Upload video if present
   if (video) {
     const videoData = new FormData();
     videoData.append("file", video);
@@ -51,13 +54,18 @@ export const createPost = async (content, image, video) => {
     });
 
     const uploadJson = await uploadRes.json();
-    if (uploadJson.secure_url) {
-      videoUrl = uploadJson.secure_url;
+    if (uploadJson.secure_url && uploadJson.public_id) {
+      videoObject = {
+        url: uploadJson.secure_url,
+        public_id: uploadJson.public_id,
+      };
+      console.log("✅ Uploaded video:", uploadJson.secure_url);
     } else {
       console.warn("Video upload failed:", uploadJson);
     }
   }
 
+  // Send to backend
   const res = await fetch(`${BASE}/posts`, {
     method: "POST",
     headers: {
@@ -66,8 +74,8 @@ export const createPost = async (content, image, video) => {
     },
     body: JSON.stringify({
       content,
-      images: imageUrls,
-      video: videoUrl,
+      images: imageObjects, // now has public_id too
+      video: videoObject,    // now has url + public_id
     }),
   });
 
