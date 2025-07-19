@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { createPost } from "../../api/dashboard"; // adjust path
+import { createPost } from "../../api/dashboard";
 import toast from "react-hot-toast";
-import Image from "next/image";
 import EmojiPickerToggle from "./EmojiPickerToggle";
 
 const CreatePost = ({ setPosts, currentUser }) => {
@@ -13,28 +12,30 @@ const CreatePost = ({ setPosts, currentUser }) => {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
 
+  const hasContent = content.trim().length > 0;
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + images.length > 6) {
       setError("You can upload up to 6 images.");
       return;
     }
-    setError("");
     setImages([...images, ...files]);
-    setVideo(null); // Disable video if images selected
+    setVideo(null);
     setPreviewVideo(null);
-    e.target.value = ""; 
+    setError("");
+    e.target.value = "";
   };
 
   const handleVideoChange = (e) => {
-    setImages([]); // Clear images
     const file = e.target.files[0];
     if (file) {
       setVideo(file);
       setPreviewVideo(URL.createObjectURL(file));
+      setImages([]);
     }
     setError("");
-    e.target.value = ""; 
+    e.target.value = "";
   };
 
   const handleEmojiSelect = (emoji) => {
@@ -43,8 +44,9 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && images.length === 0 && !video) {
-      setError("Post must contain text, image, or video.");
+
+    if (!hasContent) {
+      toast.error("❌ Please add a caption or emoji before posting.");
       return;
     }
 
@@ -53,7 +55,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
     try {
       const result = await createPost(content, images, video);
-      console.log("✅ Post created result:", result);
+
       const newPost = result?.data || result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
 
       setContent("");
@@ -61,17 +63,16 @@ const CreatePost = ({ setPosts, currentUser }) => {
       setPreviewVideo(null);
       setImages([]);
 
-      toast.success("🎉 Post uploaded successfully!");
-
-      // Update post list
       if (newPost && setPosts) {
         setPosts(prev => {
           const exists = prev.some((p) => p._id === newPost._id);
           if (exists) return prev;
           return [newPost, ...prev];
         });
+        toast.success("🎉 Post uploaded successfully!");
       } else {
         console.warn("❌ Unexpected post format:", result);
+        toast.error("❌ Post failed to upload correctly.");
       }
     } catch (err) {
       console.error("Post error:", err);
@@ -84,20 +85,23 @@ const CreatePost = ({ setPosts, currentUser }) => {
   return (
     <div className="bg-white rounded-2xl p-4 shadow mb-4">
       <form onSubmit={handleSubmit}>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="What's on your mind?"
-          className="w-full border rounded-lg p-2 resize-none"
-          rows="3"
-        />
-
-        <EmojiPickerToggle
-          onEmojiSelect={handleEmojiSelect}
-          icon="😀"
-          iconSize="text-2xl"
-          cursorPositioned={true}
-        />
+        <div className="relative">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="What's on your mind?"
+            className="w-full border rounded-lg p-2 resize-none"
+            rows="3"
+          />
+          <div className="absolute bottom-[100%] right-0">
+            <EmojiPickerToggle
+              onEmojiSelect={handleEmojiSelect}
+              icon="😀"
+              iconSize="text-2xl"
+              cursorPositioned={true}
+            />
+          </div>
+        </div>
 
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
@@ -123,9 +127,9 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
           <button
             type="submit"
-            disabled={loading || (!content.trim() && images.length === 0 && !video)} // ✅ Disable if no content/media
+            disabled={loading || !hasContent}
             className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${
-              loading || (!content.trim() && images.length === 0 && !video)
+              loading || !hasContent
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-blue-700"
             }`}
@@ -136,7 +140,6 @@ const CreatePost = ({ setPosts, currentUser }) => {
 
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-        {/* Media Previews */}
         {images.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-3">
             {images.map((img, index) => (

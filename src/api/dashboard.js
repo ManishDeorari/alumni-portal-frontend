@@ -12,7 +12,12 @@ export const createPost = async (content, image, video) => {
   let imageUrls = [];
   let videoUrl = "";
 
-  // Upload multiple images to Cloudinary
+  // 🚫 Skip media upload if no content
+  if (!content.trim()) {
+    return { message: "Failed to create post - No text or emoji." };
+  }
+
+  // Upload multiple images
   if (image && image.length > 0) {
     for (let img of image) {
       const imageData = new FormData();
@@ -34,7 +39,7 @@ export const createPost = async (content, image, video) => {
     }
   }
 
-  // Upload video to Cloudinary if provided
+  // Upload video if any
   if (video) {
     const videoData = new FormData();
     videoData.append("file", video);
@@ -53,7 +58,6 @@ export const createPost = async (content, image, video) => {
     }
   }
 
-  // Submit the post with media URLs
   const res = await fetch(`${BASE}/posts`, {
     method: "POST",
     headers: {
