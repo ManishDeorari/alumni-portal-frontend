@@ -344,7 +344,13 @@ export default function PostCard({ post, currentUser, setPosts }) {
         }}
       />
 
-      <PostMedia post={post} setSelectedImage={setSelectedImage} />
+      <PostMedia
+          post={post}
+          setSelectedImage={(index) => {
+            setStartIndex(index);
+            setShowViewer(true);
+          }}
+        />
 
       <FullImageViewer imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
 

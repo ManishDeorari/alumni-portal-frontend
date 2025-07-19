@@ -12,7 +12,7 @@ export default function ImageGallery({ images, onImageClick }) {
           src={url}
           alt={`image-${index}`}
           className="h-48 w-auto rounded-lg border cursor-pointer object-contain"
-          onClick={() => onImageClick(url)}
+          onClick={() => onImageClick(index)} // ✅ pass index instead of URL
         />
       ))}
     </div>
