@@ -71,6 +71,7 @@ export const createPost = async (content, image, video) => {
       console.log("📦 Public ID:", uploadJson.public_id);
       console.log("📅 Created At:", uploadJson.created_at);
       console.log("📍 Version:", uploadJson.version_id);
+      console.log("🎥 Video Upload Details:", uploadJson);
     } else {
       console.error("❌ Video upload failed:", uploadJson);
     }
