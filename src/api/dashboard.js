@@ -27,6 +27,7 @@ export const createPost = async (content, image, video) => {
       const uploadJson = await uploadRes.json();
       if (uploadJson.secure_url) {
         imageUrls.push(uploadJson.secure_url);
+        console.log("✅ Uploaded image URLs:", imageUrls);
       } else {
         console.warn("Image upload failed:", uploadJson);
       }

@@ -67,12 +67,17 @@ export default function PostModal({
             <p className="whitespace-pre-wrap mb-4">{post.content}</p>
 
             {/* Media */}
-            {post.image && (
-              <img
-                src={post.image}
-                alt="post"
-                className="rounded w-full max-h-[400px] object-contain border mb-4"
-              />
+            {post.images?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {post.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`post-${idx}`}
+                    className="rounded w-full max-h-[400px] object-contain border mb-4"
+                  />
+                ))}
+              </div>
             )}
             {post.video && (
               <video controls className="w-full max-h-[400px] border mb-4">
