@@ -22,7 +22,7 @@ export default function usePostEffects({ post, currentUser, setEditContent, setH
   }, [editing]);
 
   useEffect(() => {
-    const socket = require("../../../utils/socket").default;
+    const socket = require("../../../../utils/socket").default;
     const handleLikeAnimation = ({ postId, userId, isLiked }) => {
       if (postId === post._id && userId !== currentUser._id) {
         const icon = document.querySelector(`#like-icon-${post._id}`);
