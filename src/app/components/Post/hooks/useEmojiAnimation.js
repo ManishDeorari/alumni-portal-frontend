@@ -1,4 +1,20 @@
 // components/PostCard/hooks/useEmojiAnimation.js
+
+export function useEmojiAnimation(likeIconRef, post, currentUser) {
+  // Trigger like animation
+  const triggerLikeAnimation = () => {
+    if (!likeIconRef.current) return;
+
+    likeIconRef.current.classList.add("animate-ping");
+    setTimeout(() => {
+      likeIconRef.current?.classList.remove("animate-ping");
+    }, 300);
+  };
+
+  // Return both functions (only triggerLikeAnimation here; triggerReactionEffect is separate)
+  return { triggerLikeAnimation };
+}
+
 export function triggerReactionEffect(emoji) {
   const container = document.createElement("div");
   container.className = "fixed text-3xl pointer-events-none z-50";
