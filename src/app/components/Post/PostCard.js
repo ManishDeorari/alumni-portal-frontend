@@ -36,6 +36,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [showViewer, setShowViewer] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [showThread, setShowThread] = useState(false);
+  const [isLiking, setIsLiking] = useState(false); // Add this to state
 
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
@@ -136,9 +137,12 @@ const triggerLikeAnimation = (isLike) => {
 
   // ✅ Like handler with animation and toggle support
 const handleLike = async () => {
-  if (!checkAuth()) return;
+  if (!checkAuth() || isLiking) return;
+  setIsLiking(true);
 
   try {
+    const wasLiked = hasLiked;
+
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
       {
@@ -148,18 +152,36 @@ const handleLike = async () => {
     );
 
     const updated = await res.json();
+    const isNowLiked = updated.likes.includes(currentUser._id);
 
+    setHasLiked(isNowLiked);
     setPosts((prev) =>
       prev.map((p) => (p._id === post._id ? updated : p))
     );
 
-    // No need to emit manually; backend will emit postLiked and postUpdated
-    // trigger animation if needed via socket listener
+    if (!wasLiked && isNowLiked) {
+      triggerLikeAnimation(true);
+      socket.emit("postLiked", {
+        postId: post._id,
+        userId: currentUser._id,
+        isLiked: true,
+      });
+    } else if (wasLiked && !isNowLiked) {
+      triggerLikeAnimation(false);
+      socket.emit("postLiked", {
+        postId: post._id,
+        userId: currentUser._id,
+        isLiked: false,
+      });
+    }
   } catch (err) {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
+  } finally {
+    setIsLiking(false); // 🧠 Always unlock at end
   }
 };
+
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;
