@@ -1,7 +1,7 @@
 // components/PostCard/hooks/useEmojiAnimation.js
 
-export function useEmojiAnimation(likeIconRef, post, currentUser) {
-  // Trigger like animation
+// ✅ Main hook: default export
+export default function useEmojiAnimation(likeIconRef, post, currentUser) {
   const triggerLikeAnimation = () => {
     if (!likeIconRef.current) return;
 
@@ -11,10 +11,13 @@ export function useEmojiAnimation(likeIconRef, post, currentUser) {
     }, 300);
   };
 
-  // Return both functions (only triggerLikeAnimation here; triggerReactionEffect is separate)
-  return { triggerLikeAnimation };
+  return {
+    triggerLikeAnimation,
+    triggerReactionEffect,
+  };
 }
 
+// ✅ Named export for standalone usage if needed
 export function triggerReactionEffect(emoji) {
   const container = document.createElement("div");
   container.className = "fixed text-3xl pointer-events-none z-50";

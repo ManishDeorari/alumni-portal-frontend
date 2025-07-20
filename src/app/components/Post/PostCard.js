@@ -19,7 +19,7 @@ import FullImageViewer from "./FullImageViewer";
 import usePostSocket from "./usePostSocket";
 import usePostEffects from "./hooks/usePostEffects";
 import usePostActions from "./hooks/usePostActions";
-import useEmojiAnimation, { triggerReactionEffect } from "./hooks/useEmojiAnimation";
+import useEmojiAnimation, {  } from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
@@ -55,7 +55,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   usePostEffects({ post, currentUser, setHasLiked, editing, textareaRef, editKey, setEditContent });
 
   // 🎉 Like and reaction animation
-  const { triggerLikeAnimation } = useEmojiAnimation(likeIconRef, post, currentUser);
+  const { triggerLikeAnimation , triggerReactionEffect } = useEmojiAnimation(likeIconRef, post, currentUser);
 
   // 🔧 Actions related to the post (like, react, delete, edit)
   const {
