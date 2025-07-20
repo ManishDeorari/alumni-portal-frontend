@@ -186,60 +186,8 @@ const handleLike = async () => {
 const handleReact = async (emoji) => {
   if (!checkAuth()) return;
 
-  const prevReactions = post.reactions || {};
-  const userId = currentUser._id;
-
-  // ✅ Find the emoji this user previously reacted with
-  const currentEmoji = Object.keys(prevReactions).find(
-    (key) => Array.isArray(prevReactions[key]) && prevReactions[key].includes(userId)
-  );
-
-  // ✅ Undo reaction if clicked same emoji again
-  if (currentEmoji === emoji) {
-    try {
-      await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ emoji, action: "remove" }),
-        }
-      );
-      const updated = await fetchPost(post._id);
-      setPosts((prev) =>
-        prev.map((p) =>
-          p._id === post._id ? { ...p, reactions: updated.reactions } : p
-        )
-      );
-      socket.emit("updatePost", updated);
-      return; // 💥 CRITICAL — do not proceed to "add"
-    } catch (err) {
-      console.error("Failed to remove reaction:", err);
-      return;
-    }
-  }
-
-  // ✅ Remove old reaction (if any) first
-  if (currentEmoji && currentEmoji !== emoji) {
-    await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ emoji: currentEmoji, action: "remove" }),
-      }
-    );
-  }
-
-  // ✅ Add new reaction
   try {
-    await fetch(
+    const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
       {
         method: "PATCH",
@@ -247,28 +195,32 @@ const handleReact = async (emoji) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ emoji, action: "add" }),
+        body: JSON.stringify({ emoji }),
       }
     );
 
-    const updated = await fetchPost(post._id);
+    const updated = await res.json();
+
+    // Update local state
     setPosts((prev) =>
       prev.map((p) =>
         p._id === post._id ? { ...p, reactions: updated.reactions } : p
       )
     );
+
     socket.emit("updatePost", updated);
     triggerReactionEffect(emoji);
   } catch (err) {
-    console.error("Failed to react:", err);
+    console.error("❌ Failed to react:", err);
+    toast.error("❌ Reaction failed");
   }
 };
 
 // Helper
-const fetchPost = async (postId) => {
-  const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${postId}`);
-  return res.json();
-};
+//const fetchPost = async (postId) => {
+  //const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${postId}`);
+  //return res.json();
+//};
 
   const handleComment = async () => {
     if (!checkAuth() || !comment.trim()) return;
