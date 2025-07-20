@@ -181,46 +181,47 @@ const handleLike = async () => {
     setTimeout(() => setIsLiking(false), 500); // 💡 Delay helps debounce
   }
 };
-
+//react
 const handleReact = async (emoji) => {
   if (!checkAuth()) return;
 
   const prevReactions = post.reactions || {};
   const userId = currentUser._id;
+
+  // ✅ Find the emoji this user previously reacted with
   const currentEmoji = Object.keys(prevReactions).find(
     (key) => Array.isArray(prevReactions[key]) && prevReactions[key].includes(userId)
   );
 
-  // Case 1: Clicked same emoji — just remove
+  // ✅ Undo reaction if clicked same emoji again
   if (currentEmoji === emoji) {
-    await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ emoji, action: "remove" }),
-      }
-    );
-
-    // ✅ Fetch updated reactions
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`
-    );
-    const updated = await res.json();
-
-    setPosts((prev) =>
-      prev.map((p) =>
-        p._id === post._id ? { ...p, reactions: updated.reactions } : p
-      )
-    );
-    socket.emit("updatePost", updated);
-    return; // 💥 IMPORTANT: stop here
+    try {
+      await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ emoji, action: "remove" }),
+        }
+      );
+      const updated = await fetchPost(post._id);
+      setPosts((prev) =>
+        prev.map((p) =>
+          p._id === post._id ? { ...p, reactions: updated.reactions } : p
+        )
+      );
+      socket.emit("updatePost", updated);
+      return; // 💥 CRITICAL — do not proceed to "add"
+    } catch (err) {
+      console.error("Failed to remove reaction:", err);
+      return;
+    }
   }
 
-  // Case 2: Remove previous emoji if different
+  // ✅ Remove old reaction (if any) first
   if (currentEmoji && currentEmoji !== emoji) {
     await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
@@ -235,32 +236,37 @@ const handleReact = async (emoji) => {
     );
   }
 
-  // Case 3: Add new emoji
-  await fetch(
-    `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ emoji, action: "add" }),
-    }
-  );
+  // ✅ Add new reaction
+  try {
+    await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ emoji, action: "add" }),
+      }
+    );
 
-  const res = await fetch(
-    `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`
-  );
-  const updated = await res.json();
+    const updated = await fetchPost(post._id);
+    setPosts((prev) =>
+      prev.map((p) =>
+        p._id === post._id ? { ...p, reactions: updated.reactions } : p
+      )
+    );
+    socket.emit("updatePost", updated);
+    triggerReactionEffect(emoji);
+  } catch (err) {
+    console.error("Failed to react:", err);
+  }
+};
 
-  setPosts((prev) =>
-    prev.map((p) =>
-      p._id === post._id ? { ...p, reactions: updated.reactions } : p
-    )
-  );
-
-  triggerReactionEffect(emoji);
-  socket.emit("updatePost", updated);
+// Helper
+const fetchPost = async (postId) => {
+  const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${postId}`);
+  return res.json();
 };
 
   const handleComment = async () => {
