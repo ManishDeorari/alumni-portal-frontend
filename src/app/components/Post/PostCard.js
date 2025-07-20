@@ -120,40 +120,36 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
   // ✅ Like handler with animation and toggle support
   const handleLike = async () => {
-    if (!checkAuth()) return;
+  if (!checkAuth()) return;
 
-    try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  try {
+    const wasLiked = hasLiked;
 
-      const updated = await res.json();
-
-      const isNowLiked = updated.likes.includes(currentUser._id);
-      setHasLiked(isNowLiked);
-
-      setPosts((prev) =>
-        prev.map((p) => (p._id === post._id ? updated : p))
-      );
-
-      if (!hasLiked && isNowLiked) {
-        triggerLikeAnimation(post._id);
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
       }
+    );
 
-      socket.emit("updatePost", updated);
-    } catch (err) {
-      console.error("❌ Like failed:", err);
-      toast.error("Failed to like post");
+    const updated = await res.json();
+    const isNowLiked = updated.likes.includes(currentUser._id);
+
+    setHasLiked(isNowLiked);
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+
+    // ✅ Only run animation if it's a new like
+    if (!wasLiked && isNowLiked) {
+      triggerLikeAnimation(post._id);
+      socket.emit("postLiked", { postId: post._id, userId: currentUser._id });
     }
-  };
 
+  } catch (err) {
+    console.error("Like failed:", err);
+    toast.error("Failed to like post.");
+  }
+};
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;
