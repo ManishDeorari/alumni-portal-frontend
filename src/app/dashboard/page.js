@@ -107,16 +107,15 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    socket.on("postLiked", ({ postId, userId }) => {
-      if (userId === user?._id) {
-        triggerLikeAnimation(postId);
-      }
-    });
+  socket.on("postLiked", ({ postId, userId, isLiked }) => {
+    if (userId === user?._id && isLiked) {
+      triggerLikeAnimation(postId); // ✅ Only animate on like, not unlike
+    }
+  });
 
-    return () => {
-      socket.off("postLiked");
-    };
-  }, [socket, user]);
+  return () => socket.off("postLiked");
+}, [user]);
+
 
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;

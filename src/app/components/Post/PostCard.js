@@ -87,13 +87,13 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setShowViewer(true);
   };
 
-  const triggerLikeAnimation = (postId) => {
+ /* const triggerLikeAnimation = (postId) => {
   const el = document.getElementById(`like-icon-${postId}`);
   if (el) {
     el.classList.add("animate-like");
     setTimeout(() => el.classList.remove("animate-like"), 600);
   }
-};
+};*/
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -142,9 +142,18 @@ export default function PostCard({ post, currentUser, setPosts }) {
     // ✅ Only run animation if it's a new like
     if (!wasLiked && isNowLiked) {
       triggerLikeAnimation(post._id);
-      socket.emit("postLiked", { postId: post._id, userId: currentUser._id });
+      socket.emit("postLiked", {
+        postId: post._id,
+        userId: currentUser._id,
+        isLiked: true  // <-- add this
+      });
+    } else if (wasLiked && !isNowLiked) {
+      socket.emit("postLiked", {
+        postId: post._id,
+        userId: currentUser._id,
+        isLiked: false  // <-- unlike event
+      });
     }
-
   } catch (err) {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
