@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Picker from "@emoji-mart/react"; // assuming you use emoji-mart v3+
-import data from "@emoji-mart/data";   // make sure this is installed
-import { getEmojiFromUnified } from "../../../lib/emojiUtils"; // update path as needed
+import EmojiPickerToggle from "./EmojiPickerToggle";
 
 export default function PostContent({
   editing,
@@ -11,12 +9,14 @@ export default function PostContent({
   setEditContent,
   handleEditSave,
   handleBlurSave,
-  showEditEmoji,
-  setShowEditEmoji,
   post,
   textareaRef,
   setShowModal
 }) {
+  const handleEmojiSelect = (emoji) => {
+    setEditContent((prev) => prev + emoji.native);
+  };
+
   return (
     <AnimatePresence mode="wait">
       {editing ? (
@@ -28,36 +28,32 @@ export default function PostContent({
           transition={{ duration: 0.3 }}
           className="space-y-2"
         >
-          <textarea
-            ref={textareaRef}
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            onBlur={handleBlurSave}
-            rows={3}
-            className="w-full border rounded p-2"
-            placeholder="Edit your post..."
-          />
           <div className="relative">
-            <button onClick={() => setShowEditEmoji(!showEditEmoji)} className="text-xl">
-              😊
-            </button>
-            {showEditEmoji && (
-              <div className="absolute right-0 z-50">
-                <Picker
-                  data={data}
-                  onEmojiSelect={(emoji) =>
-                    setEditContent(editContent + getEmojiFromUnified(emoji.unified))
-                  }
-                />
-              </div>
-            )}
+            <textarea
+              ref={textareaRef}
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              onBlur={() => handleBlurSave(editContent, `edit-${post._id}`)}
+              rows={3}
+              className="w-full border rounded p-2 resize-none"
+              placeholder="Edit your post..."
+            />
+            <div className="absolute bottom-[100%] right-0">
+              <EmojiPickerToggle
+                onEmojiSelect={handleEmojiSelect}
+                icon="😀"
+                iconSize="text-2xl"
+              />
+            </div>
           </div>
+
           <div className="p-2 border border-gray-300 rounded bg-gray-50">
             <p className="text-sm text-gray-500 font-semibold">Preview:</p>
             <p className="whitespace-pre-wrap">{editContent}</p>
           </div>
+
           <button
-            onClick={handleEditSave}
+            onClick={() => handleEditSave(editContent)}
             className="bg-green-600 text-white px-4 py-1 rounded"
           >
             Save
