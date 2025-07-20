@@ -80,27 +80,38 @@ export default function usePostActions({
   };
 
   const handleEditSave = async (editContent) => {
-    if (!checkAuth() || !editContent.trim()) return;
-    try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content: editContent }),
-        }
-      );
-      const updated = await res.json();
-      setEditing(false);
-      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-      socket.emit("updatePost", updated);
-    } catch (error) {
-      toast.error("❌ Failed to update post");
-    }
-  };
+  if (!checkAuth()) return;
+
+  const contentToSave =
+    typeof editContent === "string"
+      ? editContent.trim()
+      : editContent?.text?.trim?.() || "";
+
+  if (!contentToSave) {
+    toast.error("Content cannot be empty");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: contentToSave }),
+      }
+    );
+    const updated = await res.json();
+    setEditing(false);
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    socket.emit("updatePost", updated);
+  } catch (error) {
+    toast.error("❌ Failed to update post");
+  }
+};
 
   const handleDelete = async () => {
     if (!checkAuth()) return;
@@ -128,20 +139,28 @@ export default function usePostActions({
     toast("💾 Draft saved", { icon: "💾" });
   };
 
-  const toggleEdit = (editKey, setEditContent) => {
-    const draft = localStorage.getItem(editKey);
-    if (draft) {
-      const confirmed = confirm(
-        "You have an unsaved draft. Load it and continue editing?"
-      );
-      if (confirmed) {
-        setEditContent(draft);
-      } else {
-        localStorage.removeItem(editKey);
-      }
+const toggleEdit = (editKey, setEditContent, editing, originalContent) => {
+  if (editing) {
+    // Cancel editing
+    setEditing(false);
+    setEditContent(originalContent);
+    localStorage.removeItem(editKey);
+    return;
+  }
+
+  const draft = localStorage.getItem(editKey);
+  if (draft) {
+    const confirmed = confirm(
+      "You have an unsaved draft. Load it and continue editing?"
+    );
+    if (confirmed) {
+      setEditContent(draft);
+    } else {
+      localStorage.removeItem(editKey);
     }
-    setEditing(true);
-  };
+  }
+  setEditing(true);
+};
 
   return {
     handleLike,

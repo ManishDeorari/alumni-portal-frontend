@@ -19,7 +19,7 @@ import FullImageViewer from "./FullImageViewer";
 import usePostSocket from "./usePostSocket";
 import usePostEffects from "./hooks/usePostEffects";
 import usePostActions from "./hooks/usePostActions";
-import useEmojiAnimation, {  } from "./hooks/useEmojiAnimation";
+import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
@@ -28,7 +28,7 @@ import socket from "../../../utils/socket";
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [editing, setEditing] = useState(false);
-  const [editContent, setEditContent] = useState(post.content);
+  const [editContent, setEditContent] = useState(post.content || "");
   const [showEditEmoji, setShowEditEmoji] = useState(false);
   const [showCommentEmoji, setShowCommentEmoji] = useState(false);
   const [comment, setComment] = useState("");
@@ -126,7 +126,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
   // ✅ Everything's clean and ready for the `return` section now.
   return (
     <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
-      <PostHeader {...{ post, currentUser, editing, toggleEdit, handleDelete }} />
+      <PostHeader {...{ post, currentUser, editing, toggleEdit: () =>
+      toggleEdit(editKey, setEditContent, editing, post.content), handleDelete }} />
 
       <PostContent
         {...{
