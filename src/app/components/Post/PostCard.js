@@ -418,8 +418,8 @@ const handleLike = async () => {
           likeIconRef,
           isLiking,           // ✅ Add this
           setVisibleComments,
-          setReactionEffect,
-          reactionEffect,
+          //setReactionEffect,
+          //reactionEffect,
         }}
       />
 
