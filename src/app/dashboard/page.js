@@ -98,6 +98,25 @@ export default function DashboardPage() {
     return () => socket.off("postCreated");
   }, []);
 
+useEffect(() => {
+  socket.on("postLiked", ({ postId, userId, isLiked }) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((p) =>
+        p._id === postId
+          ? {
+              ...p,
+              likes: isLiked
+                ? [...p.likes, userId]
+                : p.likes.filter((id) => id !== userId),
+            }
+          : p
+      )
+    );
+  });
+
+  return () => socket.off("postLiked");
+}, []);
+
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
 
