@@ -99,7 +99,7 @@ export default function DashboardPage() {
   }, []);
 
 useEffect(() => {
-  socket.on("postLiked", ({ postId, userId, isLiked }) => {
+  const handler = ({ postId, userId, isLiked }) => {
     console.log("💥 postLiked socket received:", { postId, userId, isLiked });
 
     setPosts((prevPosts) =>
@@ -108,15 +108,16 @@ useEffect(() => {
           ? {
               ...p,
               likes: isLiked
-                ? [...new Set([...p.likes, userId])]  // Ensure no duplicates
+                ? [...new Set([...p.likes, userId])]
                 : p.likes.filter((id) => id !== userId),
             }
           : p
       )
     );
-  });
+  };
 
-  return () => socket.off("postLiked");
+  socket.on("postLiked", handler);
+  return () => socket.off("postLiked", handler);
 }, []);
 
   if (loading)

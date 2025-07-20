@@ -60,16 +60,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
     }
   }, [editing]);
   
-  useEffect(() => {
-    socket.on("postLiked", ({ postId, userId, isLiked }) => {
-      if (postId === post._id && userId !== currentUser._id) {
-        triggerLikeAnimation(isLiked);
-      }
-    });
-
-    return () => socket.off("postLiked");
-  }, [post._id, currentUser._id]);
-
   const toggleEdit = () => {
     setEditing((prev) => !prev);
     setShowEditEmoji(false);
@@ -97,15 +87,29 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setStartIndex(i);
     setShowViewer(true);
   };
+//Like
+  useEffect(() => {
+  const handlePostLiked = ({ postId, userId, isLiked }) => {
+    if (postId !== post._id || userId === currentUser._id) return;
+
+    const alreadyLiked = post.likes?.includes(userId);
+    if (isLiked === alreadyLiked) return; // ✅ Prevent double animation
+
+    triggerLikeAnimation(isLiked);
+  };
+
+  socket.on("postLiked", handlePostLiked);
+  return () => socket.off("postLiked", handlePostLiked);
+}, [post._id, currentUser._id, post.likes]);
 
 const triggerLikeAnimation = (isLike) => {
-    if (likeIconRef.current) {
-      likeIconRef.current.classList.add(isLike ? "animate-like" : "animate-unlike");
-      setTimeout(() => {
-        likeIconRef.current.classList.remove("animate-like", "animate-unlike");
-      }, 500);
-    }
-  };
+  if (likeIconRef.current) {
+    likeIconRef.current.classList.add(isLike ? "animate-like" : "animate-unlike");
+    setTimeout(() => {
+      likeIconRef.current.classList.remove("animate-like", "animate-unlike");
+    }, 500);
+  }
+};
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -131,12 +135,10 @@ const triggerLikeAnimation = (isLike) => {
   };
 
   // ✅ Like handler with animation and toggle support
-  const handleLike = async () => {
+const handleLike = async () => {
   if (!checkAuth()) return;
 
   try {
-    const wasLiked = hasLiked;
-
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
       {
@@ -146,27 +148,13 @@ const triggerLikeAnimation = (isLike) => {
     );
 
     const updated = await res.json();
-    const isNowLiked = updated.likes.includes(currentUser._id);
 
-    setHasLiked(isNowLiked);
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    setPosts((prev) =>
+      prev.map((p) => (p._id === post._id ? updated : p))
+    );
 
-    // ✅ Only run animation if it's a new like
-    if (!wasLiked && isNowLiked) {
-      triggerLikeAnimation(true);   // 👍 animate like
-      socket.emit("postLiked", {
-        postId: post._id,
-        userId: currentUser._id,
-        isLiked: true
-      });
-    } else if (wasLiked && !isNowLiked) {
-      triggerLikeAnimation(false);  // 👎 animate unlike
-      socket.emit("postLiked", {
-        postId: post._id,
-        userId: currentUser._id,
-        isLiked: false
-      });
-    }
+    // No need to emit manually; backend will emit postLiked and postUpdated
+    // trigger animation if needed via socket listener
   } catch (err) {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
