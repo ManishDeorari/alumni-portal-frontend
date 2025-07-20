@@ -9,6 +9,9 @@ export default function usePostActions({
   token,
   setHasLiked,
   setEditing,
+  isLiking,         // ✅ Add this
+  setIsLiking,      // ✅ And this
+  triggerLikeAnimation,
 }) {
   const checkAuth = () => {
     if (!token) {
