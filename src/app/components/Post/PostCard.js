@@ -188,20 +188,22 @@ const handleReact = async (emoji) => {
   const prevReactions = post.reactions || {};
   const userId = currentUser._id;
 
-  // 🧠 Find current emoji reacted by this user
+  // 🔍 Find if user already reacted with any emoji
   const currentEmoji = Object.keys(prevReactions).find((key) =>
     Array.isArray(prevReactions[key]) && prevReactions[key].includes(userId)
   );
 
   let action = "add";
+  let selectedEmoji = emoji;
 
-  // ⛔️ If same emoji clicked again, it's a remove
+  // 🧼 If clicked same emoji again: remove
   if (currentEmoji === emoji) {
     action = "remove";
   }
 
-  try {
-    const res = await fetch(
+  // ✅ First remove the old emoji (if it's different)
+  if (currentEmoji && currentEmoji !== emoji) {
+    await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
       {
         method: "PATCH",
@@ -209,26 +211,46 @@ const handleReact = async (emoji) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ emoji, action }),
+        body: JSON.stringify({ emoji: currentEmoji, action: "remove" }),
       }
     );
-
-    const updated = await res.json();
-
-    setPosts((prev) =>
-      prev.map((p) =>
-        p._id === post._id ? { ...p, reactions: updated.reactions } : p
-      )
-    );
-
-    // ✅ Animate only when emoji is added
-    if (action === "add") triggerReactionEffect(emoji);
-
-    socket.emit("updatePost", updated);
-  } catch (err) {
-    console.error("❌ Emoji reaction failed:", err);
   }
+
+  // 💡 If removing same emoji, skip add step
+  if (action === "remove") {
+    selectedEmoji = null;
+  }
+
+  // ✅ Then add the new emoji (if needed)
+  if (action === "add") {
+    await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ emoji, action: "add" }),
+      }
+    );
+  }
+
+  // ✅ Fetch latest from backend
+  const res = await fetch(
+    `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}`
+  );
+  const updated = await res.json();
+
+  setPosts((prev) =>
+    prev.map((p) => (p._id === post._id ? { ...p, reactions: updated.reactions } : p))
+  );
+
+  if (action === "add") triggerReactionEffect(emoji);
+
+  socket.emit("updatePost", updated);
 };
+
 
   const handleComment = async () => {
     if (!checkAuth() || !comment.trim()) return;
