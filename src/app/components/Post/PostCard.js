@@ -22,6 +22,8 @@ import usePostActions from "./hooks/usePostActions";
 import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
+console.log("💥 getEmojiFromUnified:", getEmojiFromUnified); // Should log: ƒ
+
 // Socket
 import socket from "../../../utils/socket";
 
