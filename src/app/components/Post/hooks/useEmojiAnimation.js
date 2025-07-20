@@ -1,5 +1,5 @@
 // components/PostCard/hooks/useEmojiAnimation.js
-export function triggerReactionEffect(emoji) {
+export default function triggerReactionEffect(emoji) {
   const container = document.createElement("div");
   container.className = "fixed text-3xl pointer-events-none z-50";
   container.style.left = `${Math.random() * 80 + 10}%`;
