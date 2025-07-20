@@ -38,7 +38,7 @@ export default function PostContent({
               className="w-full border rounded p-2 resize-none"
               placeholder="Edit your post..."
             />
-            <div className="absolute bottom-[120%] right-[80px] z-50">
+            <div className="absolute bottom-[120%] right-[120px] z-50">
               <EmojiPickerToggle
                 onEmojiSelect={handleEmojiSelect}
                 icon="😀"

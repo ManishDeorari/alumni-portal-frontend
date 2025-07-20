@@ -8,6 +8,7 @@ export default function usePostActions({
   setPosts,
   token,
   setHasLiked,
+  hasLiked, 
   setEditing,
   isLiking,         // ✅ Add this
   setIsLiking,      // ✅ And this

@@ -78,6 +78,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setIsLiking,
     triggerLikeAnimation,
     triggerReactionEffect,
+    hasLiked,             // ✅ Add this
+    setHasLiked,
   });
 
   // 💬 Actions related to comments
