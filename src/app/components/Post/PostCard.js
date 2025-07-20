@@ -222,7 +222,7 @@ const handleReact = async (emoji) => {
       )
     );
 
-    //socket.emit("updatePost", updated);
+    socket.emit("updatePost", updated);
     triggerReactionEffect(emoji);
   } catch (err) {
     console.error("❌ Failed to react:", err);
