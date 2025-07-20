@@ -88,20 +88,18 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setStartIndex(i);
     setShowViewer(true);
   };
-//Like
- /* useEffect(() => {
-  const handlePostLiked = ({ postId, userId, isLiked }) => {
-    if (postId !== post._id || userId === currentUser._id) return;
-
-    const alreadyLiked = post.likes?.includes(userId);
-    if (isLiked === alreadyLiked) return; // ✅ Prevent double animation
-
-    //triggerLikeAnimation(isLiked);
+  
+useEffect(() => {
+  const handleLikeAnimation = ({ postId, userId, isLiked }) => {
+    if (postId === post._id && userId !== currentUser._id) {
+      triggerLikeAnimation(isLiked);
+    }
   };
 
-  socket.on("postLiked", handlePostLiked);
-  return () => socket.off("postLiked", handlePostLiked);
-}, [post._id, currentUser._id, post.likes]);
+  socket.on("postLiked", handleLikeAnimation);
+  return () => socket.off("postLiked", handleLikeAnimation);
+}, [post._id, currentUser._id]);
+
 
 const triggerLikeAnimation = (isLike) => {
   if (likeIconRef.current) {
@@ -110,7 +108,7 @@ const triggerLikeAnimation = (isLike) => {
       likeIconRef.current.classList.remove("animate-like", "animate-unlike");
     }, 500);
   }
-};*/
+};
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -160,14 +158,14 @@ const handleLike = async () => {
     );
 
     if (!wasLiked && isNowLiked) {
-      //triggerLikeAnimation(true);
+      triggerLikeAnimation(true);
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
         isLiked: true,
       });
     } else if (wasLiked && !isNowLiked) {
-      //triggerLikeAnimation(false);
+      triggerLikeAnimation(false);
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
