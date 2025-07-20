@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete }) {
   return (
@@ -16,21 +15,12 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
           {new Date(post.createdAt).toLocaleString()}
         </p>
       </div>
-
       {post.user?._id === currentUser._id && (
-        <div className="ml-auto flex gap-2 items-center">
-          <button
-            onClick={toggleEdit}
-            className="text-blue-600 text-sm hover:underline flex items-center gap-1"
-          >
-            <PencilIcon className="w-4 h-4" />
+        <div className="ml-auto flex gap-2">
+          <button onClick={toggleEdit} className="text-blue-600 text-sm hover:underline">
             {editing ? "Cancel" : "Edit"}
           </button>
-          <button
-            onClick={handleDelete}
-            className="text-red-600 text-sm hover:underline flex items-center gap-1"
-          >
-            <TrashIcon className="w-4 h-4" />
+          <button onClick={handleDelete} className="text-red-600 text-sm hover:underline">
             Delete
           </button>
         </div>
