@@ -28,7 +28,7 @@ import socket from "../../../utils/socket";
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [editing, setEditing] = useState(false);
-  const [editContent, setEditContent] = useState(post.content || "");
+  const [editContent, setEditContent] = useState(post.content);
   const [showEditEmoji, setShowEditEmoji] = useState(false);
   const [showCommentEmoji, setShowCommentEmoji] = useState(false);
   const [comment, setComment] = useState("");

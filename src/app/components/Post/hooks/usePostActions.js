@@ -79,18 +79,8 @@ export default function usePostActions({
     }
   };
 
-  const handleEditSave = async (editContent) => {
-  if (!checkAuth()) return;
-
-  const contentToSave =
-    typeof editContent === "string"
-      ? editContent.trim()
-      : editContent?.text?.trim?.() || "";
-
-  if (!contentToSave) {
-    toast.error("Content cannot be empty");
-    return;
-  }
+  const handleEditSave = async () => {
+  if (!checkAuth() || !editContent.trim()) return;
 
   try {
     const res = await fetch(
@@ -101,14 +91,22 @@ export default function usePostActions({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ content: contentToSave }),
+        body: JSON.stringify({ content: editContent }),
       }
     );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText);
+    }
+
     const updated = await res.json();
     setEditing(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     socket.emit("updatePost", updated);
+    toast.success("✅ Post updated");
   } catch (error) {
+    console.error("Error editing post:", error?.message || error); // 👈 LOG ERROR
     toast.error("❌ Failed to update post");
   }
 };
