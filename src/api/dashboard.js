@@ -100,7 +100,6 @@ export const createPost = async (content, image, video) => {
   return data;
 };
 
-
 // ================== COMMENT ON POST ==================
 export const commentOnPost = async (postId, text) => {
   try {
@@ -110,7 +109,7 @@ export const commentOnPost = async (postId, text) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ comment: text }), // ✅ fixed here
+      body: JSON.stringify({ text }), // ✅ fixed key
     });
 
     if (!res.ok) {
@@ -154,7 +153,7 @@ export const likePost = async (postId) => {
 };
 
 // ================== REACT TO POST ==================
-export const reactToPost = async (postId, emoji) => {
+export const reactToPost = async (postId, emoji, action = "add") => {
   try {
     const res = await fetch(`${BASE}/posts/${postId}/react`, {
       method: "PATCH",
@@ -162,7 +161,7 @@ export const reactToPost = async (postId, emoji) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ emoji }),
+      body: JSON.stringify({ emoji, action }), // ✅ fixed
     });
 
     if (!res.ok) {
@@ -200,7 +199,7 @@ export const editComment = async (postId, commentId, newText) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ comment: newText }),
+      body: JSON.stringify({ text: newText }), // ✅ fixed key
     });
 
     if (!res.ok) throw new Error("Edit comment failed");

@@ -81,6 +81,19 @@ export default function PostCard({ post, currentUser, setPosts }) {
     return () => socket.off("typing");
   }, [post._id]);
 
+  useEffect(() => {
+    socket.on("postLiked", ({ postId, userId }) => {
+      // 🧠 Trigger animation if current user is the liker
+      if (userId === currentUser._id) {
+        triggerLikeAnimation(postId);
+      }
+    });
+
+    return () => {
+      socket.off("postLiked");
+    };
+  }, [socket, currentUser]);
+
   const toggleEdit = () => {
     setEditing((prev) => !prev);
     setShowEditEmoji(false);
