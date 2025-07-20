@@ -41,7 +41,7 @@ const handleLike = async () => {
     );
 
     const updated = await res.json();
-    const isNowLiked = updated.likes.includes(currentUser._id);
+    const isNowLiked = Array.isArray(updated.likes) && updated.likes.includes(currentUser._id);
 
     setHasLiked(isNowLiked);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
