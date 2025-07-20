@@ -12,7 +12,8 @@ export default function PostReactions({
   setReactionEffect,
   reactionEffect,
   setVisibleComments,
-  likeIconRef
+  likeIconRef,
+  isLiking, // ✅ Add this here
 }) {
   return (
     <>
