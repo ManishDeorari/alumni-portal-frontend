@@ -37,6 +37,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [startIndex, setStartIndex] = useState(0);
   const [showThread, setShowThread] = useState(false);
   const [isLiking, setIsLiking] = useState(false); // Add this to state
+  const [reactionEffect, setReactionEffect] = useState(null);
 
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
@@ -196,7 +197,11 @@ const handleLike = async () => {
       }
     );
     const updated = await res.json();
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+    setPosts((prev) =>
+      prev.map((p) =>
+        p._id === post._id ? { ...p, reactions: updated.reactions } : p
+      )
+    );
     triggerReactionEffect(emoji);
     socket.emit("updatePost", updated);
   };
@@ -418,8 +423,8 @@ const handleLike = async () => {
           likeIconRef,
           isLiking,           // ✅ Add this
           setVisibleComments,
-          //setReactionEffect,
-          //reactionEffect,
+          setReactionEffect,
+          reactionEffect,
         }}
       />
 
