@@ -25,7 +25,7 @@ import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 console.log("💥 getEmojiFromUnified:", getEmojiFromUnified); // Should log: ƒ
 
 // Socket
-import socket from "../../../utils/socket";
+//import socket from "../../../utils/socket";
 
 export default function PostCard({ post, currentUser, setPosts }) {
   const [editing, setEditing] = useState(false);
