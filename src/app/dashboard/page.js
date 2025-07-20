@@ -101,6 +101,7 @@ export default function DashboardPage() {
 useEffect(() => {
   socket.on("postLiked", ({ postId, userId, isLiked }) => {
     // ✅ Skip updating if the like/unlike is from current user — already handled locally
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     if (userId === currentUser._id) return;
 
     setPosts((prevPosts) =>
