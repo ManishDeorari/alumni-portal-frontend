@@ -40,6 +40,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
   const editKey = `draft-${post._id}`;
+  const likeIconRef = useRef(null);
   usePostSocket(post._id, currentUser, setSomeoneTyping, setPosts);
 
   useEffect(() => {
@@ -58,6 +59,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
       textareaRef.current.focus();
     }
   }, [editing]);
+  
+  useEffect(() => {
+    socket.on("postLiked", ({ postId, userId, isLiked }) => {
+      if (postId === post._id && userId !== currentUser._id) {
+        triggerLikeAnimation(isLiked);
+      }
+    });
+
+    return () => socket.off("postLiked");
+  }, [post._id, currentUser._id]);
 
   const toggleEdit = () => {
     setEditing((prev) => !prev);
@@ -87,13 +98,14 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setShowViewer(true);
   };
 
- /* const triggerLikeAnimation = (postId) => {
-  const el = document.getElementById(`like-icon-${postId}`);
-  if (el) {
-    el.classList.add("animate-like");
-    setTimeout(() => el.classList.remove("animate-like"), 600);
-  }
-};*/
+const triggerLikeAnimation = (isLike) => {
+    if (likeIconRef.current) {
+      likeIconRef.current.classList.add(isLike ? "animate-like" : "animate-unlike");
+      setTimeout(() => {
+        likeIconRef.current.classList.remove("animate-like", "animate-unlike");
+      }, 500);
+    }
+  };
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -141,17 +153,18 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
     // ✅ Only run animation if it's a new like
     if (!wasLiked && isNowLiked) {
-      triggerLikeAnimation(post._id);
+      triggerLikeAnimation(true);   // 👍 animate like
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
-        isLiked: true  // <-- add this
+        isLiked: true
       });
     } else if (wasLiked && !isNowLiked) {
+      triggerLikeAnimation(false);  // 👎 animate unlike
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
-        isLiked: false  // <-- unlike event
+        isLiked: false
       });
     }
   } catch (err) {
@@ -394,6 +407,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
           userReacted,
           getReactionCount,
           setShowModal,
+          likeIconRef,
         }}
       />
 

@@ -11,7 +11,8 @@ export default function PostReactions({
   userReacted,
   setReactionEffect,
   reactionEffect,
-  setVisibleComments
+  setVisibleComments,
+  likeIconRef
 }) {
   return (
     <>
@@ -38,6 +39,7 @@ export default function PostReactions({
       {/* Like and Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
+          ref={likeIconRef}
           id={`like-icon-${post._id}`}
           onClick={handleLike}
           className={`font-semibold transition duration-200 ${
@@ -46,6 +48,7 @@ export default function PostReactions({
         >
           👍 Like ({(post.likes || []).length})
         </button>
+
         <button
           onClick={() => setVisibleComments((prev) => prev + 5)}
           className="font-semibold text-gray-600"
