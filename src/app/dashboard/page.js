@@ -99,21 +99,14 @@ export default function DashboardPage() {
   }, []);
 
 useEffect(() => {
-  const currentUser = JSON.parse(localStorage.getItem("user"));
-  if (!currentUser) return;
-
   socket.on("postLiked", ({ postId, userId, isLiked }) => {
-    if (userId === currentUser._id) return; // ignore your own event
-
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p._id === postId
           ? {
               ...p,
               likes: isLiked
-                ? p.likes.includes(userId)
-                  ? p.likes
-                  : [...p.likes, userId]
+                ? [...p.likes, userId]
                 : p.likes.filter((id) => id !== userId),
             }
           : p
