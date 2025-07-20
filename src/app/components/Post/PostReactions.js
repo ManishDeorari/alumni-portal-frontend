@@ -38,8 +38,11 @@ export default function PostReactions({
       {/* Like and Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
+          id={`like-icon-${post._id}`}
           onClick={handleLike}
-          className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600"}`}
+          className={`font-semibold transition duration-200 ${
+            hasLiked ? "text-blue-600" : "text-gray-600"
+          }`}
         >
           👍 Like ({(post.likes || []).length})
         </button>

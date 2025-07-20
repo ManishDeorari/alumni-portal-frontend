@@ -87,6 +87,14 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setShowViewer(true);
   };
 
+  const triggerLikeAnimation = (postId) => {
+  const el = document.getElementById(`like-icon-${postId}`);
+  if (el) {
+    el.classList.add("animate-like");
+    setTimeout(() => el.classList.remove("animate-like"), 600);
+  }
+};
+
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
     container.className = "fixed text-3xl pointer-events-none z-50";
@@ -110,19 +118,42 @@ export default function PostCard({ post, currentUser, setPosts }) {
     animation.onfinish = () => container.remove();
   };
 
+  // ✅ Like handler with animation and toggle support
   const handleLike = async () => {
     if (!checkAuth()) return;
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
-      {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const updated = await res.json();
+
+      const isNowLiked = updated.likes.includes(currentUser._id);
+      setHasLiked(isNowLiked);
+
+      setPosts((prev) =>
+        prev.map((p) => (p._id === post._id ? updated : p))
+      );
+
+      if (!hasLiked && isNowLiked) {
+        triggerLikeAnimation(post._id);
       }
-    );
-    const updated = await res.json();
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-    socket.emit("updatePost", updated);
+
+      socket.emit("updatePost", updated);
+    } catch (err) {
+      console.error("❌ Like failed:", err);
+      toast.error("Failed to like post");
+    }
   };
+
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;
@@ -312,7 +343,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
   }
 };
 
-
   const handleBlurSave = () => {
     localStorage.setItem(editKey, editContent);
     toast("💾 Draft saved", { icon: "💾" });
@@ -349,24 +379,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
             setShowViewer(true);
           }}
         />
-
-      {post.reactions && Object.keys(post.reactions || {}).length > 0 && (
-        <div className="flex gap-3 mt-1 flex-wrap">
-          {Object.entries(post.reactions || {}).map(([emoji, users]) => {
-            if (!Array.isArray(users) || users.length === 0) return null;
-            return (
-              <div
-                key={emoji}
-                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
-                  userReacted(emoji) ? "border border-blue-500 bg-blue-50" : ""
-                }`}
-              >
-                {emoji} <span className="text-sm text-gray-600">x{users.length}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
 
       <PostReactions
         {...{
