@@ -100,13 +100,15 @@ export default function DashboardPage() {
 
 useEffect(() => {
   socket.on("postLiked", ({ postId, userId, isLiked }) => {
+    console.log("💥 postLiked socket received:", { postId, userId, isLiked });
+
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p._id === postId
           ? {
               ...p,
               likes: isLiked
-                ? [...p.likes, userId]
+                ? [...new Set([...p.likes, userId])]  // Ensure no duplicates
                 : p.likes.filter((id) => id !== userId),
             }
           : p
