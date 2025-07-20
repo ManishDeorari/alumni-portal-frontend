@@ -182,9 +182,25 @@ const handleLike = async () => {
   }
 };
 
-  const handleReact = async (emoji) => {
-    if (!checkAuth()) return;
-    const action = userReacted(emoji) ? "remove" : "add";
+const handleReact = async (emoji) => {
+  if (!checkAuth()) return;
+
+  const prevReactions = post.reactions || {};
+  const userId = currentUser._id;
+
+  // 🧠 Find current emoji reacted by this user
+  const currentEmoji = Object.keys(prevReactions).find((key) =>
+    Array.isArray(prevReactions[key]) && prevReactions[key].includes(userId)
+  );
+
+  let action = "add";
+
+  // ⛔️ If same emoji clicked again, it's a remove
+  if (currentEmoji === emoji) {
+    action = "remove";
+  }
+
+  try {
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
       {
@@ -196,15 +212,23 @@ const handleLike = async () => {
         body: JSON.stringify({ emoji, action }),
       }
     );
+
     const updated = await res.json();
+
     setPosts((prev) =>
       prev.map((p) =>
         p._id === post._id ? { ...p, reactions: updated.reactions } : p
       )
     );
-    triggerReactionEffect(emoji);
+
+    // ✅ Animate only when emoji is added
+    if (action === "add") triggerReactionEffect(emoji);
+
     socket.emit("updatePost", updated);
-  };
+  } catch (err) {
+    console.error("❌ Emoji reaction failed:", err);
+  }
+};
 
   const handleComment = async () => {
     if (!checkAuth() || !comment.trim()) return;
