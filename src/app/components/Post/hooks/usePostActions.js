@@ -18,39 +18,53 @@ export default function usePostActions({
     return true;
   };
 
-  const handleLike = async (isLiking, setIsLiking) => {
-    if (!checkAuth() || isLiking) return;
+  // ✅ Like handler with animation and toggle support
+const handleLike = async () => {
+  if (!checkAuth() || isLiking) return;
 
-    setIsLiking(true);
-    try {
-      const wasLiked = post.likes.includes(currentUser._id);
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
-        {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const updated = await res.json();
-      const isNowLiked = updated.likes.includes(currentUser._id);
+  console.log("⚡ Like clicked", { postId: post._id, wasLiked: hasLiked });
+  setIsLiking(true); // ⛔️ Lock
 
-      setHasLiked(isNowLiked);
-      setPosts((prev) =>
-        prev.map((p) => (p._id === post._id ? updated : p))
-      );
+  try {
+    const wasLiked = hasLiked;
 
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    const updated = await res.json();
+    const isNowLiked = updated.likes.includes(currentUser._id);
+
+    setHasLiked(isNowLiked);
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+
+    if (!wasLiked && isNowLiked) {
+      triggerLikeAnimation(true);
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
-        isLiked: isNowLiked,
+        isLiked: true,
       });
-    } catch (err) {
-      console.error("Like failed:", err);
-      toast.error("Failed to like post.");
-    } finally {
-      setTimeout(() => setIsLiking(false), 500);
+    } else if (wasLiked && !isNowLiked) {
+      triggerLikeAnimation(false);
+      socket.emit("postLiked", {
+        postId: post._id,
+        userId: currentUser._id,
+        isLiked: false,
+      });
     }
-  };
+
+  } catch (err) {
+    console.error("Like failed:", err);
+    toast.error("Failed to like post.");
+  } finally {
+    setTimeout(() => setIsLiking(false), 500); // 💡 Delay helps debounce
+  }
+};
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;
