@@ -96,21 +96,21 @@ export default function PostCard({ post, currentUser, setPosts }) {
     const alreadyLiked = post.likes?.includes(userId);
     if (isLiked === alreadyLiked) return; // ✅ Prevent double animation
 
-    triggerLikeAnimation(isLiked);
+    //triggerLikeAnimation(isLiked);
   };
 
   socket.on("postLiked", handlePostLiked);
   return () => socket.off("postLiked", handlePostLiked);
 }, [post._id, currentUser._id, post.likes]);
 
-const triggerLikeAnimation = (isLike) => {
-  if (likeIconRef.current) {
-    likeIconRef.current.classList.add(isLike ? "animate-like" : "animate-unlike");
-    setTimeout(() => {
-      likeIconRef.current.classList.remove("animate-like", "animate-unlike");
-    }, 500);
-  }
-};
+//const triggerLikeAnimation = (isLike) => {
+//  if (likeIconRef.current) {
+//    likeIconRef.current.classList.add(isLike ? "animate-like" : "animate-unlike");
+//    setTimeout(() => {
+ //     likeIconRef.current.classList.remove("animate-like", "animate-unlike");
+ //   }, 500);
+ // }
+//};
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -160,14 +160,14 @@ const handleLike = async () => {
     );
 
     if (!wasLiked && isNowLiked) {
-      triggerLikeAnimation(true);
+      //triggerLikeAnimation(true);
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
         isLiked: true,
       });
     } else if (wasLiked && !isNowLiked) {
-      triggerLikeAnimation(false);
+      //triggerLikeAnimation(false);
       socket.emit("postLiked", {
         postId: post._id,
         userId: currentUser._id,
