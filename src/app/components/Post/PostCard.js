@@ -181,6 +181,7 @@ const handleLike = async () => {
     setTimeout(() => setIsLiking(false), 500); // 💡 Delay helps debounce
   }
 };
+
 //react
 const handleReact = async (emoji) => {
   if (!checkAuth()) return;
