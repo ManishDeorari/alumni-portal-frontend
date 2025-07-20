@@ -88,7 +88,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setStartIndex(i);
     setShowViewer(true);
   };
-  
+
 useEffect(() => {
   const handleLikeAnimation = ({ postId, userId, isLiked }) => {
     if (postId === post._id && userId !== currentUser._id) {
@@ -136,7 +136,9 @@ const triggerLikeAnimation = (isLike) => {
   // ✅ Like handler with animation and toggle support
 const handleLike = async () => {
   if (!checkAuth() || isLiking) return;
-  setIsLiking(true);
+
+  console.log("⚡ Like clicked", { postId: post._id, wasLiked: hasLiked });
+  setIsLiking(true); // ⛔️ Lock
 
   try {
     const wasLiked = hasLiked;
@@ -153,9 +155,7 @@ const handleLike = async () => {
     const isNowLiked = updated.likes.includes(currentUser._id);
 
     setHasLiked(isNowLiked);
-    setPosts((prev) =>
-      prev.map((p) => (p._id === post._id ? updated : p))
-    );
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
 
     if (!wasLiked && isNowLiked) {
       triggerLikeAnimation(true);
@@ -172,14 +172,14 @@ const handleLike = async () => {
         isLiked: false,
       });
     }
+
   } catch (err) {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
   } finally {
-    setIsLiking(false); // 🧠 Always unlock at end
+    setTimeout(() => setIsLiking(false), 500); // 💡 Delay helps debounce
   }
 };
-
 
   const handleReact = async (emoji) => {
     if (!checkAuth()) return;

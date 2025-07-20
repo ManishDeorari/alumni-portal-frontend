@@ -42,9 +42,10 @@ export default function PostReactions({
           ref={likeIconRef}
           id={`like-icon-${post._id}`}
           onClick={handleLike}
+          disabled={isLiking}
           className={`font-semibold transition duration-200 ${
             hasLiked ? "text-blue-600" : "text-gray-600"
-          }`}
+          } ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           👍 Like ({(post.likes || []).length})
         </button>
