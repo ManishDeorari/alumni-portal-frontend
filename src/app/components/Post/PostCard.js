@@ -14,6 +14,7 @@ import PostModal from "./PostModal";
 import CommentInput from "./CommentInput";
 import CommentCard from "./commentCard";
 import FullImageViewer from "./FullImageViewer";
+import usePostSocket from "./usePostSocket";
 
 import socket from "../../../utils/socket";
 
@@ -39,6 +40,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
   const editKey = `draft-${post._id}`;
+  usePostSocket(post._id, currentUser, setSomeoneTyping, setPosts);
 
   useEffect(() => {
     const saved = localStorage.getItem(editKey);
@@ -56,43 +58,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
       textareaRef.current.focus();
     }
   }, [editing]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("postUpdated", (updatedPost) => {
-      setPosts((prev) =>
-        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
-      );
-    });
-
-    return () => {
-      socket.off("postUpdated");
-    };
-  }, [socket, setPosts]);
-
-  useEffect(() => {
-    socket.on("typing", ({ postId, user }) => {
-      if (postId === post._id && user !== currentUser._id) {
-        setSomeoneTyping(true);
-        setTimeout(() => setSomeoneTyping(false), 3000);
-      }
-    });
-    return () => socket.off("typing");
-  }, [post._id]);
-
-  useEffect(() => {
-    socket.on("postLiked", ({ postId, userId }) => {
-      // 🧠 Trigger animation if current user is the liker
-      if (userId === currentUser._id) {
-        triggerLikeAnimation(postId);
-      }
-    });
-
-    return () => {
-      socket.off("postLiked");
-    };
-  }, [socket, currentUser]);
 
   const toggleEdit = () => {
     setEditing((prev) => !prev);

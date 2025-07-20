@@ -98,6 +98,26 @@ export default function DashboardPage() {
     return () => socket.off("postCreated");
   }, []);
 
+  const triggerLikeAnimation = (postId) => {
+    const el = document.getElementById(`like-icon-${postId}`);
+    if (el) {
+      el.classList.add("animate-like");
+      setTimeout(() => el.classList.remove("animate-like"), 600);
+    }
+  };
+
+  useEffect(() => {
+    socket.on("postLiked", ({ postId, userId }) => {
+      if (userId === user?._id) {
+        triggerLikeAnimation(postId);
+      }
+    });
+
+    return () => {
+      socket.off("postLiked");
+    };
+  }, [socket, user]);
+
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
 
