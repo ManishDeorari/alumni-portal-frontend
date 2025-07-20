@@ -110,20 +110,6 @@ const triggerLikeAnimation = (isLike) => {
     }, 500);
   }
 };
-useEffect(() => {
-  const handleReactionUpdate = ({ postId, reactions }) => {
-    if (postId === post._id) {
-      setPosts((prev) =>
-        prev.map((p) =>
-          p._id === postId ? { ...p, reactions } : p
-        )
-      );
-    }
-  };
-
-  socket.on("post:reaction", handleReactionUpdate);
-  return () => socket.off("post:reaction", handleReactionUpdate);
-}, [post._id, setPosts]);
 
   const triggerReactionEffect = (emoji) => {
     const container = document.createElement("div");
@@ -229,6 +215,12 @@ const handleReact = async (emoji) => {
     toast.error("❌ Reaction failed");
   }
 };
+
+// Helper
+//const fetchPost = async (postId) => {
+  //const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${postId}`);
+  //return res.json();
+//};
 
   const handleComment = async () => {
     if (!checkAuth() || !comment.trim()) return;
