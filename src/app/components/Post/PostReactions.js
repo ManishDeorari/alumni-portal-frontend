@@ -76,9 +76,8 @@ export default function PostReactions({
               className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
               title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
             >
-              {emoji}
+              {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
             </motion.button>
-
             {reactionEffect === emoji && (
               <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
                 {emoji}
