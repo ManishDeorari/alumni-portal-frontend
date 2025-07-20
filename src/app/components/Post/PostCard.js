@@ -21,7 +21,7 @@ import usePostEffects from "./hooks/usePostEffects";
 import usePostActions from "./hooks/usePostActions";
 import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
-
+import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 // Socket
 import socket from "../../../utils/socket";
 

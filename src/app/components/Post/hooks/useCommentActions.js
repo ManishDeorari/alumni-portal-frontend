@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import toast from "react-hot-toast";
-import socket from "../../../utils/socket";
+import socket from "../../../../utils/socket";
 
 export default function useCommentActions(
   post,

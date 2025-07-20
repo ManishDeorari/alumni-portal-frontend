@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import socket from "../../../utils/socket";
+import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "./useEmojiAnimation";
 
 export default function usePostActions({
