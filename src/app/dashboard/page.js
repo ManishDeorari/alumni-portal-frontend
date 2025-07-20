@@ -100,13 +100,18 @@ export default function DashboardPage() {
 
 useEffect(() => {
   socket.on("postLiked", ({ postId, userId, isLiked }) => {
+    // ✅ Skip updating if the like/unlike is from current user — already handled locally
+    if (userId === currentUser._id) return;
+
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p._id === postId
           ? {
               ...p,
               likes: isLiked
-                ? [...p.likes, userId]
+                ? p.likes.includes(userId)
+                  ? p.likes
+                  : [...p.likes, userId]
                 : p.likes.filter((id) => id !== userId),
             }
           : p
@@ -115,7 +120,7 @@ useEffect(() => {
   });
 
   return () => socket.off("postLiked");
-}, []);
+}, [currentUser._id]);
 
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
