@@ -23,14 +23,24 @@ export default function usePostActions({
   };
 
   // ✅ Like handler with animation and toggle support
-const handleLike = async () => {
+  const handleLike = async () => {
   if (!checkAuth() || isLiking) return;
 
-  console.log("⚡ Like clicked", { postId: post._id, wasLiked: hasLiked });
-  setIsLiking(true); // ⛔️ Lock
+  setIsLiking(true);
 
   try {
-    const wasLiked = hasLiked;
+    const userId = currentUser._id;
+    const wasLiked = post.likes.some((id) => id === userId || id === userId.toString());
+
+    // 🟣 Optimistically update
+    const optimisticLikes = wasLiked
+      ? post.likes.filter((id) => id !== userId && id !== userId.toString())
+      : [...post.likes, userId];
+
+    const tempPost = { ...post, likes: optimisticLikes };
+
+    setHasLiked(!wasLiked);
+    setPosts((prev) => prev.map((p) => (p._id === post._id ? tempPost : p)));
 
     const res = await fetch(
       `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
@@ -40,33 +50,28 @@ const handleLike = async () => {
       }
     );
 
+    if (!res.ok) throw new Error("Failed to like/unlike post");
+
     const updated = await res.json();
-    const isNowLiked = Array.isArray(updated.likes) && updated.likes.includes(currentUser._id);
+
+    const isNowLiked = Array.isArray(updated.likes) &&
+      updated.likes.some((id) => id === userId || id === userId.toString());
 
     setHasLiked(isNowLiked);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
 
-    if (!wasLiked && isNowLiked) {
-      triggerLikeAnimation(true);
-      socket.emit("postLiked", {
-        postId: post._id,
-        userId: currentUser._id,
-        isLiked: true,
-      });
-    } else if (wasLiked && !isNowLiked) {
-      triggerLikeAnimation(false);
-      socket.emit("postLiked", {
-        postId: post._id,
-        userId: currentUser._id,
-        isLiked: false,
-      });
-    }
+    triggerLikeAnimation(isNowLiked);
 
+    socket.emit("postLiked", {
+      postId: post._id,
+      userId,
+      isLiked: isNowLiked,
+    });
   } catch (err) {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
   } finally {
-    setTimeout(() => setIsLiking(false), 500); // 💡 Delay helps debounce
+    setTimeout(() => setIsLiking(false), 500); // 🧠 debounce
   }
 };
 
