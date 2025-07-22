@@ -97,20 +97,21 @@ export default function DashboardPage() {
 
     return () => socket.off("postCreated");
   }, []);
-
+//Like
 useEffect(() => {
   const handler = (updatedPost) => {
-    console.log("💥 postLiked socket received full post:", updatedPost);
+    console.log("💥 postLiked socket received:", updatedPost);
 
     setPosts((prevPosts) =>
-      prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      prevPosts.map((p) =>
+        p._id === updatedPost._id ? updatedPost : p
+      )
     );
   };
 
   socket.on("postLiked", handler);
   return () => socket.off("postLiked", handler);
 }, []);
-
 
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
