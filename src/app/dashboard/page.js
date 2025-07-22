@@ -99,26 +99,18 @@ export default function DashboardPage() {
   }, []);
 
 useEffect(() => {
-  const handler = ({ postId, userId, isLiked }) => {
-    console.log("💥 postLiked socket received:", { postId, userId, isLiked });
+  const handler = (updatedPost) => {
+    console.log("💥 postLiked socket received full post:", updatedPost);
 
     setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        p._id === postId
-        ? {
-            ...p,
-            likes: isLiked
-              ? [...new Set([...p.likes, userId])]
-              : p.likes.filter((id) => id !== userId),
-          }
-        : p
-      )
+      prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
     );
   };
 
   socket.on("postLiked", handler);
   return () => socket.off("postLiked", handler);
 }, []);
+
 
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
