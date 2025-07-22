@@ -105,13 +105,13 @@ useEffect(() => {
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p._id === postId
-          ? {
-              ...p,
-              likes: isLiked
-                ? [...new Set([...p.likes, userId])]
-                : p.likes.filter((id) => id !== userId),
-            }
-          : p
+        ? {
+            ...p,
+            likes: isLiked
+              ? [...new Set([...p.likes, userId])]
+              : p.likes.filter((id) => id !== userId),
+          }
+        : p
       )
     );
   };
