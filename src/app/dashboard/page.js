@@ -97,7 +97,8 @@ export default function DashboardPage() {
 
     return () => socket.off("postCreated");
   }, []);
-//Like
+
+  // ✅ Setup socket for liking Post
 useEffect(() => {
   const handler = (updatedPost) => {
     console.log("💥 postLiked socket received:", updatedPost);

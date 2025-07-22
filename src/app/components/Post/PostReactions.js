@@ -44,7 +44,7 @@ export default function PostReactions({
           id={`like-icon-${post._id}`}
           onClick={handleLike}
           disabled={isLiking}
-          className={`font-semibold transition duration-200 ${
+          className={`font-semibold transition-colors duration-300  ${
             hasLiked ? "text-blue-600" : "text-gray-600"
           } ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
         >

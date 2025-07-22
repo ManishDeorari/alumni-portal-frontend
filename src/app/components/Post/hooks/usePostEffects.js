@@ -12,8 +12,14 @@ export default function usePostEffects({ post, currentUser, setEditContent, setH
   }, []);
 
   useEffect(() => {
-    setHasLiked(post.likes?.includes(currentUser._id));
-  }, [post.likes, currentUser._id]);
+  const userId = currentUser._id?.toString();
+  const normalizeId = (id) =>
+    typeof id === "object" ? id._id?.toString() : id?.toString?.();
+
+  const liked = post.likes?.some((id) => normalizeId(id) === userId);
+  setHasLiked(liked);
+}, [post.likes, currentUser._id]);
+
 
   useEffect(() => {
     if (editing && textareaRef.current) {
