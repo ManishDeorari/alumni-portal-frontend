@@ -27,18 +27,18 @@ const handleLike = async () => {
   if (!checkAuth() || isLiking) return;
 
   setIsLiking(true);
+  const userId = currentUser._id?.toString();
 
   try {
-    const userId = currentUser._id;
-    const wasLiked = post.likes.some((id) => id === userId || id === userId.toString());
+    const normalizeId = (id) => (typeof id === "object" ? id._id?.toString() : id?.toString?.());
+    const wasLiked = post.likes.some((id) => normalizeId(id) === userId);
 
-    // 🟣 Optimistically update
+    // 🟣 Optimistic update
     const optimisticLikes = wasLiked
-      ? post.likes.filter((id) => id !== userId && id !== userId.toString())
+      ? post.likes.filter((id) => normalizeId(id) !== userId)
       : [...post.likes, userId];
 
     const tempPost = { ...post, likes: optimisticLikes };
-
     setHasLiked(!wasLiked);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? tempPost : p)));
 
@@ -53,15 +53,19 @@ const handleLike = async () => {
     if (!res.ok) throw new Error("Failed to like/unlike post");
 
     const updated = await res.json();
+    const updatedLikes = updated.likes || [];
+    const isNowLiked = updatedLikes.some((id) => normalizeId(id) === userId);
 
-    const isNowLiked = Array.isArray(updated.likes) &&
-      updated.likes.some((id) => id === userId || id === userId.toString());
-
+    // ✅ Update final like state and UI
     setHasLiked(isNowLiked);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
 
-    triggerLikeAnimation(isNowLiked);
+    // ✅ Animation only for like, not unlike
+    if (isNowLiked && !wasLiked) {
+      triggerLikeAnimation(true);
+    }
 
+    // ✅ Real-time socket emit
     socket.emit("postLiked", {
       postId: post._id,
       userId,
@@ -71,7 +75,7 @@ const handleLike = async () => {
     console.error("Like failed:", err);
     toast.error("Failed to like post.");
   } finally {
-    setTimeout(() => setIsLiking(false), 500); // 🧠 debounce
+    setTimeout(() => setIsLiking(false), 500); // 🧠 debounce/reset like lock
   }
 };
 

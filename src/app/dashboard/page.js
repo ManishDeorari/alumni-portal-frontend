@@ -98,7 +98,7 @@ export default function DashboardPage() {
     return () => socket.off("postCreated");
   }, []);
 
-/*useEffect(() => {
+useEffect(() => {
   const handler = ({ postId, userId, isLiked }) => {
     console.log("💥 postLiked socket received:", { postId, userId, isLiked });
 
@@ -119,7 +119,7 @@ export default function DashboardPage() {
   socket.on("postLiked", handler);
   return () => socket.off("postLiked", handler);
 }, []);
-*/
+
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
 
