@@ -23,7 +23,7 @@ export default function usePostActions({
   };
 
   // ✅ Like handler with animation and toggle support
-  const handleLike = async () => {
+const handleLike = async () => {
   if (!checkAuth() || isLiking) return;
 
   setIsLiking(true);
