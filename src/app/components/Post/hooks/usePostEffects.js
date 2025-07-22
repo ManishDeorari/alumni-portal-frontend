@@ -43,7 +43,7 @@ export default function usePostEffects({ post, currentUser, setEditContent, setH
     socket.on("postLiked", handleLikeAnimation);
     return () => socket.off("postLiked", handleLikeAnimation);
   }, [post._id, currentUser._id]);
-}
+
 
 useEffect(() => {
   const socket = require("../../../../utils/socket").default;
@@ -61,4 +61,4 @@ useEffect(() => {
   socket.on("postReacted", handleReactionUpdate);
   return () => socket.off("postReacted", handleReactionUpdate);
 }, [post._id]);
-
+}
