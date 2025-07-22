@@ -118,7 +118,7 @@ useEffect(() => {
 
   socket.on("postLiked", handler);
   return () => socket.off("postLiked", handler);
-}, []);s
+}, []);
 
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;

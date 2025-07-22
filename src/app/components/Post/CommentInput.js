@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import { FaSmile } from "react-icons/fa";
-import { EmojiPicker } from "emoji-picker-react"; // Or your custom emoji picker component
+import EmojiPicker from 'emoji-picker-react'; // Or your custom emoji picker component
 
 export default function CommentInput({
   comment,
