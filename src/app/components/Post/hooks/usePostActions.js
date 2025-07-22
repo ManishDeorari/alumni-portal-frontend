@@ -99,7 +99,12 @@ const handleLike = async () => {
           p._id === post._id ? { ...p, reactions: updated.reactions } : p
         )
       );
-      socket.emit("updatePost", updated);
+      socket.emit("postReacted", {
+        postId: post._id,
+        reactions: updated.reactions,
+        userId: currentUser._id,
+      });
+
       triggerReactionEffect(emoji);
     } catch (err) {
       toast.error("❌ Reaction failed");
