@@ -4,15 +4,9 @@ import { triggerReactionEffect } from "./useEmojiAnimation";
 
 export default function usePostActions({
   post,
-  currentUser,
   setPosts,
   token,
-  setHasLiked,
-  hasLiked, 
   setEditing,
-  isLiking,         // ✅ Add this
-  setIsLiking,      // ✅ And this
-  triggerLikeAnimation,
 }) {
   const checkAuth = () => {
     if (!token) {
@@ -22,62 +16,6 @@ export default function usePostActions({
     return true;
   };
 
-  // ✅ Like handler with animation and toggle support
-const handleLike = async () => {
-  if (!checkAuth() || isLiking) return;
-
-  setIsLiking(true);
-  const userId = currentUser._id?.toString();
-
-  try {
-    const normalizeId = (id) => (typeof id === "object" ? id._id?.toString() : id?.toString?.());
-    const wasLiked = post.likes.some((id) => normalizeId(id) === userId);
-
-    // 🟣 Optimistic update
-    const optimisticLikes = wasLiked
-      ? post.likes.filter((id) => normalizeId(id) !== userId)
-      : [...post.likes, userId];
-
-    const tempPost = { ...post, likes: optimisticLikes };
-    setHasLiked(!wasLiked);
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? tempPost : p)));
-
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/like`,
-      {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (!res.ok) throw new Error("Failed to like/unlike post");
-
-    const updated = await res.json();
-    const updatedLikes = updated.likes || [];
-    const isNowLiked = updatedLikes.some((id) => normalizeId(id) === userId);
-
-    // ✅ Update final like state and UI
-    setHasLiked(isNowLiked);
-    setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-
-    // ✅ Animation only for like, not unlike
-    if (isNowLiked && !wasLiked) {
-      triggerLikeAnimation(true);
-    }
-
-    // ✅ Real-time socket emit
-    socket.emit("postLiked", {
-      postId: post._id,
-      userId,
-      isLiked: isNowLiked,
-    });
-  } catch (err) {
-    console.error("Like failed:", err);
-    toast.error("Failed to like post.");
-  } finally {
-    setTimeout(() => setIsLiking(false), 500); // 🧠 debounce/reset like lock
-  }
-};
 
 const handleReact = async (emoji) => {
   if (!checkAuth()) return;

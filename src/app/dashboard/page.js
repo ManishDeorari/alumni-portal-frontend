@@ -98,22 +98,6 @@ export default function DashboardPage() {
     return () => socket.off("postCreated");
   }, []);
 
-  // ✅ Setup socket for liking Post
-useEffect(() => {
-  const handler = (updatedPost) => {
-    console.log("💥 postLiked socket received:", updatedPost);
-
-    setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        p._id === updatedPost._id ? updatedPost : p
-      )
-    );
-  };
-
-  socket.on("postLiked", handler);
-  return () => socket.off("postLiked", handler);
-}, []);
-
   // ✅ Setup socket for Reacting Post
 useEffect(() => {
   const handler = (updatedPost) => {

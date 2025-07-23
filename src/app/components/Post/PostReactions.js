@@ -4,16 +4,12 @@ import { motion } from "framer-motion";
 
 export default function PostReactions({
   post,
-  hasLiked,
-  handleLike,
   handleReact,
   getReactionCount,
   userReacted,
   setReactionEffect,
   reactionEffect,
   setVisibleComments,
-  likeIconRef,
-  isLiking, // ✅ Add this here
 }) {
   return (
     <>
@@ -40,18 +36,6 @@ export default function PostReactions({
       {/* Like and Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
         <button
-          ref={likeIconRef}
-          id={`like-icon-${post._id}`}
-          onClick={handleLike}
-          disabled={isLiking}
-          className={`font-semibold transition-colors duration-300  ${
-            hasLiked ? "text-blue-600" : "text-gray-600"
-          } ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          👍 Like ({(post.likes || []).length})
-        </button>
-
-        <button
           onClick={() => setVisibleComments((prev) => prev + 5)}
           className="font-semibold text-gray-600"
         >
@@ -61,7 +45,7 @@ export default function PostReactions({
 
       {/* Emoji Reaction Buttons */}
       <div className="flex gap-3 mt-2">
-        {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+        {["👍","❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
           <motion.div
             key={emoji}
             className="relative flex items-center"

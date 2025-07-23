@@ -77,24 +77,12 @@ export default function PostModal({
 
             {/* Reaction Stats */}
             <div className="text-sm text-gray-600 flex gap-6 mb-3">
-              <button
-                ref={likeIconRef}
-                id={`like-icon-${post._id}-modal`}
-                onClick={handleLike}
-                disabled={isLiking}
-                className={`font-semibold text-sm transition-colors duration-300 ${
-                  hasLiked ? "text-blue-600" : "text-gray-600"
-                } ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                👍 Like ({(post.likes || []).length})
-              </button>
-
               <span>💬 {post.comments?.length || 0} Comments</span>
             </div>
 
             {/* Emoji Reaction Buttons */}
             <div className="flex gap-3 mb-4">
-              {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+              {["👍","❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
                 <motion.div
                   key={emoji}
                   className="relative flex items-center"
