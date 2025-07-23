@@ -79,32 +79,41 @@ const handleLike = async () => {
   }
 };
 
-  const handleReact = async (emoji) => {
-    if (!checkAuth()) return;
-    try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ emoji }),
-        }
-      );
-      const updated = await res.json();
-      setPosts((prev) =>
-        prev.map((p) =>
-          p._id === post._id ? { ...p, reactions: updated.reactions } : p
-        )
-      );
-      socket.emit("updatePost", updated);
-      triggerReactionEffect(emoji);
-    } catch (err) {
-      toast.error("❌ Reaction failed");
-    }
-  };
+const handleReact = async (emoji) => {
+  if (!checkAuth()) return;
+
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/react`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ emoji }),
+      }
+    );
+
+    if (!res.ok) throw new Error("Reaction failed");
+
+    const updatedPost = await res.json();
+
+    // ✅ Update this user's view optimistically
+    setPosts((prev) =>
+      prev.map((p) => (p._id === post._id ? updatedPost : p))
+    );
+
+    // ✅ Emit real-time event to others
+    socket.emit("postReacted", updatedPost);
+
+    // ✅ Trigger local reaction animation
+    triggerReactionEffect(emoji);
+  } catch (err) {
+    console.error("Reaction Error:", err);
+    toast.error("❌ Reaction failed");
+  }
+};
 
   const handleEditSave = async (editContent) => {
   if (!checkAuth()) return;
