@@ -114,22 +114,6 @@ useEffect(() => {
   return () => socket.off("postLiked", handler);
 }, []);
 
-  // ✅ Setup socket for Reacting Post
-useEffect(() => {
-  const handler = (updatedPost) => {
-    console.log("💥 postReacted socket received:", updatedPost);
-
-    setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        p._id === updatedPost._id ? updatedPost : p
-      )
-    );
-  };
-
-  socket.on("postReacted", handler);
-  return () => socket.off("postReacted", handler);
-}, []);
-
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
 
