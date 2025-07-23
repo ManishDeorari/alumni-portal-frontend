@@ -59,7 +59,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
   // 🔧 Actions related to the post (like, react, delete, edit)
   const {
-    handleLike,
     handleReact,
     handleEditSave,
     handleDelete,
@@ -159,7 +158,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
         {...{
           post,
           hasLiked,
-          handleLike,
           handleReact,
           userReacted,
           getReactionCount,
