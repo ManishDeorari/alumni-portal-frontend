@@ -16,7 +16,6 @@ export default function usePostActions({
     return true;
   };
 
-
 const handleReact = async (emoji) => {
   if (!checkAuth()) return;
 
@@ -137,7 +136,6 @@ const toggleEdit = (editKey, setEditContent, editing, originalContent) => {
 };
 
   return {
-    handleLike,
     handleReact,
     handleEditSave,
     handleDelete,
