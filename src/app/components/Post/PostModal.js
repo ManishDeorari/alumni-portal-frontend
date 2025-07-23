@@ -3,7 +3,6 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CommentCard from "./commentCard";
 import PostMedia from "./PostMedia"; // ✅ Make sure this import is present
-import PostReactions from "./PostReactions"; // ensure this import exists
 
 export default function PostModal({
   showModal,
@@ -72,22 +71,39 @@ export default function PostModal({
               }}
             />
 
+            {/* Reaction Stats */}
+            <div className="text-sm text-gray-600 flex gap-6 mb-3">
+              <span>👍 {post.likes?.length || 0} Likes</span>
+              <span>💬 {post.comments?.length || 0} Comments</span>
+            </div>
 
-            {/* Emoji Reaction Buttons */} 
-            <PostReactions
-              post={post}
-              hasLiked={post.likes?.includes(currentUser._id)}
-              handleLike={() => {}} // optional placeholder, or pass real handler
-              handleReact={handleReact}
-              userReacted={userReacted}
-              getReactionCount={getReactionCount}
-              setShowModal={setShowModal}
-              likeIconRef={null}
-              isLiking={false}
-              setVisibleComments={() => {}}
-              setReactionEffect={setReactionEffect}
-              reactionEffect={reactionEffect}
-            />
+            {/* Emoji Reaction Buttons */}
+            <div className="flex gap-3 mb-4">
+              {["❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+                <motion.div
+                  key={emoji}
+                  className="relative flex items-center"
+                  onMouseEnter={() => setReactionEffect(emoji)}
+                  onMouseLeave={() => setReactionEffect(null)}
+                >
+                  <motion.button
+                    whileTap={{ scale: 1.3 }}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    onClick={() => handleReact(emoji)}
+                    className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
+                    title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+                  >
+                    {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
+                  </motion.button>
+                  {reactionEffect === emoji && (
+                    <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
+                      {emoji}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
 
             {/* Full Comment Thread */}
             <div className="space-y-3 border-t pt-3">
