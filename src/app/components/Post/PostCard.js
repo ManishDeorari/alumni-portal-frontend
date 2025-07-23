@@ -235,7 +235,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
       {showViewer && (
         <FullImageViewer
-          images={post.images}
+          images={post.images?.map((img) => img.url)} // ✅ extract URLs
           startIndex={startIndex}
           onClose={() => setShowViewer(false)}
         />
