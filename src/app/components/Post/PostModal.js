@@ -21,6 +21,10 @@ export default function PostModal({
   // ✅ Add these two
   setShowViewer,
   setStartIndex,
+  handleLike,
+  hasLiked,
+  isLiking,
+  likeIconRef,
 }) {
   return (
     <AnimatePresence>
@@ -74,14 +78,15 @@ export default function PostModal({
             {/* Reaction Stats */}
             <div className="text-sm text-gray-600 flex gap-6 mb-3">
               <button
-                onClick={() => handleReact("👍")}
-                className={`text-sm flex items-center gap-1 transition duration-200 ${
-                  userReacted("👍")
-                    ? "text-blue-600 font-semibold"
-                    : "text-gray-600 hover:text-blue-600"
-                }`}
+                ref={likeIconRef}
+                id={`like-icon-${post._id}-modal`}
+                onClick={handleLike}
+                disabled={isLiking}
+                className={`font-semibold text-sm transition-colors duration-300 ${
+                  hasLiked ? "text-blue-600" : "text-gray-600"
+                } ${isLiking ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                👍 {getReactionCount("👍")}
+                👍 Like ({(post.likes || []).length})
               </button>
 
               <span>💬 {post.comments?.length || 0} Comments</span>

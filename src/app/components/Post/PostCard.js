@@ -228,6 +228,10 @@ export default function PostCard({ post, currentUser, setPosts }) {
               // ✅ ADD THESE for FullImageViewer support
               setShowViewer,
               setStartIndex,
+              handleLike,
+              hasLiked,
+              isLiking,
+              likeIconRef,
             }}
           />
         )}

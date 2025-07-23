@@ -28,20 +28,23 @@ export default function usePostEffects({ post, currentUser, setEditContent, setH
   }, [editing]);
 
   useEffect(() => {
-    const socket = require("../../../../utils/socket").default;
-    const handleLikeAnimation = ({ postId, userId, isLiked }) => {
-      if (postId === post._id && userId !== currentUser._id) {
-        const icon = document.querySelector(`#like-icon-${post._id}`);
+  const socket = require("../../../../utils/socket").default;
+  const handleLikeAnimation = ({ postId, userId, isLiked }) => {
+    if (postId === post._id && userId !== currentUser._id) {
+      const ids = [`like-icon-${post._id}`, `like-icon-${post._id}-modal`];
+      ids.forEach((id) => {
+        const icon = document.getElementById(id);
         if (icon) {
           icon.classList.add(isLiked ? "animate-like" : "animate-unlike");
           setTimeout(() => {
             icon.classList.remove("animate-like", "animate-unlike");
           }, 500);
         }
-      }
-    };
-    socket.on("postLiked", handleLikeAnimation);
-    return () => socket.off("postLiked", handleLikeAnimation);
-  }, [post._id, currentUser._id]);
-  
+      });
+    }
+  };
+  socket.on("postLiked", handleLikeAnimation);
+  return () => socket.off("postLiked", handleLikeAnimation);
+}, [post._id, currentUser._id]);
+
 }
