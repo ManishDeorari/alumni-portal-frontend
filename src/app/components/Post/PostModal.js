@@ -73,7 +73,15 @@ export default function PostModal({
 
             {/* Reaction Stats */}
             <div className="text-sm text-gray-600 flex gap-6 mb-3">
-              <span>👍 {post.likes?.length || 0} Likes</span>
+              <button
+                onClick={() => handleReact("👍")}
+                className={`text-sm flex items-center gap-1 ${
+                  userReacted("👍") ? "text-blue-600 font-semibold" : "text-gray-600"
+                }`}
+              >
+              👍 {userReacted("👍") ? "Liked" : `${post.likes?.length || 0} Likes`}
+            </button>
+
               <span>💬 {post.comments?.length || 0} Comments</span>
             </div>
 
