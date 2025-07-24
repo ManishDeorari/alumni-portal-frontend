@@ -10,7 +10,7 @@ import PostHeader from "./Visual/PostHeader";
 import PostContent from "./Visual/PostContent";
 import PostMedia from "./Visual/PostMedia";
 import PostReactions from "./Visual/PostReactions";
-import PostModal from "./PostModal";
+import PostModal from ".Visual/PostModal";
 import CommentInput from "./Visual/CommentInput";
 import CommentCard from "./Visual/commentCard";
 import FullImageViewer from "./utils/FullImageViewer";

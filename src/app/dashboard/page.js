@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
-import CreatePost from "../components/CreatePost";
+import CreatePost from "../components/Post/CreatePost";
 import PostCard from "../components/Post/PostCard";
 import { motion, AnimatePresence } from "framer-motion";
 import socket from "../../utils/socket";
