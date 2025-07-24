@@ -81,6 +81,7 @@ const handleReact = async (emoji) => {
     setEditing(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     socket.emit("updatePost", updated);
+    toast.success("✏️ Post updated successfully");
   } catch (error) {
     toast.error("❌ Failed to update post");
   }

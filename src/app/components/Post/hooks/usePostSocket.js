@@ -1,6 +1,6 @@
 // components/Post/usePostSocket.js
 import { useEffect } from "react";
-import socket from "../../../utils/socket";
+import socket from "../../../../utils/socket";
 
 export default function usePostSocket(postId, currentUser, setSomeoneTyping, setPosts) {
   useEffect(() => {

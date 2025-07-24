@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import ImageGallery from "./ImageGallery"; // adjust the path if needed
-import FullImageViewer from "./FullImageViewer"; // optional, handled separately
+import ImageGallery from "../utils/ImageGallery"; // adjust the path if needed
+import FullImageViewer from "../utils/FullImageViewer"; // optional, handled separately
 
 export default function PostMedia({ post, setSelectedImage }) {
   if (!(post.images?.length > 0 || post.video || post.image)) return null;

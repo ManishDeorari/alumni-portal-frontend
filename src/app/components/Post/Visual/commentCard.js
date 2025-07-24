@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ReplyBox from "./ReplyBox";
+import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 
 export default function CommentCard({ comment, currentUser, onReply, onDelete, onEdit, replies = [] }) {

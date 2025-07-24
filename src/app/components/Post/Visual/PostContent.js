@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import EmojiPickerToggle from "../EmojiPickerToggle";
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 
 export default function PostContent({
   editing,
