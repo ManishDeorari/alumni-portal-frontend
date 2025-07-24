@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { createPost } from "../../api/dashboard";
+import { createPost } from "../../../api/dashboard";
 import toast from "react-hot-toast";
-import EmojiPickerToggle from "./Post/utils/EmojiPickerToggle";
+import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 
 const CreatePost = ({ setPosts, currentUser }) => {
   const [content, setContent] = useState("");
