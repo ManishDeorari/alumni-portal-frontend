@@ -114,6 +114,19 @@ useEffect(() => {
   return () => socket.off("postReacted", handler);
 }, []);
 
+// ✅ Setup socket for post deletion
+useEffect(() => {
+  if (!socket) return;
+
+  const handler = ({ postId }) => {
+    console.log("🗑️ postDeleted socket received:", postId);
+    setPosts((prev) => prev.filter((p) => p._id !== postId));
+  };
+
+  socket.on("postDeleted", handler);
+  return () => socket.off("postDeleted", handler);
+}, []);
+
   if (loading)
     return <div className="text-center mt-10 text-white">Loading...</div>;
 
