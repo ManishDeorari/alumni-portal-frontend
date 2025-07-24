@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import CommentCard from "./utils/commentCard";
-import PostMedia from "./Visual/PostMedia"; // ✅ Make sure this import is present
+import CommentCard from "../Visual/commentCard";
+import PostMedia from "../Visual/PostMedia"; // ✅ Make sure this import is present
 
 export default function PostModal({
   showModal,

@@ -6,13 +6,13 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Subcomponents
-import PostHeader from "./Visual/PostHeader";
-import PostContent from "./Visual/PostContent";
-import PostMedia from "./Visual/PostMedia";
-import PostReactions from "./Visual/PostReactions";
+import PostHeader from "../Post/Visual/PostHeader";
+import PostContent from "../Post/Visual/PostContent";
+import PostMedia from "../Post/Visual/PostMedia";
+import PostReactions from "../Post/Visual/PostReactions";
 import PostModal from "../Post/Visual/PostModal";
-import CommentInput from "./Visual/CommentInput";
-import CommentCard from "./Visual/commentCard";
+import CommentInput from "../Post/Visual/CommentInput";
+import CommentCard from "../Post/Visual/commentCard";
 
 import FullImageViewer from "./utils/FullImageViewer";
 
