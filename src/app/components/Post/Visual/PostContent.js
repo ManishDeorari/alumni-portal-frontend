@@ -18,7 +18,7 @@ export default function PostContent({
   };
 
   return (
-
+    <AnimatePresence mode="wait">
       {editing ? (
         <motion.div
           key="editor"
