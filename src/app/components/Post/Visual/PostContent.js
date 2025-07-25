@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import EmojiPickerToggle from "../utils/EmojiPickerToggle"
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 
 export default function PostContent({
   editing,
@@ -18,7 +18,7 @@ export default function PostContent({
   };
 
   return (
-    <AnimatePresence mode="wait">
+
       {editing ? (
         <motion.div
           key="editor"
