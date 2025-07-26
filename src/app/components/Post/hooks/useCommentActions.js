@@ -2,13 +2,13 @@ import { useCallback } from "react";
 import toast from "react-hot-toast";
 import socket from "../../../../utils/socket";
 
-export default function useCommentActions(
+export default function useCommentActions({
   post,
   currentUser,
   setPosts,
   setComment,
   setShowCommentEmoji
-) {
+}) {
   const token = localStorage.getItem("token");
 
   const checkAuth = () => {
@@ -35,6 +35,7 @@ export default function useCommentActions(
             body: JSON.stringify({ text: comment }),
           }
         );
+
         const updated = await res.json();
         if (setComment) setComment("");
         if (setShowCommentEmoji) setShowCommentEmoji(false);
@@ -42,6 +43,7 @@ export default function useCommentActions(
         setPosts((prev) =>
           prev.map((p) => (p._id === post._id ? updated : p))
         );
+
         socket.emit("updatePost", updated);
       } catch (err) {
         toast.error("❌ Failed to add comment");
