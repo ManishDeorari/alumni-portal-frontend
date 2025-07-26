@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import EmojiPickerToggle from "../utils/EmojiPickerToggle";
-import socket from "../../utils/socket";
+import socket from "../../../../utils/socket";
 
 export default function CommentInput({
   comment,
