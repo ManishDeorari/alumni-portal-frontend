@@ -8,10 +8,10 @@ const EmojiPickerToggle = ({
   onEmojiSelect,
   iconSize = "text-xl",
   icon = "😀",
-  offset = { x: 0, y: 0 }, // 🆕 new prop
+  offset = { x: 0, y: 0 }, // 🔥 Use this for minor manual shifts
 }) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [pickerStyle, setPickerStyle] = useState({ top: "40px", left: "0" });
+  const [pickerStyle, setPickerStyle] = useState({ top: "40px", left: "0px" });
 
   const buttonRef = useRef(null);
   const pickerRef = useRef(null);
@@ -20,13 +20,6 @@ const EmojiPickerToggle = ({
     e.stopPropagation();
     setShowPicker((prev) => !prev);
   };
-
-  setPickerStyle({
-    top: tooCloseToBottom ? undefined : `${40 + offset.y}px`,
-    bottom: tooCloseToBottom ? `${40 + offset.y}px` : undefined,
-    left: tooCloseToRight ? undefined : `${offset.x}px`,
-    right: tooCloseToRight ? `${offset.x}px` : undefined,
-  });
 
   const handleClickOutside = (e) => {
     if (
@@ -59,10 +52,10 @@ const EmojiPickerToggle = ({
           const tooCloseToBottom = spaceBottom < pickerHeight;
 
           setPickerStyle({
-            top: tooCloseToBottom ? undefined : "40px",
-            bottom: tooCloseToBottom ? "40px" : undefined,
-            left: tooCloseToRight ? undefined : "0px",
-            right: tooCloseToRight ? "0px" : undefined,
+            top: tooCloseToBottom ? undefined : `${40 + offset.y}px`,
+            bottom: tooCloseToBottom ? `${40 + offset.y}px` : undefined,
+            left: tooCloseToRight ? undefined : `${offset.x}px`,
+            right: tooCloseToRight ? `${offset.x}px` : undefined,
           });
         }
       }, 0);
@@ -73,7 +66,7 @@ const EmojiPickerToggle = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showPicker]);
+  }, [showPicker, offset]);
 
   return (
     <button ref={buttonRef} type="button" className={`relative ${iconSize}`} onClick={togglePicker}>
