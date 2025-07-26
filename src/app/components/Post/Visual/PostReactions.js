@@ -33,16 +33,6 @@ export default function PostReactions({
         </div>
       )}
 
-      {/* Like and Comment Buttons */}
-      <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
-        <button
-          onClick={() => setVisibleComments((prev) => prev + 5)}
-          className="font-semibold text-gray-600"
-        >
-          💬 Comment ({(post.comments || []).length})
-        </button>
-      </div>
-
       {/* Emoji Reaction Buttons */}
       <div className="flex gap-3 mt-2">
         {["👍","❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
@@ -69,6 +59,16 @@ export default function PostReactions({
             )}
           </motion.div>
         ))}
+      </div>
+
+      {/* Like and Comment Buttons */}
+      <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
+        <button
+          onClick={() => setVisibleComments((prev) => prev + 5)}
+          className="font-semibold text-gray-600"
+        >
+          💬 Comment ({(post.comments || []).length})
+        </button>
       </div>
     </>
   );

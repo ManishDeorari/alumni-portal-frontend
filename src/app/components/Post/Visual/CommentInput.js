@@ -57,6 +57,13 @@ export default function CommentInput({
         >
           <FaSmile size={18} />
         </button>
+        {/* ✅ New Submit Button */}
+        <button
+          onClick={onSubmit}
+          className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600"
+        >
+          Post
+        </button>
       </div>
 
       {/* Emoji Picker */}
