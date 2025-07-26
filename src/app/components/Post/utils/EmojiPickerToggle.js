@@ -8,6 +8,7 @@ const EmojiPickerToggle = ({
   onEmojiSelect,
   iconSize = "text-xl",
   icon = "😀",
+  offset = { x: 0, y: 0 }, // 🆕 new prop
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerStyle, setPickerStyle] = useState({ top: "40px", left: "0" });
@@ -19,6 +20,13 @@ const EmojiPickerToggle = ({
     e.stopPropagation();
     setShowPicker((prev) => !prev);
   };
+
+  setPickerStyle({
+    top: tooCloseToBottom ? undefined : `${40 + offset.y}px`,
+    bottom: tooCloseToBottom ? `${40 + offset.y}px` : undefined,
+    left: tooCloseToRight ? undefined : `${offset.x}px`,
+    right: tooCloseToRight ? `${offset.x}px` : undefined,
+  });
 
   const handleClickOutside = (e) => {
     if (

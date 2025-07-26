@@ -98,11 +98,12 @@ const CreatePost = ({ setPosts, currentUser }) => {
             className="w-full border rounded-lg p-2 resize-none"
             rows="3"
           />
-          <div className="absolute bottom-[100%] right-50">
+          <div className="absolute bottom-[100%] right-0">
             <EmojiPickerToggle
               onEmojiSelect={handleEmojiSelect}
               icon="😀"
               iconSize="text-2xl"
+              offset={{ x: -60, y: 0 }} // 🔥 shift picker 60px to left
               cursorPositioned={true}
             />
           </div>
