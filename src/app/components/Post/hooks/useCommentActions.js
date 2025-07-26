@@ -45,6 +45,7 @@ export default function useCommentActions({
         );
 
         socket.emit("updatePost", updated);
+        toast.success("💬 Comment posted!");
       } catch (err) {
         toast.error("❌ Failed to add comment");
       }
