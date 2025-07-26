@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
+import { Heart, HeartFilled } from "lucide-react"; // or use your preferred icons
 
 export default function CommentCard({ comment, currentUser, onReply, onDelete, onEdit, replies = [] }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -8,6 +9,21 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment.text);
   const [showEmoji, setShowEmoji] = useState(false);
+  
+  const toggleReaction = async () => {
+  try {
+    await fetch(`/api/posts/${postId}/comments/${comment._id}/react`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // or your method
+      },
+    });
+    // Optimistic update will come from socket
+  } catch (err) {
+    console.error("Reaction failed", err);
+  }
+};
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
@@ -94,6 +110,19 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
             )}
           </div>
         )}
+      </div>
+
+      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
+        <button onClick={toggleReaction} className="flex items-center gap-1">
+          {comment.reactions?.includes(currentUser._id) ? (
+            <span className="text-red-500">❤️</span>
+          ) : (
+            <span className="text-gray-400">🤍</span>
+          )}
+          {comment.reactions?.length > 0 && (
+              <span className="text-xs text-gray-500">{comment.reactions.length}</span>
+            )}
+        </button>
       </div>
 
       {/* Actions: Reply & Toggle Replies */}

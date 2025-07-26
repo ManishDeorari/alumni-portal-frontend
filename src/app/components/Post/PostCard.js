@@ -186,6 +186,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
             onDelete={handleDeleteComment}
             onEdit={handleEditComment}
             replies={c.replies || []}
+            postId={post._id} // ✅ Add this
           />
         ))}
 
