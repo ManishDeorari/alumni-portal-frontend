@@ -1,40 +1,18 @@
 "use client";
-import React, { useRef, useEffect } from "react";
-import { FaSmile } from "react-icons/fa";
-import EmojiPicker from "../utils/EmojiPickerToggle";
+import React, { useRef } from "react";
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 
 export default function CommentInput({
   comment,
   setComment,
-  onEmojiClick,
   onSubmit,
-  showCommentEmoji,
-  setShowCommentEmoji,
   typing,
   isTyping,
 }) {
   const inputRef = useRef(null);
-  const emojiRef = useRef(null);
 
-  // Hide emoji picker when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        emojiRef.current &&
-        !emojiRef.current.contains(e.target) &&
-        !inputRef.current?.contains(e.target)
-      ) {
-        setShowCommentEmoji(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setShowCommentEmoji]);
-
-  // ✅ Fix emoji insert directly into comment box
   const handleEmojiClick = (emojiObject) => {
-    setComment((prev) => prev + emojiObject.emoji);
-    setShowCommentEmoji(false);
+    setComment((prev) => prev + emojiObject.native || emojiObject.emoji); // emoji-mart v3/v5 support
   };
 
   return (
@@ -58,14 +36,13 @@ export default function CommentInput({
           ref={inputRef}
         />
 
-        {/* ✅ Emoji Picker */}
-          {showCommentEmoji && (
-            <div ref={emojiRef} className="absolute right-0 z-50 mt-2">
-              <EmojiPicker onEmojiClick={(e, emojiObject) => handleEmojiClick(emojiObject)} />
-            </div>
-          )}
+        {/* ✅ Working Emoji Picker Button */}
+        <EmojiPickerToggle
+          onEmojiSelect={handleEmojiClick}
+          icon="😊"
+          iconSize="text-xl"
+        />
 
-        {/* ✅ Comment Submit */}
         <button
           onClick={onSubmit}
           className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600"
@@ -76,7 +53,9 @@ export default function CommentInput({
 
       {/* Typing Indicator */}
       {typing && (
-        <p className="text-xs text-gray-400 mt-1 ml-2 italic">Someone is typing...</p>
+        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
+          Someone is typing...
+        </p>
       )}
     </div>
   );
