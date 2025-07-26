@@ -37,13 +37,12 @@ export default function CommentInput({
         />
 
         {/* ✅ Working Emoji Picker Button */}
-        <div className="absolute bottom-[120%] right-[120px] z-50">
-              <EmojiPickerToggle
-                onEmojiSelect={handleEmojiClick}
-                icon="😀"
-                iconSize="text-2xl"
-              />
-            </div>
+        <EmojiPickerToggle
+          onEmojiSelect={handleEmojiClick}
+          icon="😊"
+          iconSize="text-xl"
+          position="top-left" // 🔥 added!
+        />
 
         <button
           onClick={onSubmit}

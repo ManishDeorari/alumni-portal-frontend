@@ -30,7 +30,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
                 😊
               </button>
               {showEmoji && (
-                <div className="absolute z-50 top-10 left-10">
+                <div className="absolute z-10 top-10 left-10">
                   <Picker
                     onEmojiSelect={(emoji) =>
                       setEditText((prev) => prev + emoji.native)
