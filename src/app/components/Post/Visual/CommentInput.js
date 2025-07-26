@@ -4,7 +4,6 @@ import { FaSmile } from "react-icons/fa";
 import EmojiPicker from "../utils/EmojiPickerToggle";
 
 export default function CommentInput({
-  post,
   comment,
   setComment,
   onEmojiClick,
@@ -67,7 +66,10 @@ export default function CommentInput({
 
         {/* Post button */}
         <button
-          onClick={onSubmit}
+          onClick={() => {
+              console.log("🟦 Comment Post button clicked");
+              onSubmit();
+            }}
           className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600"
         >
           Post

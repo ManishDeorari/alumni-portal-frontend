@@ -190,21 +190,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
         )}
       </div>
 
-      <CommentInput
-        {...{
-          post,
-          currentUser,
-          comment,
-          setComment,
-          handleComment,
-          showCommentEmoji,
-          setShowCommentEmoji,
-          data,
-          getEmojiFromUnified,
-          socket,
-          someoneTyping,
-        }}
-      />
+    <CommentInput
+      comment={comment}
+      setComment={setComment}
+      onEmojiClick={(emoji) => setComment((prev) => prev + emoji)}
+      onSubmit={() => handleComment(comment)} // ✅ Correct
+      showCommentEmoji={showCommentEmoji}
+      setShowCommentEmoji={setShowCommentEmoji}
+      typing={someoneTyping}
+      isTyping={(val) => setSomeoneTyping(val)}
+    />
 
       <hr className="my-6 border-black" />
 
