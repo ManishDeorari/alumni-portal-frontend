@@ -4,45 +4,16 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { AnimatePresence, motion } from "framer-motion";
 
-// 🔧 Position utility that supports keywords and raw props
-const computePositionStyle = ({ position, top, bottom, left, right }) => {
-  // Priority: Numeric props > Keyword position
-  if (top !== undefined || bottom !== undefined || left !== undefined || right !== undefined) {
-    const style = {};
-    if (top !== undefined) style.top = typeof top === "number" ? `${top}px` : top;
-    if (bottom !== undefined) style.bottom = typeof bottom === "number" ? `${bottom}px` : bottom;
-    if (left !== undefined) style.left = typeof left === "number" ? `${left}px` : left;
-    if (right !== undefined) style.right = typeof right === "number" ? `${right}px` : right;
-    return style;
-  }
-
-  // Fallback: keyword-based
-  switch (position) {
-    case "top-left":
-      return { bottom: "40px", left: "0" };
-    case "top-right":
-      return { bottom: "40px", right: "0" };
-    case "bottom-left":
-      return { top: "40px", left: "0" };
-    case "bottom-right":
-    default:
-      return { top: "40px", right: "0" };
-  }
-};
-
 const EmojiPickerToggle = ({
   onEmojiSelect,
   iconSize = "text-xl",
   icon = "😀",
-  position = "bottom-right", // string like "top-left"
-  top,
-  bottom,
-  left,
-  right,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
-  const pickerRef = useRef(null);
+  const [pickerStyle, setPickerStyle] = useState({ top: "40px", left: "0" });
+
   const buttonRef = useRef(null);
+  const pickerRef = useRef(null);
 
   const togglePicker = (e) => {
     e.stopPropagation();
@@ -63,15 +34,38 @@ const EmojiPickerToggle = ({
   useEffect(() => {
     if (showPicker) {
       document.addEventListener("mousedown", handleClickOutside);
+
+      setTimeout(() => {
+        if (buttonRef.current) {
+          const rect = buttonRef.current.getBoundingClientRect();
+          const windowWidth = window.innerWidth;
+          const windowHeight = window.innerHeight;
+
+          const pickerWidth = 300;
+          const pickerHeight = 350;
+
+          const spaceRight = windowWidth - rect.left;
+          const spaceBottom = windowHeight - rect.bottom;
+
+          const tooCloseToRight = spaceRight < pickerWidth;
+          const tooCloseToBottom = spaceBottom < pickerHeight;
+
+          setPickerStyle({
+            top: tooCloseToBottom ? undefined : "40px",
+            bottom: tooCloseToBottom ? "40px" : undefined,
+            left: tooCloseToRight ? undefined : "0px",
+            right: tooCloseToRight ? "0px" : undefined,
+          });
+        }
+      }, 0);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPicker]);
-
-  const positionStyle = computePositionStyle({ position, top, bottom, left, right });
 
   return (
     <button ref={buttonRef} type="button" className={`relative ${iconSize}`} onClick={togglePicker}>
@@ -82,7 +76,7 @@ const EmojiPickerToggle = ({
           <motion.div
             ref={pickerRef}
             className="z-50 absolute"
-            style={positionStyle}
+            style={pickerStyle}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}

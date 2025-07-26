@@ -41,8 +41,6 @@ export default function CommentInput({
           onEmojiSelect={handleEmojiClick}
           icon="😊"
           iconSize="text-xl"
-          top={-200}
-          left={20}
         />
 
         <button
