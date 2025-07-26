@@ -43,6 +43,8 @@ export default function PostContent({
                 onEmojiSelect={handleEmojiSelect}
                 icon="😀"
                 iconSize="text-2xl"
+                top={-200}
+                left={20}
               />
             </div>
           </div>
