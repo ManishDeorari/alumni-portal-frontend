@@ -29,7 +29,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
       <div className="flex justify-between items-start">
         <div className="w-full">
-          <p className="text-sm font-semibold">{comment.user.name}</p>
+          <p className="text-sm font-semibold">{comment.user?.name}</p>
 
           {editing ? (
             <div className="flex gap-1 items-start">
@@ -65,7 +65,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
           </p>
         </div>
 
-        {comment.user._id === currentUser._id && (
+        {comment.user?._id === currentUser._id && (
           <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
               <>
