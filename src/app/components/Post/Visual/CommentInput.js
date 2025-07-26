@@ -1,9 +1,10 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import { FaSmile } from "react-icons/fa";
-import EmojiPicker from '../utils/EmojiPickerToggle'; // Or your custom emoji picker component
+import EmojiPicker from "../utils/EmojiPickerToggle";
 
 export default function CommentInput({
+  post,
   comment,
   setComment,
   onEmojiClick,
@@ -16,6 +17,7 @@ export default function CommentInput({
   const inputRef = useRef(null);
   const emojiRef = useRef(null);
 
+  // ✅ Close emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -30,26 +32,31 @@ export default function CommentInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setShowCommentEmoji]);
 
+  // ✅ Handle Enter key for submitting comment
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onSubmit();
+    }
+  };
+
   return (
     <div className="relative mt-2">
       <div className="flex items-center gap-2">
         <input
           type="text"
+          ref={inputRef}
           value={comment}
           onChange={(e) => {
             setComment(e.target.value);
-            isTyping(e.target.value.length > 0);
+            isTyping?.(e.target.value.length > 0);
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              onSubmit();
-            }
-          }}
+          onKeyDown={handleKeyDown}
           placeholder="Write a comment..."
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none"
-          ref={inputRef}
         />
+
+        {/* Emoji button */}
         <button
           type="button"
           onClick={() => setShowCommentEmoji(!showCommentEmoji)}
@@ -57,7 +64,8 @@ export default function CommentInput({
         >
           <FaSmile size={18} />
         </button>
-        {/* ✅ New Submit Button */}
+
+        {/* Post button */}
         <button
           onClick={onSubmit}
           className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600"
@@ -69,13 +77,19 @@ export default function CommentInput({
       {/* Emoji Picker */}
       {showCommentEmoji && (
         <div ref={emojiRef} className="absolute right-0 z-50 mt-2">
-          <EmojiPicker onEmojiClick={(e, emojiObject) => onEmojiClick(emojiObject.emoji)} />
+          <EmojiPicker
+            onEmojiClick={(e, emojiObject) =>
+              onEmojiClick?.(emojiObject.emoji)
+            }
+          />
         </div>
       )}
 
-      {/* Typing indicator */}
+      {/* Typing Indicator */}
       {typing && (
-        <p className="text-xs text-gray-400 mt-1 ml-2 italic">Someone is typing...</p>
+        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
+          Someone is typing...
+        </p>
       )}
     </div>
   );
