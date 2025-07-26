@@ -16,7 +16,7 @@ export default function CommentInput({
   const inputRef = useRef(null);
   const emojiRef = useRef(null);
 
-  // ✅ Close emoji picker when clicking outside
+  // Hide emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -31,12 +31,10 @@ export default function CommentInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setShowCommentEmoji]);
 
-  // ✅ Handle Enter key for submitting comment
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      onSubmit();
-    }
+  // ✅ Fix emoji insert directly into comment box
+  const handleEmojiClick = (emojiObject) => {
+    setComment((prev) => prev + emojiObject.emoji);
+    setShowCommentEmoji(false);
   };
 
   return (
@@ -44,18 +42,22 @@ export default function CommentInput({
       <div className="flex items-center gap-2">
         <input
           type="text"
-          ref={inputRef}
           value={comment}
           onChange={(e) => {
             setComment(e.target.value);
-            isTyping?.(e.target.value.length > 0);
+            isTyping(e.target.value.length > 0);
           }}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              onSubmit();
+            }
+          }}
           placeholder="Write a comment..."
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none"
+          ref={inputRef}
         />
 
-        {/* Emoji button */}
         <button
           type="button"
           onClick={() => setShowCommentEmoji(!showCommentEmoji)}
@@ -64,34 +66,25 @@ export default function CommentInput({
           <FaSmile size={18} />
         </button>
 
-        {/* Post button */}
+        {/* ✅ Comment Submit */}
         <button
-          onClick={() => {
-              console.log("🟦 Comment Post button clicked");
-              onSubmit();
-            }}
+          onClick={onSubmit}
           className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600"
         >
           Post
         </button>
       </div>
 
-      {/* Emoji Picker */}
+      {/* ✅ Emoji Picker */}
       {showCommentEmoji && (
         <div ref={emojiRef} className="absolute right-0 z-50 mt-2">
-          <EmojiPicker
-            onEmojiClick={(e, emojiObject) =>
-              onEmojiClick?.(emojiObject.emoji)
-            }
-          />
+          <EmojiPicker onEmojiClick={(e, emojiObject) => handleEmojiClick(emojiObject)} />
         </div>
       )}
 
       {/* Typing Indicator */}
       {typing && (
-        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
-          Someone is typing...
-        </p>
+        <p className="text-xs text-gray-400 mt-1 ml-2 italic">Someone is typing...</p>
       )}
     </div>
   );

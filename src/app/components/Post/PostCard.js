@@ -122,7 +122,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleLoadMore = () => {
-    setVisibleComments((prev) => prev + 3);
+    setVisibleComments((prev) => prev + 5);
   };
 
   // ✅ Everything's clean and ready for the `return` section now.
@@ -172,7 +172,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
       />
 
       <div className="pt-2 border-t border-gray-200 space-y-2">
-        {(post.comments || []).slice(0, visibleComments).map((c) => (
+      {/* ✅ Show latest comments first with pagination */}
+      {(post.comments || [])
+        .slice() // create a shallow copy
+        .reverse() // latest comment at top
+        .slice(0, visibleComments)
+        .map((c) => (
           <CommentCard
             key={c._id}
             comment={c}
@@ -183,12 +188,27 @@ export default function PostCard({ post, currentUser, setPosts }) {
             replies={c.replies || []}
           />
         ))}
-        {(post.comments || []).length > visibleComments && (
-          <button onClick={handleLoadMore} className="mt-2 text-sm text-blue-600">
-            Load more comments
-          </button>
-        )}
-      </div>
+
+      {/* ✅ Load More Button */}
+      {(post.comments || []).length > visibleComments && (
+        <button
+          onClick={handleLoadMore}
+          className="mt-2 text-sm text-blue-600 hover:underline"
+        >
+          Load more comments
+        </button>
+      )}
+
+      {/* ✅ Show Less Button */}
+      {visibleComments > 2 && (
+        <button
+          onClick={() => setVisibleComments(2)}
+          className="mt-1 text-sm text-gray-500 hover:underline"
+        >
+          Show less comments
+        </button>
+      )}
+    </div>
 
     <CommentInput
       comment={comment}
