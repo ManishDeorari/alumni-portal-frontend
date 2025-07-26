@@ -3,7 +3,7 @@ import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 import { Heart, HeartFilled } from "lucide-react"; // or use your preferred icons
 
-export default function CommentCard({ comment, currentUser, onReply, onDelete, onEdit, replies = [] }) {
+export default function CommentCard({ comment, currentUser, onReply, onDelete, onEdit, replies ,postId,}) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [editing, setEditing] = useState(false);
