@@ -221,6 +221,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
       isTyping={(val) => setSomeoneTyping(val)}
     />
 
+    {someoneTyping && (
+      <p className="text-xs text-gray-400 mt-1 ml-2 italic">
+        Someone is typing...
+      </p>
+    )}
+
       <hr className="my-6 border-black" />
 
       <AnimatePresence>

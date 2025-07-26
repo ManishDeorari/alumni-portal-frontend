@@ -1,18 +1,26 @@
-"use client";
 import React, { useRef } from "react";
 import EmojiPickerToggle from "../utils/EmojiPickerToggle";
+import socket from "../../utils/socket";
 
 export default function CommentInput({
   comment,
   setComment,
   onSubmit,
-  typing,
-  isTyping,
+  postId,
+  currentUser,
 }) {
   const inputRef = useRef(null);
 
   const handleEmojiClick = (emojiObject) => {
-    setComment((prev) => prev + emojiObject.native || emojiObject.emoji); // emoji-mart v3/v5 support
+    setComment((prev) => prev + (emojiObject.native || emojiObject.emoji));
+  };
+
+  const handleTyping = (value) => {
+    setComment(value);
+    socket.emit("typing", {
+      postId,
+      user: currentUser._id,
+    });
   };
 
   return (
@@ -21,10 +29,7 @@ export default function CommentInput({
         <input
           type="text"
           value={comment}
-          onChange={(e) => {
-            setComment(e.target.value);
-            isTyping(e.target.value.length > 0);
-          }}
+          onChange={(e) => handleTyping(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -36,7 +41,6 @@ export default function CommentInput({
           ref={inputRef}
         />
 
-        {/* ✅ Working Emoji Picker Button */}
         <EmojiPickerToggle
           onEmojiSelect={handleEmojiClick}
           icon="😊"
@@ -50,13 +54,6 @@ export default function CommentInput({
           Post
         </button>
       </div>
-
-      {/* Typing Indicator */}
-      {typing && (
-        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
-          Someone is typing...
-        </p>
-      )}
     </div>
   );
 }
