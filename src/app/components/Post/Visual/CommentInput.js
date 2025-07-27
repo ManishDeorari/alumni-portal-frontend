@@ -16,12 +16,13 @@ export default function CommentInput({
   };
 
   const handleTyping = (value) => {
-    setComment(value);
-    socket.emit("typing", {
-      postId,
-      user: currentUser._id,
-    });
-  };
+  setComment(value);
+  if (!currentUser || !currentUser._id) return;
+  socket.emit("typing", {
+    postId,
+    user: currentUser._id,
+  });
+};
 
   return (
     <div className="relative mt-2">

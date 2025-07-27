@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
+import socket from "../../../../utils/socket";
 
 export default function CommentCard({
   comment,
