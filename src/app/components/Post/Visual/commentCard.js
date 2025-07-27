@@ -13,7 +13,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
   const toggleReaction = async () => {
   try {
     await fetch(`/api/posts/${postId}/comments/${comment._id}/react`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`, // or your method
@@ -29,7 +29,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
       <div className="flex justify-between items-start">
         <div className="w-full">
-          <p className="text-sm font-semibold">{comment.user?.name}</p>
+          <p className="text-sm font-semibold">{comment.user?.name || "Unknown"}</p>
 
           {editing ? (
             <div className="flex gap-1 items-start">
@@ -114,7 +114,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
 
       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
         <button onClick={toggleReaction} className="flex items-center gap-1">
-          {comment.reactions?.includes(currentUser._id) ? (
+          {comment.reactions?.includes(comment.user?._id) ? (
             <span className="text-red-500">❤️</span>
           ) : (
             <span className="text-gray-400">🤍</span>
