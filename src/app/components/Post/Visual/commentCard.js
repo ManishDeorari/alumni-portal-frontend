@@ -114,14 +114,14 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
 
       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
         <button onClick={toggleReaction} className="flex items-center gap-1">
-          {comment.reactions?.includes(comment.user?._id) ? (
+          {comment.reactions?.includes(currentUser._id) ? (
             <span className="text-red-500">❤️</span>
           ) : (
             <span className="text-gray-400">🤍</span>
           )}
           {comment.reactions?.length > 0 && (
-              <span className="text-xs text-gray-500">{comment.reactions.length}</span>
-            )}
+            <span className="text-xs text-gray-500">{comment.reactions.length}</span>
+          )}
         </button>
       </div>
 
