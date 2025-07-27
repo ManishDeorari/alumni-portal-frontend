@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 import socket from "../../../../utils/socket";
+import { FaHeart, FaRegHeart } from "react-icons/fa"; // ❤️ icons
 
 export default function CommentCard({
   comment,
@@ -21,8 +22,12 @@ export default function CommentCard({
 
   if (!comment || !currentUser || !comment.user) return null;
 
-  // ✅ Toggle emoji reaction
-  const toggleReaction = async (emoji = "❤️") => {
+  const userId = currentUser._id;
+  const emoji = "❤️";
+  const usersReacted = comment.reactions?.[emoji] || [];
+  const hasReacted = usersReacted.includes(userId);
+
+  const toggleReaction = async () => {
     try {
       const res = await fetch(
         `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
@@ -37,9 +42,9 @@ export default function CommentCard({
       );
 
       if (!res.ok) throw new Error("Failed to react");
-
       const updatedPost = await res.json();
-      socket.emit("updatePostRequest", { postId }); // request update
+
+      socket.emit("updatePostRequest", { postId }); // Let others know
     } catch (err) {
       console.error("🔴 Reaction failed:", err);
     }
@@ -136,33 +141,22 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Emoji Reactions */}
-      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
-        {comment.reactions &&
-          Object.entries(comment.reactions).map(([emoji, users]) => {
-            const reacted = users.includes(currentUser._id);
-            return (
-              <button
-                key={emoji}
-                onClick={() => toggleReaction(emoji)}
-                className={`flex items-center gap-1 rounded px-1 ${
-                  reacted ? "bg-red-100" : "hover:bg-gray-100"
-                }`}
-              >
-                <span className={reacted ? "text-red-500" : "text-gray-500"}>
-                  {emoji}
-                </span>
-                <span className="text-xs text-gray-500">{users.length}</span>
-              </button>
-            );
-          })}
-
-        {/* ➕ Default Add Reaction (❤️) */}
+      {/* ❤️ Single emoji reaction (heart only) */}
+      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
         <button
-          onClick={() => toggleReaction("❤️")}
-          className="text-gray-400 hover:text-red-500 text-sm"
+          onClick={toggleReaction}
+          className={`flex items-center gap-1 rounded px-1 transition-all duration-150 ${
+            hasReacted ? "bg-red-100" : "hover:bg-gray-100"
+          }`}
         >
-          + React
+          {hasReacted ? (
+            <FaHeart className="text-red-500" />
+          ) : (
+            <FaRegHeart className="text-gray-500" />
+          )}
+          <span className="text-xs text-gray-500">
+            {usersReacted.length || 0}
+          </span>
         </button>
       </div>
 
