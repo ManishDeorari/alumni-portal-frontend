@@ -3,9 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 import socket from "../../../../utils/socket";
-import useEmojiAnimation, {
-  triggerReactionEffect,
-} from "../hooks/useEmojiAnimation";
+import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 
 export default function CommentCard({
   comment,
@@ -21,18 +19,12 @@ export default function CommentCard({
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
-  const [localReactions, setLocalReactions] = useState(comment.reactions);
+  const [localReactions, setLocalReactions] = useState(comment.reactions || {});
   const heartRef = useRef(null);
 
-  // ✅ First: Hooks must come first
-useEffect(() => {
-  if (comment?.reactions) {
-    setLocalReactions(comment.reactions);
-  }
-}, [comment?.reactions]);
-
-// ❌ Must come after all hooks
-if (!comment || !currentUser || !comment.user) return null;
+  useEffect(() => {
+    setLocalReactions(comment.reactions || {});
+  }, [comment.reactions]);
 
   const toggleReaction = async (emoji = "❤️") => {
     try {
@@ -50,15 +42,18 @@ if (!comment || !currentUser || !comment.user) return null;
 
       if (!res.ok) throw new Error("Failed to react");
 
-      const updatedPost = await res.json();
+      const updated = await res.json(); // ✅ expects updated comment object
+      setLocalReactions(updated.reactions || {}); // ✅ Update reactions
       socket.emit("updatePostRequest", { postId });
-
-      // 🎉 Trigger floating heart effect
       triggerReactionEffect(emoji);
     } catch (err) {
       console.error("🔴 Reaction failed:", err);
     }
   };
+
+  if (!comment || !currentUser || !comment.user) return null;
+
+  const hasReacted = localReactions?.["❤️"]?.includes(currentUser._id);
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
@@ -102,7 +97,6 @@ if (!comment || !currentUser || !comment.user) return null;
           </p>
         </div>
 
-        {/* ✏️ Edit/Delete Controls */}
         {comment.user?._id === currentUser._id && (
           <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
@@ -151,7 +145,7 @@ if (!comment || !currentUser || !comment.user) return null;
         )}
       </div>
 
-      {/* ❤️ Emoji Reaction */}
+      {/* ❤️ Reaction */}
       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
         <button
           onClick={() => toggleReaction("❤️")}
@@ -160,11 +154,7 @@ if (!comment || !currentUser || !comment.user) return null;
           <span
             ref={heartRef}
             className={`transition-all duration-200 ${
-              localReactions?.["❤️"]?.some(
-                (id) => id.toString() === currentUser._id.toString()
-              )
-                ? "text-red-500"
-                : "text-gray-400"
+              hasReacted ? "text-red-500" : "text-gray-400"
             } text-[18px]`}
           >
             ❤️
@@ -175,7 +165,7 @@ if (!comment || !currentUser || !comment.user) return null;
         </button>
       </div>
 
-      {/* 💬 Reply Actions */}
+      {/* 💬 Actions */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
         <button onClick={() => setShowReplyBox((v) => !v)}>
           {showReplyBox ? "Cancel" : "Reply"}
@@ -196,7 +186,6 @@ if (!comment || !currentUser || !comment.user) return null;
         )}
       </div>
 
-      {/* 📝 Reply Box */}
       {showReplyBox && (
         <ReplyBox
           parentId={comment._id}
@@ -207,7 +196,6 @@ if (!comment || !currentUser || !comment.user) return null;
         />
       )}
 
-      {/* 🔁 Nested Replies */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {replies.map((r) => (
