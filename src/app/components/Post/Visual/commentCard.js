@@ -1,8 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 import socket from "../../../../utils/socket";
+import useEmojiAnimation, {
+  triggerReactionEffect,
+} from "../PostCard/hooks/useEmojiAnimation";
 
 export default function CommentCard({
   comment,
@@ -18,31 +21,18 @@ export default function CommentCard({
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
-  const [localReactions, setLocalReactions] = useState(comment.reactions || {});
+  const [localReactions, setLocalReactions] = useState(comment.reactions);
+  const heartRef = useRef(null);
 
   if (!comment || !currentUser || !comment.user) return null;
 
-  // ✅ Toggle emoji reaction
+  // 🔄 Sync local reactions when props update
+  useEffect(() => {
+    setLocalReactions(comment.reactions);
+  }, [comment.reactions]);
+
   const toggleReaction = async (emoji = "❤️") => {
     try {
-      // Optimistic UI update
-      const updated = { ...localReactions };
-      const users = updated[emoji]?.map((id) => id.toString()) || [];
-
-      const alreadyReacted = users.includes(currentUser._id.toString());
-
-      if (alreadyReacted) {
-        // Remove user from reaction
-        updated[emoji] = users.filter(
-          (id) => id !== currentUser._id.toString()
-        );
-      } else {
-        // Add user to reaction
-        updated[emoji] = [...users, currentUser._id.toString()];
-      }
-
-      setLocalReactions(updated); // update UI immediately
-
       const res = await fetch(
         `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
         {
@@ -57,9 +47,11 @@ export default function CommentCard({
 
       if (!res.ok) throw new Error("Failed to react");
 
-      // Real update from server via socket
       const updatedPost = await res.json();
       socket.emit("updatePostRequest", { postId });
+
+      // 🎉 Trigger floating heart effect
+      triggerReactionEffect(emoji);
     } catch (err) {
       console.error("🔴 Reaction failed:", err);
     }
@@ -107,7 +99,7 @@ export default function CommentCard({
           </p>
         </div>
 
-        {/* ✏️ Owner controls */}
+        {/* ✏️ Edit/Delete Controls */}
         {comment.user?._id === currentUser._id && (
           <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
@@ -156,31 +148,31 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Heart Reaction (only one emoji style) */}
-<div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
-  <button
-    onClick={() => toggleReaction("❤️")}
-    className="flex items-center gap-1 rounded px-1 focus:outline-none"
-  >
-    <span
-      className={`text-xl transition-all duration-200 ${
-        localReactions?.["❤️"]?.some(
-          (id) => id.toString() === currentUser._id.toString()
-        )
-          ? "text-red-500"
-          : "text-gray-400"
-      }`}
-    >
-      ❤️
-    </span>
-    <span className="text-xs text-gray-600">
-      {localReactions?.["❤️"]?.length || 0}
-    </span>
-  </button>
-</div>
+      {/* ❤️ Emoji Reaction */}
+      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
+        <button
+          onClick={() => toggleReaction("❤️")}
+          className="flex items-center gap-1 rounded px-1 focus:outline-none"
+        >
+          <span
+            ref={heartRef}
+            className={`transition-all duration-200 ${
+              localReactions?.["❤️"]?.some(
+                (id) => id.toString() === currentUser._id.toString()
+              )
+                ? "text-red-500"
+                : "text-gray-400"
+            } text-[18px]`}
+          >
+            ❤️
+          </span>
+          <span className="text-base font-bold text-gray-700">
+            {localReactions?.["❤️"]?.length || 0}
+          </span>
+        </button>
+      </div>
 
-
-      {/* 🧵 Reply actions */}
+      {/* 💬 Reply Actions */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
         <button onClick={() => setShowReplyBox((v) => !v)}>
           {showReplyBox ? "Cancel" : "Reply"}
@@ -201,7 +193,7 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* 💬 Reply Box */}
+      {/* 📝 Reply Box */}
       {showReplyBox && (
         <ReplyBox
           parentId={comment._id}
