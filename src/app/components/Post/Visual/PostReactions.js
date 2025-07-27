@@ -47,7 +47,7 @@ export default function PostReactions({
               whileHover={{ scale: 1.2 }}
               transition={{ type: "spring", stiffness: 300 }}
               onClick={() => handleReact(emoji)}
-              className={`text-2xl px-2 py-1 rounded-full transition-all duration-150 ${
+              className={`text-2xl px-2 py-1 rounded-full transition-all duration-50 ${
                 userReacted(emoji)
                   ? "bg-red-100 text-blue-600 font-semibold shadow"
                   : "bg-gray-100 text-black font-semibold shadow hover:bg-gray-200"
