@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
 import socket from "../../../../utils/socket";
-import { FaHeart, FaRegHeart } from "react-icons/fa"; // ❤️ icons
 
 export default function CommentCard({
   comment,
@@ -19,16 +18,31 @@ export default function CommentCard({
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
+  const [localReactions, setLocalReactions] = useState(comment.reactions || {});
 
   if (!comment || !currentUser || !comment.user) return null;
 
-  const userId = currentUser._id;
-  const emoji = "❤️";
-  const usersReacted = comment.reactions?.[emoji] || [];
-  const hasReacted = usersReacted.includes(userId);
-
-  const toggleReaction = async () => {
+  // ✅ Toggle emoji reaction
+  const toggleReaction = async (emoji = "❤️") => {
     try {
+      // Optimistic UI update
+      const updated = { ...localReactions };
+      const users = updated[emoji]?.map((id) => id.toString()) || [];
+
+      const alreadyReacted = users.includes(currentUser._id.toString());
+
+      if (alreadyReacted) {
+        // Remove user from reaction
+        updated[emoji] = users.filter(
+          (id) => id !== currentUser._id.toString()
+        );
+      } else {
+        // Add user to reaction
+        updated[emoji] = [...users, currentUser._id.toString()];
+      }
+
+      setLocalReactions(updated); // update UI immediately
+
       const res = await fetch(
         `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
         {
@@ -42,9 +56,10 @@ export default function CommentCard({
       );
 
       if (!res.ok) throw new Error("Failed to react");
-      const updatedPost = await res.json();
 
-      socket.emit("updatePostRequest", { postId }); // Let others know
+      // Real update from server via socket
+      const updatedPost = await res.json();
+      socket.emit("updatePostRequest", { postId });
     } catch (err) {
       console.error("🔴 Reaction failed:", err);
     }
@@ -141,22 +156,39 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Single emoji reaction (heart only) */}
-      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
+      {/* ❤️ Emoji Reactions */}
+      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
+        {localReactions &&
+          Object.entries(localReactions).map(([emoji, users]) => {
+            const reacted = users.some(
+              (id) => id.toString() === currentUser._id.toString()
+            );
+            const count = users.length;
+
+            if (count === 0) return null; // skip if nobody reacted
+
+            return (
+              <button
+                key={emoji}
+                onClick={() => toggleReaction(emoji)}
+                className={`flex items-center gap-1 rounded px-1 ${
+                  reacted ? "bg-red-100" : "hover:bg-gray-100"
+                }`}
+              >
+                <span className={reacted ? "text-red-500" : "text-gray-500"}>
+                  {emoji}
+                </span>
+                <span className="text-xs text-gray-500">{count}</span>
+              </button>
+            );
+          })}
+
+        {/* ➕ Default Add Reaction (❤️) */}
         <button
-          onClick={toggleReaction}
-          className={`flex items-center gap-1 rounded px-1 transition-all duration-150 ${
-            hasReacted ? "bg-red-100" : "hover:bg-gray-100"
-          }`}
+          onClick={() => toggleReaction("❤️")}
+          className="text-gray-400 hover:text-red-500 text-sm"
         >
-          {hasReacted ? (
-            <FaHeart className="text-red-500" />
-          ) : (
-            <FaRegHeart className="text-gray-500" />
-          )}
-          <span className="text-xs text-gray-500">
-            {usersReacted.length || 0}
-          </span>
+          + React
         </button>
       </div>
 
