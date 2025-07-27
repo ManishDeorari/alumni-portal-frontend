@@ -11,13 +11,15 @@ export default function CommentCard({
   replies,
   postId,
 }) {
-  if (!comment || !currentUser) return null;
-
+  // ✅ Always call hooks first!
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [editText, setEditText] = useState(comment.text);
+  const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
+
+  // ✅ Handle null/undefined cases after hook declarations
+  if (!comment || !currentUser) return null;
 
   const toggleReaction = async () => {
     try {
@@ -28,7 +30,6 @@ export default function CommentCard({
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      // Reaction updates will be handled via socket
     } catch (err) {
       console.error("Reaction failed", err);
     }
