@@ -74,7 +74,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
           if (exists) return prev;
           return [newPost, ...prev];
         });
-        toast.success("🎉 Post uploaded successfully!");
+        toast.success("🎉 Post uploaded successfully!",{ autoClose: 1500 });
       } else {
         console.warn("❌ Unexpected post format:", result);
         toast.error("❌ Post failed to upload correctly.");

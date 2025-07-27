@@ -45,7 +45,7 @@ export default function useCommentActions({
         );
 
         socket.emit("updatePost", updated);
-        toast.success("💬 Comment posted!");
+        toast.success("💬 Comment posted!", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to add comment");
       }
@@ -113,7 +113,7 @@ export default function useCommentActions({
           )
         );
 
-        toast.success("✏️ Comment updated");
+        toast.success("✏️ Comment updated", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to update comment");
       }
@@ -136,6 +136,7 @@ export default function useCommentActions({
           prev.map((p) => (p._id === post._id ? updated : p))
         );
         socket.emit("updatePost", updated);
+        toast.success("🗑️ Comment deleted!", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to delete comment");
       }

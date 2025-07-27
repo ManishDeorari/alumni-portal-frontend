@@ -81,7 +81,7 @@ const handleReact = async (emoji) => {
     setEditing(false);
     setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
     socket.emit("updatePost", updated);
-    toast.success("✏️ Post updated successfully");
+    toast.success("✏️ Post updated successfully", { autoClose: 1500 });
   } catch (error) {
     toast.error("❌ Failed to update post");
   }
@@ -102,7 +102,7 @@ const handleReact = async (emoji) => {
       );
       await res.json();
       setPosts((prev) => prev.filter((p) => p._id !== post._id));
-      toast.success("🗑️ Post deleted");
+      toast.success("🗑️ Post deleted",{ autoClose: 1500 });
     } catch (err) {
       toast.error("❌ Failed to delete post");
     }
