@@ -5,7 +5,7 @@ import Picker from "@emoji-mart/react";
 import socket from "../../../../utils/socket";
 import useEmojiAnimation, {
   triggerReactionEffect,
-} from "../PostCard/hooks/useEmojiAnimation";
+} from "../hooks/useEmojiAnimation";
 
 export default function CommentCard({
   comment,
