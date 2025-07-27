@@ -170,7 +170,7 @@ export default function CommentCard({
                 ${
                   reacted
                     ? "bg-red-100 text-blue-600 font-semibold shadow-sm"
-                    : "bg-gray-100 text-gray-600"
+                    : "bg-gray-100 text-black-600 font-semibold shadow-sm"
                 } hover:scale-105`}
             >
               <span
