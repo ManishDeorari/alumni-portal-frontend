@@ -20,6 +20,7 @@ export default function CommentCard({
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
   const [reactions, setReactions] = useState(comment.reactions || {});
+  const [deleting, setDeleting] = useState(false);
   const heartRef = useRef(null);
 
   useEffect(() => {
@@ -137,10 +138,15 @@ export default function CommentCard({
                   Edit
                 </button>
                 <button
-                  onClick={() => onDelete(comment._id)}
-                  className="text-red-500 block"
+                  onClick={async () => {
+                    setDeleting(true);
+                    await onDelete(comment._id);
+                    setDeleting(false);
+                  }}
+                  disabled={deleting}
+                  className="text-red-500 block disabled:opacity-50"
                 >
-                  Delete
+                  {deleting ? "Deleting..." : "Delete"}
                 </button>
               </>
             )}
@@ -149,7 +155,7 @@ export default function CommentCard({
       </div>
 
       {/* 🎉 Multiple Emoji Reactions */}
-      <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
+      <div className="flex flex-wrap items-center gap-1 mt-1 text-sm">
         {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
           const count = reactions?.[emoji]?.length || 0;
           const reacted =
@@ -163,7 +169,7 @@ export default function CommentCard({
               className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 text-sm 
                 ${
                   reacted
-                    ? "bg-blue-100 text-blue-600 font-semibold shadow-sm"
+                    ? "text-red-500 font-semibold shadow-sm"
                     : "bg-gray-100 text-gray-600"
                 } hover:scale-105`}
             >
