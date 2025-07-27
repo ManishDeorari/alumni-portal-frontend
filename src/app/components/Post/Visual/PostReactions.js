@@ -44,13 +44,13 @@ export default function PostReactions({
           >
             <motion.button
               whileTap={{ scale: 1.3 }}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.2 }}
               transition={{ type: "spring", stiffness: 300 }}
               onClick={() => handleReact(emoji)}
               className={`text-2xl px-2 py-1 rounded-full transition-all duration-150 ${
                 userReacted(emoji)
-                  ? "bg-red-100 text-blue-600 font-semibold shadow-sm scale-75"
-                  : "bg-gray-100 text-black font-semibold shadow-sm hover:scale-75"
+                  ? "bg-red-100 text-blue-600 font-semibold shadow"
+                  : "bg-gray-100 text-black font-semibold shadow hover:bg-gray-200"
               }`}
               title={
                 userReacted(emoji)
@@ -60,6 +60,7 @@ export default function PostReactions({
             >
               {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
             </motion.button>
+
             {reactionEffect === emoji && (
               <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-sm px-2 py-1 bg-gray-800 text-white rounded shadow">
                 {emoji}
