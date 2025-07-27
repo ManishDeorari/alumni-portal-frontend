@@ -155,7 +155,7 @@ export default function CommentCard({
       </div>
 
       {/* 🎉 Multiple Emoji Reactions */}
-      <div className="flex flex-wrap items-center gap-1 mt-1 text-sm">
+      <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
         {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
           const count = reactions?.[emoji]?.length || 0;
           const reacted =
@@ -169,7 +169,7 @@ export default function CommentCard({
               className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 text-sm 
                 ${
                   reacted
-                    ? "text-red-500 font-semibold shadow-sm"
+                    ? "bg-red-100 text-blue-600 font-semibold shadow-sm"
                     : "bg-gray-100 text-gray-600"
                 } hover:scale-105`}
             >
