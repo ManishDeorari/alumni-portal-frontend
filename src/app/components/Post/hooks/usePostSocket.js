@@ -14,7 +14,7 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
     };
 
     const handleCommentReacted = ({ postId: incomingId, commentId, userId, emoji }) => {
-  if (incomingId !== postId){ console.error("🔥 Incoming ID Comment eactiorn error:", err.message); return;}
+  if (incomingId !== postId){ return;}
 
 setPosts((prevPosts) =>
   prevPosts.map((post) => {
