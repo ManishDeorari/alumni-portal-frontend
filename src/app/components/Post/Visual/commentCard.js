@@ -13,37 +13,37 @@ export default function CommentCard({
   replies = [],
   postId,
 }) {
-  // 🔒 Hook declarations at the top
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
 
-  // ✅ Prevent crashes if missing data
   if (!comment || !currentUser || !comment.user) return null;
 
-  const toggleReaction = async () => {
-  try {
-    const res = await fetch(
-      `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
+  // ✅ Toggle emoji reaction
+  const toggleReaction = async (emoji = "❤️") => {
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ emoji }),
+        }
+      );
 
-    const data = await res.json();
+      if (!res.ok) throw new Error("Failed to react");
 
-    // Optionally, emit update if not already
-    socket.emit("updatePostRequest", { postId }); // new event
-  } catch (err) {
-    console.error("🔴 Reaction failed:", err);
-  }
-};
+      const updatedPost = await res.json();
+      socket.emit("updatePostRequest", { postId }); // request update
+    } catch (err) {
+      console.error("🔴 Reaction failed:", err);
+    }
+  };
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
@@ -136,19 +136,33 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Reactions */}
-      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-        <button onClick={toggleReaction} className="flex items-center gap-1">
-          {comment.reactions?.includes(currentUser._id) ? (
-            <span className="text-red-500">❤️</span>
-          ) : (
-            <span className="text-gray-400">🤍</span>
-          )}
-          {comment.reactions?.length > 0 && (
-            <span className="text-xs text-gray-500">
-              {comment.reactions.length}
-            </span>
-          )}
+      {/* ❤️ Emoji Reactions */}
+      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
+        {comment.reactions &&
+          Object.entries(comment.reactions).map(([emoji, users]) => {
+            const reacted = users.includes(currentUser._id);
+            return (
+              <button
+                key={emoji}
+                onClick={() => toggleReaction(emoji)}
+                className={`flex items-center gap-1 rounded px-1 ${
+                  reacted ? "bg-red-100" : "hover:bg-gray-100"
+                }`}
+              >
+                <span className={reacted ? "text-red-500" : "text-gray-500"}>
+                  {emoji}
+                </span>
+                <span className="text-xs text-gray-500">{users.length}</span>
+              </button>
+            );
+          })}
+
+        {/* ➕ Default Add Reaction (❤️) */}
+        <button
+          onClick={() => toggleReaction("❤️")}
+          className="text-gray-400 hover:text-red-500 text-sm"
+        >
+          + React
         </button>
       </div>
 
@@ -184,7 +198,7 @@ export default function CommentCard({
         />
       )}
 
-      {/* 🔁 Render Replies */}
+      {/* 🔁 Nested Replies */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {replies.map((r) => (
