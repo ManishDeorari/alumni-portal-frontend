@@ -19,11 +19,11 @@ export default function CommentCard({
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
-  const [localReactions, setLocalReactions] = useState(comment.reactions || {});
+  const [reactions, setReactions] = useState(comment.reactions || {});
   const heartRef = useRef(null);
 
   useEffect(() => {
-    setLocalReactions(comment.reactions || {});
+    setReactions(comment.reactions || {});
   }, [comment.reactions]);
 
   const toggleReaction = async (emoji = "❤️") => {
@@ -42,8 +42,12 @@ export default function CommentCard({
 
       if (!res.ok) throw new Error("Failed to react");
 
-      const updated = await res.json(); // ✅ expects updated comment object
-      setLocalReactions(updated.reactions || {}); // ✅ Update reactions
+      const updated = await res.json();
+      const updatedReactions = updated?.reactions || updated?.comment?.reactions;
+      if (updatedReactions) {
+        setReactions(updatedReactions); // ✅ All-user reaction state
+      }
+
       socket.emit("updatePostRequest", { postId });
       triggerReactionEffect(emoji);
     } catch (err) {
@@ -53,7 +57,7 @@ export default function CommentCard({
 
   if (!comment || !currentUser || !comment.user) return null;
 
-  const hasReacted = localReactions?.["❤️"]?.includes(currentUser._id);
+  const hasReacted = reactions?.["❤️"]?.includes(currentUser._id);
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
@@ -160,7 +164,7 @@ export default function CommentCard({
             ❤️
           </span>
           <span className="text-base font-bold text-gray-700">
-            {localReactions?.["❤️"]?.length || 0}
+            {reactions?.["❤️"]?.length || 0}
           </span>
         </button>
       </div>
