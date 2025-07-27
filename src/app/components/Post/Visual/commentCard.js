@@ -26,7 +26,7 @@ export default function CommentCard({
     setReactions(comment.reactions || {});
   }, [comment.reactions]);
 
-  const toggleReaction = async (emoji = "❤️") => {
+  const toggleReaction = async (emoji) => {
     try {
       const res = await fetch(
         `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
@@ -55,9 +55,6 @@ export default function CommentCard({
       console.error("🔴 Reaction failed:", err);
     }
   };
-
-  const hasReacted = Array.isArray(reactions?.["❤️"]) &&
-  reactions["❤️"].some((id) => id === currentUser._id);
 
   if (!comment || !currentUser || !comment.user) return null;
 
@@ -151,26 +148,36 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Reaction */}
-      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
-        <button
-          onClick={() => toggleReaction("❤️")}
-          className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 
-            ${hasReacted ? "bg-red-100 text-red-600 font-semibold shadow" : "bg-gray-100 text-gray-600"}
-            hover:scale-105`}
-        >
-          <span
-            ref={heartRef}
-            className={`text-lg ${
-              hasReacted ? "text-red-500" : "text-gray-500"
-            }`}
-          >
-            ❤️
-          </span>
-          <span className="text-sm">
-            {reactions?.["❤️"]?.length || 0}
-          </span>
-        </button>
+      {/* 🎉 Multiple Emoji Reactions */}
+      <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
+        {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
+          const count = reactions?.[emoji]?.length || 0;
+          const reacted =
+            Array.isArray(reactions?.[emoji]) &&
+            reactions[emoji].includes(currentUser._id);
+
+          return (
+            <button
+              key={emoji}
+              onClick={() => toggleReaction(emoji)}
+              className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 text-sm 
+                ${
+                  reacted
+                    ? "bg-blue-100 text-blue-600 font-semibold shadow-sm"
+                    : "bg-gray-100 text-gray-600"
+                } hover:scale-105`}
+            >
+              <span
+                className={`text-[18px] ${
+                  reacted ? "scale-110" : ""
+                } transition-transform`}
+              >
+                {emoji}
+              </span>
+              <span>{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* 💬 Actions */}

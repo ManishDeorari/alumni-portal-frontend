@@ -82,7 +82,7 @@ export default function PostModal({
 
             {/* Emoji Reaction Buttons */}
             <div className="flex gap-3 mb-4">
-              {["👍","❤️", "😂", "😮", "😢", "😡"].map((emoji) => (
+              {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
                 <motion.div
                   key={emoji}
                   className="relative flex items-center"
