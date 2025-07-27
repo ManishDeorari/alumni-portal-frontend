@@ -13,28 +13,38 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
       }
     };
 
-    const handleCommentReacted = ({ postId: incomingId, commentId, userId }) => {
-      if (incomingId !== postId) return;
+    const handleCommentReacted = ({ postId: incomingId, commentId, userId, emoji }) => {
+  if (incomingId !== postId) return;
 
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
-          if (post._id !== incomingId) return post;
+  setPosts((prevPosts) =>
+    prevPosts.map((post) => {
+      if (post._id !== incomingId) return post;
 
-          const updatedComments = post.comments.map((c) => {
-            if (c._id !== commentId) return c;
+      const updatedComments = post.comments.map((c) => {
+        if (c._id !== commentId) return c;
 
-            const already = c.reactions?.includes(userId);
-            const updatedReactions = already
-              ? c.reactions.filter((id) => id !== userId)
-              : [...(c.reactions || []), userId];
+        const currentReactions = { ...c.reactions };
 
-            return { ...c, reactions: updatedReactions };
-          });
+        // Ensure the emoji key exists as an array
+        const emojiReactions = currentReactions[emoji] || [];
 
-          return { ...post, comments: updatedComments };
-        })
-      );
-    };
+        const already = emojiReactions.includes(userId);
+        const updatedEmojiReactions = already
+          ? emojiReactions.filter((id) => id !== userId)
+          : [...emojiReactions, userId];
+
+        currentReactions[emoji] = updatedEmojiReactions;
+
+        return {
+          ...c,
+          reactions: currentReactions,
+        };
+      });
+
+      return { ...post, comments: updatedComments };
+    })
+  );
+};
 
     const handleUpdatePostRequest = async ({ postId: incomingId }) => {
       try {

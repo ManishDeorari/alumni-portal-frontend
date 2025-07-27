@@ -56,7 +56,8 @@ export default function CommentCard({
     }
   };
 
-  const hasReacted = reactions?.["❤️"]?.includes(currentUser._id);
+  const hasReacted = Array.isArray(reactions?.["❤️"]) &&
+  reactions["❤️"].some((id) => id === currentUser._id);
 
   if (!comment || !currentUser || !comment.user) return null;
 
