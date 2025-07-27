@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
@@ -8,30 +9,33 @@ export default function CommentCard({
   onReply,
   onDelete,
   onEdit,
-  replies,
+  replies = [],
   postId,
 }) {
-  // ✅ Always call hooks first!
+  // 🔒 Hook declarations at the top
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
 
-  // ✅ Handle null/undefined cases after hook declarations
-  if (!comment || !currentUser) return null;
+  // ✅ Prevent crashes if missing data
+  if (!comment || !currentUser || !comment.user) return null;
 
   const toggleReaction = async () => {
     try {
-      await fetch(`/api/posts/${postId}/comments/${comment._id}/react`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
     } catch (err) {
-      console.error("Reaction failed", err);
+      console.error("🔴 Reaction failed:", err);
     }
   };
 
@@ -39,10 +43,12 @@ export default function CommentCard({
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
       <div className="flex justify-between items-start">
         <div className="w-full">
-          <p className="text-sm font-semibold">{comment.user?.name || "Unknown"}</p>
+          <p className="text-sm font-semibold">
+            {comment.user?.name || "Unknown"}
+          </p>
 
           {editing ? (
-            <div className="flex gap-1 items-start">
+            <div className="flex gap-1 items-start relative">
               <input
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
@@ -56,7 +62,7 @@ export default function CommentCard({
                 😊
               </button>
               {showEmoji && (
-                <div className="absolute z-10 top-10 left-40">
+                <div className="absolute z-50 top-10 left-40">
                   <Picker
                     onEmojiSelect={(emoji) =>
                       setEditText((prev) => prev + emoji.native)
@@ -75,6 +81,7 @@ export default function CommentCard({
           </p>
         </div>
 
+        {/* ✏️ Owner controls */}
         {comment.user?._id === currentUser._id && (
           <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
@@ -139,7 +146,7 @@ export default function CommentCard({
         </button>
       </div>
 
-      {/* 🧵 Reply & Toggle */}
+      {/* 🧵 Reply actions */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
         <button onClick={() => setShowReplyBox((v) => !v)}>
           {showReplyBox ? "Cancel" : "Reply"}
@@ -150,8 +157,12 @@ export default function CommentCard({
             className="text-gray-500 hover:underline"
           >
             {showReplies
-              ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
-              : `Show ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`}
+              ? `Hide ${replies.length} repl${
+                  replies.length > 1 ? "ies" : "y"
+                }`
+              : `Show ${replies.length} repl${
+                  replies.length > 1 ? "ies" : "y"
+                }`}
           </button>
         )}
       </div>
@@ -167,7 +178,7 @@ export default function CommentCard({
         />
       )}
 
-      {/* 🔁 Replies */}
+      {/* 🔁 Render Replies */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {replies.map((r) => (
