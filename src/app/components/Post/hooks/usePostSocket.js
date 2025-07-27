@@ -13,12 +13,6 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
       }
     };
 
-    const handlePostUpdated = (updatedPost) => {
-      setPosts((prev) =>
-        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
-      );
-    };
-
     const handleCommentReacted = ({ postId: incomingId, commentId, userId }) => {
       if (incomingId !== postId) return;
 
@@ -53,14 +47,14 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
       }
     };
 
+    // ✅ Attach listeners
     socket.on("typing", handleTyping);
-    socket.on("postUpdated", handlePostUpdated);
     socket.on("commentReacted", handleCommentReacted);
     socket.on("updatePostRequest", handleUpdatePostRequest);
 
+    // ✅ Clean up on unmount
     return () => {
       socket.off("typing", handleTyping);
-      socket.off("postUpdated", handlePostUpdated);
       socket.off("commentReacted", handleCommentReacted);
       socket.off("updatePostRequest", handleUpdatePostRequest);
     };
