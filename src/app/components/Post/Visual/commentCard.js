@@ -42,10 +42,11 @@ export default function CommentCard({
 
       if (!res.ok) throw new Error("Failed to react");
 
-      const updated = await res.json();
-      const updatedReactions = updated?.reactions || updated?.comment?.reactions;
-      if (updatedReactions) {
-        setReactions(updatedReactions); // ✅ All-user reaction state
+      const result = await res.json();
+      const updatedComment = result.comment;
+
+      if (updatedComment?.reactions) {
+        setReactions(updatedComment.reactions);
       }
 
       socket.emit("updatePostRequest", { postId });
@@ -55,9 +56,9 @@ export default function CommentCard({
     }
   };
 
-  if (!comment || !currentUser || !comment.user) return null;
-
   const hasReacted = reactions?.["❤️"]?.includes(currentUser._id);
+
+  if (!comment || !currentUser || !comment.user) return null;
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
