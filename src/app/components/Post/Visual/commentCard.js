@@ -23,21 +23,26 @@ export default function CommentCard({
   if (!comment || !currentUser || !comment.user) return null;
 
   const toggleReaction = async () => {
-    try {
-      await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-    } catch (err) {
-      console.error("🔴 Reaction failed:", err);
-    }
-  };
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    // Optionally, emit update if not already
+    socket.emit("updatePostRequest", { postId }); // new event
+  } catch (err) {
+    console.error("🔴 Reaction failed:", err);
+  }
+};
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">

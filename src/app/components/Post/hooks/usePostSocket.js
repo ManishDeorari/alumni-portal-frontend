@@ -4,52 +4,65 @@ import socket from "../../../../utils/socket";
 
 export default function usePostSocket(postId, currentUser, setSomeoneTyping, setPosts) {
   useEffect(() => {
-  if (!socket) return;
+    if (!socket) return;
 
-  const handleTyping = ({ postId: incomingId, user }) => {
-    if (incomingId === postId && user !== currentUser._id) {
-      setSomeoneTyping(true);
-      setTimeout(() => setSomeoneTyping(false), 3000);
-    }
-  };
+    const handleTyping = ({ postId: incomingId, user }) => {
+      if (incomingId === postId && user !== currentUser._id) {
+        setSomeoneTyping(true);
+        setTimeout(() => setSomeoneTyping(false), 3000);
+      }
+    };
 
-  const handlePostUpdated = (updatedPost) => {
-    setPosts((prev) =>
-      prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
-    );
-  };
+    const handlePostUpdated = (updatedPost) => {
+      setPosts((prev) =>
+        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      );
+    };
 
-  const handleCommentReacted = ({ postId: incomingId, commentId, userId }) => {
-    if (incomingId !== postId) return;
+    const handleCommentReacted = ({ postId: incomingId, commentId, userId }) => {
+      if (incomingId !== postId) return;
 
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post._id !== incomingId) return post;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => {
+          if (post._id !== incomingId) return post;
 
-        const updatedComments = post.comments.map((c) => {
-          if (c._id !== commentId) return c;
+          const updatedComments = post.comments.map((c) => {
+            if (c._id !== commentId) return c;
 
-          const already = c.reactions?.includes(userId);
-          const updatedReactions = already
-            ? c.reactions.filter((id) => id !== userId)
-            : [...(c.reactions || []), userId];
+            const already = c.reactions?.includes(userId);
+            const updatedReactions = already
+              ? c.reactions.filter((id) => id !== userId)
+              : [...(c.reactions || []), userId];
 
-          return { ...c, reactions: updatedReactions };
-        });
+            return { ...c, reactions: updatedReactions };
+          });
 
-        return { ...post, comments: updatedComments };
-      })
-    );
-  };
+          return { ...post, comments: updatedComments };
+        })
+      );
+    };
 
-  socket.on("typing", handleTyping);
-  socket.on("postUpdated", handlePostUpdated);
-  socket.on("commentReacted", handleCommentReacted);
+    const handleUpdatePostRequest = async ({ postId: incomingId }) => {
+      try {
+        if (incomingId !== postId) return;
+        const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${incomingId}`);
+        const post = await res.json();
+        setPosts((prev) => prev.map((p) => (p._id === incomingId ? post : p)));
+      } catch (err) {
+        console.error("🔴 Failed to sync post", err);
+      }
+    };
 
-  return () => {
-    socket.off("typing", handleTyping);
-    socket.off("postUpdated", handlePostUpdated);
-    socket.off("commentReacted", handleCommentReacted);
-  };
-}, [postId, currentUser._id, setSomeoneTyping, setPosts]);
+    socket.on("typing", handleTyping);
+    socket.on("postUpdated", handlePostUpdated);
+    socket.on("commentReacted", handleCommentReacted);
+    socket.on("updatePostRequest", handleUpdatePostRequest);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("postUpdated", handlePostUpdated);
+      socket.off("commentReacted", handleCommentReacted);
+      socket.off("updatePostRequest", handleUpdatePostRequest);
+    };
+  }, [postId, currentUser._id, setSomeoneTyping, setPosts]);
 }
