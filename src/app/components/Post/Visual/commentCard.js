@@ -156,41 +156,29 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* ❤️ Emoji Reactions */}
-      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
-        {localReactions &&
-          Object.entries(localReactions).map(([emoji, users]) => {
-            const reacted = users.some(
-              (id) => id.toString() === currentUser._id.toString()
-            );
-            const count = users.length;
+      {/* ❤️ Heart Reaction (only one emoji style) */}
+<div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
+  <button
+    onClick={() => toggleReaction("❤️")}
+    className="flex items-center gap-1 rounded px-1 focus:outline-none"
+  >
+    <span
+      className={`text-xl transition-all duration-200 ${
+        localReactions?.["❤️"]?.some(
+          (id) => id.toString() === currentUser._id.toString()
+        )
+          ? "text-red-500"
+          : "text-gray-400"
+      }`}
+    >
+      ❤️
+    </span>
+    <span className="text-xs text-gray-600">
+      {localReactions?.["❤️"]?.length || 0}
+    </span>
+  </button>
+</div>
 
-            if (count === 0) return null; // skip if nobody reacted
-
-            return (
-              <button
-                key={emoji}
-                onClick={() => toggleReaction(emoji)}
-                className={`flex items-center gap-1 rounded px-1 ${
-                  reacted ? "bg-red-100" : "hover:bg-gray-100"
-                }`}
-              >
-                <span className={reacted ? "text-red-500" : "text-gray-500"}>
-                  {emoji}
-                </span>
-                <span className="text-xs text-gray-500">{count}</span>
-              </button>
-            );
-          })}
-
-        {/* ➕ Default Add Reaction (❤️) */}
-        <button
-          onClick={() => toggleReaction("❤️")}
-          className="text-gray-400 hover:text-red-500 text-sm"
-        >
-          + React
-        </button>
-      </div>
 
       {/* 🧵 Reply actions */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
