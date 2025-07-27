@@ -24,12 +24,15 @@ export default function CommentCard({
   const [localReactions, setLocalReactions] = useState(comment.reactions);
   const heartRef = useRef(null);
 
-  if (!comment || !currentUser || !comment.user) return null;
-
-  // 🔄 Sync local reactions when props update
-  useEffect(() => {
+  // ✅ First: Hooks must come first
+useEffect(() => {
+  if (comment?.reactions) {
     setLocalReactions(comment.reactions);
-  }, [comment.reactions]);
+  }
+}, [comment?.reactions]);
+
+// ❌ Must come after all hooks
+if (!comment || !currentUser || !comment.user) return null;
 
   const toggleReaction = async (emoji = "❤️") => {
     try {
