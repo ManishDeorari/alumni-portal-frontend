@@ -1,29 +1,38 @@
 import React, { useState } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
-import { Heart, HeartFilled } from "lucide-react"; // or use your preferred icons
 
-export default function CommentCard({ comment, currentUser, onReply, onDelete, onEdit, replies ,postId,}) {
+export default function CommentCard({
+  comment,
+  currentUser,
+  onReply,
+  onDelete,
+  onEdit,
+  replies,
+  postId,
+}) {
+  if (!comment || !currentUser) return null;
+
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment.text);
   const [showEmoji, setShowEmoji] = useState(false);
-  
+
   const toggleReaction = async () => {
-  try {
-    await fetch(`/api/posts/${postId}/comments/${comment._id}/react`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // or your method
-      },
-    });
-    // Optimistic update will come from socket
-  } catch (err) {
-    console.error("Reaction failed", err);
-  }
-};
+    try {
+      await fetch(`/api/posts/${postId}/comments/${comment._id}/react`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      // Reaction updates will be handled via socket
+    } catch (err) {
+      console.error("Reaction failed", err);
+    }
+  };
 
   return (
     <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
@@ -46,7 +55,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
                 😊
               </button>
               {showEmoji && (
-                <div className="absolute z-10 top-0 left-80">
+                <div className="absolute z-10 top-10 left-40">
                   <Picker
                     onEmojiSelect={(emoji) =>
                       setEditText((prev) => prev + emoji.native)
@@ -74,6 +83,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
                   onClick={() => {
                     onEdit(comment._id, editText);
                     setEditing(false);
+                    setShowEmoji(false);
                   }}
                 >
                   Save
@@ -112,6 +122,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
         )}
       </div>
 
+      {/* ❤️ Reactions */}
       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
         <button onClick={toggleReaction} className="flex items-center gap-1">
           {comment.reactions?.includes(currentUser._id) ? (
@@ -120,12 +131,14 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
             <span className="text-gray-400">🤍</span>
           )}
           {comment.reactions?.length > 0 && (
-            <span className="text-xs text-gray-500">{comment.reactions.length}</span>
+            <span className="text-xs text-gray-500">
+              {comment.reactions.length}
+            </span>
           )}
         </button>
       </div>
 
-      {/* Actions: Reply & Toggle Replies */}
+      {/* 🧵 Reply & Toggle */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
         <button onClick={() => setShowReplyBox((v) => !v)}>
           {showReplyBox ? "Cancel" : "Reply"}
@@ -142,7 +155,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
         )}
       </div>
 
-      {/* Reply Input */}
+      {/* 💬 Reply Box */}
       {showReplyBox && (
         <ReplyBox
           parentId={comment._id}
@@ -153,7 +166,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
         />
       )}
 
-      {/* Nested Replies */}
+      {/* 🔁 Replies */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {replies.map((r) => (
@@ -165,6 +178,7 @@ export default function CommentCard({ comment, currentUser, onReply, onDelete, o
               onDelete={onDelete}
               onEdit={onEdit}
               replies={r.replies || []}
+              postId={postId}
             />
           ))}
         </div>
