@@ -35,7 +35,7 @@ export default function PostReactions({
 
       {/* Emoji Reaction Buttons */}
       <div className="flex gap-3 mt-2">
-        {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
+        {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
           <motion.div
             key={emoji}
             className="relative flex items-center"
@@ -47,8 +47,16 @@ export default function PostReactions({
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 300 }}
               onClick={() => handleReact(emoji)}
-              className={`text-2xl ${userReacted(emoji) ? "opacity-100" : "opacity-60"}`}
-              title={userReacted(emoji) ? "You reacted" : `${getReactionCount(emoji)} reacted`}
+              className={`text-2xl px-2 py-1 rounded-full transition-all duration-150 ${
+                userReacted(emoji)
+                  ? "bg-red-100 text-blue-600 font-semibold shadow-sm scale-105"
+                  : "bg-gray-100 text-black font-semibold shadow-sm hover:scale-105"
+              }`}
+              title={
+                userReacted(emoji)
+                  ? "You reacted"
+                  : `${getReactionCount(emoji)} reacted`
+              }
             >
               {emoji} {getReactionCount(emoji) > 0 ? getReactionCount(emoji) : ""}
             </motion.button>
