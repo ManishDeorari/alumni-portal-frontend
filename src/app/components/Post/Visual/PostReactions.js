@@ -49,8 +49,8 @@ export default function PostReactions({
               onClick={() => handleReact(emoji)}
               className={`text-2xl px-2 py-1 rounded-full transition-all duration-150 ${
                 userReacted(emoji)
-                  ? "bg-red-100 text-blue-600 font-semibold shadow-sm scale-105"
-                  : "bg-gray-100 text-black font-semibold shadow-sm hover:scale-105"
+                  ? "bg-red-100 text-blue-600 font-semibold shadow-sm scale-75"
+                  : "bg-gray-100 text-black font-semibold shadow-sm hover:scale-75"
               }`}
               title={
                 userReacted(emoji)
