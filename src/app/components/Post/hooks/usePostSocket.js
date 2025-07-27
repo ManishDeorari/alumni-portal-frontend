@@ -6,6 +6,7 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
   useEffect(() => {
     if (!socket) return;
 
+    // 🟡 Typing indicator handler
     const handleTyping = ({ postId: incomingId, user }) => {
       if (incomingId === postId && user !== currentUser._id) {
         setSomeoneTyping(true);
@@ -13,34 +14,14 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
       }
     };
 
+    // ✅ Comment reaction handler — no UI mutation, only log or use for toasts
     const handleCommentReacted = ({ postId: incomingId, commentId, userId, emoji }) => {
-  if (incomingId !== postId){ return;}
+      if (incomingId !== postId) return;
+      console.log("💬 commentReacted received. UI will update via postUpdated socket.");
+      // Optionally: show animation or toast here.
+    };
 
-setPosts((prevPosts) =>
-  prevPosts.map((post) => {
-    if (post._id !== incomingId) return post;
-
-    const updatedComments = post.comments.map((comment) => {
-      if (comment._id !== commentId) return comment;
-
-      // ensure reactions exist
-      const reactions = { ...(comment.reactions || {}) };
-      const usersForEmoji = new Set(reactions[emoji] || []);
-
-      if (usersForEmoji.has(userId)) {
-        usersForEmoji.delete(userId); // undo
-      } else {
-        usersForEmoji.add(userId); // react
-      }
-
-      reactions[emoji] = Array.from(usersForEmoji);
-      return { ...comment, reactions };
-    });
-
-    return { ...post, comments: updatedComments };
-  })
-); };
-
+    // 🔁 Optional fallback: request updated post manually
     const handleUpdatePostRequest = async ({ postId: incomingId }) => {
       try {
         if (incomingId !== postId) return;
