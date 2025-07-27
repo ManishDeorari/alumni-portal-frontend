@@ -155,17 +155,19 @@ export default function CommentCard({
       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 flex-wrap">
         <button
           onClick={() => toggleReaction("❤️")}
-          className="flex items-center gap-1 rounded px-1 focus:outline-none"
+          className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 
+            ${hasReacted ? "bg-red-100 text-red-600 font-semibold shadow" : "bg-gray-100 text-gray-600"}
+            hover:scale-105`}
         >
           <span
             ref={heartRef}
-            className={`transition-all duration-200 ${
-              hasReacted ? "text-red-500" : "text-gray-400"
-            } text-[18px]`}
+            className={`text-lg ${
+              hasReacted ? "text-red-500" : "text-gray-500"
+            }`}
           >
             ❤️
           </span>
-          <span className="text-base font-bold text-gray-700">
+          <span className="text-sm">
             {reactions?.["❤️"]?.length || 0}
           </span>
         </button>
