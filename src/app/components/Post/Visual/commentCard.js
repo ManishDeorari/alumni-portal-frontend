@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import ReplyBox from "../utils/ReplyBox";
-import EmojiPickerToggle from "../utils/EmojiPickerToggle"; // ✅ NEW import
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 
@@ -13,9 +13,11 @@ export default function CommentCard({
   onEdit,
   replies = [],
   postId,
+  isReply = false, // 🆕 to distinguish replies from top-level comments
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
-  const [showReplies, setShowReplies] = useState(true);
+  const [showReplies, setShowReplies] = useState(false); // 🆕 Hidden by default
+  const [visibleReplies, setVisibleReplies] = useState(2); // 🆕 Pagination
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
@@ -60,7 +62,11 @@ export default function CommentCard({
   if (!comment || !currentUser || !comment.user) return null;
 
   return (
-    <div className="pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50 mt-2 rounded-md space-y-2 py-2 px-2 relative">
+    <div
+      className={`${
+        isReply ? "pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50" : ""
+      } mt-2 rounded-md space-y-2 py-2 px-2 relative`}
+    >
       <div className="flex justify-between items-start">
         <div className="w-full">
           <p className="text-sm font-semibold">
@@ -75,7 +81,6 @@ export default function CommentCard({
                 placeholder="Edit your comment..."
                 className="w-full border rounded px-2 py-1 text-sm"
               />
-              
               <EmojiPickerToggle
                 show={showEmoji}
                 onEmojiSelect={(emoji) =>
@@ -168,13 +173,7 @@ export default function CommentCard({
                     : "bg-gray-100 text-black-600 font-semibold shadow-sm"
                 } hover:scale-105`}
             >
-              <span
-                className={`text-[18px] ${
-                  reacted ? "scale-110" : ""
-                } transition-transform`}
-              >
-                {emoji}
-              </span>
+              <span className="text-[18px]">{emoji}</span>
               <span>{count}</span>
             </button>
           );
@@ -183,12 +182,18 @@ export default function CommentCard({
 
       {/* 💬 Actions */}
       <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
-        <button onClick={() => setShowReplyBox((v) => !v)}>
-          {showReplyBox ? "Cancel" : "Reply"}
-        </button>
+        {!isReply && (
+          <button onClick={() => setShowReplyBox((v) => !v)}>
+            {showReplyBox ? "Cancel" : "Reply"}
+          </button>
+        )}
+
         {replies.length > 0 && (
           <button
-            onClick={() => setShowReplies((prev) => !prev)}
+            onClick={() => {
+              setShowReplies((prev) => !prev);
+              setVisibleReplies(2);
+            }}
             className="text-gray-500 hover:underline"
           >
             {showReplies
@@ -202,6 +207,7 @@ export default function CommentCard({
         )}
       </div>
 
+      {/* ✏️ Reply Input */}
       {showReplyBox && (
         <ReplyBox
           parentId={comment._id}
@@ -212,20 +218,40 @@ export default function CommentCard({
         />
       )}
 
+      {/* 🧵 Reply Threads with Pagination */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
-          {replies.map((r) => (
+          {replies.slice(0, visibleReplies).map((r) => (
             <CommentCard
               key={r._id}
               comment={r}
               currentUser={currentUser}
-              onReply={onReply}
+              onReply={() => {}} // 🧯 disable nested reply
               onDelete={onDelete}
               onEdit={onEdit}
               replies={r.replies || []}
               postId={postId}
+              isReply={true}
             />
           ))}
+
+          {replies.length > visibleReplies && (
+            <button
+              className="text-blue-500 text-xs ml-4"
+              onClick={() => setVisibleReplies((v) => v + 2)}
+            >
+              Load more replies
+            </button>
+          )}
+
+          {visibleReplies > 2 && (
+            <button
+              className="text-red-400 text-xs ml-4"
+              onClick={() => setVisibleReplies(2)}
+            >
+              Show less replies
+            </button>
+          )}
         </div>
       )}
     </div>
