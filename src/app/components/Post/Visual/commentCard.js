@@ -75,13 +75,7 @@ export default function CommentCard({
                 placeholder="Edit your comment..."
                 className="w-full border rounded px-2 py-1 text-sm"
               />
-              <button
-                onClick={() => setShowEmoji((prev) => !prev)}
-                className="text-xl"
-              >
-                😊
-              </button>
-
+              
               <EmojiPickerToggle
                 show={showEmoji}
                 onEmojiSelect={(emoji) =>
