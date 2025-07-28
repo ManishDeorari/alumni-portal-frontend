@@ -4,6 +4,7 @@ import ReplyBox from "../utils/ReplyBox";
 import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function CommentCard({
   comment,
@@ -14,13 +15,11 @@ export default function CommentCard({
   replies = [],
   postId,
   isReply = false,
-
-  // 🆕 for handling reply-specific actions
   onEditReply,
   onDeleteReply,
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
-  const [showReplies, setShowReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(true);
   const [visibleReplies, setVisibleReplies] = useState(2);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
@@ -114,9 +113,7 @@ export default function CommentCard({
               />
               <EmojiPickerToggle
                 show={showEmoji}
-                onEmojiSelect={(emoji) =>
-                  setEditText((prev) => prev + emoji.native)
-                }
+                onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
                 positionClass="absolute top-10 left-40"
               />
             </div>
@@ -139,9 +136,11 @@ export default function CommentCard({
                 <button
                   className="text-blue-600 font-semibold block"
                   onClick={() => {
-                    isReply
-                      ? onEditReply(comment._id, editText)
-                      : onEdit(comment._id, editText);
+                    if (isReply) {
+                      onEditReply(comment._id, editText);
+                    } else {
+                      onEdit(comment._id, editText);
+                    }
                     setEditing(false);
                     setShowEmoji(false);
                   }}
@@ -173,9 +172,11 @@ export default function CommentCard({
                 <button
                   onClick={async () => {
                     setDeleting(true);
-                    await (isReply
-                      ? onDeleteReply(comment._id)
-                      : onDelete(comment._id));
+                    if (isReply) {
+                      await onDeleteReply(comment._id);
+                    } else {
+                      await onDelete(comment._id);
+                    }
                     setDeleting(false);
                   }}
                   disabled={deleting}
@@ -249,47 +250,55 @@ export default function CommentCard({
           />
         )}
 
-        {/* 🧵 Reply Threads */}
-        {showReplies && replies.length > 0 && (
-          <div className="mt-2 space-y-2">
-            {[...replies]
-              .reverse()
-              .slice(0, visibleReplies)
-              .map((r) => (
-                <CommentCard
-                  key={r._id}
-                  comment={r}
-                  currentUser={currentUser}
-                  onReply={onReply}
-                  onDelete={onDelete}
-                  onEdit={onEdit}
-                  replies={r.replies || []}
-                  postId={postId}
-                  isReply={true}
-                  onEditReply={onEditReply}
-                  onDeleteReply={onDeleteReply}
-                />
-              ))}
+        {/* 🧵 Animated, Indented Reply Threads */}
+        <AnimatePresence>
+          {showReplies && replies.length > 0 && (
+            <motion.div
+              className="mt-2 space-y-2 ml-6"
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.2 }}
+            >
+              {[...replies]
+                .reverse()
+                .slice(0, visibleReplies)
+                .map((r) => (
+                  <CommentCard
+                    key={r._id}
+                    comment={r}
+                    currentUser={currentUser}
+                    onReply={onReply}
+                    onDelete={onDelete}
+                    onEdit={onEdit}
+                    replies={r.replies || []}
+                    postId={postId}
+                    isReply={true}
+                    onEditReply={onEditReply}
+                    onDeleteReply={onDeleteReply}
+                  />
+                ))}
 
-            {replies.length > visibleReplies && (
-              <button
-                className="text-blue-500 text-xs ml-4"
-                onClick={() => setVisibleReplies((v) => v + 2)}
-              >
-                Load more replies
-              </button>
-            )}
+              {replies.length > visibleReplies && (
+                <button
+                  className="text-blue-500 text-xs ml-4"
+                  onClick={() => setVisibleReplies((v) => v + 2)}
+                >
+                  Load more replies
+                </button>
+              )}
 
-            {visibleReplies > 2 && (
-              <button
-                className="text-red-400 text-xs ml-4"
-                onClick={() => setVisibleReplies(2)}
-              >
-                Show less replies
-              </button>
-            )}
-          </div>
-        )}
+              {visibleReplies > 2 && (
+                <button
+                  className="text-red-400 text-xs ml-4"
+                  onClick={() => setVisibleReplies(2)}
+                >
+                  Show less replies
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
     </div>
   );
 }
