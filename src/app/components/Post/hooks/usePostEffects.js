@@ -1,5 +1,5 @@
 // components/PostCard/hooks/usePostEffects.js
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function usePostEffects({
   post,
@@ -8,14 +8,10 @@ export default function usePostEffects({
   setHasLiked,
   editing,
   textareaRef,
-  setSomeoneTyping,
-  setPosts,
 }) {
-  const postRef = useRef(null); // ✅ This will be used to highlight or scroll the post
-
   const editKey = `draft-${post._id}`;
 
-  // ✅ Restore local draft content
+  // 🔹 Load saved draft content (if available)
   useEffect(() => {
     const saved = localStorage.getItem(editKey);
     if (saved && !post.content.includes(saved)) {
@@ -23,7 +19,7 @@ export default function usePostEffects({
     }
   }, []);
 
-  // ✅ Set liked state on mount and whenever likes change
+  // 🔹 Check if current user liked this post
   useEffect(() => {
     const userId = currentUser._id?.toString();
     const normalizeId = (id) =>
@@ -33,21 +29,16 @@ export default function usePostEffects({
     setHasLiked(liked);
   }, [post.likes, currentUser._id]);
 
-  // ✅ Auto-scroll user’s own post into view on load
-  useEffect(() => {
-    if (post.user?._id === currentUser?._id && postRef.current) {
-      postRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, []);
+  // ❌ Removed post auto-scroll. Keeping it only for replies or modal context.
 
-  // ✅ Auto-focus edit textarea
+  // 🔹 Focus textarea when editing
   useEffect(() => {
     if (editing && textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [editing]);
 
-  // ✅ Like animation from other users via socket
+  // 🔹 React animation when other users like this post
   useEffect(() => {
     const socket = require("../../../../utils/socket").default;
     const handleLikeAnimation = ({ postId, userId, isLiked }) => {
@@ -67,6 +58,4 @@ export default function usePostEffects({
     socket.on("postLiked", handleLikeAnimation);
     return () => socket.off("postLiked", handleLikeAnimation);
   }, [post._id, currentUser._id]);
-
-  return postRef; // ✅ Export this so PostCard can attach it to its wrapper
 }

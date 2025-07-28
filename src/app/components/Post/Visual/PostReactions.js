@@ -62,10 +62,10 @@ export default function PostReactions({
       </div>
 
       {/* Like and Comment Buttons */}
-      <div className="flex items-center gap-5 pt-2 border-t border-gray-300">
+      <div className="flex items-center gap-5 pt-2 border-t border-black-300">
         <button
           onClick={() => setVisibleComments((prev) => prev + 5)}
-          className="font-semibold text-gray-600"
+          className="font-semibold text-black-600"
         >
           💬 Comment ({(post.comments || []).length})
         </button>

@@ -134,18 +134,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setVisibleComments((prev) => prev + 5);
   };
 
+    const isMyPost = post.user?._id === currentUser._id;
   // ✅ Everything's clean and ready for the `return` section now.
   return (
-    <div
-      ref={postRef} // for smooth scroll later
-      className={`relative bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 transition-all duration-300 
-        ${
-          post.user?._id === currentUser?._id
-            ? "outline outline-2 outline-black/70 bg-gradient-to-br from-gray-50 to-white"
-            : ""
-        }
-      `}
-    >
+      <div
+        ref={postRef}
+        className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
+          ${isMyPost ? "bg-gradient-to-tr from-gray-100 to-blue-50" : "bg-white"}
+          hover:shadow-md`}
+      >
+
       <PostHeader {...{ post, currentUser, editing, toggleEdit: () =>
       toggleEdit(editKey, setEditContent, editing, post.content), handleDelete }} />
 
