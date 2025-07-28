@@ -1,63 +1,38 @@
 import React, { useState } from "react";
-import Picker from '@emoji-mart/react';
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 
 export default function ReplyBox({ parentId, onSubmit }) {
   const [replyText, setReplyText] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isTyping, setIsTyping] = useState(false); // Simulated typing indicator
-
-  const handleEmojiSelect = (emoji) => {
-    setReplyText((prev) => prev + emoji.native);
-    setShowEmojiPicker(false);
-  };
-
-  const handleTyping = (e) => {
-    setReplyText(e.target.value);
-    if (!isTyping) {
-      setIsTyping(true);
-      // You can emit socket event here: socket.emit("typing", { parentId });
-      setTimeout(() => setIsTyping(false), 2000); // Reset after 2s of inactivity
-    }
-  };
+  const [showEmoji, setShowEmoji] = useState(false);
 
   return (
-    <div className="relative flex gap-2 mt-2 items-start">
+    <div className="relative flex gap-2 mt-2 items-start w-full">
       <input
         value={replyText}
-        onChange={handleTyping}
+        onChange={(e) => setReplyText(e.target.value)}
         placeholder="Write a reply..."
         className="flex-grow border rounded px-2 py-1 text-sm"
       />
-      <button
-        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-        className="text-sm"
-        title="Add Emoji"
-      >
-        😊
-      </button>
+      <EmojiPickerToggle
+        show={showEmoji}
+        onEmojiSelect={(emoji) =>
+          setReplyText((prev) => prev + emoji.native)
+        }
+        onToggle={() => setShowEmoji((prev) => !prev)}
+        positionClass="absolute top-10 left-2"
+      />
       <button
         onClick={() => {
           if (replyText.trim()) {
             onSubmit(replyText.trim());
             setReplyText("");
+            setShowEmoji(false);
           }
         }}
         className="text-sm text-blue-600 font-semibold"
       >
         Send
       </button>
-
-      {showEmojiPicker && (
-        <div className="absolute bottom-10 left-0 z-50">
-          <Picker onSelect={handleEmojiSelect} theme="light" />
-        </div>
-      )}
-
-      {isTyping && (
-        <div className="absolute -bottom-5 left-2 text-[11px] text-blue-500 animate-pulse italic">
-        ✍️ typing...
-      </div>
-      )}
     </div>
   );
 }

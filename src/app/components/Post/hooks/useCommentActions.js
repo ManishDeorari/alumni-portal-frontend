@@ -72,6 +72,7 @@ export default function useCommentActions({
           prev.map((p) => (p._id === post._id ? updated : p))
         );
         socket.emit("updatePost", updated);
+        toast.success("💬 Reply posted!", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to reply");
       }
