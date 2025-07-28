@@ -56,15 +56,15 @@ export default function useCommentActions({
   const handleReply = useCallback(
     async (parentCommentId, replyText) => {
       try {
-        const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comments/${parentCommentId}/reply`,
+        await fetch(
+          `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${commentId}/reply`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`, // include auth if needed
             },
-            body: JSON.stringify({ parentCommentId, text: replyText }),
+            body: JSON.stringify({ text: replyText }),
           }
         );
         const updated = await res.json();
