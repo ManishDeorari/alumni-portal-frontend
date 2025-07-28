@@ -216,66 +216,80 @@ export default function CommentCard({
       </div>
 
       {/* 💬 Actions */}
-      <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
-        {!isReply && (
-          <button onClick={() => setShowReplyBox((v) => !v)}>
-            {showReplyBox ? "Cancel" : "Reply"}
-          </button>
-        )}
-      </div>
-
-      {/* ✏️ Reply Input */}
-      {showReplyBox && (
-        <ReplyBox
-          parentId={comment._id}
-          onSubmit={(text) => {
-            onReply(comment._id, text);
-            setShowReplyBox(false);
-          }}
-        />
-      )}
-
-      {/* 🧵 Reply Threads */}
-      {replies.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {[...replies]
-            .reverse()
-            .slice(0, visibleReplies)
-            .map((r) => (
-              <CommentCard
-                key={r._id}
-                comment={r}
-                currentUser={currentUser}
-                onReply={onReply}
-                onDelete={onDelete}
-                onEdit={onEdit}
-                replies={r.replies || []}
-                postId={postId}
-                isReply={true}
-                onEditReply={onEditReply}
-                onDeleteReply={onDeleteReply}
-              />
-            ))}
-
-          {replies.length > visibleReplies && (
-            <button
-              className="text-blue-500 text-xs ml-4"
-              onClick={() => setVisibleReplies((v) => v + 2)}
-            >
-              Load more replies
+        <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
+          {!isReply && (
+            <button onClick={() => setShowReplyBox((v) => !v)}>
+              {showReplyBox ? "Cancel" : "Reply"}
             </button>
           )}
 
-          {visibleReplies > 2 && (
+          {replies.length > 0 && (
             <button
-              className="text-red-400 text-xs ml-4"
-              onClick={() => setVisibleReplies(2)}
+              onClick={() => {
+                setShowReplies((prev) => !prev);
+                setVisibleReplies(2);
+              }}
+              className="text-gray-500 hover:underline"
             >
-              Show less replies
+              {showReplies
+                ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
+                : `Show ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`}
             </button>
           )}
         </div>
-      )}
+
+        {/* ✏️ Reply Input */}
+        {showReplyBox && (
+          <ReplyBox
+            parentId={comment._id}
+            onSubmit={(text) => {
+              onReply(comment._id, text);
+              setShowReplyBox(false);
+            }}
+          />
+        )}
+
+        {/* 🧵 Reply Threads */}
+        {showReplies && replies.length > 0 && (
+          <div className="mt-2 space-y-2">
+            {[...replies]
+              .reverse()
+              .slice(0, visibleReplies)
+              .map((r) => (
+                <CommentCard
+                  key={r._id}
+                  comment={r}
+                  currentUser={currentUser}
+                  onReply={onReply}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  replies={r.replies || []}
+                  postId={postId}
+                  isReply={true}
+                  onEditReply={onEditReply}
+                  onDeleteReply={onDeleteReply}
+                />
+              ))}
+
+            {replies.length > visibleReplies && (
+              <button
+                className="text-blue-500 text-xs ml-4"
+                onClick={() => setVisibleReplies((v) => v + 2)}
+              >
+                Load more replies
+              </button>
+            )}
+
+            {visibleReplies > 2 && (
+              <button
+                className="text-red-400 text-xs ml-4"
+                onClick={() => setVisibleReplies(2)}
+              >
+                Show less replies
+              </button>
+            )}
+          </div>
+        )}
     </div>
   );
 }
