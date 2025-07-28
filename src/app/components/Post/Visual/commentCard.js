@@ -248,41 +248,44 @@ export default function CommentCard({
       )}
 
       {/* 🧵 Reply Threads */}
-      {showReplies && replies.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {replies.slice(0, visibleReplies).map((r) => (
-            <CommentCard
-              key={r._id}
-              comment={r}
-              currentUser={currentUser}
-              onReply={() => {}}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              replies={r.replies || []}
-              postId={postId}
-              isReply={true}
-            />
-          ))}
+        {showReplies && replies.length > 0 && (
+          <div className="mt-2 space-y-2">
+            {[...replies]
+              .reverse()
+              .slice(0, visibleReplies)
+              .map((r) => (
+                <CommentCard
+                  key={r._id}
+                  comment={r}
+                  currentUser={currentUser}
+                  onReply={() => {}}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  replies={r.replies || []}
+                  postId={postId}
+                  isReply={true}
+                />
+              ))}
 
-          {replies.length > visibleReplies && (
-            <button
-              className="text-blue-500 text-xs ml-4"
-              onClick={() => setVisibleReplies((v) => v + 2)}
-            >
-              Load more replies
-            </button>
-          )}
+            {replies.length > visibleReplies && (
+              <button
+                className="text-blue-500 text-xs ml-4"
+                onClick={() => setVisibleReplies((v) => v + 2)}
+              >
+                Load more replies
+              </button>
+            )}
 
-          {visibleReplies > 2 && (
-            <button
-              className="text-red-400 text-xs ml-4"
-              onClick={() => setVisibleReplies(2)}
-            >
-              Show less replies
-            </button>
-          )}
-        </div>
-      )}
+            {visibleReplies > 2 && (
+              <button
+                className="text-red-400 text-xs ml-4"
+                onClick={() => setVisibleReplies(2)}
+              >
+                Show less replies
+              </button>
+            )}
+          </div>
+        )}
     </div>
   );
 }
