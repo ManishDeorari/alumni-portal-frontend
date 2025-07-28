@@ -210,7 +210,7 @@ export default function CommentCard({
       </div>
 
       {/* 💬 Actions */}
-      <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
+      <div className="ml-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-full hover:bg-blue-600">
         {!isReply && (
           <button onClick={() => setShowReplyBox((v) => !v)}>
             {showReplyBox ? "Cancel" : "Reply"}
