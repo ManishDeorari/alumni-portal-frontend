@@ -13,21 +13,35 @@ export default function CommentCard({
   onEdit,
   replies = [],
   postId,
-  isReply = false, // 🆕 to distinguish replies from top-level comments
+  isReply = false,
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
-  const [showReplies, setShowReplies] = useState(false); // 🆕 Hidden by default
-  const [visibleReplies, setVisibleReplies] = useState(2); // 🆕 Pagination
+  const [showReplies, setShowReplies] = useState(false);
+  const [visibleReplies, setVisibleReplies] = useState(2);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment?.text || "");
   const [showEmoji, setShowEmoji] = useState(false);
   const [reactions, setReactions] = useState(comment.reactions || {});
   const [deleting, setDeleting] = useState(false);
-  const heartRef = useRef(null);
+
+  // 🆕 Highlight scroll
+  const commentRef = useRef(null);
+  const isOwn = comment.user?._id === currentUser._id;
+  const [justPosted, setJustPosted] = useState(false);
 
   useEffect(() => {
     setReactions(comment.reactions || {});
   }, [comment.reactions]);
+
+  // 🆕 Auto scroll + flash effect
+  useEffect(() => {
+    if (isOwn && comment.justNow) {
+      commentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setJustPosted(true);
+      const timer = setTimeout(() => setJustPosted(false), 1000); // 1s flash
+      return () => clearTimeout(timer);
+    }
+  }, [comment.justNow, isOwn]);
 
   const toggleReaction = async (emoji) => {
     try {
@@ -63,14 +77,22 @@ export default function CommentCard({
 
   return (
     <div
-      className={`${
-        isReply ? "pl-6 ml-3 border-l-[3px] border-blue-300 bg-blue-50" : ""
-      } mt-2 rounded-md space-y-2 py-2 px-2 relative`}
+      ref={commentRef} // 🆕 Scroll target
+      className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
+        ${isReply ? "pl-6 ml-3 border-l-[3px] border-blue-300" : ""}
+        ${isOwn ? "border border-yellow-400 bg-yellow-50" : "bg-white"}
+        ${justPosted ? "ring-2 ring-yellow-400" : ""}
+      `}
     >
       <div className="flex justify-between items-start">
         <div className="w-full">
-          <p className="text-sm font-semibold">
+          <p className="text-sm font-semibold flex items-center gap-1">
             {comment.user?.name || "Unknown"}
+            {isOwn && (
+              <span className="text-[10px] text-green-700 bg-green-100 px-1 rounded">
+                You
+              </span>
+            )}
           </p>
 
           {editing ? (
@@ -101,7 +123,7 @@ export default function CommentCard({
           </p>
         </div>
 
-        {comment.user?._id === currentUser._id && (
+        {isOwn && (
           <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
               <>
@@ -218,7 +240,7 @@ export default function CommentCard({
         />
       )}
 
-      {/* 🧵 Reply Threads with Pagination */}
+      {/* 🧵 Reply Threads */}
       {showReplies && replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {replies.slice(0, visibleReplies).map((r) => (
@@ -226,7 +248,7 @@ export default function CommentCard({
               key={r._id}
               comment={r}
               currentUser={currentUser}
-              onReply={() => {}} // 🧯 disable nested reply
+              onReply={() => {}}
               onDelete={onDelete}
               onEdit={onEdit}
               replies={r.replies || []}
