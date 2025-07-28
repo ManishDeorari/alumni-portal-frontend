@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReplyBox from "../utils/ReplyBox";
 import Picker from "@emoji-mart/react";
+import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 
@@ -75,22 +76,11 @@ export default function CommentCard({
                 placeholder="Edit your comment..."
                 className="w-full border rounded px-2 py-1 text-sm"
               />
-              <button
-                onClick={() => setShowEmoji((prev) => !prev)}
-                className="text-xl"
-              >
-                😊
-              </button>
-              {showEmoji && (
-                <div className="absolute z-50 top-10 left-40">
-                  <Picker
-                    onEmojiSelect={(emoji) =>
-                      setEditText((prev) => prev + emoji.native)
-                    }
-                    theme="light"
-                  />
-                </div>
-              )}
+              <EmojiPickerToggle
+                onEmojiSelect={handleEmojiClick}
+                icon="😊"
+                iconSize="text-xl"
+              />
             </div>
           ) : (
             <p>{comment.text}</p>
@@ -98,6 +88,9 @@ export default function CommentCard({
 
           <p className="text-xs text-gray-400">
             {new Date(comment.createdAt).toLocaleString()}
+            {comment.editedAt && (
+              <span className="ml-2 italic text-yellow-500">(edited)</span>
+            )}
           </p>
         </div>
 

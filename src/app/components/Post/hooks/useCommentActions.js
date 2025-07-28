@@ -87,7 +87,7 @@ export default function useCommentActions({
 
       try {
         const res = await fetch(
-          `https://alumni-backend-d9k9.onrender.com/api/comments/${commentId}`,
+          `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}`,
           {
             method: "PUT",
             headers: {
@@ -98,21 +98,13 @@ export default function useCommentActions({
           }
         );
 
-        const updatedComment = await res.json();
+        const updated = await res.json();
 
-        setPosts((prevPosts) =>
-          prevPosts.map((p) =>
-            p._id === post._id
-              ? {
-                  ...p,
-                  comments: p.comments.map((c) =>
-                    c._id === commentId ? updatedComment : c
-                  ),
-                }
-              : p
-          )
+        setPosts((prev) =>
+          prev.map((p) => (p._id === post._id ? updated : p))
         );
 
+        socket.emit("updatePost", updated);
         toast.success("✏️ Comment updated", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to update comment");
