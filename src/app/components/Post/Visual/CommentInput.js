@@ -38,7 +38,7 @@ export default function CommentInput({
             }
           }}
           placeholder="Write a comment..."
-          className="flex-1 border border-black-300 rounded-full px-4 py-2 text-sm bg-white-100 focus:outline-none"
+          className="flex-1 border border-black-300 rounded-full px-4 py-2 text-sm focus:outline-none"
           ref={inputRef}
         />
 

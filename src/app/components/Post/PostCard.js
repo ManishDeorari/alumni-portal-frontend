@@ -140,7 +140,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
       <div
         ref={postRef}
         className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
-          ${isMyPost ? "bg-gradient-to-br from-teal-100 to-cyan-200" : "bg-white"}
+          ${isMyPost ? "bg-gradient-to-tr from-gray-200 to-blue-100" : "bg-white"}
           hover:shadow-md`}
       >
 
