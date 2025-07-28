@@ -28,6 +28,10 @@ export default function CommentCard({
     setReactions(comment.reactions || {});
   }, [comment.reactions]);
 
+  const handleEmojiClick = (emojiObject) => {
+    setComment((prev) => prev + (emojiObject.native || emojiObject.emoji));
+  };
+  
   const toggleReaction = async (emoji) => {
     try {
       const res = await fetch(
