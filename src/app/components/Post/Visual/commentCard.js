@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import ReplyBox from "../utils/ReplyBox";
-import Picker from "@emoji-mart/react";
-import EmojiPickerToggle from "../utils/EmojiPickerToggle";
+import EmojiPickerToggle from "../utils/EmojiPickerToggle"; // ✅ NEW import
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 
@@ -28,10 +27,6 @@ export default function CommentCard({
     setReactions(comment.reactions || {});
   }, [comment.reactions]);
 
-  const handleEmojiClick = (emojiObject) => {
-    setComment((prev) => prev + (emojiObject.native || emojiObject.emoji));
-  };
-  
   const toggleReaction = async (emoji) => {
     try {
       const res = await fetch(
@@ -80,10 +75,19 @@ export default function CommentCard({
                 placeholder="Edit your comment..."
                 className="w-full border rounded px-2 py-1 text-sm"
               />
+              <button
+                onClick={() => setShowEmoji((prev) => !prev)}
+                className="text-xl"
+              >
+                😊
+              </button>
+
               <EmojiPickerToggle
-                onEmojiSelect={handleEmojiClick}
-                icon="😊"
-                iconSize="text-xl"
+                show={showEmoji}
+                onEmojiSelect={(emoji) =>
+                  setEditText((prev) => prev + emoji.native)
+                }
+                positionClass="absolute top-10 left-40"
               />
             </div>
           ) : (
@@ -151,9 +155,9 @@ export default function CommentCard({
         )}
       </div>
 
-      {/* 🎉 Multiple Emoji Reactions */}
+      {/* 👍 Reactions */}
       <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
-        {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
+        {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
           const count = reactions?.[emoji]?.length || 0;
           const reacted =
             Array.isArray(reactions?.[emoji]) &&
