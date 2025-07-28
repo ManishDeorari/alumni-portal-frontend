@@ -258,7 +258,7 @@ export default function CommentCard({
                   key={r._id}
                   comment={r}
                   currentUser={currentUser}
-                  onReply={() => {}}
+                  onReply={onReply}
                   onDelete={onDelete}
                   onEdit={onEdit}
                   replies={r.replies || []}
