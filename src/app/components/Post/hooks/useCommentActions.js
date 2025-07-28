@@ -55,25 +55,34 @@ export default function useCommentActions({
 
   const handleReply = useCallback(
     async (parentCommentId, replyText) => {
+      if (!checkAuth() || !replyText.trim()) {
+        toast.error("Reply cannot be empty");
+        return;
+      }
+
       try {
-        await fetch(
-          `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${commentId}/reply`,
+        const res = await fetch(
+          `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${parentCommentId}/reply`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // include auth if needed
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ text: replyText }),
           }
         );
+
         const updated = await res.json();
+
         setPosts((prev) =>
           prev.map((p) => (p._id === post._id ? updated : p))
         );
+
         socket.emit("updatePost", updated);
         toast.success("💬 Reply posted!", { autoClose: 1500 });
       } catch (err) {
+        console.error("❌ handleReply error:", err);
         toast.error("❌ Failed to reply");
       }
     },
