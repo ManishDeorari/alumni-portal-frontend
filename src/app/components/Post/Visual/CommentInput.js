@@ -26,21 +26,21 @@ export default function CommentInput({
 
   return (
     <div className="relative mt-2">
-      <div className="flex items-center gap-2">
-        <input
-          type="text"
-          value={comment}
-          onChange={(e) => handleTyping(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              onSubmit();
-            }
-          }}
-          placeholder="Write a comment..."
-          className="flex-1 border border-black-300 rounded-full px-4 py-2 text-sm focus:outline-none"
-          ref={inputRef}
-        />
+        <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 border border-black">
+          <input
+            type="text"
+            value={comment}
+            onChange={(e) => handleTyping(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onSubmit();
+              }
+            }}
+            placeholder="Write a comment..."
+            className="flex-1 bg-white border-none outline-none text-sm"
+            ref={inputRef}
+          />
 
         <EmojiPickerToggle
           onEmojiSelect={handleEmojiClick}
