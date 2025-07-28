@@ -57,7 +57,7 @@ export default function useCommentActions({
     async (parentCommentId, replyText) => {
       try {
         const res = await fetch(
-          `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/reply`,
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comments/${parentCommentId}/reply`,
           {
             method: "POST",
             headers: {
