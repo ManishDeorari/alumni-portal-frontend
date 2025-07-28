@@ -111,7 +111,7 @@ export default function CommentCard({
                   Save
                 </button>
                 <button
-                  className="text-gray-400 block"
+                  className="text-black-400 block"
                   onClick={() => {
                     setEditing(false);
                     setEditText(comment.text);
