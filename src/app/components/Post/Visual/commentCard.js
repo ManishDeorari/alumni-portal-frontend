@@ -14,6 +14,10 @@ export default function CommentCard({
   replies = [],
   postId,
   isReply = false,
+
+  // 🆕 for handling reply-specific actions
+  onEditReply,
+  onDeleteReply,
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
@@ -24,7 +28,6 @@ export default function CommentCard({
   const [reactions, setReactions] = useState(comment.reactions || {});
   const [deleting, setDeleting] = useState(false);
 
-  // 🆕 Highlight scroll
   const commentRef = useRef(null);
   const isOwn = comment.user?._id === currentUser._id;
   const [justPosted, setJustPosted] = useState(false);
@@ -33,37 +36,36 @@ export default function CommentCard({
     setReactions(comment.reactions || {});
   }, [comment.reactions]);
 
-  // 🆕 Auto scroll + flash effect
   useEffect(() => {
     if (isOwn && comment.justNow) {
       commentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       setJustPosted(true);
-      const timer = setTimeout(() => setJustPosted(false), 1000); // 1s flash
+      const timer = setTimeout(() => setJustPosted(false), 1000);
       return () => clearTimeout(timer);
     }
   }, [comment.justNow, isOwn]);
 
   const toggleReaction = async (emoji) => {
     try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ emoji }),
-        }
-      );
+      const url = isReply
+        ? `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${comment.parentId}/reply/${comment._id}/react`
+        : `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ emoji }),
+      });
 
       if (!res.ok) throw new Error("Failed to react");
 
       const result = await res.json();
-      const updatedComment = result.comment;
 
-      if (updatedComment?.reactions) {
-        setReactions(updatedComment.reactions);
+      if (result?.reactions || result?.comment?.reactions) {
+        setReactions(result.reactions || result.comment.reactions);
       }
 
       socket.emit("updatePostRequest", { postId });
@@ -77,20 +79,20 @@ export default function CommentCard({
 
   return (
     <div
-        ref={commentRef}
-        className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
-          ${
-            isReply
-              ? isOwn
-                ? "bg-yellow-100 border border-yellow-400 pl-6 ml-3 border-l-[3px] border-blue-300"
-                : "bg-white text-black border border-black pl-6 ml-3 border-l-[3px] border-blue-300"
-              : isOwn
-              ? "bg-yellow-50 border border-yellow-400"
-              : "bg-white border border-black"
-          }
-          ${justPosted ? "ring-2 ring-yellow-400" : ""}
-        `}
-      >
+      ref={commentRef}
+      className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
+        ${
+          isReply
+            ? isOwn
+              ? "bg-yellow-100 border border-yellow-400 pl-6 ml-3 border-l-[3px] border-blue-300"
+              : "bg-white text-black border border-black pl-6 ml-3 border-l-[3px] border-blue-300"
+            : isOwn
+            ? "bg-yellow-50 border border-yellow-400"
+            : "bg-white border border-black"
+        }
+        ${justPosted ? "ring-2 ring-yellow-400" : ""}
+      `}
+    >
       <div className="flex justify-between items-start">
         <div className="w-full">
           <p className="text-sm font-semibold flex items-center gap-1">
@@ -137,7 +139,9 @@ export default function CommentCard({
                 <button
                   className="text-blue-600 font-semibold block"
                   onClick={() => {
-                    onEdit(comment._id, editText);
+                    isReply
+                      ? onEditReply(comment._id, editText)
+                      : onEdit(comment._id, editText);
                     setEditing(false);
                     setShowEmoji(false);
                   }}
@@ -169,7 +173,9 @@ export default function CommentCard({
                 <button
                   onClick={async () => {
                     setDeleting(true);
-                    await onDelete(comment._id);
+                    await (isReply
+                      ? onDeleteReply(comment._id)
+                      : onDelete(comment._id));
                     setDeleting(false);
                   }}
                   disabled={deleting}
@@ -248,44 +254,46 @@ export default function CommentCard({
       )}
 
       {/* 🧵 Reply Threads */}
-        {showReplies && replies.length > 0 && (
-          <div className="mt-2 space-y-2">
-            {[...replies]
-              .reverse()
-              .slice(0, visibleReplies)
-              .map((r) => (
-                <CommentCard
-                  key={r._id}
-                  comment={r}
-                  currentUser={currentUser}
-                  onReply={onReply}
-                  onDelete={onDelete}
-                  onEdit={onEdit}
-                  replies={r.replies || []}
-                  postId={postId}
-                  isReply={true}
-                />
-              ))}
+      {showReplies && replies.length > 0 && (
+        <div className="mt-2 space-y-2">
+          {[...replies]
+            .reverse()
+            .slice(0, visibleReplies)
+            .map((r) => (
+              <CommentCard
+                key={r._id}
+                comment={r}
+                currentUser={currentUser}
+                onReply={onReply}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                replies={r.replies || []}
+                postId={postId}
+                isReply={true}
+                onEditReply={onEditReply}
+                onDeleteReply={onDeleteReply}
+              />
+            ))}
 
-            {replies.length > visibleReplies && (
-              <button
-                className="text-blue-500 text-xs ml-4"
-                onClick={() => setVisibleReplies((v) => v + 2)}
-              >
-                Load more replies
-              </button>
-            )}
+          {replies.length > visibleReplies && (
+            <button
+              className="text-blue-500 text-xs ml-4"
+              onClick={() => setVisibleReplies((v) => v + 2)}
+            >
+              Load more replies
+            </button>
+          )}
 
-            {visibleReplies > 2 && (
-              <button
-                className="text-red-400 text-xs ml-4"
-                onClick={() => setVisibleReplies(2)}
-              >
-                Show less replies
-              </button>
-            )}
-          </div>
-        )}
+          {visibleReplies > 2 && (
+            <button
+              className="text-red-400 text-xs ml-4"
+              onClick={() => setVisibleReplies(2)}
+            >
+              Show less replies
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -95,8 +95,11 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const {
     handleComment,
     handleReply,
+    handleEditComment,
     handleDeleteComment,
-    handleEditComment
+    handleEditReply,
+    handleDeleteReply,
+    handleReactToReply,
   } = useCommentActions({
     post,
     comment,
@@ -203,6 +206,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
             onEdit={handleEditComment}
             replies={c.replies || []}
             postId={post._id} // ✅ Add this
+            onEditReply={handleEditReply}       // ✅ ADD
+            onDeleteReply={handleDeleteReply}   // ✅ ADD
+            onReactToReply={handleReactToReply} // ✅ ADD
           />
         ))}
 

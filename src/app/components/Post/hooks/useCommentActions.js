@@ -146,10 +146,89 @@ export default function useCommentActions({
     [post._id, setPosts]
   );
 
+  const handleEditReply = useCallback(
+  async (commentId, replyId, newText) => {
+    if (!checkAuth() || !newText.trim()) return alert("Reply cannot be empty");
+
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: newText }),
+        }
+      );
+
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      socket.emit("postUpdated", updated);
+      toast.success("✏️ Reply updated", { autoClose: 1500 });
+    } catch (err) {
+      toast.error("❌ Failed to edit reply");
+    }
+  },
+  [post._id, setPosts]
+);
+
+const handleDeleteReply = useCallback(
+  async (commentId, replyId) => {
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      socket.emit("postUpdated", updated);
+      toast.success("🗑️ Reply deleted!", { autoClose: 1500 });
+    } catch (err) {
+      toast.error("❌ Failed to delete reply");
+    }
+  },
+  [post._id, setPosts]
+);
+
+const handleReactToReply = useCallback(
+  async (commentId, replyId, emoji) => {
+    try {
+      const res = await fetch(
+        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}/reply/${replyId}/react`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ emoji }),
+        }
+      );
+
+      const updated = await res.json();
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      socket.emit("postUpdated", updated);
+      toast.success("👍 Reply reaction updated", { autoClose: 1500 });
+    } catch (err) {
+      toast.error("❌ Failed to react to reply");
+    }
+  },
+  [post._id, setPosts]
+);
+
   return {
-    handleComment,
-    handleReply,
-    handleEditComment,
-    handleDeleteComment,
-  };
+  handleComment,
+  handleReply,
+  handleEditComment,
+  handleDeleteComment,
+  handleEditReply,
+  handleDeleteReply,
+  handleReactToReply,
+};
+
 }
