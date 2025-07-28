@@ -80,7 +80,7 @@ export default function CommentCard({
       ref={commentRef} // 🆕 Scroll target
       className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
         ${isReply ? "pl-6 ml-3 border-l-[3px] border-blue-300" : ""}
-        ${isOwn ? "border border-yellow-400 bg-yellow-50" : "bg-white"}
+        ${isOwn ? "border border-yellow-400 bg-yellow-50" : "bg-white border border-black"}
         ${justPosted ? "ring-2 ring-yellow-400" : ""}
       `}
     >
