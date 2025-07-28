@@ -222,24 +222,6 @@ export default function CommentCard({
             {showReplyBox ? "Cancel" : "Reply"}
           </button>
         )}
-
-        {replies.length > 0 && (
-          <button
-            onClick={() => {
-              setShowReplies((prev) => !prev);
-              setVisibleReplies(2);
-            }}
-            className="text-gray-500 hover:underline"
-          >
-            {showReplies
-              ? `Hide ${replies.length} repl${
-                  replies.length > 1 ? "ies" : "y"
-                }`
-              : `Show ${replies.length} repl${
-                  replies.length > 1 ? "ies" : "y"
-                }`}
-          </button>
-        )}
       </div>
 
       {/* ✏️ Reply Input */}
@@ -254,7 +236,7 @@ export default function CommentCard({
       )}
 
       {/* 🧵 Reply Threads */}
-      {showReplies && replies.length > 0 && (
+      {replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {[...replies]
             .reverse()
