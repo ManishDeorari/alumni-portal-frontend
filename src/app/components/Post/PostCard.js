@@ -53,7 +53,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
   usePostSocket(post._id, currentUser, setSomeoneTyping, setPosts);
 
   // 📦 Centralize all effects
-  usePostEffects({ post, currentUser, setHasLiked, editing, textareaRef, editKey, setEditContent });
+  const postRef = usePostEffects({
+      post,
+      currentUser,
+      setEditContent,
+      setHasLiked,
+      editing,
+      textareaRef,
+      setSomeoneTyping,
+      setPosts,
+    });
 
   // 🎉 Like and reaction animation
   const { triggerLikeAnimation , triggerReactionEffect } = useEmojiAnimation(likeIconRef, post, currentUser);
@@ -127,7 +136,16 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
   // ✅ Everything's clean and ready for the `return` section now.
   return (
-    <div className="bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 relative">
+    <div
+      ref={postRef} // for smooth scroll later
+      className={`relative bg-white text-gray-900 rounded-lg shadow p-4 space-y-3 transition-all duration-300 
+        ${
+          post.user?._id === currentUser?._id
+            ? "outline outline-2 outline-black/70 bg-gradient-to-br from-gray-50 to-white"
+            : ""
+        }
+      `}
+    >
       <PostHeader {...{ post, currentUser, editing, toggleEdit: () =>
       toggleEdit(editKey, setEditContent, editing, post.content), handleDelete }} />
 
