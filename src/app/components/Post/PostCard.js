@@ -43,6 +43,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [hasLiked, setHasLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [reactionEffect, setReactionEffect] = useState(null);
+  const [showComments, setShowComments] = useState(false);
 
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
@@ -131,7 +132,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleLoadMore = () => {
-    setVisibleComments((prev) => prev + 5);
+    setShowComments((prev) => !prev);
   };
 
     const isMyPost = post.user?._id === currentUser._id;
@@ -184,6 +185,8 @@ export default function PostCard({ post, currentUser, setPosts }) {
           setVisibleComments,
           setReactionEffect,
           reactionEffect,
+          showComments,
+          setShowComments,
         }}
       />
 

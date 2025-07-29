@@ -9,7 +9,8 @@ export default function PostReactions({
   userReacted,
   setReactionEffect,
   reactionEffect,
-  setVisibleComments,
+  showComments,
+  setShowComments, // ✅ new
 }) {
   return (
     <>
@@ -35,7 +36,7 @@ export default function PostReactions({
 
       {/* Emoji Reaction Buttons */}
       <div className="flex gap-3 mt-2">
-        {["👍","❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
+        {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
           <motion.div
             key={emoji}
             className="relative flex items-center"
@@ -64,7 +65,7 @@ export default function PostReactions({
       {/* Like and Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-black-300">
         <button
-          onClick={() => setVisibleComments((prev) => prev + 5)}
+          onClick={() => setShowComments((prev) => !prev)} // ✅ toggle
           className="font-semibold text-black-600"
         >
           💬 Comment ({(post.comments || []).length})
