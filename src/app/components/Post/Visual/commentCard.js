@@ -47,9 +47,16 @@ export default function CommentCard({
 
   const toggleReaction = async (emoji) => {
     try {
+      const parentCommentId = comment.parentId || comment.parent_id || comment.parent || comment.parentCommentId;
+
       const url = isReply
-        ? `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${comment.parentId}/reply/${comment._id}/react`
+        ? `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${parentCommentId}/reply/${comment._id}/react`
         : `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`;
+
+      if (isReply && !parentCommentId) {
+        console.error("❌ Reply reaction failed: missing parentId");
+        return;
+      }
 
       const res = await fetch(url, {
         method: "POST",
@@ -63,10 +70,7 @@ export default function CommentCard({
       if (!res.ok) throw new Error("Failed to react");
 
       const result = await res.json();
-
-      if (result?.reactions || result?.comment?.reactions) {
-        setReactions(result.reactions || result.comment.reactions);
-      }
+      setReactions(result.reactions || result.comment.reactions);
 
       socket.emit("updatePostRequest", { postId });
       triggerReactionEffect(emoji);
