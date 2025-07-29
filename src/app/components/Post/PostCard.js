@@ -190,48 +190,47 @@ export default function PostCard({ post, currentUser, setPosts }) {
         }}
       />
 
-      <div className="pt-2 border-t border-gray-200 space-y-2">
-      {/* ✅ Show latest comments first with pagination */}
-      {(post.comments || [])
-        .slice() // create a shallow copy
-        .reverse() // latest comment at top
-        .slice(0, visibleComments)
-        .map((c) => (
-          <CommentCard
-            key={c._id}
-            comment={c}
-            currentUser={currentUser}
-            onReply={handleReply}
-            onDelete={handleDeleteComment}
-            onEdit={handleEditComment}
-            replies={c.replies || []}
-            postId={post._id} // ✅ Add this
-            onEditReply={handleEditReply}       // ✅ ADD
-            onDeleteReply={handleDeleteReply}   // ✅ ADD
-            onReactToReply={handleReactToReply} // ✅ ADD
-          />
-        ))}
+      {showComments && (
+        <div className="pt-2 border-t border-gray-200 space-y-2">
+          {(post.comments || [])
+            .slice()
+            .reverse()
+            .slice(0, visibleComments)
+            .map((c) => (
+              <CommentCard
+                key={c._id}
+                comment={c}
+                currentUser={currentUser}
+                onReply={handleReply}
+                onDelete={handleDeleteComment}
+                onEdit={handleEditComment}
+                replies={c.replies || []}
+                postId={post._id}
+                onEditReply={handleEditReply}
+                onDeleteReply={handleDeleteReply}
+                onReactToReply={handleReactToReply}
+              />
+            ))}
 
-      {/* ✅ Load More Button */}
-      {(post.comments || []).length > visibleComments && (
-        <button
-          onClick={handleLoadMore}
-          className="mt-2 text-sm text-blue-600 hover:underline"
-        >
-          Load more comments
-        </button>
-      )}
+          {(post.comments || []).length > visibleComments && (
+            <button
+              onClick={handleLoadMore}
+              className="mt-2 text-sm text-blue-600 hover:underline"
+            >
+              Load more comments
+            </button>
+          )}
 
-      {/* ✅ Show Less Button */}
-      {visibleComments > 2 && (
-        <button
-          onClick={() => setVisibleComments(2)}
-          className="mt-1 text-sm text-gray-500 hover:underline"
-        >
-          Show less comments
-        </button>
+          {visibleComments > 2 && (
+            <button
+              onClick={() => setVisibleComments(2)}
+              className="mt-1 text-sm text-gray-500 hover:underline"
+            >
+              Show less comments
+            </button>
+          )}
+        </div>
       )}
-    </div>
 
     <CommentInput
       comment={comment}
