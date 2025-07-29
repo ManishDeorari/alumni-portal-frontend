@@ -1,8 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
-import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Subcomponents
@@ -24,9 +21,6 @@ import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
-// Socket
-import socket from "../../../utils/socket";
-
 export default function PostCard({ post, currentUser, setPosts }) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content || "");
@@ -44,6 +38,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [isLiking, setIsLiking] = useState(false);
   const [reactionEffect, setReactionEffect] = useState(null);
   const [showComments, setShowComments] = useState(false);
+  const [showReactionModal, setShowReactionModal] = useState(false);
+  const [reactionModalEmoji, setReactionModalEmoji] = useState(null);
+  const [reactionModalUsers, setReactionModalUsers] = useState([]);
 
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
@@ -174,22 +171,26 @@ export default function PostCard({ post, currentUser, setPosts }) {
         />
 
       <PostReactions
-        {...{
-          post,
-          hasLiked,
-          handleReact,
-          userReacted,
-          getReactionCount,
-          setShowModal,
-          likeIconRef,
-          isLiking,           // ✅ Add this
-          setVisibleComments,
-          setReactionEffect,
-          reactionEffect,
-          showComments,
-          setShowComments,
-        }}
-      />
+  {...{
+    post,
+    hasLiked,
+    handleReact,
+    userReacted,
+    getReactionCount,
+    setShowModal,
+    likeIconRef,
+    isLiking,
+    setVisibleComments,
+    setReactionEffect,
+    reactionEffect,
+    showComments,
+    setShowComments,
+    setShowReactionModal,
+    setReactionModalEmoji,
+    setReactionModalUsers,
+  }}
+/>
+
 
       {showComments && (
         <div className="pt-2 border-t border-gray-200 space-y-2">
@@ -225,7 +226,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
           {visibleComments > 2 && (
             <button
               onClick={() => setVisibleComments(2)}
-              className="mt-1 text-sm text-gray-500 hover:underline"
+              className="mt-1 text-sm text-red-500 hover:underline"
             >
               Show less comments
             </button>
@@ -283,6 +284,15 @@ export default function PostCard({ post, currentUser, setPosts }) {
           onClose={() => setShowViewer(false)}
         />
       )}
+
+      {showReactionModal && (
+  <ReactionModal
+    emoji={reactionModalEmoji}
+    users={reactionModalUsers}
+    onClose={() => setShowReactionModal(false)}
+  />
+)}
+
     </div>
   );
 }
