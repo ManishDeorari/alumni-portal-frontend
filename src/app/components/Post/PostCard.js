@@ -10,7 +10,7 @@ import PostReactions from "../Post/Visual/PostReactions";
 import PostModal from "../Post/Visual/PostModal";
 import CommentInput from "../Post/Visual/CommentInput";
 import CommentCard from "../Post/Visual/commentCard";
-
+import ReactionModal from "./Visual/ReactionModal";
 import FullImageViewer from "./utils/FullImageViewer";
 
 // Hooks
