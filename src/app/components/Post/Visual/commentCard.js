@@ -17,6 +17,7 @@ export default function CommentCard({
   isReply = false,
   onEditReply,
   onDeleteReply,
+  onReactToReply,
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
