@@ -112,13 +112,13 @@ export default function PostCard({ post, currentUser, setPosts }) {
     setShowViewer(true);
   };
 
-  const checkAuth = () => {
+  /*const checkAuth = () => {
     if (!token) {
       alert("Please log in to interact with posts.");
       return false;
     }
     return true;
-  };
+  };*/
 
   const getReactionCount = (emoji) => {
     const users = post.reactions?.[emoji];
