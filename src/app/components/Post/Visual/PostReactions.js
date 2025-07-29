@@ -65,8 +65,8 @@ export default function PostReactions({
       {/* Like and Comment Buttons */}
       <div className="flex items-center gap-5 pt-2 border-t border-black-300">
         <button
-          onClick={() => setShowComments((prev) => !prev)} // ✅ toggle
-          className="font-semibold text-black-600"
+          onClick={() => setShowComments((prev) => !prev)}
+          className="font-semibold text-black-600 hover:underline cursor-pointer transition"
         >
           💬 Comment ({(post.comments || []).length})
         </button>

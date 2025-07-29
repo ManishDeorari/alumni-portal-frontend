@@ -132,8 +132,9 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleLoadMore = () => {
-    setShowComments((prev) => !prev);
-  };
+  const total = (post.comments || []).length;
+  setVisibleComments((prev) => Math.min(prev + 5, total));
+};
 
     const isMyPost = post.user?._id === currentUser._id;
   // ✅ Everything's clean and ready for the `return` section now.
