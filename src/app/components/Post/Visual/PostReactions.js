@@ -11,6 +11,9 @@ export default function PostReactions({
   reactionEffect,
   showComments,
   setShowComments, // ✅ new
+  setShowReactionModal,
+    setReactionModalEmoji,
+    setReactionModalUsers,
 }) {
   return (
     <>
