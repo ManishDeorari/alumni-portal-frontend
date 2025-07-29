@@ -139,7 +139,7 @@ export default function CommentCard({
                   className="text-blue-600 font-semibold block"
                   onClick={() => {
                     if (isReply) {
-                      onEditReply(comment._id, editText);
+                      onEditReply(comment.parentId, comment._id, editText); // ✅ Corrected
                     } else {
                       onEdit(comment._id, editText);
                     }
