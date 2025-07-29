@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import toast from "react-hot-toast";
 import socket from "../../../../utils/socket";
+import { triggerReactionEffect } from "./useEmojiAnimation";
 
 export default function useCommentActions({
   post,
@@ -213,6 +214,7 @@ const handleReactToReply = useCallback(
       const updated = await res.json();
       setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
       socket.emit("postUpdated", updated);
+      triggerReactionEffect(emoji);
       //toast.success("👍 Reply reaction updated", { autoClose: 1500 });
     } catch (err) {
       toast.error("❌ Failed to react to reply");
