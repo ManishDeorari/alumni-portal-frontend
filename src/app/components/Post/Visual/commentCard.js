@@ -276,6 +276,7 @@ export default function CommentCard({
                     isReply={true}
                     onEditReply={onEditReply}
                     onDeleteReply={onDeleteReply}
+                    onReactToReply={onReactToReply} 
                   />
                 ))}
 
