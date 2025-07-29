@@ -5,9 +5,10 @@ import { triggerReactionEffect } from "./useEmojiAnimation";
 export default function usePostActions({
   post,
   setPosts,
-  token,
+  //token,
   setEditing,
 }) {
+  const token = localStorage.getItem("token");
   const checkAuth = () => {
     if (!token) {
       alert("Please log in to interact with posts.");

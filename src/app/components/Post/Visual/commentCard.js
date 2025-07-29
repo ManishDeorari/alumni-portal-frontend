@@ -45,39 +45,36 @@ export default function CommentCard({
     }
   }, [comment.justNow, isOwn]);
 
-  const toggleReaction = async (emoji) => {
-    try {
-      const parentCommentId = comment.parentId || comment.parent_id || comment.parent || comment.parentCommentId;
+ const toggleReaction = async (emoji) => {
+  if (isReply && onReactToReply) {
+    // Use parent handler for replies
+    return onReactToReply(comment.parentId || comment.parentCommentId, comment._id, emoji);
+  }
 
-      const url = isReply
-        ? `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comment/${parentCommentId}/reply/${comment._id}/react`
-        : `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`;
+  // ✅ Local logic for top-level comment
+  try {
+    const url = `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`;
 
-      if (isReply && !parentCommentId) {
-        console.error("❌ Reply reaction failed: missing parentId");
-        return;
-      }
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ emoji }),
+    });
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ emoji }),
-      });
+    if (!res.ok) throw new Error("Failed to react");
 
-      if (!res.ok) throw new Error("Failed to react");
+    const result = await res.json();
+    setReactions(result.reactions || result.comment.reactions);
 
-      const result = await res.json();
-      setReactions(result.reactions || result.comment.reactions);
-
-      socket.emit("updatePostRequest", { postId });
-      triggerReactionEffect(emoji);
-    } catch (err) {
-      console.error("🔴 Reaction failed:", err);
-    }
-  };
+    socket.emit("updatePostRequest", { postId });
+    triggerReactionEffect(emoji);
+  } catch (err) {
+    console.error("🔴 Reaction failed:", err);
+  }
+};
 
   if (!comment || !currentUser || !comment.user) return null;
 
