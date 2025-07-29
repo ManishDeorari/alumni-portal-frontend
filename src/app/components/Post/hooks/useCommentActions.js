@@ -175,26 +175,27 @@ export default function useCommentActions({
   [post._id, setPosts]
 );
 
-const handleDeleteReply = useCallback(
-  async (commentId, replyId) => {
-    try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const updated = await res.json();
-      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-      socket.emit("postUpdated", updated);
-      toast.success("🗑️ Reply deleted!", { autoClose: 1500 });
-    } catch (err) {
-      toast.error("❌ Failed to delete reply");
-    }
-  },
-  [post._id, setPosts]
-);
+const handleDeleteReply = async (commentId, replyId) => {
+  try {
+    const res = await fetch(
+      `https://alumni-backend-d9k9.onrender.com/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    const updated = await res.json();
+    setPosts((prev) =>
+      prev.map((p) => (p._id === post._id ? updated : p))
+    );
+    socket.emit("updatePost", updated);
+    toast.success("🗑️ Reply deleted!", { autoClose: 1500 });
+  } catch (err) {
+    console.error("❌ Failed to delete reply:", err);
+    toast.error("❌ Failed to delete reply");
+  }
+};
 
 const handleReactToReply = useCallback(
   async (commentId, replyId, emoji) => {

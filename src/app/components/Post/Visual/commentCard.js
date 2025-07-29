@@ -175,7 +175,7 @@ export default function CommentCard({
                   onClick={async () => {
                     setDeleting(true);
                     if (isReply) {
-                      await onDeleteReply(comment._id);
+                      await onDeleteReply(comment.parentId, comment._id); // ✅ parentId is commentId
                     } else {
                       await onDelete(comment._id);
                     }
