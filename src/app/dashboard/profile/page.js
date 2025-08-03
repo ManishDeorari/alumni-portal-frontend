@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
+import { Pencil } from "lucide-react";
+import ProfileBanner from "../../components/profile/ProfileBanner";
 import SectionCard from "../../components/profile/SectionCard";
 
 export default function ProfilePage() {
@@ -26,28 +28,34 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
-  if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
+  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <Sidebar />
 
-      {/* 🔷 Profile Header */}
+      {/* 🔷 Top Profile Section (Banner + Info Combined) */}
       <div className="max-w-4xl mx-auto mt-4 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
-        {/* Banner */}
         <div className="relative w-full h-48 bg-black">
-          {profile.bannerImage ? (
-            <img src={profile.bannerImage} alt="Banner" className="object-cover w-full h-full" />
-          ) : (
-            <div className="w-full h-full bg-black" />
+          {profile.bannerImage && (
+            <img
+              src={profile.bannerImage}
+              alt="Banner"
+              className="object-cover w-full h-full"
+            />
           )}
           <div className="absolute inset-0 bg-black bg-opacity-30" />
+          
+          {/* ✏️ Banner Edit Button */}
+          <div className="absolute top-2 right-2 z-10">
+            <Pencil className="text-white hover:text-blue-300 cursor-pointer" />
+          </div>
         </div>
 
-        {/* Avatar, Name, Email, Enrollment, Connections */}
-        <div className="relative -mt-16 px-6 pb-6 flex flex-col sm:flex-row sm:items-end gap-6">
-          {/* Avatar */}
-          <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-md bg-white">
+        {/* 🔷 Profile Info Container */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 px-6 pb-6 -mt-16">
+          {/* 🟣 Profile Image */}
+          <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-md bg-gray-200">
             <img
               src={profile.profileImage || "/default-avatar.png"}
               alt="Profile"
@@ -55,14 +63,14 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Name + Info */}
+          {/* 🟣 Name + Email + Enrollment */}
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-900">{profile.name || "Unnamed User"}</h2>
+            <h2 className="text-2xl font-bold">{profile.name || "Unnamed User"}</h2>
             <p className="text-sm text-gray-700"><strong>Email:</strong> {profile.email}</p>
             <p className="text-sm text-gray-700"><strong>Enrollment No:</strong> {profile.enrollmentNo}</p>
           </div>
 
-          {/* Connections */}
+          {/* 🟣 Connections */}
           <div className="text-center sm:text-right">
             <p className="text-sm font-medium text-gray-500">Connections</p>
             <p className="text-lg font-bold text-blue-600">{profile.followers?.length || 0}</p>
@@ -73,8 +81,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* 🔷 Section Cards */}
-      <div className="max-w-4xl mx-auto mt-8 space-y-6 pb-10">
+      {/* 🔽 Sections */}
+      <div className="max-w-4xl mx-auto mt-20 space-y-6 pb-10">
+
         <SectionCard title="Contact & Social" hasData>
           <p><strong>Phone:</strong> {profile.phone || "Not provided"}</p>
           <p><strong>Address:</strong> {profile.address || "Not set"}</p>
