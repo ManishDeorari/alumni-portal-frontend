@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import { Pencil, PlusCircle } from "lucide-react";
-import ProfileBanner from "../../components/profile/ProfileBanner";
-import ProfileAvatar from "../../components/profile/ProfileAvatar";
 import SectionCard from "../../components/profile/SectionCard";
 
 export default function ProfilePage() {
@@ -29,37 +26,55 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
-  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
+  if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <Sidebar />
 
-      {/* Banner */}
-      <div className="relative w-full h-56 bg-black">
-        <img
-          src={profile.bannerImage || "/default_banner.jpg"}
-          alt="Banner"
-          className="w-full h-full object-cover"
-        />
-        <ProfileBanner banner={profile.bannerImage} onUpload={fetchProfile} />
-        
-        {/* Floating avatar and basic info */}
-        <div className="absolute bottom-[-40px] left-10 flex items-end gap-4">
-          <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} />
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">{profile.name}</h2>
-            <p className="text-sm">{profile.college || "College not set"}</p>
-            <p className="text-sm text-gray-300">{profile.email}</p>
-            <p className="text-sm text-gray-300">Enrollment No: {profile.enrollment}</p>
+      {/* 🔷 Profile Header */}
+      <div className="max-w-4xl mx-auto mt-4 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
+        {/* Banner */}
+        <div className="relative w-full h-48 bg-black">
+          {profile.bannerImage ? (
+            <img src={profile.bannerImage} alt="Banner" className="object-cover w-full h-full" />
+          ) : (
+            <div className="w-full h-full bg-black" />
+          )}
+          <div className="absolute inset-0 bg-black bg-opacity-30" />
+        </div>
+
+        {/* Avatar, Name, Email, Enrollment, Connections */}
+        <div className="relative -mt-16 px-6 pb-6 flex flex-col sm:flex-row sm:items-end gap-6">
+          {/* Avatar */}
+          <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-md bg-white">
+            <img
+              src={profile.profileImage || "/default-avatar.png"}
+              alt="Profile"
+              className="object-cover w-full h-full"
+            />
+          </div>
+
+          {/* Name + Info */}
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-gray-900">{profile.name || "Unnamed User"}</h2>
+            <p className="text-sm text-gray-700"><strong>Email:</strong> {profile.email}</p>
+            <p className="text-sm text-gray-700"><strong>Enrollment No:</strong> {profile.enrollmentNo}</p>
+          </div>
+
+          {/* Connections */}
+          <div className="text-center sm:text-right">
+            <p className="text-sm font-medium text-gray-500">Connections</p>
+            <p className="text-lg font-bold text-blue-600">{profile.followers?.length || 0}</p>
+            <button className="mt-1 text-sm text-blue-500 underline hover:text-blue-700">
+              View Connections
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Sections */}
-      <div className="max-w-4xl mx-auto mt-20 space-y-6 pb-10">
-
-        {/* Contact + Links */}
+      {/* 🔷 Section Cards */}
+      <div className="max-w-4xl mx-auto mt-8 space-y-6 pb-10">
         <SectionCard title="Contact & Social" hasData>
           <p><strong>Phone:</strong> {profile.phone || "Not provided"}</p>
           <p><strong>Address:</strong> {profile.address || "Not set"}</p>
@@ -67,19 +82,16 @@ export default function ProfilePage() {
           <p><strong>LinkedIn:</strong> {profile.linkedin || "Not linked"}</p>
         </SectionCard>
 
-        {/* Visitors & Followers */}
         <SectionCard title="Connections & Visitors" hasData>
           <p><strong>Followers:</strong> {profile.followers?.length || 0}</p>
           <p><strong>Total Visitors:</strong> {profile.totalViews || 0}</p>
           <p><strong>Today’s Visits:</strong> {profile.todayViews || 0}</p>
         </SectionCard>
 
-        {/* About */}
         <SectionCard title="About" hasData={!!profile.bio}>
           <p>{profile.bio || "No bio available."}</p>
         </SectionCard>
 
-        {/* Activity Preview */}
         <SectionCard title="Activity" hasData={!!profile.posts?.length}>
           {profile.posts?.slice(0, 2).map((post, idx) => (
             <div key={idx} className="mb-2 text-sm">{post.content}</div>
@@ -89,7 +101,6 @@ export default function ProfilePage() {
           )}
         </SectionCard>
 
-        {/* Experience */}
         <SectionCard title="Experience" hasData={!!profile.experience?.length}>
           {profile.experience?.map((exp, idx) => (
             <div key={idx}>
@@ -99,7 +110,6 @@ export default function ProfilePage() {
           ))}
         </SectionCard>
 
-        {/* Education */}
         <SectionCard title="Education" hasData={!!profile.education?.length}>
           {profile.education?.map((edu, idx) => (
             <div key={idx}>
@@ -109,7 +119,6 @@ export default function ProfilePage() {
           ))}
         </SectionCard>
 
-        {/* Current Work Profile */}
         <SectionCard title="Current Work Profile" hasData={!!profile.workProfile}>
           <p><strong>Functional Area:</strong> {profile.workProfile?.functionalArea || "N/A"}</p>
           <p><strong>Sub-functional Area:</strong> {profile.workProfile?.subFunctionalArea || "None"}</p>
@@ -118,7 +127,6 @@ export default function ProfilePage() {
           <p><strong>Skills:</strong> {(profile.skills || []).join(", ") || "No skills listed"}</p>
         </SectionCard>
 
-        {/* Job Preferences */}
         <SectionCard title="Job Preferences" hasData={!!profile.jobPreferences}>
           <p><strong>Preferred Functional Area:</strong> {profile.jobPreferences?.functionalArea || "N/A"}</p>
           <p><strong>Preferred Locations:</strong> {(profile.jobPreferences?.preferredLocations || []).join(", ") || "N/A"}</p>
