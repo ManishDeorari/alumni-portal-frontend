@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import Link from "next/link";
-import Image from "next/image";
+import { Pencil, PlusCircle } from "lucide-react";
+import ProfileBanner from "../../components/profile/ProfileBanner";
+import ProfileAvatar from "../../components/profile/ProfileAvatar";
+import SectionCard from "../../components/profile/SectionCard";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
@@ -30,36 +32,78 @@ export default function ProfilePage() {
   if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white pt-[80px]">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white">
       <Sidebar />
 
-      <div className="p-6 max-w-xl mx-auto space-y-6 bg-white text-gray-800 rounded-xl shadow-md">
-        <h1 className="text-3xl font-bold text-center text-blue-700">Your Profile</h1>
+      <div className="max-w-4xl mx-auto mt-4 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
+        <ProfileBanner banner={profile.bannerImage} onUpload={fetchProfile} />
 
-        <div className="flex flex-col items-center space-y-2">
-          <Image
-            src={profile.profileImage || "/default-profile.png"}
-            alt="Profile"
-            className="w-28 h-28 rounded-full object-cover border"
-          />
-          <p className="text-lg font-semibold">{profile.name || "Unnamed"}</p>
-        </div>
+        <div className="relative px-6 pb-6">
+          <div className="relative -top-10 flex items-center gap-4">
+            <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} />
 
-        <div className="space-y-2">
-          <p><strong>Email:</strong> {profile.email}</p>
-          <p><strong>Enrollment Number:</strong> {profile.enrollmentNumber}</p>
-          <p><strong>Bio:</strong> {profile.bio || "No bio added."}</p>
-          <p><strong>Job Title:</strong> {profile.job || "Not specified"}</p>
-          <p><strong>Course:</strong> {profile.course || "Not specified"}</p>
-          <p><strong>Graduation Year:</strong> {profile.graduationYear || "Not specified"}</p>
-        </div>
+            <div>
+              <h2 className="text-2xl font-semibold">{profile.name || "Unnamed"}</h2>
+              <p className="text-sm text-gray-600">{profile.job || "No job specified"}</p>
+            </div>
+          </div>
 
-        <div className="text-center">
-          <Link href="/dashboard/profile/edit">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-              Edit Profile
-            </button>
-          </Link>
+          <div className="mt-4 space-y-6">
+            <SectionCard title="About" hasData={!!profile.bio}>
+              <p>{profile.bio || "No bio available."}</p>
+            </SectionCard>
+
+            <SectionCard title="Education" hasData={!!profile.education?.length}>
+              {(profile.education || []).map((edu, idx) => (
+                <div key={idx} className="mb-2">
+                  <p className="font-semibold">{edu.degree} at {edu.institution}</p>
+                  <p className="text-sm text-gray-600">{edu.year}</p>
+                </div>
+              ))}
+              {!profile.education?.length && <p>No education history added.</p>}
+            </SectionCard>
+
+            <SectionCard title="Experience" hasData={!!profile.experience?.length}>
+              {(profile.experience || []).map((exp, idx) => (
+                <div key={idx} className="mb-2">
+                  <p className="font-semibold">{exp.title} at {exp.company}</p>
+                  <p className="text-sm text-gray-600">{exp.startDate} - {exp.endDate}</p>
+                </div>
+              ))}
+              {!profile.experience?.length && <p>No experience added yet.</p>}
+            </SectionCard>
+
+            <SectionCard title="Contact" hasData={!!profile.phone || !!profile.email}>
+              <p><strong>Email:</strong> {profile.email}</p>
+              <p><strong>Phone:</strong> {profile.phone || "N/A"}</p>
+              <p><strong>LinkedIn:</strong> {profile.linkedIn || "Not linked"}</p>
+            </SectionCard>
+
+            <SectionCard title="Skills" hasData={!!profile.skills?.length}>
+              {(profile.skills || []).join(", ") || "No skills listed."}
+            </SectionCard>
+
+            <SectionCard title="Resume" hasData={!!profile.jobPreferences?.resumeLink}>
+              {profile.jobPreferences?.resumeLink ? (
+                <a
+                  href={profile.jobPreferences.resumeLink}
+                  className="text-blue-600 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Resume
+                </a>
+              ) : (
+                "No resume uploaded."
+              )}
+            </SectionCard>
+
+            <SectionCard title="Job Preferences" hasData={!!profile.jobPreferences?.functionalArea}>
+              <p><strong>Functional Area:</strong> {profile.jobPreferences?.functionalArea || "N/A"}</p>
+              <p><strong>Preferred Locations:</strong> {(profile.jobPreferences?.preferredLocations || []).join(", ") || "N/A"}</p>
+              <p><strong>Notice Period:</strong> {profile.jobPreferences?.noticePeriod || "N/A"}</p>
+            </SectionCard>
+          </div>
         </div>
       </div>
     </div>
