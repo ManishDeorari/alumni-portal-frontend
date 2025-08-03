@@ -1,5 +1,3 @@
-"use client";
-
 import { Pencil, PlusCircle } from "lucide-react";
 
 export default function SectionCard({ title, children, hasData }) {
@@ -16,4 +14,4 @@ export default function SectionCard({ title, children, hasData }) {
       {children}
     </div>
   );
-} 
+}
