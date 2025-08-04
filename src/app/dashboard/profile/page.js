@@ -2,13 +2,19 @@
 
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import { Camera } from "lucide-react";
+import { Camera, Copy, Edit } from "lucide-react";
 import SectionCard from "../../components/profile/SectionCard";
+import ProfileAvatar from "../../components/profile/ProfileAvatar";
 import Link from "next/link";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [whatsapp, setWhatsapp] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [user, setUser] = useState(null);
 
   const fetchProfile = async () => {
     try {
@@ -18,9 +24,36 @@ export default function ProfilePage() {
       });
       const data = await res.json();
       setProfile(data);
+      setWhatsapp(data.whatsapp || "");
+      setLinkedin(data.linkedin || "");
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching profile:", error.message);
+    }
+  };
+
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopied(field);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleUpdateSocial = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update-social`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ whatsapp, linkedin }),
+      });
+      const data = await res.json();
+      setProfile(prev => ({ ...prev, whatsapp: data.whatsapp, linkedin: data.linkedin }));
+      setShowModal(false);
+    } catch (error) {
+      alert("Failed to update social links");
     }
   };
 
@@ -35,8 +68,7 @@ export default function ProfilePage() {
       <Sidebar />
 
       {/* 🔷 Top Profile Section */}
-      <div className="max-w-4xl mx-auto mt-4 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
-        
+      <div className="max-w-4xl mx-auto mt-3 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
         {/* 🔷 Banner */}
         <div className="relative w-full h-36 bg-black">
           <img
@@ -45,8 +77,6 @@ export default function ProfilePage() {
             className="object-cover w-full h-full"
           />
           <div className="absolute inset-0 bg-black bg-opacity-30" />
-          
-          {/* 📷 Camera Icon for Banner */}
           <div className="absolute top-2 right-2 z-10">
             <Camera className="text-white hover:text-blue-300 cursor-pointer w-5 h-5" />
           </div>
@@ -54,38 +84,60 @@ export default function ProfilePage() {
 
         {/* 🔷 Profile Info Block */}
         <div className="relative px-6 pb-6 -mt-12 flex flex-col items-center">
-          
-          {/* 🟣 Profile Picture + Camera Icon (outside the circle) */}
+          {/* Avatar */}
           <div className="relative flex justify-center">
-            {/* Circle Avatar */}
-            <div className="w-28 h-28 rounded-full border-4 border-white overflow-hidden shadow-md bg-gray-200">
-              <img
-                src={profile.profileImage || "/default-profile.jpg"}
-                alt="Profile"
-                className="object-cover w-full h-full"
-              />
-            </div>
-
-            {/* 📷 Camera Icon positioned outside the circle */}
-            <div className="absolute bottom-1 left-1/2 translate-x-8 bg-white p-1 rounded-full shadow cursor-pointer">
-              <Camera className="w-4 h-4 text-gray-700" />
-            </div>
+            <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} />
           </div>
 
-          {/* Name, Email, Enrollment */}
-          <div className="flex-1 space-y-1 mt-4">  {/* <-- Added mt-4 */}
+          {/* Name + Edit */}
+          <div className="flex justify-center w-full mt-4 relative">
             <h2 className="text-2xl font-bold">{profile.name || "Unnamed User"}</h2>
-            <p className="text-sm text-gray-700">
-              <strong>Email:</strong> {profile.email}
-            </p>
-            <p className="text-sm text-gray-700">
-              <strong>Enrollment No:</strong> {profile.enrollmentNumber || "N/A"}
-            </p>
+            <Edit
+              className="w-5 h-5 text-blue-600 cursor-pointer hover:text-blue-800 absolute right-4 top-1"
+              title="Edit Social Links"
+              onClick={() => setShowModal(true)}
+            />
           </div>
 
-          {/* 🔷 Connections, Visitors, Today Stats */}
-          <div className="flex justify-between items-end w-full px-6 pt-6 pb-2 mt-6">
-            {/* Connection - Left */}
+          {/* Email & Enrollment */}
+          <div className="w-full max-w-md text-center mt-3 space-y-2">
+            <div className="flex justify-center items-center gap-2 text-sm text-gray-700">
+              <strong>Email:</strong> {profile.email}
+              {profile.email && (
+                <Copy
+                  onClick={() => copyToClipboard(profile.email, "email")}
+                  className="w-4 h-4 cursor-pointer text-gray-500 hover:text-blue-600"
+                  title="Copy Email"
+                />
+              )}
+              {copied === "email" && <span className="text-green-500 ml-1">Copied</span>}
+            </div>
+
+            <div className="text-sm text-gray-700">
+              <strong>Enrollment No:</strong> {profile.enrollmentNumber || "N/A"}
+            </div>
+
+            {/* Personal Info Section */}
+            <div className="text-sm text-gray-700 space-y-1 pt-1">
+              <div className="flex justify-center items-center gap-2">
+                <strong>Phone:</strong> {profile.phone || "Not provided"}
+                {profile.phone && (
+                  <Copy
+                    onClick={() => copyToClipboard(profile.phone, "phone")}
+                    className="w-4 h-4 cursor-pointer text-gray-500 hover:text-blue-600"
+                    title="Copy Phone"
+                  />
+                )}
+                {copied === "phone" && <span className="text-green-500 ml-1">Copied</span>}
+              </div>
+              <p><strong>Address:</strong> {profile.address || "Not set"}</p>
+              <p><strong>WhatsApp:</strong> {profile.whatsapp || "Not linked"}</p>
+              <p><strong>LinkedIn:</strong> {profile.linkedin || "Not linked"}</p>
+            </div>
+          </div>
+
+          {/* 🔷 Stats */}
+          <div className="flex justify-between items-end w-full px-6 pt-6 pb-2 mt-4">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-gray-500">Connections</p>
               <Link href="/dashboard/connections">
@@ -94,42 +146,20 @@ export default function ProfilePage() {
                 </button>
               </Link>
             </div>
-
-            {/* Total Visitors - Center */}
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-gray-500">Total Visitors</p>
-              <p className="text-xl font-bold text-purple-600">
-                {profile.totalViews || 0}
-              </p>
+              <p className="text-xl font-bold text-purple-600">{profile.totalViews || 0}</p>
             </div>
-
-            {/* Today's Visit - Right */}
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-gray-500">Today’s Visits</p>
-              <p className="text-xl font-bold text-green-600">
-                {profile.todayViews || 0}
-              </p>
+              <p className="text-xl font-bold text-green-600">{profile.todayViews || 0}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 🔽 Sections */}
+      {/* 🔽 Rest Sections */}
       <div className="max-w-4xl mx-auto mt-20 space-y-6 pb-10">
-
-        <SectionCard title="Contact & Social" hasData>
-          <p><strong>Phone:</strong> {profile.phone || "Not provided"}</p>
-          <p><strong>Address:</strong> {profile.address || "Not set"}</p>
-          <p><strong>WhatsApp:</strong> {profile.whatsapp || "Not linked"}</p>
-          <p><strong>LinkedIn:</strong> {profile.linkedin || "Not linked"}</p>
-        </SectionCard>
-
-        <SectionCard title="Connections & Visitors" hasData>
-          <p><strong>Followers:</strong> {profile.followers?.length || 0}</p>
-          <p><strong>Total Visitors:</strong> {profile.totalViews || 0}</p>
-          <p><strong>Today’s Visits:</strong> {profile.todayViews || 0}</p>
-        </SectionCard>
-
         <SectionCard title="About" hasData={!!profile.bio}>
           <p>{profile.bio || "No bio available."}</p>
         </SectionCard>
@@ -181,6 +211,37 @@ export default function ProfilePage() {
           }</p>
         </SectionCard>
       </div>
+
+      {/* 🔘 Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-80 space-y-4 shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-800">Update Social Links</h2>
+            <div>
+              <label className="text-sm text-gray-600">WhatsApp:</label>
+              <input
+                type="text"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                className="w-full mt-1 p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">LinkedIn:</label>
+              <input
+                type="text"
+                value={linkedin}
+                onChange={(e) => setLinkedin(e.target.value)}
+                className="w-full mt-1 p-2 border rounded"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowModal(false)} className="px-4 py-1 bg-gray-200 rounded">Cancel</button>
+              <button onClick={handleUpdateSocial} className="px-4 py-1 bg-blue-600 text-white rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
