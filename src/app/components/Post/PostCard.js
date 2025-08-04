@@ -191,7 +191,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
   }}
 />
 
-
       {showComments && (
         <div className="pt-2 border-t border-gray-200 space-y-2">
           {(post.comments || [])
@@ -286,13 +285,12 @@ export default function PostCard({ post, currentUser, setPosts }) {
       )}
 
       {showReactionModal && (
-  <ReactionModal
-    emoji={reactionModalEmoji}
-    users={reactionModalUsers}
-    onClose={() => setShowReactionModal(false)}
-  />
-)}
-
+        <ReactionModal
+          emoji={reactionModalEmoji}
+          users={reactionModalUsers}
+          onClose={() => setShowReactionModal(false)}
+        />
+      )}
     </div>
   );
 }

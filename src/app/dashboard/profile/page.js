@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Camera } from "lucide-react";
 import SectionCard from "../../components/profile/SectionCard";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
@@ -82,27 +83,32 @@ export default function ProfilePage() {
             </p>
           </div>
 
-          {/* 🔷 Horizontal Connections + Visitors Info */}
-          <div className="flex justify-between items-center px-6 pb-6 text-sm text-gray-800">
-            {/* 🔹 Connections */}
-            <div className="flex flex-col items-start w-1/3">
-              <p className="font-medium text-gray-500">Connections</p>
-              <p className="text-lg font-bold text-blue-600">{profile.followers?.length || 0}</p>
-              <button className="mt-1 text-sm text-blue-500 underline hover:text-blue-700">
-                View Connections
-              </button>
+          {/* 🔷 Connections, Visitors, Today Stats */}
+          <div className="flex justify-between items-end w-full px-6 pt-6 pb-2 mt-6">
+            {/* Connection - Left */}
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-gray-500">Connections</p>
+              <Link href="/dashboard/connections">
+                <button className="text-xl font-bold text-blue-600 hover:underline">
+                  {profile.followers?.length || 0}
+                </button>
+              </Link>
             </div>
 
-            {/* 🔹 Total Visitors */}
-            <div className="flex flex-col items-center w-1/3">
-              <p className="font-medium text-gray-500">Total Visitors</p>
-              <p className="text-lg font-bold text-purple-600">{profile.totalViews || 0}</p>
+            {/* Total Visitors - Center */}
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-gray-500">Total Visitors</p>
+              <p className="text-xl font-bold text-purple-600">
+                {profile.totalViews || 0}
+              </p>
             </div>
 
-            {/* 🔹 Today’s Visits */}
-            <div className="flex flex-col items-end w-1/3">
-              <p className="font-medium text-gray-500">Today’s Visits</p>
-              <p className="text-lg font-bold text-green-600">{profile.todayViews || 0}</p>
+            {/* Today's Visit - Right */}
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-gray-500">Today’s Visits</p>
+              <p className="text-xl font-bold text-green-600">
+                {profile.todayViews || 0}
+              </p>
             </div>
           </div>
         </div>

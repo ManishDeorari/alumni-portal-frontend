@@ -5,7 +5,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
   return (
     <div className="flex items-center gap-3">
       <img
-        src={post.user?.profilePic || "/default-profile.png"}
+        src={post.user?.profilePic || "/default-profile.jpg"}
         alt="profile"
         className="w-10 h-10 rounded-full"
       />
