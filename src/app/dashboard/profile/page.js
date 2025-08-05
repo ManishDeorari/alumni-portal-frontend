@@ -14,7 +14,6 @@ export default function ProfilePage() {
   const [showModal, setShowModal] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
   const [linkedin, setLinkedin] = useState("");
-  const [user, setUser] = useState(null);
 
   const fetchProfile = async () => {
     try {
@@ -86,7 +85,7 @@ export default function ProfilePage() {
         <div className="relative px-6 pb-6 -mt-12 flex flex-col items-center">
           {/* Avatar */}
           <div className="relative flex justify-center">
-            <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} />
+            <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} userId={profile._id} />
           </div>
 
           {/* Name + Edit */}

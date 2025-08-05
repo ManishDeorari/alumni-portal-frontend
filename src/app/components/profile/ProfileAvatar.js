@@ -4,9 +4,9 @@ import { Camera, Trash } from "lucide-react";
 import { useState } from "react";
 import ProfileEditorModal from "./ProfileEditorModal";
 
-export default function ProfileAvatar({ image, onUpload }) {
+export default function ProfileAvatar({ image, onUpload ,userId}) {
   const [showModal, setShowModal] = useState(false);
-  const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  //const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
   const handleDelete = async () => {
     const token = localStorage.getItem("token");
