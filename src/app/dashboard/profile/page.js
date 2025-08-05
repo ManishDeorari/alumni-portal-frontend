@@ -22,7 +22,8 @@ export default function ProfilePage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setProfile(data);
+      console.log("Updated profile data:", data); // ✅ Debug log
+      setProfile({ ...data }); // ✅ Important fix
       setWhatsapp(data.whatsapp || "");
       setLinkedin(data.linkedin || "");
       setLoading(false);
