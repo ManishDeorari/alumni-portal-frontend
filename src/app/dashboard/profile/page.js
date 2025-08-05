@@ -86,7 +86,7 @@ export default function ProfilePage() {
         <div className="relative px-6 pb-6 -mt-12 flex flex-col items-center">
           {/* Avatar */}
           <div className="relative flex justify-center">
-            <ProfileAvatar image={profile.profileImage} onUpload={fetchProfile} userId={profile._id} />
+            <ProfileAvatar image={profile.profilePicture} onUpload={fetchProfile} userId={profile._id} />
           </div>
 
           {/* Name + Edit */}
