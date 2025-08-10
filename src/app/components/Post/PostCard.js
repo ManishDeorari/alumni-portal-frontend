@@ -142,7 +142,6 @@ export default function PostCard({ post, currentUser, setPosts }) {
           ${isMyPost ? "bg-gradient-to-tr from-gray-175 to-blue-50" : "bg-white"}
           hover:shadow-md`}
       >
-
       <PostHeader {...{ post, currentUser, editing, toggleEdit: () =>
       toggleEdit(editKey, setEditContent, editing, post.content), handleDelete }} />
 
