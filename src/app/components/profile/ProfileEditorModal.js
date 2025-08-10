@@ -1,7 +1,7 @@
 "use client";
 
 import { X, RotateCcw, RotateCw } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function ProfileEditorModal({ onClose, onUploaded, userId, currentImage }) {
@@ -12,7 +12,6 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
 
   const fileInputRef = useRef();
 
-  // Handle new file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -20,7 +19,6 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  // Apply (Upload + Update + Delete old)
   const handleApplyUpload = async () => {
     if (!selectedFile || !userId) {
       toast.error("Please select a photo first.");
@@ -29,13 +27,14 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
 
     setUploading(true);
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-    const newPublicId = `user_${userId}_profile`;
-    formData.append("public_id", newPublicId);
-
     try {
+      // 1️⃣ Upload to Cloudinary
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      const newPublicId = `user_${userId}_profile`;
+      formData.append("public_id", newPublicId);
+
       const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
         method: "POST",
         body: formData,
@@ -47,8 +46,8 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
         return;
       }
 
+      // 2️⃣ Update user profile in backend
       const token = localStorage.getItem("token");
-
       const backendRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
         method: "PUT",
         headers: {
@@ -68,10 +67,10 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
       }
 
       toast.success("✅ Profile image updated!");
-      onUploaded(); // Refresh across app
+      onUploaded(); // Trigger app-wide refresh
       setSelectedFile(null);
       setActiveTab(null);
-      onClose(); // Close the modal
+      onClose();
     } catch (err) {
       console.error("❌ Error uploading image:", err);
       toast.error("Something went wrong.");
@@ -88,10 +87,9 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
           <X />
         </button>
 
-        {/* 📸 Title */}
         <h2 className="text-lg font-semibold mb-4 text-center">Profile Image</h2>
 
-        {/* 🖼️ Image Preview */}
+        {/* 🖼️ Preview */}
         <div className="flex justify-center mb-4">
           <img
             src={previewUrl || "/default-profile.jpg"}
@@ -100,35 +98,22 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
           />
         </div>
 
-        {/* 🔧 Top Row: Crop / Filters / Adjust */}
+        {/* Tabs */}
         <div className="flex justify-around mb-4 border-b pb-2">
-          <button
-            onClick={() => setActiveTab(activeTab === "crop" ? null : "crop")}
-            className={`px-4 py-1 rounded font-medium ${
-              activeTab === "crop" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-            }`}
-          >
-            Crop
-          </button>
-          <button
-            onClick={() => setActiveTab(activeTab === "filters" ? null : "filters")}
-            className={`px-4 py-1 rounded font-medium ${
-              activeTab === "filters" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-            }`}
-          >
-            Filters
-          </button>
-          <button
-            onClick={() => setActiveTab(activeTab === "adjust" ? null : "adjust")}
-            className={`px-4 py-1 rounded font-medium ${
-              activeTab === "adjust" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-            }`}
-          >
-            Adjust
-          </button>
+          {["crop", "filters", "adjust"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(activeTab === tab ? null : tab)}
+              className={`px-4 py-1 rounded font-medium ${
+                activeTab === tab ? "bg-blue-100 text-blue-600" : "text-gray-600"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </div>
 
-        {/* 🧰 Subsection Preview */}
+        {/* Subsection */}
         {activeTab && (
           <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px]">
             {activeTab === "crop" && (
@@ -183,17 +168,15 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
           </div>
         )}
 
-        {/* 📥 Bottom Row: Action Buttons */}
+        {/* Action Buttons */}
         <div className="flex justify-between items-center mt-6">
           <button className="text-red-600 font-medium hover:underline">Delete Photo</button>
-
           <button
             onClick={() => fileInputRef.current.click()}
             className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
           >
             Change Photo
           </button>
-
           <button
             onClick={handleApplyUpload}
             disabled={uploading}
