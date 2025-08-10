@@ -5,9 +5,11 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
   return (
     <div className="flex items-center gap-3">
       <img
-        src={post.user?.profilePic || "/default-profile.jpg"}
-        alt="profile"
-        className="w-10 h-10 rounded-full"
+        src={image || "/default-profile.jpg"}
+        alt="Profile"
+        width={112}
+        height={112}
+        className="rounded-full border-4 border-white object-cover w-28 h-28"
       />
       <div>
         <p className="font-semibold flex items-center gap-1">

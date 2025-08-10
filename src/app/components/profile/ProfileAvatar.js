@@ -23,7 +23,7 @@ export default function ProfileAvatar({ image, onUpload ,userId}) {
 
   return (
     <div className="relative">
-      <Image
+      <img
         src={image || "/default-profile.jpg"}
         alt="Profile"
         width={112}
