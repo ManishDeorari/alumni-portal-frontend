@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,9 +41,7 @@ export default function LoginPage() {
         throw new Error("Token not received");
       }
 
-
-      // ✅ Redirect to dashboard
-      //router.push("/dashboard");
+      toast.success("✅ LogIn Success!");
     } catch (err) {
       console.error("Login Error:", err);
       setError(err.message || "Something went wrong");

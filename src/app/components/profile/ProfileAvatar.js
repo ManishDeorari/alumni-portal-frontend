@@ -1,8 +1,7 @@
 "use client";
-import Image from "next/image";
 import { Camera, Trash } from "lucide-react";
 import { useState } from "react";
-import ProfileEditorModal from "./ProfileEditorModal";
+import ProfileEditorModal from "./Avatar/ProfileEditorModal";
 
 export default function ProfileAvatar({ image, onUpload ,userId}) {
   const [showModal, setShowModal] = useState(false);
