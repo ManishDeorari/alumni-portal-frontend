@@ -1,108 +1,94 @@
-"use client";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-const FILTERS = {
-  Original: "none",
-  Studio: "brightness(1.1) contrast(1.1)",
-  Spotlight: "brightness(1.2) saturate(1.3)",
-  Prime: "contrast(1.2) saturate(1.2)",
-  Classic: "grayscale(0.6) contrast(1.1)",
-  Edge: "contrast(1.4) brightness(0.9)",
-  Luminate: "brightness(1.3) saturate(1.1) contrast(1.1)",
-};
+const filters = [
+  { name: "Original", css: "none" }, // reset option
+  { name: "Grayscale", css: "grayscale(100%)" },
+  { name: "Sepia", css: "sepia(100%)" },
+  { name: "Contrast", css: "contrast(150%)" },
+  { name: "Brightness", css: "brightness(120%)" },
+  { name: "Hue Rotate", css: "hue-rotate(90deg)" },
+  { name: "Invert", css: "invert(100%)" },
+  { name: "Saturate", css: "saturate(200%)" },
+];
 
-export default function ProfileImageFilters({ imageSrc, onFilterApplied }) {
-  const [selected, setSelected] = useState(null); // no default
-  const [cache, setCache] = useState({});
-  const originalRef = useRef(null); // store original image once fully loaded
-  const originalReady = useRef(false); // flag to ensure original is ready
+export default function ProfileImageFilters({ imageSrc, onComplete }) {
+  const [tempFilter, setTempFilter] = useState("Original"); // preview filter
+  const originalImageRef = useRef(null);
 
-  // Load original image once
   useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imageSrc;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-      const dataUrl = canvas.toDataURL("image/jpeg");
-      fetch(dataUrl)
-        .then((res) => res.blob())
-        .then((blob) => {
-          originalRef.current = { dataUrl, file: new File([blob], "original.jpg", { type: blob.type }) };
-          originalReady.current = true;
-        });
-    };
+    if (imageSrc && !originalImageRef.current) {
+      originalImageRef.current = imageSrc; // store the very first image
+    }
   }, [imageSrc]);
 
-  const applyFilter = (filterName) => {
-    setSelected(filterName);
-
-    // Apply Original: always force reset to uploaded image
-    if (filterName === "Original") {
-      if (!originalReady.current) return; // do nothing if not ready
-      onFilterApplied(originalRef.current.dataUrl, originalRef.current.file);
-      return;
+  const handleApply = () => {
+    const css = filters.find((f) => f.name === tempFilter)?.css || "none";
+    if (onComplete) {
+      onComplete(imageSrc, css); // tell parent which filter is applied
     }
+  };
 
-    // Use cache if available
-    if (cache[filterName]) {
-      onFilterApplied(cache[filterName].dataUrl, cache[filterName].file);
-      return;
+  const handleReset = () => {
+    setTempFilter("Original");
+    if (onComplete && originalImageRef.current) {
+      onComplete(originalImageRef.current, "none"); // restore to original
     }
-
-    // Apply filter freshly on original
-    if (!originalReady.current) return; // safety check
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = originalRef.current.dataUrl;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.filter = FILTERS[filterName];
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-
-      const dataUrl = canvas.toDataURL("image/jpeg");
-      fetch(dataUrl)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const file = new File([blob], `profile_${filterName}.jpg`, { type: blob.type });
-          setCache((prev) => ({ ...prev, [filterName]: { dataUrl, file } }));
-          onFilterApplied(dataUrl, file);
-        });
-    };
   };
 
   return (
-    <div className="flex gap-4 overflow-x-auto w-full justify-center p-2">
-      {Object.keys(FILTERS).map((filter) => (
-        <div
-          key={filter}
-          onClick={() => applyFilter(filter)}
-          className={`text-center text-xs cursor-pointer ${
-            selected === filter ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-500"
-          }`}
-        >
-          <div
-            className={`w-16 h-16 rounded mb-1 mx-auto shadow overflow-hidden border-2 ${
-              selected === filter ? "border-blue-500" : "border-transparent"
+    <div className="flex flex-col items-center">
+      {/* Preview */}
+      <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-2 border-gray-300">
+        <img
+          src={imageSrc}
+          alt="Preview"
+          className="w-full h-full object-cover"
+          style={{
+            filter: filters.find((f) => f.name === tempFilter)?.css || "none",
+          }}
+        />
+      </div>
+
+      {/* Filters Thumbnails */}
+      <div className="flex gap-4 flex-wrap justify-center mb-4">
+        {filters.map((filter) => (
+          <button
+            key={filter.name}
+            onClick={() => setTempFilter(filter.name)}
+            className={`flex flex-col items-center w-16 ${
+              tempFilter === filter.name
+                ? "text-blue-600 font-bold"
+                : "text-gray-600"
             }`}
           >
-            <img
-              src={imageSrc} // static thumbnails
-              alt={filter}
-              className="w-full h-full object-cover"
-              style={{ filter: FILTERS[filter] }}
-            />
-          </div>
-          {filter === "Original" ? "Reset to Original" : filter}
-        </div>
-      ))}
+            <div className="w-12 h-12 rounded-full overflow-hidden mb-1 border">
+              <img
+                src={imageSrc}
+                alt={filter.name}
+                className="w-full h-full object-cover"
+                style={{ filter: filter.css }}
+              />
+            </div>
+            <span className="text-xs">{filter.name}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 w-full justify-center">
+        <button
+          onClick={handleApply}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Apply Filter
+        </button>
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 }

@@ -5,20 +5,6 @@ import ProfileEditorModal from "./Avatar/ProfileEditorModal";
 
 export default function ProfileAvatar({ image, onUpload ,userId}) {
   const [showModal, setShowModal] = useState(false);
-  //const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-
-  const handleDelete = async () => {
-    const token = localStorage.getItem("token");
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ profileImage: "" }),
-    });
-    onUpload(); // <- This will refresh image from parent
-  };
 
   return (
     <div className="relative">
@@ -37,16 +23,6 @@ export default function ProfileAvatar({ image, onUpload ,userId}) {
       >
         <Camera size={18} className="text-gray-700" />
       </button>
-
-      {image && (
-        <button
-          onClick={handleDelete}
-          className="absolute top-1 right-1 bg-white p-1 rounded-full shadow hover:bg-red-200"
-          title="Remove photo"
-        >
-          <Trash size={16} className="text-red-500" />
-        </button>
-      )}
 
       {showModal && (
         <ProfileEditorModal

@@ -1,10 +1,11 @@
 "use client";
 
-import { X, RotateCcw, Camera, ZoomIn, RefreshCw } from "lucide-react";
-import { useRef, useState } from "react";
+import { X} from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import ProfileImageCropper from "./ProfileImageCropper";
 import ProfileImageFilters from "./ProfileImageFilters";
+import ProfileImageAdjust from "./ProfileImageAdjust";
 
 export default function ProfileEditorModal({ onClose, onUploaded, userId, currentImage }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,6 +13,14 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+  const adjustOriginalRef = useRef({ url: null, file: null });
+  const [adjustKey, setAdjustKey] = useState(0); // force remount after reset
+
+useEffect(() => {
+  if (activeTab === "adjust") {
+    adjustOriginalRef.current = { url: previewUrl, file: selectedFile };
+  }
+}, [activeTab]); // <-- only when tab toggles to "adjust"
 
   const fileInputRef = useRef();
 
@@ -201,8 +210,8 @@ return (
         />
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-around mb-4 border-b pb-2">
+      {/* Tabs + Reset */}
+      <div className="flex justify-around mb-4 border-b pb-2 items-center">
         {["crop", "filters", "adjust"].map((tab) => (
           <button
             key={tab}
@@ -211,16 +220,33 @@ return (
               setActiveTab(activeTab === tab ? null : tab);
             }}
             disabled={!selectedFile}
-            className={`px-4 py-1 rounded font-medium transition ${
+            className={`bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium ${
               activeTab === tab
                 ? "bg-blue-100 text-blue-600"
-                : "text-gray-600"
+                : "text-black-600"
             } ${!selectedFile ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
             title={!selectedFile ? "Select a new image first" : `Open ${tab}`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
+
+          {/* Reset Button */}
+          {selectedFile && (
+            <button
+              onClick={() => {
+                // Restore preview to the original selected file
+                setPreviewUrl(adjustOriginalRef.current.url || URL.createObjectURL(selectedFile));
+                // Keep the selected file intact
+                setActiveTab(null);          // close any open tab
+                setAdjustKey((k) => k + 1);  // force adjust sliders reset
+              }}
+              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium"
+              title="Reset adjustments but keep the selected image"
+            >
+              Reset
+            </button>
+          )}
       </div>
 
       {/* Subsection */}
@@ -246,22 +272,50 @@ return (
           {activeTab === "filters" && selectedFile && (
             <ProfileImageFilters
               imageSrc={previewUrl}
-              onFilterApplied={(filteredImg, filteredFile) => {
-                setPreviewUrl(filteredImg);
-                setSelectedFile(filteredFile);
+              onComplete={(img, css) => {
+                // Apply CSS filter directly to preview
+                setPreviewUrl(img);
+
+                // Instead of creating a new file, just track filter css for upload
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const image = new Image();
+
+                image.src = img;
+                image.onload = () => {
+                  canvas.width = image.width;
+                  canvas.height = image.height;
+                  ctx.filter = css; // apply filter here
+                  ctx.drawImage(image, 0, 0, image.width, image.height);
+
+                  canvas.toBlob((blob) => {
+                    if (blob) {
+                      setSelectedFile(new File([blob], "profile_filtered.jpg", { type: blob.type }));
+                      setPreviewUrl(URL.createObjectURL(blob)); // update preview with filtered version
+                    }
+                  }, "image/jpeg");
+                };
               }}
             />
           )}
 
-          {activeTab === "adjust" && (
-            <div className="w-full px-6 space-y-3">
-              {["Brightness", "Contrast", "Saturation", "Vignette"].map((adj) => (
-                <div key={adj}>
-                  <label className="text-sm font-medium">{adj}</label>
-                  <input type="range" min="-100" max="100" step="1" className="w-full" />
-                </div>
-              ))}
-            </div>
+          {activeTab === "adjust" && selectedFile && (
+            <ProfileImageAdjust
+              key={adjustKey}              // remount after reset so sliders reset visually
+              imageUrl={previewUrl}        // prop name matches child component
+              onApply={(url, file) => {
+                setPreviewUrl(url);
+                setSelectedFile(file);
+              }}
+              onReset={() => {
+                const { url, file } = adjustOriginalRef.current || {};
+                if (url) setPreviewUrl(url);
+                if (file) setSelectedFile(file);
+
+                // force the child to remount so its internal slider state resets
+                setAdjustKey((k) => k + 1);
+              }}
+            />
           )}
         </div>
       )}
@@ -271,6 +325,7 @@ return (
         <button
           onClick={handleDeletePhoto}
           className="text-red-600 font-medium hover:underline"
+          title="Delete your current profile photo and set default"
         >
           Delete Photo
         </button>
@@ -284,6 +339,7 @@ return (
               setActiveTab(null); // close crop/filters/adjust if open
             }}
             className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+            title="Cancel changes and keep previous photo"
           >
             Cancel
           </button>
@@ -291,6 +347,7 @@ return (
           <button
             onClick={() => fileInputRef.current.click()}
             className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+            title="Select a new photo to change your profile image"
           >
             Change Photo
           </button>
@@ -300,6 +357,7 @@ return (
           onClick={handleApplyUpload}
           disabled={uploading}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50"
+          title="Apply all changes and update profile photo"
         >
           {uploading ? "Applying..." : "Apply"}
         </button>
