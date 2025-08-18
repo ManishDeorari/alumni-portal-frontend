@@ -1,9 +1,10 @@
 "use client";
 
-import { X, RotateCcw, RotateCw } from "lucide-react";
+import { X, RotateCcw, Camera, ZoomIn, RefreshCw } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import ProfileImageCropper from "./ProfileImageCropper";
+import ProfileImageFilters from "./ProfileImageFilters";
 
 export default function ProfileEditorModal({ onClose, onUploaded, userId, currentImage }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -176,118 +177,143 @@ const handleDeletePhoto = async () => {
   }
 };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg w-[90%] max-w-3xl p-4 relative text-black">
-        {/* ❌ Close Button */}
-        <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 hover:text-black">
-          <X />
+return (
+  <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+    {/* Scrollable white modal box */}
+    <div className="bg-white rounded-lg w-[90%] max-w-3xl p-4 relative text-black 
+                    max-h-[90vh] overflow-y-auto">
+      {/* ❌ Close Button */}
+      <button
+        onClick={onClose}
+        className="absolute top-2 right-2 text-gray-600 hover:text-black"
+      >
+        <X />
+      </button>
+
+      <h2 className="text-lg font-semibold mb-4 text-center">Profile Image</h2>
+
+      {/* 🖼️ Preview */}
+      <div className="flex justify-center mb-4">
+        <img
+          src={previewUrl || "/default-profile.jpg"}
+          alt="Preview"
+          className="w-40 h-40 object-cover rounded-full shadow"
+        />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex justify-around mb-4 border-b pb-2">
+        {["crop", "filters", "adjust"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => {
+              if (!selectedFile) return; // prevent activation if no new image
+              setActiveTab(activeTab === tab ? null : tab);
+            }}
+            disabled={!selectedFile}
+            className={`px-4 py-1 rounded font-medium transition ${
+              activeTab === tab
+                ? "bg-blue-100 text-blue-600"
+                : "text-gray-600"
+            } ${!selectedFile ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
+            title={!selectedFile ? "Select a new image first" : `Open ${tab}`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Subsection */}
+      {activeTab && (
+        <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px]">
+          {activeTab === "crop" && selectedFile && (
+            <ProfileImageCropper
+              imageSrc={previewUrl}
+              onComplete={(croppedImg) => {
+                setCroppedImage(croppedImg);
+                setPreviewUrl(croppedImg); // immediately update preview
+                fetch(croppedImg)
+                  .then((res) => res.blob())
+                  .then((blob) =>
+                    setSelectedFile(
+                      new File([blob], "profile.jpg", { type: blob.type })
+                    )
+                  );
+              }}
+            />
+          )}
+
+          {activeTab === "filters" && selectedFile && (
+            <ProfileImageFilters
+              imageSrc={previewUrl}
+              onFilterApplied={(filteredImg, filteredFile) => {
+                setPreviewUrl(filteredImg);
+                setSelectedFile(filteredFile);
+              }}
+            />
+          )}
+
+          {activeTab === "adjust" && (
+            <div className="w-full px-6 space-y-3">
+              {["Brightness", "Contrast", "Saturation", "Vignette"].map((adj) => (
+                <div key={adj}>
+                  <label className="text-sm font-medium">{adj}</label>
+                  <input type="range" min="-100" max="100" step="1" className="w-full" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center mt-6">
+        <button
+          onClick={handleDeletePhoto}
+          className="text-red-600 font-medium hover:underline"
+        >
+          Delete Photo
         </button>
 
-        <h2 className="text-lg font-semibold mb-4 text-center">Profile Image</h2>
-
-        {/* 🖼️ Preview */}
-        <div className="flex justify-center mb-4">
-          <img
-            src={previewUrl || "/default-profile.jpg"}
-            alt="Preview"
-            className="w-40 h-40 object-cover rounded-full shadow"
-          />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex justify-around mb-4 border-b pb-2">
-          {["crop", "filters", "adjust"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(activeTab === tab ? null : tab)}
-              className={`px-4 py-1 rounded font-medium ${
-                activeTab === tab ? "bg-blue-100 text-blue-600" : "text-gray-600"
-              }`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {/* Subsection */}
-        {activeTab && (
-          <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px]">
-            {activeTab === "crop" && selectedFile && (
-              <ProfileImageCropper
-                imageSrc={previewUrl}
-                onComplete={(croppedImg) => {
-                  setCroppedImage(croppedImg);
-                  // Also setSelectedFile to cropped blob so Apply button uploads cropped version
-                  fetch(croppedImg)
-                    .then((res) => res.blob())
-                    .then((blob) => setSelectedFile(new File([blob], "profile.jpg", { type: blob.type })));
-                }}
-              />
-            )}
-
-            {activeTab === "filters" && (
-              <div className="flex gap-4 overflow-x-auto w-full justify-center">
-                {["Original", "Studio", "Spotlight", "Prime", "Classic", "Edge", "Luminate"].map(
-                  (filter) => (
-                    <div
-                      key={filter}
-                      className="text-center text-xs text-gray-700 cursor-pointer hover:text-blue-600"
-                    >
-                      <div className="w-16 h-16 bg-gray-300 rounded mb-1 mx-auto shadow" />
-                      {filter}
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-
-            {activeTab === "adjust" && (
-              <div className="w-full px-6 space-y-3">
-                {["Brightness", "Contrast", "Saturation", "Vignette"].map((adj) => (
-                  <div key={adj}>
-                    <label className="text-sm font-medium">{adj}</label>
-                    <input type="range" min="-100" max="100" step="1" className="w-full" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex justify-between items-center mt-6">
+        {/* Change Photo ↔ Cancel toggle */}
+        {selectedFile ? (
           <button
-              onClick={handleDeletePhoto}
-              className="text-red-600 font-medium hover:underline"
-            >
-              Delete Photo
-            </button>
-
+            onClick={() => {
+              setSelectedFile(null);
+              setPreviewUrl(currentImage || "/default-profile.jpg");
+              setActiveTab(null); // close crop/filters/adjust if open
+            }}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+          >
+            Cancel
+          </button>
+        ) : (
           <button
             onClick={() => fileInputRef.current.click()}
             className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
           >
             Change Photo
           </button>
-          <button
-            onClick={handleApplyUpload}
-            disabled={uploading}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50"
-          >
-            {uploading ? "Applying..." : "Apply"}
-          </button>
-        </div>
+        )}
 
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <button
+          onClick={handleApplyUpload}
+          disabled={uploading}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50"
+        >
+          {uploading ? "Applying..." : "Apply"}
+        </button>
       </div>
+
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={handleFileChange}
+      />
     </div>
-  );
+  </div>
+);
 }

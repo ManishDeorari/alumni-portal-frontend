@@ -1,59 +1,121 @@
-// frontend/components/ProfileImageCropper.js
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
-import getCroppedImg from "./cropImageUtils"; // helper function
+import { RotateCw, RotateCcw, RotateCwSquare } from "lucide-react";
+import getCroppedImg from "./cropImageUtils";
 
 export default function ProfileImageCropper({ imageSrc, onComplete }) {
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
-  const onCropComplete = useCallback(
-    async (_, croppedAreaPixels) => {
-      const croppedImg = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
-      onComplete(croppedImg);
-    },
-    [imageSrc, rotation, onComplete]
-  );
+  // Store original image for reset
+  const originalImageRef = useRef(null);
+
+  useEffect(() => {
+    if (imageSrc && !originalImageRef.current) {
+      originalImageRef.current = imageSrc;
+    }
+  }, [imageSrc]);
+
+  const onCropComplete = useCallback((_, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
+
+  const handleReset = () => {
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+    if (onComplete && originalImageRef.current) {
+      onComplete(originalImageRef.current);
+    }
+  };
+
+  const handleFixPosition = async () => {
+    if (!croppedAreaPixels) return;
+    try {
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
+      if (onComplete) {
+        onComplete(croppedImage);
+      }
+    } catch (e) {
+      console.error("Fix position error:", e);
+    }
+  };
 
   return (
-    <div className="relative w-full h-[300px] bg-black">
-      <Cropper
-        image={imageSrc}
-        crop={crop}
-        zoom={zoom}
-        rotation={rotation}
-        aspect={1} // square for profile pic
-        onCropChange={setCrop}
-        onRotationChange={setRotation}
-        onZoomChange={setZoom}
-        onCropComplete={onCropComplete}
-        cropShape="round" // makes circle preview
-        showGrid={false}
-      />
+    <div
+      className="relative w-full max-w-[320px] mx-auto p-2 overflow-y-auto"
+      style={{ maxHeight: "90vh" }}
+    >
+      {/* Cropper area */}
+      <div className="relative w-full h-[300px] bg-black/70 rounded-lg overflow-hidden flex items-center justify-center">
+        <Cropper
+          image={imageSrc}
+          crop={crop}
+          zoom={zoom}
+          rotation={rotation}
+          aspect={1}
+          cropShape="round"
+          showGrid={false}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onRotationChange={setRotation}
+          onCropComplete={onCropComplete}
+        />
+      </div>
 
-      {/* Controls */}
-      <div className="flex flex-col gap-2 mt-4">
-        <label>Zoom</label>
+      {/* Zoom Slider */}
+      <div className="w-full mt-4 flex flex-col items-center">
+        <label className="text-lg font-semibold text-black-200 mb-1">Zoom</label>
         <input
           type="range"
           min={1}
           max={3}
-          step={0.1}
+          step={0.05}
           value={zoom}
-          onChange={(e) => setZoom(Number(e.target.value))}
-        />
-
-        <label>Rotation</label>
-        <input
-          type="range"
-          min={0}
-          max={360}
-          step={1}
-          value={rotation}
-          onChange={(e) => setRotation(Number(e.target.value))}
+          onChange={(e) => setZoom(parseFloat(e.target.value))}
+          className="w-full h-4 rounded-lg appearance-none cursor-pointer"
+          style={{
+            background: "black",
+            accentColor: "#3b82f6",
+          }}
         />
       </div>
+
+      {/* Buttons row */}
+      <div className="flex justify-center gap-4 mt-4">
+        <button
+          onClick={() => setRotation((r) => r - 90)}
+          className="bg-gray-200 p-3 rounded-full hover:bg-gray-300"
+          title="Rotate Left"
+        >
+          <RotateCcw size={22} />
+        </button>
+        <button
+          onClick={() => setRotation((r) => r + 90)}
+          className="bg-gray-200 p-3 rounded-full hover:bg-gray-300"
+          title="Rotate Right"
+        >
+          <RotateCw size={22} />
+        </button>
+        <button
+          onClick={handleReset}
+          className="bg-gray-200 p-3 rounded-full hover:bg-gray-300"
+          title="Reset to Original"
+        >
+          <RotateCcw size={22} className="text-red-500" />
+        </button>
+      </div>
+
+      {/* Fix Position */}
+      <button
+        onClick={handleFixPosition}
+        className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4 w-full hover:bg-blue-700"
+        title="Apply current crop and save"
+      >
+        Fix Position
+      </button>
     </div>
   );
 }
