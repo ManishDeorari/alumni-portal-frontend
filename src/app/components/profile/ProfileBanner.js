@@ -2,7 +2,7 @@
 
 import { Camera } from "lucide-react";
 import { useState } from "react";
-import BannerEditorModal from "./Banner/BannerEditorModal"; // we will create this
+import BannerEditorModal from "./Banner/BannerEditorModal";
 
 export default function ProfileBanner({ image, onUpload, userId }) {
   const [showModal, setShowModal] = useState(false);
@@ -10,16 +10,21 @@ export default function ProfileBanner({ image, onUpload, userId }) {
   return (
     <div className="relative w-full h-48 overflow-hidden rounded-lg">
       {/* Banner preview */}
-      <img
-        src={image || "/default-banner.jpg"}
-        alt="Banner"
-        className="w-full h-full object-cover"
-      />
+      <div className="w-full h-full bg-gray-200">
+        <img
+          src={image || "/default_banner.jpg"}
+          alt="Banner"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Edit button */}
       <button
-        onClick={() => setShowModal(true)}
-        className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer"
+        onClick={() => {
+          console.log("Button clicked");
+          setShowModal(true);
+        }}
+        className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer z-10"
         title="Edit banner"
       >
         <Camera size={20} className="text-gray-700" />

@@ -5,6 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import { Camera, Copy, Edit } from "lucide-react";
 import SectionCard from "../../components/profile/SectionCard";
 import ProfileAvatar from "../../components/profile/ProfileAvatar";
+import ProfileBanner from "../../components/profile/ProfileBanner";
 import Link from "next/link";
 
 export default function ProfilePage() {
@@ -70,16 +71,12 @@ export default function ProfilePage() {
       {/* 🔷 Top Profile Section */}
       <div className="max-w-4xl mx-auto mt-3 rounded-xl overflow-hidden bg-white shadow-md text-gray-900">
         {/* 🔷 Banner */}
-        <div className="relative w-full h-36 bg-black">
-          <img
-            src={profile.bannerImage || "/default_banner.jpg"}
-            alt="Banner"
-            className="object-cover w-full h-full"
+        <div className="relative w-full h-36">
+          <ProfileBanner
+            image={profile.bannerImage}
+            onUpload={fetchProfile}
+            userId={profile._id}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30" />
-          <div className="absolute top-2 right-2 z-10">
-            <Camera className="text-white hover:text-blue-300 cursor-pointer w-5 h-5" />
-          </div>
         </div>
 
         {/* 🔷 Profile Info Block */}

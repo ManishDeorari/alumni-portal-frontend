@@ -3,20 +3,20 @@
 import { X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import ProfileImageCropper from "./ProfileImageCropper"; // can reuse, just set aspect ratio for banner
-import ProfileImageFilters from "./ProfileImageFilters";
-import ProfileImageAdjust from "./ProfileImageAdjust";
+import ProfileImageCropper from "../Avatar/ProfileImageCropper";
+import ProfileImageFilters from "../Avatar/ProfileImageFilters";
+import ProfileImageAdjust from "../Avatar/ProfileImageAdjust";
 
 export default function BannerEditorModal({ onClose, onUploaded, userId, currentImage }) {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(currentImage || "/default-banner.jpg");
+  const [previewUrl, setPreviewUrl] = useState(currentImage || "/default_banner.jpg");
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState(null);
   const adjustOriginalRef = useRef({ url: null, file: null });
   const [adjustKey, setAdjustKey] = useState(0);
 
   useEffect(() => {
-    if (activeTab === "adjust") {
+    if (activeTab === "adjust" || activeTab === "crop" || activeTab === "filters") {
       adjustOriginalRef.current = { url: previewUrl, file: selectedFile };
     }
   }, [activeTab]);
@@ -70,7 +70,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           bannerImage: uploadJson.secure_url,
-          oldImageUrl: latestBanner && !latestBanner.includes("default-banner.jpg") ? latestBanner : null,
+          oldImageUrl: latestBanner && !latestBanner.includes("default_banner.jpg") ? latestBanner : null,
         }),
       });
 
@@ -82,7 +82,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
       if (typeof onUploaded === "function") onUploaded(uploadJson.secure_url);
 
       // Optional: delete old Cloudinary banner
-      if (latestBanner && !latestBanner.includes("default-banner.jpg")) {
+      if (latestBanner && !latestBanner.includes("default_banner.jpg")) {
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/delete-old-image`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -115,7 +115,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
       const latestProfile = await latestProfileRes.json();
       const latestBanner = latestProfile?.bannerImage || null;
 
-      const defaultBannerUrl = "/default-banner.jpg";
+      const defaultBannerUrl = "/default_banner.jpg";
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
         method: "PUT",
@@ -145,8 +145,12 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
         <h2 className="text-lg font-semibold mb-4 text-center">Banner Image</h2>
 
         {/* Preview */}
-        <div className="flex justify-center mb-4">
-          <img src={previewUrl || "/default-banner.jpg"} alt="Preview" className="w-full max-h-60 object-cover rounded-lg shadow" />
+        <div className="flex justify-center mb-4 w-full">
+          <img
+            src={previewUrl || currentImage || "/default_banner.jpg"}
+            alt="Preview"
+            className="w-full h-48 object-cover rounded-lg shadow"
+          />
         </div>
 
         {/* Tabs + Reset */}
@@ -179,54 +183,119 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
         {activeTab && (
           <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px] w-full">
             {activeTab === "crop" && selectedFile && (
-              <ProfileImageCropper imageSrc={previewUrl} onComplete={(croppedImg) => { setPreviewUrl(croppedImg); fetch(croppedImg).then(res => res.blob()).then(blob => setSelectedFile(new File([blob], "banner.jpg", { type: blob.type }))); }} aspectRatio={16 / 5} />
+              <ProfileImageCropper
+                imageSrc={previewUrl}
+                onComplete={(croppedImg) => {
+                  setPreviewUrl(croppedImg);
+                  fetch(croppedImg)
+                    .then((res) => res.blob())
+                    .then((blob) =>
+                      setSelectedFile(
+                        new File([blob], "banner.jpg", { type: blob.type })
+                      )
+                    );
+                }}
+                aspectRatio={16 / 5}
+              />
             )}
 
             {activeTab === "filters" && selectedFile && (
-              <ProfileImageFilters imageSrc={previewUrl} onComplete={(img, css) => {
-                setPreviewUrl(img);
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-                const image = new Image();
-                image.src = img;
-                image.onload = () => {
-                  canvas.width = image.width;
-                  canvas.height = image.height;
-                  ctx.filter = css;
-                  ctx.drawImage(image, 0, 0, image.width, image.height);
-                  canvas.toBlob(blob => { if (blob) { setSelectedFile(new File([blob], "banner_filtered.jpg", { type: blob.type })); setPreviewUrl(URL.createObjectURL(blob)); } }, "image/jpeg");
-                };
-              }} />
+              <ProfileImageFilters
+                imageSrc={previewUrl}
+                onComplete={(img, css) => {
+                  setPreviewUrl(img);
+                  const canvas = document.createElement("canvas");
+                  const ctx = canvas.getContext("2d");
+                  const image = new Image();
+                  image.src = img;
+                  image.onload = () => {
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    ctx.filter = css;
+                    ctx.drawImage(image, 0, 0, image.width, image.height);
+                    canvas.toBlob((blob) => {
+                      if (blob) {
+                        setSelectedFile(
+                          new File([blob], "banner_filtered.jpg", {
+                            type: blob.type,
+                          })
+                        );
+                        setPreviewUrl(URL.createObjectURL(blob));
+                      }
+                    }, "image/jpeg");
+                  };
+                }}
+              />
             )}
 
             {activeTab === "adjust" && selectedFile && (
-              <ProfileImageAdjust key={adjustKey} imageUrl={previewUrl} onApply={(url, file) => { setPreviewUrl(url); setSelectedFile(file); }} onReset={() => { const { url, file } = adjustOriginalRef.current || {}; if (url) setPreviewUrl(url); if (file) setSelectedFile(file); setAdjustKey((k) => k + 1); }} />
+              <ProfileImageAdjust
+                key={adjustKey}
+                imageUrl={previewUrl}
+                onApply={(url, file) => {
+                  setPreviewUrl(url);
+                  setSelectedFile(file);
+                }}
+                onReset={() => {
+                  const { url, file } = adjustOriginalRef.current || {};
+                  if (url) setPreviewUrl(url);
+                  if (file) setSelectedFile(file);
+                  setAdjustKey((k) => k + 1);
+                }}
+              />
             )}
           </div>
         )}
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center mt-6">
-          <button onClick={handleDeleteBanner} className="text-red-600 font-medium hover:underline" title="Delete current banner and set default">
+          <button
+            onClick={handleDeleteBanner}
+            className="text-red-600 font-medium hover:underline"
+            title="Delete current banner and set default"
+          >
             Delete Banner
           </button>
 
           {selectedFile ? (
-            <button onClick={() => { setSelectedFile(null); setPreviewUrl(currentImage || "/default-banner.jpg"); setActiveTab(null); }} className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded" title="Cancel changes and keep previous banner">
+            <button
+              onClick={() => {
+                setSelectedFile(null);
+                setPreviewUrl(currentImage || "/default_banner.jpg");
+                setActiveTab(null);
+              }}
+              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+              title="Cancel changes and keep previous banner"
+            >
               Cancel
             </button>
           ) : (
-            <button onClick={() => fileInputRef.current.click()} className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded" title="Select a new banner to change">
+            <button
+              onClick={() => fileInputRef.current.click()}
+              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+              title="Select a new banner to change"
+            >
               Change Banner
             </button>
           )}
 
-          <button onClick={handleApplyUpload} disabled={uploading} className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50" title="Apply all changes and update banner">
+          <button
+            onClick={handleApplyUpload}
+            disabled={uploading}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50"
+            title="Apply all changes and update banner"
+          >
             {uploading ? "Applying..." : "Apply"}
           </button>
         </div>
 
-        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
   const [adjustKey, setAdjustKey] = useState(0); // force remount after reset
 
 useEffect(() => {
-  if (activeTab === "adjust") {
+  if (activeTab === "adjust" || activeTab === "crop" || activeTab === "filters") {i
     adjustOriginalRef.current = { url: previewUrl, file: selectedFile };
   }
 }, [activeTab]); // <-- only when tab toggles to "adjust"
