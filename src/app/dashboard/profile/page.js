@@ -6,6 +6,7 @@ import { Camera, Copy, Edit } from "lucide-react";
 import SectionCard from "../../components/profile/SectionCard";
 import ProfileAvatar from "../../components/profile/ProfileAvatar";
 import ProfileBanner from "../../components/profile/ProfileBanner";
+import PostCard from "@/app/components/Post/PostCard";
 import Link from "next/link";
 
 export default function ProfilePage() {
@@ -19,14 +20,27 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
+
+      // 1) Get profile info
+      const resProfile = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      console.log("Updated profile data:", data); // ✅ Debug log
-      setProfile({ ...data }); // ✅ Important fix
-      setWhatsapp(data.whatsapp || "");
-      setLinkedin(data.linkedin || "");
+      const profileData = await resProfile.json();
+
+      // 2) Get user posts
+      const resPosts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const postsData = await resPosts.json();
+
+      // 3) Merge into profile state
+      setProfile({
+        ...profileData,
+        posts: postsData,   // 🔹 attach posts
+      });
+
+      setWhatsapp(profileData.whatsapp || "");
+      setLinkedin(profileData.linkedin || "");
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching profile:", error.message);
@@ -186,6 +200,70 @@ export default function ProfilePage() {
               <p className="text-sm text-gray-600">{edu.year}</p>
             </div>
           ))}
+        </SectionCard>
+
+        {/* 🔷 Activity Section (Moved below Education) */}
+        <SectionCard title="Activity" hasData={!!profile.posts?.length || !!profile.activity?.length}>
+          {profile.posts && profile.posts.length > 0 ? (
+            <>
+              {/* Show newest → oldest */}
+              {profile.posts
+                .slice() // copy array
+                .reverse()
+                .slice(0, 2)
+                .map((post, idx) => (
+                  <div key={idx} className="mb-4">
+                    {/* 🔹 Reuse PostCard to show all interactions */}
+                    <PostCard post={post} isProfileActivity />
+                  </div>
+                ))}
+
+              {profile.posts.length > 2 && (
+                <button
+                  onClick={() => window.location.href = "/dashboard/myposts"}
+                  className="text-blue-600 underline"
+                >
+                  See all posts
+                </button>
+              )}
+            </>
+          ) : (
+            <p className="text-gray-600">No activity yet.</p>
+          )}
+
+          {/* 🔹 Show Reactions, Comments, Replies */}
+          {profile.activity && profile.activity.length > 0 && (
+            <div className="mt-6">
+              <h3 className="font-semibold text-gray-800 mb-2">Your Interactions</h3>
+              {profile.activity.slice(0, 2).map((activity, idx) => (
+                <div key={idx} className="mb-3 text-sm">
+                  {activity.type === "reaction" && (
+                    <p>
+                      You reacted <span className="font-bold">{activity.reaction}</span> to a post
+                    </p>
+                  )}
+                  {activity.type === "comment" && (
+                    <p>
+                      You commented: <span className="italic">"{activity.text}"</span>
+                    </p>
+                  )}
+                  {activity.type === "reply" && (
+                    <p>
+                      You replied: <span className="italic">"{activity.text}"</span>
+                    </p>
+                  )}
+                </div>
+              ))}
+              {profile.activity.length > 2 && (
+                <button
+                  onClick={() => window.location.href = "/dashboard/myactivity"}
+                  className="text-blue-600 underline"
+                >
+                  See all activity
+                </button>
+              )}
+            </div>
+          )}
         </SectionCard>
 
         <SectionCard title="Current Work Profile" hasData={!!profile.workProfile}>

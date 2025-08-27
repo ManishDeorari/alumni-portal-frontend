@@ -3,9 +3,9 @@
 import { X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import ProfileImageCropper from "../Avatar/ProfileImageCropper";
-import ProfileImageFilters from "../Avatar/ProfileImageFilters";
-import ProfileImageAdjust from "../Avatar/ProfileImageAdjust";
+import BannerImageCropper from "./BannerImageCropper";
+import BannerImageFilters from "./BannerImageFilters";
+import BannerImageAdjust from "./BannerImageAdjust";
 
 export default function BannerEditorModal({ onClose, onUploaded, userId, currentImage }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -15,19 +15,21 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
   const adjustOriginalRef = useRef({ url: null, file: null });
   const [adjustKey, setAdjustKey] = useState(0);
 
-  useEffect(() => {
-    if (activeTab === "adjust" || activeTab === "crop" || activeTab === "filters") {
-      adjustOriginalRef.current = { url: previewUrl, file: selectedFile };
-    }
-  }, [activeTab]);
 
   const fileInputRef = useRef();
 
+  // When user selects a new file, store it as the ORIGINAL
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    setPreviewUrl(url);
+
+    // Save original for Reset
+    adjustOriginalRef.current = { url, file };
   };
 
   const handleApplyUpload = async () => {
@@ -168,22 +170,26 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
           ))}
 
           {/* Reset Button */}
-          {selectedFile && (
-            <button
-              onClick={() => { setPreviewUrl(adjustOriginalRef.current.url || URL.createObjectURL(selectedFile)); setActiveTab(null); setAdjustKey((k) => k + 1); }}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium"
-              title="Reset adjustments but keep the selected banner"
-            >
-              Reset
-            </button>
-          )}
+          <button
+            onClick={() => {
+              const { url, file } = adjustOriginalRef.current || {};
+              if (url) setPreviewUrl(url);
+              if (file) setSelectedFile(file);
+              setActiveTab(null);
+              setAdjustKey((k) => k + 1); // re-render adjust tool cleanly
+            }}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium"
+            title="Reset adjustments but keep the selected banner"
+          >
+            Reset
+          </button>
         </div>
 
         {/* Subsection */}
         {activeTab && (
           <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px] w-full">
             {activeTab === "crop" && selectedFile && (
-              <ProfileImageCropper
+              <BannerImageCropper
                 imageSrc={previewUrl}
                 onComplete={(croppedImg) => {
                   setPreviewUrl(croppedImg);
@@ -200,7 +206,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
             )}
 
             {activeTab === "filters" && selectedFile && (
-              <ProfileImageFilters
+              <BannerImageFilters
                 imageSrc={previewUrl}
                 onComplete={(img, css) => {
                   setPreviewUrl(img);
@@ -229,7 +235,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
             )}
 
             {activeTab === "adjust" && selectedFile && (
-              <ProfileImageAdjust
+              <BannerImageAdjust
                 key={adjustKey}
                 imageUrl={previewUrl}
                 onApply={(url, file) => {

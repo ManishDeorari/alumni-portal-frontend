@@ -16,19 +16,20 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
   const adjustOriginalRef = useRef({ url: null, file: null });
   const [adjustKey, setAdjustKey] = useState(0); // force remount after reset
 
-useEffect(() => {
-  if (activeTab === "adjust" || activeTab === "crop" || activeTab === "filters") {i
-    adjustOriginalRef.current = { url: previewUrl, file: selectedFile };
-  }
-}, [activeTab]); // <-- only when tab toggles to "adjust"
-
   const fileInputRef = useRef();
 
+  // When user selects a new file, store it as the ORIGINAL
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    setPreviewUrl(url);
+
+    // Save original for Reset
+    adjustOriginalRef.current = { url, file };
   };
 
   const handleApplyUpload = async () => {
@@ -235,14 +236,14 @@ return (
           {selectedFile && (
             <button
               onClick={() => {
-                // Restore preview to the original selected file
-                setPreviewUrl(adjustOriginalRef.current.url || URL.createObjectURL(selectedFile));
-                // Keep the selected file intact
-                setActiveTab(null);          // close any open tab
-                setAdjustKey((k) => k + 1);  // force adjust sliders reset
+                const { url, file } = adjustOriginalRef.current || {};
+                if (url) setPreviewUrl(url);
+                if (file) setSelectedFile(file);
+                setActiveTab(null);
+                setAdjustKey((k) => k + 1); // re-render adjust tool cleanly
               }}
               className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium"
-              title="Reset adjustments but keep the selected image"
+              title="Reset adjustments but keep the selected banner"
             >
               Reset
             </button>

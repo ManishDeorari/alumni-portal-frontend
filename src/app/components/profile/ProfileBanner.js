@@ -1,46 +1,47 @@
-"use client";
-
 import { Camera } from "lucide-react";
 import { useState } from "react";
 import BannerEditorModal from "./Banner/BannerEditorModal";
+import ImageViewerModal from "./ImageViewerModal";
 
 export default function ProfileBanner({ image, onUpload, userId }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [showViewer, setShowViewer] = useState(false);
+
+  const bannerImg = image || "/default_banner.jpg";
 
   return (
     <div className="relative w-full h-48 overflow-hidden rounded-lg">
-      {/* Banner preview */}
       <div className="w-full h-full bg-gray-200">
         <img
-          src={image || "/default_banner.jpg"}
+          src={bannerImg}
           alt="Banner"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover cursor-pointer"
+          onClick={() => setShowViewer(true)}
         />
       </div>
 
-      {/* Edit button */}
       <button
-        onClick={() => {
-          console.log("Button clicked");
-          setShowModal(true);
-        }}
+        onClick={() => setShowEditor(true)}
         className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer z-10"
         title="Edit banner"
       >
         <Camera size={20} className="text-gray-700" />
       </button>
 
-      {/* Modal */}
-      {showModal && (
+      {showEditor && (
         <BannerEditorModal
           userId={userId}
-          currentImage={image}
-          onClose={() => setShowModal(false)}
+          currentImage={bannerImg}
+          onClose={() => setShowEditor(false)}
           onUploaded={() => {
-            setShowModal(false);
-            onUpload(); // refresh banner from parent
+            setShowEditor(false);
+            onUpload();
           }}
         />
+      )}
+
+      {showViewer && (
+        <ImageViewerModal imageUrl={bannerImg} onClose={() => setShowViewer(false)} />
       )}
     </div>
   );
