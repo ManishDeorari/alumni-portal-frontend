@@ -244,12 +244,12 @@ export default function ProfilePage() {
                   )}
                   {activity.type === "comment" && (
                     <p>
-                      You commented: <span className="italic">"{activity.text}"</span>
+                      You commented: <span className="italic">&quot;{activity.text}&quot;</span>
                     </p>
                   )}
                   {activity.type === "reply" && (
                     <p>
-                      You replied: <span className="italic">"{activity.text}"</span>
+                      You replied: <span className="italic">&quot;{activity.text}&quot;</span>
                     </p>
                   )}
                 </div>

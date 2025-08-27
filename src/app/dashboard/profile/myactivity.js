@@ -38,8 +38,8 @@ export default function MyActivityPage() {
             <div key={idx} className="mb-6">
               <p className="text-sm text-gray-300 mb-2">
                 {act.type === "reaction" && <>You reacted <b>{act.reaction}</b></>}
-                {act.type === "comment" && <>You commented: <i>"{act.text}"</i></>}
-                {act.type === "reply" && <>You replied: <i>"{act.text}"</i></>}
+                {act.type === "comment" && <>You commented: <i>&quot;{act.text}&quot;</i></>}
+                {act.type === "reply" && <>You replied: <i>&quot;{act.text}&quot;</i></>}
               </p>
               {/* show the post where it happened */}
               {act.post && <PostCard post={act.post} />}
