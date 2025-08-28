@@ -3,27 +3,30 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import PostCard from "../../components/Post/PostCard";
-import { fetchPosts } from "../../../api/dashboard";
 
 export default function MyPostsPage() {
   const [posts, setPosts] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchMyPosts = async () => {
-  try {
+    try {
       const token = localStorage.getItem("token");
+
+      // 1) posts
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
+      const postsData = await res.json();
 
-      if (Array.isArray(data)) {
-        setPosts(data.reverse());
-      } else {
-        console.error("❌ Expected array, got:", data);
-        setPosts([]);
-      }
+      // 2) current user
+      const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userData = await resUser.json();
 
+      setPosts(Array.isArray(postsData) ? postsData.reverse() : []);
+      setCurrentUser(userData);
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching my posts:", error.message);
@@ -44,10 +47,14 @@ export default function MyPostsPage() {
         <h1 className="text-2xl font-bold mb-6">My Posts</h1>
         {posts.length > 0 ? (
           posts
-            .filter(p => p && p._id) // ensure valid
+            .filter((p) => p && p._id)
             .map((post) => (
               <div key={post._id} className="mb-6">
-                <PostCard post={post} />
+                <PostCard
+                  post={post}
+                  currentUser={currentUser} // ✅ important
+                  setPosts={setPosts}
+                />
               </div>
             ))
         ) : (

@@ -21,22 +21,22 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("token");
 
-      // 1) Get profile info
+      // 1) Profile info
       const resProfile = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const profileData = await resProfile.json();
 
-      // 2) Get user posts
+      // 2) Posts
       const resPosts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const postsData = await resPosts.json();
 
-      // 3) Merge into profile state
+      // 3) Merge into state
       setProfile({
         ...profileData,
-        posts: postsData,   // 🔹 attach posts
+        posts: Array.isArray(postsData) ? postsData : [],
       });
 
       setWhatsapp(profileData.whatsapp || "");
@@ -175,15 +175,6 @@ export default function ProfilePage() {
           <p>{profile.bio || "No bio available."}</p>
         </SectionCard>
 
-        <SectionCard title="Activity" hasData={!!profile.posts?.length}>
-          {profile.posts?.slice(0, 2).map((post, idx) => (
-            <div key={idx} className="mb-2 text-sm">{post.content}</div>
-          ))}
-          {profile.posts?.length > 2 && (
-            <button className="text-blue-600 underline">See all posts</button>
-          )}
-        </SectionCard>
-
         <SectionCard title="Experience" hasData={!!profile.experience?.length}>
           {profile.experience?.map((exp, idx) => (
             <div key={idx}>
@@ -203,34 +194,51 @@ export default function ProfilePage() {
         </SectionCard>
 
         {/* 🔷 Activity Section (Moved below Education) */}
-        <SectionCard title="Activity" hasData={!!profile.posts?.length || !!profile.activity?.length}>
-          {Array.isArray(profile.posts) && profile.posts.length > 0 ? (
-          <>
+         <SectionCard
+        title="Activity"
+        hasData={profile.posts && profile.posts.length > 0}
+      >
+        {profile.posts && profile.posts.length > 0 ? (
+          <div className="mt-2">
+            <h3 className="font-semibold text-gray-800 mb-2">Your Posts</h3>
             {profile.posts
-              .slice() // safe now
+              .filter((p) => p && p._id)
+              .slice()
               .reverse()
               .slice(0, 2)
-              .map((post, idx) => (
-                <div key={idx} className="mb-4">
-                  <PostCard post={post} isProfileActivity />
+              .map((post) => (
+                <div key={post._id} className="mb-4">
+                  <PostCard
+                    post={post}
+                    currentUser={profile} // ✅ pass user
+                    setPosts={(updateFn) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        posts: typeof updateFn === "function"
+                          ? updateFn(prev.posts || [])
+                          : updateFn,
+                      }))
+                    }
+                    isProfileActivity
+                  />
                 </div>
               ))}
 
             {profile.posts.length > 2 && (
               <button
-                onClick={() => (window.location.href = "/dashboard/myposts")}
+                onClick={() => (window.location.href = "/dashboard/profile/myposts")}
                 className="text-blue-600 underline"
               >
                 See all posts
               </button>
             )}
-          </>
+          </div>
         ) : (
           <p className="text-gray-600">No activity yet.</p>
         )}
 
-          {/* 🔹 Show Reactions, Comments, Replies */}
-          {Array.isArray(profile.activity) && profile.activity.length > 0 && (
+        {/* 🔹 Show Reactions, Comments, Replies */}
+        {Array.isArray(profile.activity) && profile.activity.length > 0 && (
           <div className="mt-6">
             <h3 className="font-semibold text-gray-800 mb-2">Your Interactions</h3>
             {profile.activity.slice(0, 2).map((activity, idx) => (
@@ -242,12 +250,14 @@ export default function ProfilePage() {
                 )}
                 {activity.type === "comment" && (
                   <p>
-                    You commented: <span className="italic">&quot;{String(activity.text || "")}&quot;</span>
+                    You commented:{" "}
+                    <span className="italic">"{String(activity.text || "")}"</span>
                   </p>
                 )}
                 {activity.type === "reply" && (
                   <p>
-                    You replied: <span className="italic">&quot;{String(activity.text || "")}&quot;</span>
+                    You replied:{" "}
+                    <span className="italic">"{String(activity.text || "")}"</span>
                   </p>
                 )}
               </div>
@@ -262,7 +272,7 @@ export default function ProfilePage() {
             )}
           </div>
         )}
-        </SectionCard>
+      </SectionCard>
 
         <SectionCard title="Current Work Profile" hasData={!!profile.workProfile}>
           <p><strong>Functional Area:</strong> {profile.workProfile?.functionalArea || "N/A"}</p>
