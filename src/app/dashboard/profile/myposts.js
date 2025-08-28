@@ -10,16 +10,24 @@ export default function MyPostsPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchMyPosts = async () => {
-    try {
+  try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setPosts(data.reverse()); // newest → oldest
+
+      if (Array.isArray(data)) {
+        setPosts(data.reverse());
+      } else {
+        console.error("❌ Expected array, got:", data);
+        setPosts([]);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching my posts:", error.message);
+      setLoading(false);
     }
   };
 
@@ -35,11 +43,13 @@ export default function MyPostsPage() {
       <div className="max-w-3xl mx-auto py-8 px-4">
         <h1 className="text-2xl font-bold mb-6">My Posts</h1>
         {posts.length > 0 ? (
-          posts.map((post) => (
-            <div key={post._id} className="mb-6">
-              <PostCard post={post} />
-            </div>
-          ))
+          posts
+            .filter(p => p && p._id) // ensure valid
+            .map((post) => (
+              <div key={post._id} className="mb-6">
+                <PostCard post={post} />
+              </div>
+            ))
         ) : (
           <p className="text-gray-200">You haven’t created any posts yet.</p>
         )}
