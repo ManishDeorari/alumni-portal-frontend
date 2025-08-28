@@ -8,6 +8,7 @@ import ProfileAvatar from "../../components/profile/ProfileAvatar";
 import ProfileBanner from "../../components/profile/ProfileBanner";
 import PostCard from "@/app/components/Post/PostCard";
 import Link from "next/link";
+import MyPostsPage from "./myposts";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({});
@@ -248,18 +249,7 @@ export default function ProfilePage() {
                     You reacted <span className="font-bold">{activity.reaction}</span> to a post
                   </p>
                 )}
-                {activity.type === "comment" && (
-                  <p>
-                    You commented:{" "}
-                    <span className="italic">"{String(activity.text || "")}"</span>
-                  </p>
-                )}
-                {activity.type === "reply" && (
-                  <p>
-                    You replied:{" "}
-                    <span className="italic">"{String(activity.text || "")}"</span>
-                  </p>
-                )}
+                
               </div>
             ))}
             {profile.activity.length > 2 && (
