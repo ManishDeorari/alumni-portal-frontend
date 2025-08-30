@@ -9,11 +9,11 @@ export default function MyPostsPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
 
-  // pagination
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const limit = 10;
   const [hasMore, setHasMore] = useState(false);
 
+  // fetch current user
   const fetchUser = async (token) => {
     const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -22,27 +22,43 @@ export default function MyPostsPage() {
     setCurrentUser(userData);
   };
 
+  // fetch only MY posts
   const fetchMyPosts = async (pageNum = 1, append = false, tokenFromArg) => {
     const token = tokenFromArg || localStorage.getItem("token");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts/me?page=${pageNum}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts?page=${pageNum}&limit=${limit}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const data = await res.json();
-
-    // 🔹 API returns { posts, total }
-    if (data && Array.isArray(data.posts)) {
-      setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
-      const loaded = (append ? posts.length : 0) + data.posts.length;
-      const total = typeof data.total === "number" ? data.total : loaded;
-      setHasMore(loaded < total);
+    if (!res.ok) {
+      console.error("❌ Failed to fetch my posts:", res.status);
+      setPosts([]);
+      setHasMore(false);
       return;
     }
 
-    // fallback
-    console.error("Unexpected response for my posts:", data);
+    const data = await res.json();
+
+    // ✅ Case A: plain array of posts
+    if (Array.isArray(data)) {
+      const sorted = [...data].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setPosts(sorted);
+      setHasMore(false); // no pagination support
+      return;
+    }
+
+    // ✅ Case B: object { posts, total }
+    if (data.posts && Array.isArray(data.posts)) {
+      setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
+      const loaded = (append ? posts.length : 0) + data.posts.length;
+      setHasMore(loaded < data.total);
+      return;
+    }
+
+    console.error("❌ Unexpected response for my posts:", data);
     setPosts([]);
     setHasMore(false);
   };
@@ -76,20 +92,18 @@ export default function MyPostsPage() {
 
         {posts.length > 0 ? (
           <>
-            {posts
-              .filter((p) => p && p._id)
-              .map((post) => (
-                <div
-                  key={post._id}
-                  className="mb-6 bg-white rounded-2xl shadow-md p-4 text-black border border-black"
-                >
-                  {currentUser ? (
-                    <PostCard post={post} currentUser={currentUser} setPosts={setPosts} />
-                  ) : (
-                    <div>Loading user…</div>
-                  )}
-                </div>
-              ))}
+            {posts.map((post) => (
+              <div
+                key={post._id}
+                className="mb-6 bg-white rounded-2xl shadow-md p-4 text-black border border-black"
+              >
+                {currentUser ? (
+                  <PostCard post={post} currentUser={currentUser} setPosts={setPosts} />
+                ) : (
+                  <div>Loading user…</div>
+                )}
+              </div>
+            ))}
 
             {hasMore ? (
               <div className="text-center mt-6">

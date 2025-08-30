@@ -15,7 +15,7 @@ export default function MyActivityPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setActivity(data.reverse()); // newest first
+      setActivity(data); // ✅ already sorted in backend
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching activity:", error.message);
@@ -45,7 +45,6 @@ export default function MyActivityPage() {
                   <>You replied: <i>&quot;{String(act.text || "")}&quot;</i></>
                 )}
               </p>
-              {/* show the post where it happened */}
               {act.post && <PostCard post={act.post} />}
             </div>
           ))

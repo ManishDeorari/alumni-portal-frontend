@@ -194,82 +194,88 @@ export default function ProfilePage() {
         </SectionCard>
 
         {/* 🔷 Activity Section (Moved below Education) */}
-         <SectionCard
-        title="Activity"
-        hasData={profile.posts && profile.posts.length > 0}
-      >
-        {profile.posts && profile.posts.length > 0 ? (
-          <div className="mt-2">
-            <h3 className="font-semibold text-gray-800 mb-2">Your Posts</h3>
-            {profile.posts
-              .filter((p) => p && p._id)
-              .slice()
-              .reverse()
-              .slice(0, 2)
-              .map((post) => (
-                <div key={post._id} className="mb-4">
-                  <PostCard
-                    post={post}
-                    currentUser={profile} // ✅ pass user
-                    setPosts={(updateFn) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        posts: typeof updateFn === "function"
-                          ? updateFn(prev.posts || [])
-                          : updateFn,
-                      }))
-                    }
-                    isProfileActivity
-                  />
+        <SectionCard
+          title="Activity"
+          hasData={
+            (profile.posts && profile.posts.length > 0) ||
+            (Array.isArray(profile.activity) && profile.activity.length > 0)
+          } // ✅ allow either posts OR activity
+        >
+          {/* 🔹 Posts */}
+          {profile.posts && profile.posts.length > 0 ? (
+            <div className="mt-2">
+              <h3 className="font-semibold text-gray-800 mb-2">Your Posts</h3>
+              {profile.posts
+                .filter((p) => p && p._id)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 2)
+                .map((post) => (
+                  <div key={post._id} className="mb-4">
+                    <PostCard
+                      post={post}
+                      currentUser={profile}
+                      setPosts={(updateFn) =>
+                        setProfile((prev) => ({
+                          ...prev,
+                          posts:
+                            typeof updateFn === "function"
+                              ? updateFn(prev.posts || [])
+                              : updateFn,
+                        }))
+                      }
+                      isProfileActivity
+                    />
+                  </div>
+                ))}
+
+              {profile.posts.length > 2 && (
+                <Link href="/dashboard/myposts" className="text-blue-600 underline">
+                  See all posts
+                </Link>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-600">No posts yet.</p>
+          )}
+
+          {/* 🔹 Activity (Reactions, Comments, Replies) */}
+          {Array.isArray(profile.activity) && profile.activity.length > 0 ? (
+            <div className="mt-6">
+              <h3 className="font-semibold text-gray-800 mb-2">Your Interactions</h3>
+              {profile.activity.slice(0, 2).map((activity, idx) => (
+                <div key={idx} className="mb-3 text-sm">
+                  {activity.type === "reaction" && (
+                    <p>
+                      You reacted <span className="font-bold">{activity.reaction}</span> to a post
+                    </p>
+                  )}
+                  {activity.type === "comment" && (
+                    <p>
+                      You commented:{" "}
+                      <span className="italic">"{String(activity.text || "")}"</span>
+                    </p>
+                  )}
+                  {activity.type === "reply" && (
+                    <p>
+                      You replied:{" "}
+                      <span className="italic">"{String(activity.text || "")}"</span>
+                    </p>
+                  )}
                 </div>
               ))}
-
-            {profile.posts.length > 2 && (
-              <Link href="/dashboard/myposts" className="text-blue-600 underline">
-                See all posts
-              </Link>
-            )}
-          </div>
-        ) : (
-          <p className="text-gray-600">No activity yet.</p>
-        )}
-
-        {/* 🔹 Show Reactions, Comments, Replies */}
-        {Array.isArray(profile.activity) && profile.activity.length > 0 && (
-          <div className="mt-6">
-            <h3 className="font-semibold text-gray-800 mb-2">Your Interactions</h3>
-            {profile.activity.slice(0, 2).map((activity, idx) => (
-              <div key={idx} className="mb-3 text-sm">
-                {activity.type === "reaction" && (
-                  <p>
-                    You reacted <span className="font-bold">{activity.reaction}</span> to a post
-                  </p>
-                )}
-                {activity.type === "comment" && (
-                  <p>
-                    You commented:{" "}
-                    <span className="italic">"{String(activity.text || "")}"</span>
-                  </p>
-                )}
-                {activity.type === "reply" && (
-                  <p>
-                    You replied:{" "}
-                    <span className="italic">"{String(activity.text || "")}"</span>
-                  </p>
-                )}
-              </div>
-            ))}
-            {profile.activity.length > 2 && (
-              <button
-                onClick={() => (window.location.href = "/dashboard/profile/myactivity")}
-                className="text-blue-600 underline"
-              >
-                See all activity
-              </button>
-            )}
-          </div>
-        )}
-      </SectionCard>
+              {profile.activity.length > 2 && (
+                <button
+                  onClick={() => (window.location.href = "/dashboard/myactivity")}
+                  className="text-blue-600 underline"
+                >
+                  See all activity
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-600 mt-2">No interactions yet.</p>
+          )}
+        </SectionCard>
 
         <SectionCard title="Current Work Profile" hasData={!!profile.workProfile}>
           <p><strong>Functional Area:</strong> {profile.workProfile?.functionalArea || "N/A"}</p>
