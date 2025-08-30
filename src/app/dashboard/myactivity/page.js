@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import PostCard from "../../components/posts/PostCard";
+import PostCard from "../../components/Post/PostCard";
 
 export default function MyActivityPage() {
   const [activity, setActivity] = useState([]);
