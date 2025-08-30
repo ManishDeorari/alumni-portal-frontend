@@ -2,6 +2,7 @@ import { Camera } from "lucide-react";
 import { useState } from "react";
 import ProfileEditorModal from "./Avatar/ProfileEditorModal";
 import ImageViewerModal from "./ImageViewerModal"; // import here
+import Image from "next/image";
 
 export default function ProfileAvatar({ image, onUpload, userId }) {
   const [showEditor, setShowEditor] = useState(false);
@@ -11,7 +12,7 @@ export default function ProfileAvatar({ image, onUpload, userId }) {
 
   return (
     <div className="relative">
-      <img
+      <Image
         src={profileImg}
         alt="Profile"
         width={112}
