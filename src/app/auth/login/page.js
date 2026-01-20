@@ -18,33 +18,40 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      console.log("Form data:", form);
       const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ Use for cookies/session
+        credentials: "include",
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Login failed");
-      }
-
       const data = await res.json();
 
-      // ✅ Store token if needed (commented out if using cookies)
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      // ✅ Save token and role
       if (data.token) {
-        localStorage.setItem("token", data.token); // ✅ Save token
-        router.push("/dashboard");
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("userId", data.userId);
+
+        toast.success("✅ Login Successful!");
+
+        // ✅ Redirect based on role
+        if (data.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         throw new Error("Token not received");
       }
-
-      toast.success("✅ LogIn Success!");
     } catch (err) {
       console.error("Login Error:", err);
       setError(err.message || "Something went wrong");
+      toast.error(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -58,44 +65,46 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="bg-white text-gray-800 rounded-xl shadow-lg w-full max-w-md p-8 space-y-4"
       >
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+        <h2 className="text-2xl font-bold text-center">Login to Continue</h2>
 
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded focus:outline-none"
-          required
-        />
+        <div className="space-y-3">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
 
-        <input
-          type="text"
-          name="enrollmentNumber"
-          placeholder="Enrollment Number"
-          value={form.enrollmentNumber}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded focus:outline-none"
-          required
-        />
+          <input
+            type="text"
+            name="enrollmentNumber"
+            placeholder="ID"
+            value={form.enrollmentNumber}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded focus:outline-none"
-          required
-        />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
         >
           {loading ? "Logging In..." : "Login"}
         </button>

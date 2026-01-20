@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "", enrollmentNumber: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    enrollmentNumber: "",
+    role: "alumni", // default
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -15,18 +21,36 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
+      // Prepare body according to role
+      const body =
+        form.role === "faculty"
+          ? {
+              name: form.name,
+              email: form.email,
+              password: form.password,
+              role: "faculty",
+              enrollmentNumber: form.enrollmentNumber, // employeeId handled as same field
+            }
+          : {
+              name: form.name,
+              email: form.email,
+              password: form.password,
+              role: "alumni",
+              enrollmentNumber: form.enrollmentNumber,
+            };
+
       const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
 
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Signup failed");
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Signup failed");
 
+      alert("✅ Signup successful! Please wait for admin approval.");
       router.push("/auth/login");
     } catch (err) {
       setError(err.message || "Something went wrong");
@@ -47,6 +71,30 @@ export default function SignupPage() {
 
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
+        {/* Role Selector */}
+        <div className="flex justify-center gap-4 mb-4">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="role"
+              value="alumni"
+              checked={form.role === "alumni"}
+              onChange={handleChange}
+            />
+            Alumni
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="role"
+              value="faculty"
+              checked={form.role === "faculty"}
+              onChange={handleChange}
+            />
+            Faculty
+          </label>
+        </div>
+
         <input
           type="text"
           name="name"
@@ -54,15 +102,17 @@ export default function SignupPage() {
           value={form.name}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <input
           type="text"
           name="enrollmentNumber"
-          placeholder="Enrollment Number"
+          placeholder={form.role === "faculty" ? "Employee ID" : "Enrollment Number"}
           value={form.enrollmentNumber}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <input
@@ -72,6 +122,7 @@ export default function SignupPage() {
           value={form.email}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <input
@@ -81,6 +132,7 @@ export default function SignupPage() {
           value={form.password}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded focus:outline-none"
+          required
         />
 
         <button
@@ -93,7 +145,9 @@ export default function SignupPage() {
 
         <p className="mt-4 text-sm text-center">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-blue-600 underline">Login</Link>
+          <Link href="/auth/login" className="text-blue-600 underline">
+            Login
+          </Link>
         </p>
 
         <Link href="/" className="block mt-2 text-center text-blue-600 text-sm">
