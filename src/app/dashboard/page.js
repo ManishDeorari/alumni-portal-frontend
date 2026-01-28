@@ -266,7 +266,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               ) : (
-                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You've reached the end ✨</p>
+                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You&apos;ve reached the end ✨</p>
               )}
             </>
           )}

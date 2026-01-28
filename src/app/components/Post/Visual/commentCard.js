@@ -72,24 +72,25 @@ export default function CommentCard({
     setShowEmoji(!showEmoji);
   };
 
-  // ✅ Safety check: early return if basic data is missing
-  if (!comment || !currentUser || !comment.user) return null;
-
-  const isOwn = comment.user?._id === currentUser?._id;
   const [justPosted, setJustPosted] = useState(false);
 
   useEffect(() => {
-    setReactions(comment.reactions || {});
-  }, [comment.reactions]);
+    setReactions(comment?.reactions || {});
+  }, [comment?.reactions]);
 
   useEffect(() => {
-    if (isOwn && comment.justNow) {
+    if (isOwn && comment?.justNow) {
       commentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       setJustPosted(true);
       const timer = setTimeout(() => setJustPosted(false), 1000);
       return () => clearTimeout(timer);
     }
-  }, [comment.justNow, isOwn]);
+  }, [comment?.justNow, isOwn]);
+
+  // ✅ Safety check: early return if basic data is missing
+  if (!comment || !currentUser || !comment.user) return null;
+
+  const isOwn = comment.user?._id === currentUser?._id;
 
   const toggleReaction = async (emoji) => {
     if (isReply && onReactToReply) {

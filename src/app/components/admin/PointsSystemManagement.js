@@ -247,7 +247,7 @@ export default function PointsSystemManagement() {
                     ⚠️ Year-End Rollover
                 </h2>
                 <p className="text-sm text-white/70 mb-4">
-                    Clicking the button below will copy everyone's current total points to "Previous Year Points" and reset their current balance to zero. This should only be done once a year.
+                    Clicking the button below will copy everyone&apos;s current total points to &quot;Previous Year Points&quot; and reset their current balance to zero. This should only be done once a year.
                 </p>
                 <button
                     onClick={triggerRollover}
