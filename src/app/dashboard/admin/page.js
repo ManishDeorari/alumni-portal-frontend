@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import PendingUsers from "../../components/admin/PendingUsers";
 import AdminsManager from "../../components/admin/AdminsManager";
 import Leaderboard from "../../components/Leaderboard";
+import PointsSystemManagement from "../../components/admin/PointsSystemManagement";
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AdminDashboardPage() {
@@ -288,6 +289,7 @@ export default function AdminDashboardPage() {
               <TabButton id="pending" label="Pending Users" />
               <TabButton id="admins" label="Manage Admins" />
               <TabButton id="leaderboard" label="Leaderboard" />
+              {user?.isMainAdmin && <TabButton id="points" label="Points System" />}
             </div>
           </div>
         </section>
@@ -322,6 +324,11 @@ export default function AdminDashboardPage() {
               lastYearData={leaderboard.filter(u => u.year === "last")}
               loading={leaderboardLoading}
             />
+          )}
+
+          {/* POINTS SYSTEM */}
+          {activeTab === "points" && user?.isMainAdmin && (
+            <PointsSystemManagement />
           )}
         </section>
       </main>
