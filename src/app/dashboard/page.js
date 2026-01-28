@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import AdminSidebar from "../components/AdminSidebar"; // <-- Admin sidebar
@@ -54,42 +54,30 @@ export default function DashboardPage() {
   }, [router]);
 
   // ✅ Fetch posts
-    const fetchPosts = useCallback(
-    async (pageNum = 1, append = false, tag = undefined) => {
-      try {
-        let url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}`;
+  const fetchPosts = async (pageNum = 1, append = false) => {
+    try {
+      let queryType = "Regular";
+      if (activeTab === "my") queryType = "all";
+      else if (activeTab !== "all") queryType = activeTab;
 
-        if (tag !== undefined) {
-          url += `&tag=${tag}`;
-        }
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}&type=${queryType}`
+      );
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.posts)) return;
 
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!res.ok || !Array.isArray(data.posts)) return;
-
-        setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
-
-        const loaded = (append ? posts.length : 0) + data.posts.length;
-        setHasMore(loaded < data.total);
-      } catch (err) {
-        console.error("Failed to fetch posts:", err.message);
-      }
-    },
-    [limit, posts.length]
-  );
+      setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
+      const loaded = (append ? posts.length : 0) + data.posts.length;
+      setHasMore(loaded < data.total);
+    } catch (err) {
+      console.error("Failed to fetch posts:", err.message);
+    }
+  };
 
   useEffect(() => {
-    if (activeTab === "all") {
-      fetchPosts(1, false, "null");
-    } else if (activeTab === "session") {
-      fetchPosts(1, false, "Session");
-    } else if (activeTab === "event") {
-      fetchPosts(1, false, "Event");
-    } else if (activeTab === "announcement") {
-      fetchPosts(1, false, "Announcement");
-    }
-  }, [activeTab, fetchPosts]);
+    setPage(1);
+    fetchPosts(1, false);
+  }, [activeTab]);
 
   // Load more
   const handleLoadMore = async () => {
@@ -177,10 +165,10 @@ export default function DashboardPage() {
         </section>
 
         {/* Feed Subsections Tabs */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-3 flex-wrap">
           <button
             onClick={() => setActiveTab("all")}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "all"
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "all"
               ? "bg-white text-blue-700 shadow-lg scale-105"
               : "bg-white/20 text-white hover:bg-white/30"
               }`}
@@ -189,7 +177,7 @@ export default function DashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("my")}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "my"
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "my"
               ? "bg-white text-blue-700 shadow-lg scale-105"
               : "bg-white/20 text-white hover:bg-white/30"
               }`}
@@ -197,31 +185,31 @@ export default function DashboardPage() {
             My Posts
           </button>
           <button
-            onClick={() => setActiveTab("session")}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "session"
-                ? "bg-blue-500 text-white shadow-lg scale-105"
-                : "bg-white/20 text-white hover:bg-white/30"
+            onClick={() => setActiveTab("Session")}
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Session"
+              ? "bg-white text-blue-700 shadow-lg scale-105"
+              : "bg-white/20 text-white hover:bg-white/30"
               }`}
           >
             Session
           </button>
           <button
-            onClick={() => setActiveTab("event")}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "event"
-                ? "bg-green-500 text-white shadow-lg scale-105"
-                : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            Event
-          </button>
-          <button
-            onClick={() => setActiveTab("announcement")}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "announcement"
-                ? "bg-orange-500 text-white shadow-lg scale-105"
-                : "bg-white/20 text-white hover:bg-white/30"
+            onClick={() => setActiveTab("Announcement")}
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Announcement"
+              ? "bg-white text-blue-700 shadow-lg scale-105"
+              : "bg-white/20 text-white hover:bg-white/30"
               }`}
           >
             Announcement
+          </button>
+          <button
+            onClick={() => setActiveTab("Event")}
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Event"
+              ? "bg-white text-blue-700 shadow-lg scale-105"
+              : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            Event
           </button>
         </div>
 
@@ -278,7 +266,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               ) : (
-                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You&apos;ve reached the end ✨</p>
+                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You've reached the end ✨</p>
               )}
             </>
           )}

@@ -1,13 +1,13 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL + "/api";
 
 // ================== FETCH POSTS ==================
-export const fetchPosts = async () => {
-  const res = await fetch(`${BASE}/posts`);
+export const fetchPosts = async (page = 1, limit = 10, type = "Regular") => {
+  const res = await fetch(`${BASE}/posts?page=${page}&limit=${limit}&type=${type}`);
   if (!res.ok) throw new Error("Failed to fetch posts");
   return res.json();
 };
 
-export const createPost = async (content, image, video, tag = null) => {
+export const createPost = async (content, image, video, type = "Regular") => {
   let imageObjects = [];
   let videoObject = null;
 
@@ -89,7 +89,7 @@ export const createPost = async (content, image, video, tag = null) => {
       content,
       images: imageObjects,
       video: videoObject,
-      tag: tag,
+      type,
     }),
   });
 

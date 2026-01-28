@@ -34,6 +34,14 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
               You
             </span>
           )}
+          {post.type && post.type !== "Regular" && (
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${post.type === "Session" ? "bg-green-100 text-green-600" :
+              post.type === "Event" ? "bg-orange-100 text-orange-600" :
+                "bg-red-100 text-red-600"
+              }`}>
+              {post.type}
+            </span>
+          )}
         </div>
         <p className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
       </div>

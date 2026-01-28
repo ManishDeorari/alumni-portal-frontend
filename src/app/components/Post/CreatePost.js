@@ -11,21 +11,14 @@ const CreatePost = ({ setPosts, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedType, setSelectedType] = useState("Regular");
+
+  const availableTags = [];
+  if (currentUser?.role === "alumni") availableTags.push("Session");
+  if (currentUser?.role === "faculty" || currentUser?.isAdmin) availableTags.push("Event");
+  if (currentUser?.isAdmin) availableTags.push("Announcement");
 
   const hasContent = content.trim().length > 0;
-
-  // Determine available tags based on user role
-  const availableTags = [];
-  if (currentUser?.role === 'alumni') {
-    availableTags.push('Session');
-  }
-  if (currentUser?.role === 'faculty' || currentUser?.role === 'admin') {
-    availableTags.push('Event');
-  }
-  if (currentUser?.role === 'admin') {
-    availableTags.push('Announcement');
-  }
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -72,7 +65,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
     setError("");
 
     try {
-      const result = await createPost(content, images, video, selectedTag);
+      const result = await createPost(content, images, video, selectedType);
 
       const newPost = result?.data || result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
 
@@ -80,7 +73,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
       setVideo(null);
       setPreviewVideo(null);
       setImages([]);
-      setSelectedTag(null);
+      setSelectedType("Regular");
 
       if (newPost && setPosts) {
         setPosts(prev => {
@@ -123,40 +116,25 @@ const CreatePost = ({ setPosts, currentUser }) => {
           </div>
         </div>
 
-        {/* Tag Selector */}
         {availableTags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2 items-center">
-            <span className="text-sm text-gray-600 font-medium">Tag:</span>
+          <div className="flex gap-2 mt-4 flex-wrap">
             {availableTags.map((tag) => (
               <button
                 key={tag}
                 type="button"
-                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${selectedTag === tag
-                    ? tag === 'Session'
-                      ? 'bg-blue-500 text-white'
-                      : tag === 'Event'
-                        ? 'bg-green-500 text-white'
-                        : 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                onClick={() => setSelectedType(selectedType === tag ? "Regular" : tag)}
+                className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${selectedType === tag
+                  ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
+                  : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200"
                   }`}
               >
                 {tag}
               </button>
             ))}
-            {selectedTag && (
-              <button
-                type="button"
-                onClick={() => setSelectedTag(null)}
-                className="text-xs text-gray-500 hover:text-gray-700 underline"
-              >
-                Clear
-              </button>
-            )}
           </div>
         )}
 
-        <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
+        <div className="flex gap-4 items-center justify-between mt-4 flex-wrap">
           <label className="cursor-pointer text-blue-600">
             📷 Add Photo
             <input
