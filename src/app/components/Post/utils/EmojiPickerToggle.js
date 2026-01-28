@@ -1,20 +1,27 @@
-"use client";
 import React, { useRef, useState, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
+
+const DEFAULT_OFFSET = { x: 0, y: 0 };
 
 const EmojiPickerToggle = ({
   onEmojiSelect,
   iconSize = "text-xl",
   icon = "😀",
-  offset = { x: 0, y: 0 }, // 🔥 Use this for minor manual shifts
+  offset = DEFAULT_OFFSET,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [pickerStyle, setPickerStyle] = useState({ top: "40px", left: "0px" });
+  const [pickerStyle, setPickerStyle] = useState({ top: "0px", left: "0px" });
+  const [mounted, setMounted] = useState(false);
 
   const buttonRef = useRef(null);
   const pickerRef = useRef(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const togglePicker = (e) => {
     e.stopPropagation();
@@ -36,29 +43,56 @@ const EmojiPickerToggle = ({
     if (showPicker) {
       document.addEventListener("mousedown", handleClickOutside);
 
-      setTimeout(() => {
+      const updatePosition = () => {
         if (buttonRef.current) {
           const rect = buttonRef.current.getBoundingClientRect();
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
 
-          const pickerWidth = 300;
-          const pickerHeight = 350;
+          const pickerWidth = 350; // Increased safety margin
+          const pickerHeight = 435;
 
           const spaceRight = windowWidth - rect.left;
           const spaceBottom = windowHeight - rect.bottom;
+          const spaceTop = rect.top;
 
           const tooCloseToRight = spaceRight < pickerWidth;
           const tooCloseToBottom = spaceBottom < pickerHeight;
+          const tooCloseToTop = spaceTop < pickerHeight;
 
-          setPickerStyle({
-            top: tooCloseToBottom ? undefined : `${40 + offset.y}px`,
-            bottom: tooCloseToBottom ? `${40 + offset.y}px` : undefined,
-            left: tooCloseToRight ? undefined : `${offset.x}px`,
-            right: tooCloseToRight ? `${offset.x}px` : undefined,
-          });
+          // Calculate absolute fixed position based on viewport
+          const style = {
+            position: "fixed",
+            zIndex: 9999,
+          };
+
+          if (tooCloseToTop) {
+            style.top = `${rect.bottom + 8 + offset.y}px`;
+          } else if (tooCloseToBottom) {
+            style.bottom = `${windowHeight - rect.top + 8 + offset.y}px`;
+          } else {
+            // Default to showing below unless no space
+            style.top = `${rect.bottom + 8 + offset.y}px`;
+          }
+
+          if (tooCloseToRight) {
+            style.right = `${windowWidth - rect.right + offset.x}px`;
+          } else {
+            style.left = `${rect.left + offset.x}px`;
+          }
+
+          setPickerStyle(style);
         }
-      }, 0);
+      };
+
+      updatePosition();
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+
+      return () => {
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
+      };
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
@@ -69,25 +103,42 @@ const EmojiPickerToggle = ({
   }, [showPicker, offset]);
 
   return (
-    <button ref={buttonRef} type="button" className={`relative ${iconSize}`} onClick={togglePicker}>
-      {icon}
+    <div className="inline-block">
+      <button
+        ref={buttonRef}
+        type="button"
+        className={`relative ${iconSize} hover:scale-110 transition-transform`}
+        onClick={togglePicker}
+      >
+        {icon}
+      </button>
 
-      <AnimatePresence>
-        {showPicker && (
+      {mounted && showPicker && createPortal(
+        <AnimatePresence>
           <motion.div
             ref={pickerRef}
-            className="z-50 absolute"
+            className="shadow-2xl rounded-xl overflow-hidden ring-1 ring-black ring-opacity-5"
             style={pickerStyle}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
-            <Picker data={data} onEmojiSelect={onEmojiSelect} theme="light" />
+            <Picker
+              data={data}
+              onEmojiSelect={(emoji) => {
+                onEmojiSelect(emoji);
+                setShowPicker(false);
+              }}
+              theme="light"
+              perLine={6}
+              emojiSize={12}
+            />
           </motion.div>
-        )}
-      </AnimatePresence>
-    </button>
+        </AnimatePresence>,
+        document.body
+      )}
+    </div>
   );
 };
 

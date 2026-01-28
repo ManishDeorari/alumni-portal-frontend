@@ -52,18 +52,18 @@ export default function PostCard({ post, currentUser, setPosts }) {
 
   // 📦 Centralize all effects
   const postRef = usePostEffects({
-      post,
-      currentUser,
-      setEditContent,
-      setHasLiked,
-      editing,
-      textareaRef,
-      setSomeoneTyping,
-      setPosts,
-    });
+    post,
+    currentUser,
+    setEditContent,
+    setHasLiked,
+    editing,
+    textareaRef,
+    setSomeoneTyping,
+    setPosts,
+  });
 
   // 🎉 Like and reaction animation
-  const { triggerLikeAnimation , triggerReactionEffect } = useEmojiAnimation(likeIconRef, post, currentUser);
+  const { triggerLikeAnimation, triggerReactionEffect } = useEmojiAnimation(likeIconRef, post, currentUser);
 
   // 🔧 Actions related to the post (like, react, delete, edit)
   const {
@@ -129,21 +129,23 @@ export default function PostCard({ post, currentUser, setPosts }) {
   };
 
   const handleLoadMore = () => {
-  const total = (post.comments || []).length;
-  setVisibleComments((prev) => Math.min(prev + 5, total));
-};
+    const total = (post.comments || []).length;
+    setVisibleComments((prev) => Math.min(prev + 5, total));
+  };
 
-    const isMyPost = post.user?._id === currentUser._id;
+  const isMyPost = post.user?._id === currentUser._id;
   // ✅ Everything's clean and ready for the `return` section now.
   return (
-      <div
-        ref={postRef}
-        className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
+    <div
+      ref={postRef}
+      className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
           ${isMyPost ? "bg-gradient-to-tr from-gray-175 to-blue-50" : "bg-white"}
           hover:shadow-md`}
-      >
-      <PostHeader {...{ post, currentUser, editing, toggleEdit: () =>
-      toggleEdit(editKey, setEditContent, editing, post.content), handleDelete }} />
+    >
+      <PostHeader {...{
+        post, currentUser, editing, toggleEdit: () =>
+          toggleEdit(editKey, setEditContent, editing, post.content), handleDelete
+      }} />
 
       <PostContent
         {...{
@@ -162,33 +164,33 @@ export default function PostCard({ post, currentUser, setPosts }) {
       />
 
       <PostMedia
-          post={post}
-          setSelectedImage={(index) => {
-            setStartIndex(index);
-            setShowViewer(true);
-          }}
-        />
+        post={post}
+        setSelectedImage={(index) => {
+          setStartIndex(index);
+          setShowViewer(true);
+        }}
+      />
 
       <PostReactions
-  {...{
-    post,
-    hasLiked,
-    handleReact,
-    userReacted,
-    getReactionCount,
-    setShowModal,
-    likeIconRef,
-    isLiking,
-    setVisibleComments,
-    setReactionEffect,
-    reactionEffect,
-    showComments,
-    setShowComments,
-    setShowReactionModal,
-    setReactionModalEmoji,
-    setReactionModalUsers,
-  }}
-/>
+        {...{
+          post,
+          hasLiked,
+          handleReact,
+          userReacted,
+          getReactionCount,
+          setShowModal,
+          likeIconRef,
+          isLiking,
+          setVisibleComments,
+          setReactionEffect,
+          reactionEffect,
+          showComments,
+          setShowComments,
+          setShowReactionModal,
+          setReactionModalEmoji,
+          setReactionModalUsers,
+        }}
+      />
 
       {showComments && (
         <div className="pt-2 border-t border-gray-200 space-y-2">
@@ -232,22 +234,22 @@ export default function PostCard({ post, currentUser, setPosts }) {
         </div>
       )}
 
-    <CommentInput
-      comment={comment}
-      setComment={setComment}
-      onEmojiClick={(emoji) => setComment((prev) => prev + emoji)}
-      onSubmit={() => handleComment(comment)} // ✅ Correct
-      showCommentEmoji={showCommentEmoji}
-      setShowCommentEmoji={setShowCommentEmoji}
-      typing={someoneTyping}
-      isTyping={(val) => setSomeoneTyping(val)}
-    />
+      <CommentInput
+        comment={comment}
+        setComment={setComment}
+        onEmojiClick={(emoji) => setComment((prev) => prev + emoji)}
+        onSubmit={() => handleComment(comment)} // ✅ Correct
+        showCommentEmoji={showCommentEmoji}
+        setShowCommentEmoji={setShowCommentEmoji}
+        typing={someoneTyping}
+        isTyping={(val) => setSomeoneTyping(val)}
+      />
 
-    {someoneTyping && (
-      <p className="text-xs text-gray-400 mt-1 ml-2 italic">
-        Someone is typing...
-      </p>
-    )}
+      {someoneTyping && (
+        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
+          Someone is typing...
+        </p>
+      )}
 
       <hr className="my-6 border-black" />
 
@@ -267,6 +269,24 @@ export default function PostCard({ post, currentUser, setPosts }) {
               setShowThread,
               handleReply,
               handleDeleteComment,
+              handleComment,
+              handleEditComment,
+              handleEditReply,
+              handleDeleteReply,
+              handleReactToReply,
+              comment,
+              setComment,
+              editing,
+              setEditing,
+              editContent,
+              setEditContent,
+              handleEditSave,
+              handleBlurSave,
+              toggleEdit,
+              handleDelete,
+              showEditEmoji,
+              setShowEditEmoji,
+              textareaRef,
               // ✅ ADD THESE for FullImageViewer support
               setShowViewer,
               setStartIndex,

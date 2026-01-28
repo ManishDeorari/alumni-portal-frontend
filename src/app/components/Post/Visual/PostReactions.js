@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 
 // Emoji to label mapping
 const emojiLabels = {
@@ -26,7 +27,7 @@ export default function PostReactions({
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [hoveredEmoji, setHoveredEmoji] = useState(null);
-  const [showAbove, setShowAbove] = useState(false);
+  const [pickerStyle, setPickerStyle] = useState({});
   const pickerRef = useRef();
   const buttonRef = useRef();
 
@@ -47,12 +48,26 @@ export default function PostReactions({
 
   // Handle dynamic position of emoji picker
   const handleEmojiButtonClick = () => {
-    if (buttonRef.current) {
+    if (!showEmojiPicker && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
       const spaceBelow = viewportHeight - rect.bottom;
       const spaceAbove = rect.top;
-      setShowAbove(spaceBelow < 150 && spaceAbove > 150);
+
+      const style = {
+        position: "fixed",
+        zIndex: 9999,
+        left: `${rect.left}px`,
+      };
+
+      if (spaceBelow < 150 && spaceAbove > 150) {
+        style.bottom = `${viewportHeight - rect.top + 8}px`;
+      } else {
+        style.top = `${rect.bottom + 8}px`;
+      }
+
+      setPickerStyle(style);
     }
     setShowEmojiPicker((prev) => !prev);
   };
@@ -67,11 +82,10 @@ export default function PostReactions({
             return (
               <div
                 key={emoji}
-                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${
-                  userReacted(emoji)
-                    ? "border border-blue-500 bg-blue-50"
-                    : ""
-                }`}
+                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${userReacted(emoji)
+                  ? "border border-blue-500 bg-blue-50"
+                  : ""
+                  }`}
               >
                 {emoji}
                 <span className="text-sm text-gray-600">x{users.length}</span>
@@ -82,15 +96,15 @@ export default function PostReactions({
       )}
 
       {/* React + Comment Buttons */}
-      <div className="relative mt-2" ref={pickerRef}>
+      <div className="relative mt-2">
         <div className="flex items-center justify-between border-t border-black-300 pt-2">
           {/* React Button (left) */}
           <button
             onClick={handleEmojiButtonClick}
-            className="font-semibold text-base text-black-600 hover:underline transition"
+            className="font-semibold text-base text-black-600 hover:underline transition flex items-center gap-1"
             ref={buttonRef}
           >
-            ➕ React
+            👍 React
           </button>
 
           {/* Comment Button (right, slightly left-pushed) */}
@@ -103,47 +117,48 @@ export default function PostReactions({
         </div>
 
         {/* Emoji Picker */}
-        <AnimatePresence>
-          {showEmojiPicker && (
-            <motion.div
-              initial={{ opacity: 0, y: showAbove ? 10 : -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: showAbove ? 10 : -10 }}
-              className={`absolute z-20 bg-white border border-gray-300 shadow-lg rounded-full px-4 py-2 flex gap-3 ${
-                showAbove ? "bottom-full mb-2" : "top-full mt-2"
-              }`}
-            >
-              {Object.keys(emojiLabels).map((emoji) => (
-                <motion.button
-                  key={emoji}
-                  whileTap={{ scale: 1.3 }}
-                  whileHover={{ scale: 1.1 }}
-                  onMouseEnter={() => setHoveredEmoji(emoji)}
-                  onMouseLeave={() => setHoveredEmoji(null)}
-                  onClick={() => {
-                    handleReact(emoji);
-                    setShowEmojiPicker(false);
-                  }}
-                  className={`text-2xl relative ${
-                    userReacted(emoji) ? "opacity-100" : "opacity-60"
-                  }`}
-                >
-                  {emoji}
-                  {hoveredEmoji === emoji && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded shadow whitespace-nowrap"
-                    >
-                      {emojiLabels[emoji]}
-                    </motion.div>
-                  )}
-                </motion.button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {showEmojiPicker && createPortal(
+          <div style={pickerStyle} className="fixed z-[9999]">
+            <AnimatePresence>
+              <motion.div
+                ref={pickerRef}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="bg-white border border-gray-300 shadow-2xl rounded-full px-4 py-2 flex gap-3 ring-1 ring-black ring-opacity-5"
+              >
+                {Object.keys(emojiLabels).map((emoji) => (
+                  <motion.button
+                    key={emoji}
+                    whileTap={{ scale: 1.3 }}
+                    whileHover={{ scale: 1.1 }}
+                    onMouseEnter={() => setHoveredEmoji(emoji)}
+                    onMouseLeave={() => setHoveredEmoji(null)}
+                    onClick={() => {
+                      handleReact(emoji);
+                      setShowEmojiPicker(false);
+                    }}
+                    className={`text-2xl relative ${userReacted(emoji) ? "opacity-100" : "opacity-60"
+                      }`}
+                  >
+                    {emoji}
+                    {hoveredEmoji === emoji && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded shadow whitespace-nowrap"
+                      >
+                        {emojiLabels[emoji]}
+                      </motion.div>
+                    )}
+                  </motion.button>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>,
+          document.body
+        )}
       </div>
     </>
   );

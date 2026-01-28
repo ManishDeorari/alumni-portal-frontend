@@ -23,6 +23,13 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
     const file = e.target.files[0];
     if (!file) return;
 
+    // 🚫 Block GIFs and animated formats
+    if (file.type === "image/gif") {
+      toast.error("GIFs or animated images are not allowed for banners.");
+      e.target.value = null; // reset input
+      return;
+    }
+
     const url = URL.createObjectURL(file);
 
     setSelectedFile(file);

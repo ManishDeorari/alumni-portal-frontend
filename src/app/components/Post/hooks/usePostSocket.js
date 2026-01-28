@@ -25,7 +25,8 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
     const handleUpdatePostRequest = async ({ postId: incomingId }) => {
       try {
         if (incomingId !== postId) return;
-        const res = await fetch(`https://alumni-backend-d9k9.onrender.com/api/posts/${incomingId}`);
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_URL}/api/posts/${incomingId}`);
         const post = await res.json();
         setPosts((prev) => prev.map((p) => (p._id === incomingId ? post : p)));
       } catch (err) {

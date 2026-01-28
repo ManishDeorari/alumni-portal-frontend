@@ -27,25 +27,27 @@ export default function SignupPage() {
       const body =
         form.role === "faculty"
           ? {
-              name: form.name,
-              email: form.email,
-              password: form.password,
-              role: "faculty",
-              enrollmentNumber: form.enrollmentNumber, // employeeId handled as same field
-            }
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            role: "faculty",
+            enrollmentNumber: form.enrollmentNumber, // employeeId handled as same field
+          }
           : {
-              name: form.name,
-              email: form.email,
-              password: form.password,
-              role: "alumni",
-              enrollmentNumber: form.enrollmentNumber,
-            };
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            role: "alumni",
+            enrollmentNumber: form.enrollmentNumber,
+          };
 
-      const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Signup failed");

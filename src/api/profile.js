@@ -1,4 +1,4 @@
-const BASE = "https://alumni-backend-d9k9.onrender.com";
+const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export const getProfileById = async (id) => {
   const token = localStorage.getItem("token");

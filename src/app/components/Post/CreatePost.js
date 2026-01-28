@@ -11,8 +11,21 @@ const CreatePost = ({ setPosts, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
+  const [selectedTag, setSelectedTag] = useState(null);
 
   const hasContent = content.trim().length > 0;
+
+  // Determine available tags based on user role
+  const availableTags = [];
+  if (currentUser?.role === 'alumni') {
+    availableTags.push('Session');
+  }
+  if (currentUser?.role === 'faculty' || currentUser?.role === 'admin') {
+    availableTags.push('Event');
+  }
+  if (currentUser?.role === 'admin') {
+    availableTags.push('Announcement');
+  }
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -28,20 +41,20 @@ const CreatePost = ({ setPosts, currentUser }) => {
   };
 
   const handleVideoChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    if (file.size > 100 * 1024 * 1024) {
-      toast.error("❌ Please upload a video smaller than 100MB.");
-      e.target.value = "";
-      return;
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error("❌ Please upload a video smaller than 100MB.");
+        e.target.value = "";
+        return;
+      }
+      setVideo(file);
+      setPreviewVideo(URL.createObjectURL(file));
+      setImages([]);
+      setError("");
     }
-    setVideo(file);
-    setPreviewVideo(URL.createObjectURL(file));
-    setImages([]);
-    setError("");
-  }
-  e.target.value = "";
-};
+    e.target.value = "";
+  };
 
   const handleEmojiSelect = (emoji) => {
     setContent((prev) => prev + emoji.native);
@@ -59,7 +72,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
     setError("");
 
     try {
-      const result = await createPost(content, images, video);
+      const result = await createPost(content, images, video, selectedTag);
 
       const newPost = result?.data || result?.post || (Array.isArray(result.posts) ? result.posts[0] : null);
 
@@ -67,6 +80,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
       setVideo(null);
       setPreviewVideo(null);
       setImages([]);
+      setSelectedTag(null);
 
       if (newPost && setPosts) {
         setPosts(prev => {
@@ -74,7 +88,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
           if (exists) return prev;
           return [newPost, ...prev];
         });
-        toast.success("🎉 Post uploaded successfully!",{ autoClose: 1500 });
+        toast.success("🎉 Post uploaded successfully!", { autoClose: 1500 });
       } else {
         console.warn("❌ Unexpected post format:", result);
         toast.error("❌ Post failed to upload correctly.");
@@ -109,6 +123,39 @@ const CreatePost = ({ setPosts, currentUser }) => {
           </div>
         </div>
 
+        {/* Tag Selector */}
+        {availableTags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-600 font-medium">Tag:</span>
+            {availableTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${selectedTag === tag
+                    ? tag === 'Session'
+                      ? 'bg-blue-500 text-white'
+                      : tag === 'Event'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-orange-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+              >
+                {tag}
+              </button>
+            ))}
+            {selectedTag && (
+              <button
+                type="button"
+                onClick={() => setSelectedTag(null)}
+                className="text-xs text-gray-500 hover:text-gray-700 underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="flex gap-4 items-center justify-between mt-2 flex-wrap">
           <label className="cursor-pointer text-blue-600">
             📷 Add Photo
@@ -134,11 +181,10 @@ const CreatePost = ({ setPosts, currentUser }) => {
           <button
             type="submit"
             disabled={loading || !hasContent}
-            className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${
-              loading || !hasContent
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-700"
-            }`}
+            className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${loading || !hasContent
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-700"
+              }`}
           >
             {loading ? "Posting..." : "Post"}
           </button>

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import PendingUsers from "../../components/admin/PendingUsers";
 import AdminsManager from "../../components/admin/AdminsManager";
 import Leaderboard from "../../components/Leaderboard";
-const API = process.env.NEXT_PUBLIC_API_URL || "https://alumni-backend-d9k9.onrender.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -187,26 +187,26 @@ export default function AdminDashboardPage() {
   const demoteAdmin = async (id) => {
     const target = adminsList.find(u => u._id === id);
     if (target?.isMainAdmin) {
-        toast.error("Cannot demote the Main Admin!");
-        return;
+      toast.error("Cannot demote the Main Admin!");
+      return;
     }
 
     if (!window.confirm("Are you sure you want to demote this admin back to faculty?")) return;
 
     try {
-        const res = await fetch(`${API}/api/admin/remove-admin/${id}`, {
+      const res = await fetch(`${API}/api/admin/remove-admin/${id}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${getToken()}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Demote failed");
-        toast.success(data.message || "Demoted");
-        fetchAdminsList();
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Demote failed");
+      toast.success(data.message || "Demoted");
+      fetchAdminsList();
     } catch (err) {
-        console.error(err);
-        toast.error(err.message || "Demote failed");
+      console.error(err);
+      toast.error(err.message || "Demote failed");
     }
-    };
+  };
 
   const assignPoints = async (e) => {
     e.preventDefault();
@@ -260,16 +260,15 @@ export default function AdminDashboardPage() {
   const TabButton = ({ id, label }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`px-4 py-2 rounded-md ${
-        activeTab === id ? "bg-white text-gray-900 font-semibold" : "bg-white/10 text-white"
-      }`}
+      className={`px-4 py-2 rounded-md ${activeTab === id ? "bg-white text-gray-900 font-semibold" : "bg-white/10 text-white"
+        }`}
     >
       {label}
     </button>
   );
 
   if (loading) return <div className="text-white p-8">Loading...</div>;
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
       <Sidebar />

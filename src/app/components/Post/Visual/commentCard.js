@@ -5,6 +5,8 @@ import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
+import { createPortal } from "react-dom";
 
 export default function CommentCard({
   comment,
@@ -27,9 +29,53 @@ export default function CommentCard({
   const [showEmoji, setShowEmoji] = useState(false);
   const [reactions, setReactions] = useState(comment.reactions || {});
   const [deleting, setDeleting] = useState(false);
+  const [showAbove, setShowAbove] = useState(true);
+  const [pickerStyle, setPickerStyle] = useState({});
 
   const commentRef = useRef(null);
-  const isOwn = comment.user?._id === currentUser._id;
+  const reactButtonRef = useRef(null);
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    if (showEmoji) {
+      const handleClickOutside = (e) => {
+        if (pickerRef.current && !pickerRef.current.contains(e.target) &&
+          reactButtonRef.current && !reactButtonRef.current.contains(e.target)) {
+          setShowEmoji(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showEmoji]);
+
+  const toggleEmojiPicker = () => {
+    if (!showEmoji && reactButtonRef.current) {
+      const rect = reactButtonRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const spaceAbove = rect.top;
+
+      const style = {
+        position: "fixed",
+        zIndex: 9999,
+        left: `${rect.left}px`,
+      };
+
+      if (spaceAbove > 150) {
+        style.bottom = `${windowHeight - rect.top + 8}px`;
+      } else {
+        style.top = `${rect.bottom + 8}px`;
+      }
+
+      setPickerStyle(style);
+    }
+    setShowEmoji(!showEmoji);
+  };
+
+  // ✅ Safety check: early return if basic data is missing
+  if (!comment || !currentUser || !comment.user) return null;
+
+  const isOwn = comment.user?._id === currentUser?._id;
   const [justPosted, setJustPosted] = useState(false);
 
   useEffect(() => {
@@ -45,49 +91,51 @@ export default function CommentCard({
     }
   }, [comment.justNow, isOwn]);
 
- const toggleReaction = async (emoji) => {
-  if (isReply && onReactToReply) {
-    // Use parent handler for replies
-    return onReactToReply(comment.parentId || comment.parentCommentId, comment._id, emoji);
-  }
+  const toggleReaction = async (emoji) => {
+    if (isReply && onReactToReply) {
+      // Use parent handler for replies
+      return onReactToReply(comment.parentId || comment.parentCommentId, comment._id, emoji);
+    }
 
-  // ✅ Local logic for top-level comment
-  try {
-    const url = `https://alumni-backend-d9k9.onrender.com/api/posts/${postId}/comments/${comment._id}/react`;
+    // ✅ Local logic for top-level comment
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const url = `${API_URL}/api/posts/${postId}/comments/${comment._id}/react`;
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ emoji }),
-    });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ emoji }),
+      });
 
-    if (!res.ok) throw new Error("Failed to react");
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Backend error:", errorData);
+        throw new Error(errorData.error || "Failed to react");
+      }
 
-    const result = await res.json();
-    setReactions(result.reactions || result.comment.reactions);
+      const result = await res.json();
+      setReactions(result.reactions || result.comment.reactions);
 
-    socket.emit("updatePostRequest", { postId });
-    triggerReactionEffect(emoji);
-  } catch (err) {
-    console.error("🔴 Reaction failed:", err);
-  }
-};
-
-  if (!comment || !currentUser || !comment.user) return null;
+      socket.emit("updatePostRequest", { postId });
+      triggerReactionEffect(emoji);
+    } catch (err) {
+      console.error("🔴 Reaction failed:", err);
+    }
+  };
 
   return (
     <div
       ref={commentRef}
       className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
-        ${
-          isReply
-            ? isOwn
-              ? "bg-yellow-100 border border-yellow-400 pl-6 ml-3 border-l-[3px] border-blue-300"
-              : "bg-white text-black border border-black pl-6 ml-3 border-l-[3px] border-blue-300"
-            : isOwn
+        ${isReply
+          ? isOwn
+            ? "bg-yellow-100 border border-yellow-400 pl-6 ml-3 border-l-[3px] border-blue-300"
+            : "bg-white text-black border border-black pl-6 ml-3 border-l-[3px] border-blue-300"
+          : isOwn
             ? "bg-yellow-50 border border-yellow-400"
             : "bg-white border border-black"
         }
@@ -95,213 +143,266 @@ export default function CommentCard({
       `}
     >
       <div className="flex justify-between items-start">
-        <div className="w-full">
-          <p className="text-sm font-semibold flex items-center gap-1">
-            {comment.user?.name || "Unknown"}
-            {isOwn && (
-              <span className="text-[10px] text-green-700 bg-green-100 px-1 rounded">
-                You
-              </span>
-            )}
-          </p>
-
-          {editing ? (
-            <div className="flex gap-1 items-start relative">
-              <input
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                placeholder="Edit your comment..."
-                className="w-full border rounded px-2 py-1 text-sm"
-              />
-              <EmojiPickerToggle
-                show={showEmoji}
-                onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
-                positionClass="absolute top-10 left-40"
-              />
+        <div className="flex gap-2 w-full">
+          <img
+            src={comment.user?.profilePicture || "/default-profile.jpg"}
+            alt="User"
+            className="w-8 h-8 rounded-full border border-black object-cover mt-0.5"
+          />
+          <div className="w-full">
+            <div className="text-sm font-semibold flex items-center gap-1">
+              {isOwn ? (
+                <span className="text-gray-900">{comment.user?.name || "Unknown"}</span>
+              ) : (
+                <Link
+                  href={`/dashboard/profile/${comment.user?._id}`}
+                  className="hover:underline text-blue-700 cursor-pointer"
+                >
+                  {comment.user?.name || "Unknown"}
+                </Link>
+              )}
+              {isOwn && (
+                <span className="text-[10px] text-green-700 bg-green-100 px-1 rounded">
+                  You
+                </span>
+              )}
             </div>
-          ) : (
-            <p>{comment.text}</p>
-          )}
 
-          <p className="text-xs text-gray-400">
-            {new Date(comment.createdAt).toLocaleString()}
-            {comment.editedAt && (
-              <span className="ml-2 italic text-yellow-500">(edited)</span>
-            )}
-          </p>
-        </div>
-
-        {isOwn && (
-          <div className="text-xs text-right space-y-1 ml-2">
             {editing ? (
-              <>
-                <button
-                  className="text-blue-600 font-semibold block"
-                  onClick={() => {
-                    if (isReply) {
-                      onEditReply(comment.parentId, comment._id, editText); // ✅ Corrected
-                    } else {
-                      onEdit(comment._id, editText);
-                    }
-                    setEditing(false);
-                    setShowEmoji(false);
-                  }}
-                >
-                  Save
-                </button>
-                <button
-                  className="text-black-400 block"
-                  onClick={() => {
-                    setEditing(false);
-                    setEditText(comment.text);
-                    setShowEmoji(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
+              <div className="flex gap-1 items-start relative">
+                <input
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  placeholder="Edit your comment..."
+                  className="w-full border rounded px-2 py-1 text-sm"
+                />
+                <EmojiPickerToggle
+                  show={showEmoji}
+                  onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
+                  positionClass="absolute top-10 left-40"
+                />
+              </div>
             ) : (
-              <>
-                <button
-                  className="text-green-600 block"
-                  onClick={() => {
-                    setEditText(comment.text);
-                    setEditing(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={async () => {
-                    setDeleting(true);
-                    if (isReply) {
-                      await onDeleteReply(comment.parentId, comment._id); // ✅ parentId is commentId
-                    } else {
-                      await onDelete(comment._id);
-                    }
-                    setDeleting(false);
-                  }}
-                  disabled={deleting}
-                  className="text-red-500 block disabled:opacity-50"
-                >
-                  {deleting ? "Deleting..." : "Delete"}
-                </button>
-              </>
+              <p>{comment.text}</p>
             )}
+
+            <p className="text-xs text-gray-400">
+              {new Date(comment.createdAt).toLocaleString()}
+              {comment.editedAt && (
+                <span className="ml-2 italic text-yellow-500">(edited)</span>
+              )}
+            </p>
           </div>
-        )}
+
+          {isOwn && (
+            <div className="text-xs text-right space-y-1 ml-2">
+              {editing ? (
+                <>
+                  <button
+                    className="text-blue-600 font-semibold block"
+                    onClick={() => {
+                      if (isReply) {
+                        onEditReply(comment.parentId, comment._id, editText); // ✅ Corrected
+                      } else {
+                        onEdit(comment._id, editText);
+                      }
+                      setEditing(false);
+                      setShowEmoji(false);
+                    }}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="text-black-400 block"
+                    onClick={() => {
+                      setEditing(false);
+                      setEditText(comment.text);
+                      setShowEmoji(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="text-green-600 block"
+                    onClick={() => {
+                      setEditText(comment.text);
+                      setEditing(true);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setDeleting(true);
+                      if (isReply) {
+                        await onDeleteReply(comment.parentId, comment._id); // ✅ parentId is commentId
+                      } else {
+                        await onDelete(comment._id);
+                      }
+                      setDeleting(false);
+                    }}
+                    disabled={deleting}
+                    className="text-red-500 block disabled:opacity-50"
+                  >
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* 👍 Reactions */}
-      <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
-        {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => {
-          const count = reactions?.[emoji]?.length || 0;
-          const reacted =
-            Array.isArray(reactions?.[emoji]) &&
-            reactions[emoji].includes(currentUser._id);
-
-          return (
-            <button
-              key={emoji}
-              onClick={() => toggleReaction(emoji)}
-              className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all duration-200 text-sm 
-                ${
-                  reacted
-                    ? "bg-red-100 text-blue-600 font-semibold shadow-sm"
-                    : "bg-gray-100 text-black-600 font-semibold shadow-sm"
-                } hover:scale-105`}
-            >
-              <span className="text-[18px]">{emoji}</span>
-              <span>{count}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* 👍 Reactions Summary */}
+      {reactions && Object.keys(reactions).some(emoji => reactions[emoji]?.length > 0) && (
+        <div className="flex gap-2 mt-1 flex-wrap">
+          {Object.entries(reactions).map(([emoji, users]) => {
+            if (!Array.isArray(users) || users.length === 0) return null;
+            const reacted = users.includes(currentUser._id);
+            return (
+              <button
+                key={emoji}
+                onClick={() => toggleReaction(emoji)}
+                className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 transition-all border 
+                  ${reacted ? "bg-blue-50 border-blue-400 text-blue-700" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200"}`}
+              >
+                <span>{emoji}</span>
+                <span className="font-semibold">{users.length}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* 💬 Actions */}
-        <div className="flex items-center gap-3 text-xs text-blue-600 mt-1">
-          {!isReply && (
-            <button onClick={() => setShowReplyBox((v) => !v)}>
-              {showReplyBox ? "Cancel" : "Reply"}
-            </button>
-          )}
+      <div className="flex items-center gap-4 text-xs mt-2 font-medium">
+        {/* React Button */}
+        <div className="relative">
+          <button
+            ref={reactButtonRef}
+            onClick={toggleEmojiPicker}
+            className="text-gray-500 hover:text-blue-600 transition flex items-center gap-1"
+          >
+            👍 React
+          </button>
 
-          {replies.length > 0 && (
-            <button
-              onClick={() => {
-                setShowReplies((prev) => !prev);
-                setVisibleReplies(2);
-              }}
-              className="text-gray-500 hover:underline"
-            >
-              {showReplies
-                ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
-                : `Show ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`}
-            </button>
+          {showEmoji && createPortal(
+            <div style={pickerStyle} className="fixed z-[9999]">
+              <AnimatePresence>
+                <motion.div
+                  ref={pickerRef}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="bg-white border border-gray-200 shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5"
+                >
+                  {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
+                    <button
+                      key={emoji}
+                      onClick={() => {
+                        toggleReaction(emoji);
+                        setShowEmoji(false);
+                      }}
+                      className="text-xl hover:scale-125 transition-transform"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>,
+            document.body
           )}
         </div>
 
-        {/* ✏️ Reply Input */}
-        {showReplyBox && (
-          <ReplyBox
-            parentId={comment._id}
-            onSubmit={(text) => {
-              onReply(comment._id, text);
-              setShowReplyBox(false);
-            }}
-          />
+        {!isReply && (
+          <button
+            onClick={() => setShowReplyBox((v) => !v)}
+            className="text-gray-500 hover:text-blue-600 transition"
+          >
+            {showReplyBox ? "Cancel" : "Reply"}
+          </button>
         )}
 
-        {/* 🧵 Animated, Indented Reply Threads */}
-        <AnimatePresence>
-          {showReplies && replies.length > 0 && (
-            <motion.div
-              className="mt-2 space-y-2 ml-6"
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              transition={{ duration: 0.2 }}
-            >
-              {[...replies]
-                .reverse()
-                .slice(0, visibleReplies)
-                .map((r) => (
-                  <CommentCard
-                    key={r._id}
-                    comment={r}
-                    currentUser={currentUser}
-                    onReply={onReply}
-                    onDelete={onDelete}
-                    onEdit={onEdit}
-                    replies={r.replies || []}
-                    postId={postId}
-                    isReply={true}
-                    onEditReply={onEditReply}
-                    onDeleteReply={onDeleteReply}
-                    onReactToReply={onReactToReply} 
-                  />
-                ))}
+        {replies.length > 0 && (
+          <button
+            onClick={() => {
+              setShowReplies((prev) => !prev);
+              setVisibleReplies(2);
+            }}
+            className="text-gray-500 hover:underline"
+          >
+            {showReplies
+              ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
+              : `Show ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`}
+          </button>
+        )}
+      </div>
 
-              {replies.length > visibleReplies && (
-                <button
-                  className="text-blue-500 text-xs ml-4"
-                  onClick={() => setVisibleReplies((v) => v + 2)}
-                >
-                  Load more replies
-                </button>
-              )}
+      {/* ✏️ Reply Input */}
+      {showReplyBox && (
+        <ReplyBox
+          parentId={comment._id}
+          onSubmit={(text) => {
+            onReply(comment._id, text);
+            setShowReplyBox(false);
+          }}
+        />
+      )}
 
-              {visibleReplies > 2 && (
-                <button
-                  className="text-red-400 text-xs ml-4"
-                  onClick={() => setVisibleReplies(2)}
-                >
-                  Show less replies
-                </button>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* 🧵 Animated, Indented Reply Threads */}
+      <AnimatePresence>
+        {showReplies && replies.length > 0 && (
+          <motion.div
+            className="mt-2 space-y-2 ml-6"
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
+          >
+            {[...replies]
+              .reverse()
+              .slice(0, visibleReplies)
+              .map((r) => (
+                <CommentCard
+                  key={r._id}
+                  comment={r}
+                  currentUser={currentUser}
+                  onReply={onReply}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  replies={r.replies || []}
+                  postId={postId}
+                  isReply={true}
+                  onEditReply={onEditReply}
+                  onDeleteReply={onDeleteReply}
+                  onReactToReply={onReactToReply}
+                />
+              ))}
+
+            {replies.length > visibleReplies && (
+              <button
+                className="text-blue-500 text-xs ml-4"
+                onClick={() => setVisibleReplies((v) => v + 2)}
+              >
+                Load more replies
+              </button>
+            )}
+
+            {visibleReplies > 2 && (
+              <button
+                className="text-red-400 text-xs ml-4"
+                onClick={() => setVisibleReplies(2)}
+              >
+                Show less replies
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

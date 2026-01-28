@@ -7,7 +7,7 @@ export const fetchPosts = async () => {
   return res.json();
 };
 
-export const createPost = async (content, image, video) => {
+export const createPost = async (content, image, video, tag = null) => {
   let imageObjects = [];
   let videoObject = null;
 
@@ -89,6 +89,7 @@ export const createPost = async (content, image, video) => {
       content,
       images: imageObjects,
       video: videoObject,
+      tag: tag,
     }),
   });
 

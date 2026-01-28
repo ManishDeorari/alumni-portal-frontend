@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://alumni-backend-d9k9.onrender.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function Leaderboard() {
   const [currentYear, setCurrentYear] = useState([]);
@@ -67,7 +67,7 @@ export default function Leaderboard() {
               <div className="flex items-center space-x-4">
                 <span className="text-lg font-bold text-gray-700 w-6">{index + 1}.</span>
                 <Image
-                  src={user.profilePicture || "/default-profile.png"}
+                  src={user.profilePicture || "/default-profile.jpg"}
                   alt={user.name}
                   width={40}
                   height={40}

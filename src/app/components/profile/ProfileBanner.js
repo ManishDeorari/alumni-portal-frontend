@@ -3,7 +3,7 @@ import { useState } from "react";
 import BannerEditorModal from "./Banner/BannerEditorModal";
 import ImageViewerModal from "./ImageViewerModal";
 
-export default function ProfileBanner({ image, onUpload, userId }) {
+export default function ProfileBanner({ image, onUpload, userId, isPublicView }) {
   const [showEditor, setShowEditor] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
 
@@ -20,13 +20,15 @@ export default function ProfileBanner({ image, onUpload, userId }) {
         />
       </div>
 
-      <button
-        onClick={() => setShowEditor(true)}
-        className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer z-10"
-        title="Edit banner"
-      >
-        <Camera size={20} className="text-gray-700" />
-      </button>
+      {!isPublicView && (
+        <button
+          onClick={() => setShowEditor(true)}
+          className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer z-10"
+          title="Edit banner"
+        >
+          <Camera size={20} className="text-gray-700" />
+        </button>
+      )}
 
       {showEditor && (
         <BannerEditorModal

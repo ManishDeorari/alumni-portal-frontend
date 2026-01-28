@@ -14,7 +14,7 @@ export default function MessagesPage() {
     const fetchConnected = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://alumni-backend-d9k9.onrender.com/api/user/connected", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/connected`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -43,7 +43,7 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white p-6">
       <Sidebar /> {/* ✅ Sidebar added */}
-    
+
       <h1 className="text-3xl font-bold mb-4">Messages</h1>
 
       <div className="flex gap-6">
@@ -51,9 +51,8 @@ export default function MessagesPage() {
           {connectedUsers.map((user) => (
             <div
               key={user._id}
-              className={`p-2 flex gap-3 items-center rounded cursor-pointer hover:bg-blue-100 ${
-                selectedUser?._id === user._id ? "bg-blue-200" : ""
-              }`}
+              className={`p-2 flex gap-3 items-center rounded cursor-pointer hover:bg-blue-100 ${selectedUser?._id === user._id ? "bg-blue-200" : ""
+                }`}
               onClick={() => setSelectedUser(user)}
             >
               <Image

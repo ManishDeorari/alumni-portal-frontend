@@ -15,11 +15,15 @@ export default function DashboardPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // pagination
+  // Pagination
   const [page, setPage] = useState(1);
   const limit = 10;
   const [hasMore, setHasMore] = useState(false);
   const [fetchingMore, setFetchingMore] = useState(false);
+
+  // Feed Tabs & Pending Posts
+  const [activeTab, setActiveTab] = useState("all"); // "all" or "my"
+  const [pendingPosts, setPendingPosts] = useState([]);
 
   // ✅ Fetch current user
   useEffect(() => {
@@ -32,7 +36,7 @@ export default function DashboardPage() {
 
       try {
         const res = await fetch(
-          "https://alumni-backend-d9k9.onrender.com/api/user/me",
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/me`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -50,11 +54,13 @@ export default function DashboardPage() {
   }, [router]);
 
   // ✅ Fetch posts
-  const fetchPosts = async (pageNum = 1, append = false) => {
+  const fetchPosts = async (pageNum = 1, append = false, tag = undefined) => {
     try {
-      const res = await fetch(
-        `https://alumni-backend-d9k9.onrender.com/api/posts?page=${pageNum}&limit=${limit}`
-      );
+      let url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}`;
+      if (tag !== undefined) {
+        url += `&tag=${tag}`;
+      }
+      const res = await fetch(url);
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.posts)) return;
 
@@ -66,7 +72,17 @@ export default function DashboardPage() {
     }
   };
 
-  useEffect(() => { fetchPosts(1, false); }, []);
+  useEffect(() => {
+    if (activeTab === 'all') {
+      fetchPosts(1, false, 'null'); // Fetch untagged posts
+    } else if (activeTab === 'session') {
+      fetchPosts(1, false, 'Session');
+    } else if (activeTab === 'event') {
+      fetchPosts(1, false, 'Event');
+    } else if (activeTab === 'announcement') {
+      fetchPosts(1, false, 'Announcement');
+    }
+  }, [activeTab]);
 
   // Load more
   const handleLoadMore = async () => {
@@ -79,14 +95,23 @@ export default function DashboardPage() {
 
   // Socket events
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user) return;
 
     const updatePost = (updatedPost) =>
       setPosts((prev) =>
         prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
       );
 
-    const addPost = (newPost) => setPosts((prev) => [newPost, ...prev]);
+    const addPost = (newPost) => {
+      // If it's the current user's post, add it immediately
+      if (newPost.user?._id === user._id) {
+        setPosts((prev) => [newPost, ...prev]);
+      } else {
+        // Otherwise, add it to pending posts
+        setPendingPosts((prev) => [newPost, ...prev]);
+      }
+    };
+
     const removePost = ({ postId }) =>
       setPosts((prev) => prev.filter((p) => p._id !== postId));
 
@@ -101,7 +126,17 @@ export default function DashboardPage() {
       socket.off("postReacted", updatePost);
       socket.off("postDeleted", removePost);
     };
-  }, []);
+  }, [user]);
+
+  const loadPendingPosts = () => {
+    setPosts((prev) => [...pendingPosts, ...prev]);
+    setPendingPosts([]);
+  };
+
+  // Filtering posts based on active tab
+  const filteredPosts = activeTab === "my"
+    ? posts.filter(p => p.user?._id === user?._id)
+    : posts;
 
   if (loading) return "Loading...";
 
@@ -109,9 +144,6 @@ export default function DashboardPage() {
 
   // ✅ Choose sidebar based on role
   const SidebarComponent = user.isAdmin ? AdminSidebar : Sidebar;
-
-  console.log("User role:", user.isAdmin);
-  //console.log("Fetched user:", data);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
@@ -137,20 +169,89 @@ export default function DashboardPage() {
           <CreatePost setPosts={setPosts} currentUser={user} />
         </section>
 
+        {/* Feed Subsections Tabs */}
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "all"
+              ? "bg-white text-blue-700 shadow-lg scale-105"
+              : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            All Posts
+          </button>
+          <button
+            onClick={() => setActiveTab("my")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "my"
+              ? "bg-white text-blue-700 shadow-lg scale-105"
+              : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            My Posts
+          </button>
+          <button
+            onClick={() => setActiveTab("session")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "session"
+                ? "bg-blue-500 text-white shadow-lg scale-105"
+                : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            Session
+          </button>
+          <button
+            onClick={() => setActiveTab("event")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "event"
+                ? "bg-green-500 text-white shadow-lg scale-105"
+                : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            Event
+          </button>
+          <button
+            onClick={() => setActiveTab("announcement")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${activeTab === "announcement"
+                ? "bg-orange-500 text-white shadow-lg scale-105"
+                : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+          >
+            Announcement
+          </button>
+        </div>
+
+        {/* New Posts Notification */}
+        <AnimatePresence>
+          {pendingPosts.length > 0 && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="flex justify-center overflow-hidden"
+            >
+              <button
+                onClick={loadPendingPosts}
+                className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-full font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+              >
+                ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""}
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Posts */}
         <section>
-          <h2 className="text-xl font-bold mb-4">📰 Latest Posts</h2>
-          {posts.length === 0 ? (
-            <p className="text-center text-gray-200">No posts yet.</p>
+          {filteredPosts.length === 0 ? (
+            <p className="text-center text-gray-200 mt-10 italic">
+              {activeTab === "my" ? "You haven't posted anything yet." : "No posts yet."}
+            </p>
           ) : (
             <>
               <AnimatePresence>
-                {posts.map((post) => (
+                {filteredPosts.map((post) => (
                   <motion.div
                     key={post._id}
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.3 }}
                     className="mb-6 bg-white text-gray-900 p-6 rounded-xl shadow-md"
                   >
@@ -159,18 +260,18 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
 
-              {hasMore ? (
+              {hasMore && activeTab === "all" ? (
                 <div className="text-center mt-6">
                   <button
                     onClick={handleLoadMore}
                     disabled={fetchingMore}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                    className="px-6 py-2 bg-white text-blue-700 font-bold rounded-full hover:bg-blue-50 transition-all disabled:opacity-50 shadow-md"
                   >
-                    {fetchingMore ? "Loading..." : "Load More"}
+                    {fetchingMore ? "Loading..." : "View More Posts"}
                   </button>
                 </div>
               ) : (
-                <p className="text-center mt-6 text-gray-200">🚫 No more posts</p>
+                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You've reached the end ✨</p>
               )}
             </>
           )}
@@ -179,3 +280,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
