@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import AdminSidebar from "../components/AdminSidebar"; // <-- Admin sidebar
@@ -54,35 +54,42 @@ export default function DashboardPage() {
   }, [router]);
 
   // ✅ Fetch posts
-  const fetchPosts = async (pageNum = 1, append = false, tag = undefined) => {
-    try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}`;
-      if (tag !== undefined) {
-        url += `&tag=${tag}`;
-      }
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!res.ok || !Array.isArray(data.posts)) return;
+    const fetchPosts = useCallback(
+    async (pageNum = 1, append = false, tag = undefined) => {
+      try {
+        let url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}`;
 
-      setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
-      const loaded = (append ? posts.length : 0) + data.posts.length;
-      setHasMore(loaded < data.total);
-    } catch (err) {
-      console.error("Failed to fetch posts:", err.message);
-    }
-  };
+        if (tag !== undefined) {
+          url += `&tag=${tag}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!res.ok || !Array.isArray(data.posts)) return;
+
+        setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
+
+        const loaded = (append ? posts.length : 0) + data.posts.length;
+        setHasMore(loaded < data.total);
+      } catch (err) {
+        console.error("Failed to fetch posts:", err.message);
+      }
+    },
+    [limit, posts.length]
+  );
 
   useEffect(() => {
-    if (activeTab === 'all') {
-      fetchPosts(1, false, 'null'); // Fetch untagged posts
-    } else if (activeTab === 'session') {
-      fetchPosts(1, false, 'Session');
-    } else if (activeTab === 'event') {
-      fetchPosts(1, false, 'Event');
-    } else if (activeTab === 'announcement') {
-      fetchPosts(1, false, 'Announcement');
+    if (activeTab === "all") {
+      fetchPosts(1, false, "null");
+    } else if (activeTab === "session") {
+      fetchPosts(1, false, "Session");
+    } else if (activeTab === "event") {
+      fetchPosts(1, false, "Event");
+    } else if (activeTab === "announcement") {
+      fetchPosts(1, false, "Announcement");
     }
-  }, [activeTab]);
+  }, [activeTab, fetchPosts]);
 
   // Load more
   const handleLoadMore = async () => {
@@ -271,7 +278,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               ) : (
-                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You've reached the end ✨</p>
+                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You&apos;ve reached the end ✨</p>
               )}
             </>
           )}
