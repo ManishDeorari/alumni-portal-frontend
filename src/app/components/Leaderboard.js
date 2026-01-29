@@ -1,9 +1,8 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import PointsDistributionModal from "./profile/PointsDistributionModal";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -12,6 +11,8 @@ export default function Leaderboard() {
   const [lastYear, setLastYear] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -52,6 +53,11 @@ export default function Leaderboard() {
   const currentFiltered = filterUsers(currentYear);
   const lastFiltered = filterUsers(lastYear);
 
+  const handlePointClick = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
   const Card = ({ title, users, pointsKey }) => (
     <div className="bg-white rounded-2xl shadow-md p-6 mb-6 max-w-3xl mx-auto">
       <h2 className="text-xl font-bold mb-4 text-gray-800">{title}</h2>
@@ -78,9 +84,12 @@ export default function Leaderboard() {
                   <p className="text-sm text-gray-500">{user.enrollmentNumber || "N/A"}</p>
                 </div>
               </div>
-              <span className="font-bold text-blue-600 text-lg">
+              <button
+                onClick={() => handlePointClick(user)}
+                className="font-bold text-blue-600 text-lg hover:underline transition-all active:scale-95"
+              >
                 {user[pointsKey]?.total ?? 0} pts
-              </span>
+              </button>
             </li>
           ))}
         </ul>
@@ -93,7 +102,7 @@ export default function Leaderboard() {
       key="leaderboard"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6"
+      className="p-6 relative"
     >
       <div className="flex justify-between items-center mb-6 max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold text-black-700">🏆 Alumni Leaderboard</h1>
@@ -116,6 +125,14 @@ export default function Leaderboard() {
           {/* Last Year */}
           <Card title="🥇 Last Year" users={lastFiltered} pointsKey="lastYearPoints" />
         </>
+      )}
+
+      {selectedUser && (
+        <PointsDistributionModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          user={selectedUser}
+        />
       )}
     </motion.div>
   );

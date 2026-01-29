@@ -90,7 +90,7 @@ export default function ProfilePage() {
         <ProfileAbout profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileEducation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
-        <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        {!isPublicView && <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />}
         <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
       </div>

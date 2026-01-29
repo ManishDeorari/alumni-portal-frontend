@@ -31,7 +31,7 @@ export default function SignupPage() {
             email: form.email,
             password: form.password,
             role: "faculty",
-            enrollmentNumber: form.enrollmentNumber, // employeeId handled as same field
+            employeeId: form.enrollmentNumber, // mapping faculty field to employeeId
           }
           : {
             name: form.name,
