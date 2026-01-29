@@ -261,40 +261,48 @@ export default function AdminDashboardPage() {
   const TabButton = ({ id, label }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`px-4 py-2 rounded-md ${activeTab === id ? "bg-white text-gray-900 font-semibold" : "bg-white/10 text-white"
+      className={`px-6 py-2.5 rounded-2xl transition-all duration-300 font-bold text-sm shadow-lg ${activeTab === id
+        ? "bg-white text-blue-700 scale-105 shadow-white/10"
+        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5"
         }`}
     >
       {label}
     </button>
   );
 
-  if (loading) return <div className="text-white p-8">Loading...</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex flex-col items-center justify-center gap-4 text-white">
+      <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+      <p className="font-black uppercase tracking-widest text-xs opacity-50">Initializing Admin Panel</p>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800 text-white relative">
       <Sidebar />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
-        <section className="mb-6">
-          <div className="bg-white/10 p-4 rounded-lg flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-sm text-white/80">
-                Signed in as <strong>{user?.name}</strong> ({user?.email})
+        <section className="bg-gray-800/80 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden animate-in fade-in duration-700">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl font-black tracking-tight text-white mb-2">Admin Panel</h1>
+              <p className="text-blue-100/60 font-medium">
+                Welcome back, <span className="text-white font-bold">{user?.name}</span>
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <nav className="flex flex-wrap justify-center gap-3">
               <TabButton id="pending" label="Pending Users" />
               <TabButton id="admins" label="Manage Admins" />
               <TabButton id="leaderboard" label="Leaderboard" />
               {user?.isMainAdmin && <TabButton id="points" label="Points System" />}
-            </div>
+            </nav>
           </div>
         </section>
 
-        <section>
+        <section className="animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">
           {/* MANAGE ReEQUEST */}
           {activeTab === "pending" && (
             <PendingUsers

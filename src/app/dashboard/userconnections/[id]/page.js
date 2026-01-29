@@ -85,7 +85,7 @@ const UserConnectionsPage = () => {
                                         alt={user.name}
                                     />
                                     <div className="min-w-0">
-                                        <Link href={`/dashboard/profile/${user._id}`}>
+                                        <Link href={`/dashboard/profile?id=${user._id}`}>
                                             <h3 className="font-extrabold text-white group-hover:text-blue-300 truncate transition-colors text-lg tracking-tight">{user.name}</h3>
                                         </Link>
                                         <p className="text-xs text-blue-100/60 font-medium truncate">{user.course} • {user.year}</p>

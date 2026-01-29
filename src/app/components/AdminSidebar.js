@@ -23,49 +23,42 @@ export default function AdminSidebar() {
       {/* Logo or App Name */}
       <div className="text-2xl font-bold">Alumni Portal</div>
 
-      {/* Navigation Links */}
-      <div className="flex space-x-6 items-center text-lg">
+      {/* Navigation Links - Icon Only */}
+      <div className="flex space-x-8 items-center text-2xl">
         {/* Admin-specific page */}
-        <Link href="/dashboard/admin" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard/admin" className="hover:text-gray-200 relative group" title="Admin Panel">
           <FaUserShield />
-          <span>Admin</span>
         </Link>
 
         {/* Common links for all users */}
-        <Link href="/dashboard" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard" className="hover:text-gray-200 relative group" title="Home">
           <FaHome />
-          <span>Home</span>
         </Link>
 
-        <Link href="/dashboard/network" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard/network" className="hover:text-gray-200 relative group" title="Network">
           <FaUserFriends />
-          <span>Network</span>
         </Link>
 
-        <Link href="/dashboard/messages" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard/messages" className="hover:text-gray-200 relative group" title="Messages">
           <FaEnvelope />
-          <span>Messages</span>
         </Link>
 
-        <Link href="/dashboard/notifications" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard/notifications" className="hover:text-gray-200 relative group" title="Notifications">
           <FaBell />
-          <span>Notifications</span>
         </Link>
 
-        <Link href="/dashboard/profile" className="hover:text-gray-200 flex items-center space-x-1">
+        <Link href="/dashboard/profile" className="hover:text-gray-200 relative group" title="Profile">
           <FaUserCircle />
-          <span>Profile</span>
         </Link>
 
         {/* Settings Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="hover:text-gray-200 flex items-center space-x-1 group pt-1"
+            className="hover:text-gray-200 relative group pt-1"
             title="Settings"
           >
             <FaCog className={showSettings ? "rotate-90 transition-transform duration-300" : "transition-transform duration-300"} />
-            <span>Settings</span>
           </button>
 
           {showSettings && (

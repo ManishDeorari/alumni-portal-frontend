@@ -94,10 +94,6 @@ export const createPost = async (content, image, video, type = "Regular") => {
   });
 
   const data = await res.json();
-
-  // ✅ Add content contribution points
-  await updatePoints(5);
-
   return data;
 };
 
@@ -120,7 +116,6 @@ export const commentOnPost = async (postId, text) => {
     }
 
     const data = await res.json();
-    await updatePoints(3);
     return data;
   } catch (error) {
     console.error("commentOnPost() error:", error.message);
@@ -145,7 +140,6 @@ export const likePost = async (postId) => {
     }
 
     const data = await res.json();
-    await updatePoints(2);
     return data;
   } catch (error) {
     console.error("likePost() error:", error.message);

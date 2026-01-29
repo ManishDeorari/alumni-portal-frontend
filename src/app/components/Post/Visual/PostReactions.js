@@ -101,7 +101,7 @@ export default function PostReactions({
           {/* React Button (left) */}
           <button
             onClick={handleEmojiButtonClick}
-            className="font-semibold text-base text-black-600 hover:underline transition flex items-center gap-1"
+            className="font-semibold text-base text-gray-600 hover:underline transition flex items-center gap-1"
             ref={buttonRef}
           >
             👍 React
@@ -110,7 +110,7 @@ export default function PostReactions({
           {/* Comment Button (right, slightly left-pushed) */}
           <button
             onClick={() => setShowComments((prev) => !prev)}
-            className="font-semibold text-base text-black-600 hover:underline cursor-pointer transition mr-2"
+            className="font-semibold text-base text-gray-600 hover:underline cursor-pointer transition mr-2"
           >
             💬 Comment ({(post.comments || []).length})
           </button>

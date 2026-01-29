@@ -49,8 +49,8 @@ const EmojiPickerToggle = ({
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
 
-          const pickerWidth = 350; // Increased safety margin
-          const pickerHeight = 435;
+          const pickerWidth = 500;
+          const pickerHeight = 600;
 
           const spaceRight = windowWidth - rect.left;
           const spaceBottom = windowHeight - rect.bottom;
@@ -130,9 +130,10 @@ const EmojiPickerToggle = ({
                 onEmojiSelect(emoji);
                 setShowPicker(false);
               }}
-              theme="light"
-              perLine={6}
-              emojiSize={12}
+              theme="dark"
+              perLine={8}
+              emojiSize={24}
+              emojiButtonSize={36}
             />
           </motion.div>
         </AnimatePresence>,

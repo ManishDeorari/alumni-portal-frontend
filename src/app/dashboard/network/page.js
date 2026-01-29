@@ -13,7 +13,7 @@ const NetworkPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [requested, setRequested] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     course: "",
@@ -86,14 +86,14 @@ const NetworkPage = () => {
       <Sidebar />
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <header className="flex flex-col md:flex-row justify-between items-center bg-gray-800/80 backdrop-blur-2xl p-6 rounded-3xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
+        <header className="flex flex-col md:flex-row justify-between items-center bg-black/20 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-70"></div>
           <div>
             <h1 className="text-4xl font-black text-white tracking-tight">Network</h1>
             <p className="text-blue-100/60 font-medium">Build your professional circle with alumni</p>
           </div>
           <div className="flex gap-4 mt-6 md:mt-0">
-            <Link href="/dashboard/myconnections" className="relative group px-6 py-3 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all backdrop-blur-md shadow-lg flex items-center gap-3">
+            <Link href="/dashboard/myconnections" className="relative group px-6 py-3 bg-white/10 border border-white/10 text-white rounded-2xl font-bold hover:bg-white/20 transition-all shadow-lg backdrop-blur-md flex items-center gap-3">
               My Network
               {currentUser?.connections?.length > 0 && (
                 <span className="bg-blue-500 text-white text-[11px] px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]">
@@ -117,7 +117,7 @@ const NetworkPage = () => {
         </header>
 
         {/* Search & Filters */}
-        <section className="bg-gray-800/80 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] space-y-8 relative overflow-hidden">
+        <section className="bg-black/20 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-lg space-y-8 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -127,7 +127,7 @@ const NetworkPage = () => {
                 value={searchQuery}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/30"
+                className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/30 shadow-inner"
               />
               <svg className="absolute left-4 top-4 w-5 h-5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
@@ -183,7 +183,7 @@ const NetworkPage = () => {
 
         {/* Search Results - MOVED ABOVE RECOMMENDATIONS */}
         {alumni.length > 0 && (
-          <section className="bg-gray-800/80 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700 relative overflow-hidden">
+          <section className="bg-black/20 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-lg space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
             <div className="flex items-center gap-4">
               <div className="h-10 w-2 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
@@ -191,16 +191,16 @@ const NetworkPage = () => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {alumni.map((user) => (
-                <div key={user._id} className="bg-gray-900/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/5 flex items-center justify-between gap-5 shadow-sm hover:shadow-xl hover:border-blue-400/50 transition-all group relative overflow-hidden">
+                <div key={user._id} className="bg-black/40 backdrop-blur-lg rounded-[2rem] p-6 border border-white/10 flex items-center justify-between gap-5 shadow-xl hover:shadow-2xl hover:border-blue-400/30 transition-all group relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
 
                   <div className="flex items-center gap-5 min-w-0 relative z-10">
                     <img
                       src={user.profilePicture || "/default-profile.jpg"}
-                      className="w-20 h-20 rounded-2xl object-cover border-2 border-white shadow-md bg-gray-200 flex-shrink-0 group-hover:scale-110 transition-transform duration-500"
+                      className="w-20 h-20 rounded-2xl object-cover border-2 border-white/20 shadow-md bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="min-w-0">
-                      <Link href={`/dashboard/profile/${user._id}`}>
+                      <Link href={`/dashboard/profile?id=${user._id}`}>
                         <h3 className="font-extrabold text-white text-xl group-hover:text-blue-300 transition-colors truncate">{user.name}</h3>
                       </Link>
                       <p className="text-blue-100/60 font-medium truncate">{user.course} • {user.year}</p>
@@ -237,48 +237,69 @@ const NetworkPage = () => {
           </section>
         )}
 
-        {/* Suggestions - WRAPPED IN DARK GLASS DIV */}
-        {suggestions.length > 0 && (
-          <section className="bg-gray-800/80 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-2 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.4)]"></div>
-              <h2 className="text-3xl font-black text-white tracking-tight">Recommended for You</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {suggestions.map((user) => (
-                <div key={user._id} className="bg-gray-900/40 backdrop-blur-xl hover:bg-gray-900/60 rounded-[2rem] border border-white/5 hover:border-amber-400/50 transition-all duration-300 overflow-hidden group shadow-sm hover:shadow-2xl">
-                  <div className="h-24 bg-gradient-to-br from-blue-500/10 to-purple-600/10 group-hover:from-amber-500/20 group-hover:to-orange-500/20 transition-colors duration-500"></div>
-                  <div className="px-6 pb-6 -mt-12 text-center relative z-10">
-                    <img
-                      src={user.profilePicture || "/default-profile.jpg"}
-                      className="w-24 h-24 rounded-3xl border-4 border-white/10 mx-auto object-cover bg-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-500 hover:rotate-3"
-                    />
-                    <div className="mt-4">
-                      <Link href={`/dashboard/profile/${user._id}`}>
-                        <h3 className="font-extrabold text-white text-lg group-hover:text-amber-200 transition-colors truncate px-2">{user.name}</h3>
-                      </Link>
-                      <p className="text-xs text-blue-100/60 font-medium truncate mt-1">{user.course || "Alumni"}</p>
-                      <div className="mt-3 inline-block px-3 py-1 bg-white/5 border border-white/5 rounded-full">
-                        <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em]">{user.workProfile?.industry || "Networking"}</p>
+        {/* Categorized Suggestions */}
+        <div className="space-y-12">
+          {[
+            { id: "newAlumni", title: "New to the Portal", icon: "✨", color: "blue", data: suggestions.newAlumni, emptyMsg: "No new alumni found." },
+            { id: "topConnections", title: "Influential Networkers", icon: "⭐", color: "amber", data: suggestions.topConnections, emptyMsg: "No top networkers found." },
+            { id: "relatedPeople", title: "Based on Your Course", icon: "🎓", color: "purple", data: suggestions.relatedPeople, emptyMsg: "No related alumni found." }
+          ].map((section) => (
+            <section key={section.id} className="bg-black/20 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-lg space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-700 relative overflow-hidden">
+              <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${section.color === 'blue' ? 'from-blue-600' : section.color === 'amber' ? 'from-amber-500' : 'from-purple-600'} via-transparent to-transparent opacity-80`}></div>
+              <div className="flex items-center gap-3">
+                <div className={`h-8 w-1.5 ${section.color === 'blue' ? 'bg-blue-600' : section.color === 'amber' ? 'bg-amber-500' : 'bg-purple-600'} rounded-full`}></div>
+                <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">{section.icon} {section.title}</h2>
+              </div>
+
+              {!section.data || section.data.length === 0 ? (
+                <div className="py-10 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
+                  <p className="text-white/40 font-bold uppercase tracking-widest text-sm">{section.emptyMsg}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {section.data.map((user) => (
+                    <div key={user._id} className="bg-white/5 rounded-[2rem] border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden group shadow-lg hover:shadow-2xl relative">
+                      <div className={`absolute top-0 right-0 w-24 h-24 ${section.color === 'blue' ? 'bg-blue-500/10' : section.color === 'amber' ? 'bg-amber-500/10' : 'bg-purple-500/10'} rounded-full -mr-12 -mt-12 group-hover:bg-opacity-20 transition-colors`}></div>
+
+                      <div className="p-6 flex items-center gap-5 relative z-10">
+                        <img
+                          src={user.profilePicture || "/default-profile.jpg"}
+                          className="w-16 h-16 rounded-2xl object-cover border-2 border-white/10 group-hover:scale-110 transition-transform duration-500 shadow-md"
+                        />
+                        <div className="min-w-0">
+                          <Link href={`/dashboard/profile?id=${user._id}`}>
+                            <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors truncate">{user.name}</h3>
+                          </Link>
+                          <p className="text-[10px] text-white/50 uppercase font-black tracking-widest mt-1">{user.course}</p>
+                          {user.connections_count !== undefined && (
+                            <span className="inline-block mt-2 px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[9px] font-bold rounded-md">
+                              {user.connections_count} Connections
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="px-6 pb-6 relative z-10">
+                        <button
+                          onClick={() => handleConnect(user._id)}
+                          disabled={requested[user._id]}
+                          className={`w-full py-3 rounded-xl text-xs font-black transition-all ${requested[user._id]
+                            ? "bg-white/5 text-white/30 cursor-not-allowed border border-white/5"
+                            : section.color === 'blue' ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                              : section.color === 'amber' ? "bg-amber-500 hover:bg-amber-400 text-white shadow-lg shadow-amber-500/20"
+                                : "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-500/20"
+                            } active:scale-95`}
+                        >
+                          {requested[user._id] ? "Request Sent" : "Connect"}
+                        </button>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleConnect(user._id)}
-                      disabled={requested[user._id]}
-                      className={`w-full mt-6 py-3 rounded-2xl text-sm font-black transition-all shadow-md group-hover:shadow-xl ${requested[user._id]
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                        : "bg-amber-400 text-amber-950 hover:bg-amber-300 active:scale-95 shadow-amber-400/20"
-                        }`}
-                    >
-                      {requested[user._id] ? "Request Sent" : "Connect Now"}
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              )}
+            </section>
+          ))}
+        </div>
       </main>
 
       <RequestsModal

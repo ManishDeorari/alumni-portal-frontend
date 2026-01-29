@@ -22,7 +22,7 @@ import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
-export default function PostCard({ post, currentUser, setPosts }) {
+export default function PostCard({ post, currentUser, setPosts, initialShowComments = false }) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content || "");
   const [showEditEmoji, setShowEditEmoji] = useState(false);
@@ -38,7 +38,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
   const [hasLiked, setHasLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [reactionEffect, setReactionEffect] = useState(null);
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(initialShowComments);
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [reactionModalEmoji, setReactionModalEmoji] = useState(null);
   const [reactionModalUsers, setReactionModalUsers] = useState([]);
@@ -153,7 +153,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
         setShowModal(true);
       }}
       className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
-          cursor-pointer
+          cursor-pointer text-black
           ${isMyPost ? "bg-gradient-to-tr from-gray-175 to-blue-50" : "bg-white"}
           hover:shadow-md`}
     >
@@ -208,7 +208,7 @@ export default function PostCard({ post, currentUser, setPosts }) {
       />
 
       {showComments && (
-        <div className="pt-2 border-t border-gray-200 space-y-2">
+        <div className="pt-2 border-t border-black space-y-2">
           {(post.comments || [])
             .slice()
             .reverse()

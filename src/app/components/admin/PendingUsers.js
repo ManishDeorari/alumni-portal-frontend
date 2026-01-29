@@ -55,67 +55,81 @@ export default function PendingUsers({
   };
 
   const Card = ({ title, users, badgeColor, actions, children }) => (
-    <div className="bg-white rounded-xl border shadow-sm mb-8">
-      <div className="flex items-center justify-between px-5 py-3 border-b">
-        <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+    <div className="bg-gray-900/40 backdrop-blur-xl rounded-[2.5rem] border border-white/10 shadow-2xl mb-10 overflow-hidden group transition-all hover:border-white/20">
+      <div className="flex flex-col sm:flex-row items-center justify-between px-8 py-6 border-b border-white/10 bg-white/5">
+        <h3 className="font-extrabold text-white text-xl flex items-center gap-3">
           {title}
-          <span className={`text-xs px-2 py-0.5 rounded-full ${badgeColor}`}>
+          <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badgeColor}`}>
             {users.length}
           </span>
         </h3>
-        {actions}
+        <div className="mt-4 sm:mt-0">
+          {actions}
+        </div>
       </div>
-      {users.length === 0 ? (
-        <p className="p-5 text-sm text-gray-500">No pending requests.</p>
-      ) : (
-        children
-      )}
+      <div className="p-2 sm:p-4">
+        {users.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="text-blue-100/30 font-bold italic">No pending requests in this category.</p>
+          </div>
+        ) : (
+          children
+        )}
+      </div>
     </div>
   );
 
   return (
-    <>
+    <div className="space-y-6">
       <motion.div
         key="pending"
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white/90 text-gray-900 p-6 rounded-xl shadow-md"
+        className="space-y-8"
       >
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3">Pending Requests</h2>
-          <input
-            type="text"
-            placeholder="Search by name, email, ID…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-1/3 px-3 py-2 border rounded-md text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-800/90 p-8 rounded-[2rem] border border-white/20 shadow-xl">
+          <div className="relative flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="Search by name, email, ID…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/20 font-medium"
+            />
+            <svg className="absolute left-4 top-4 w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          </div>
+          <p className="text-blue-100/40 text-sm font-bold uppercase tracking-widest">
+            Filtering {pendingUsers.length} total users
+          </p>
         </div>
 
         {pendingLoading ? (
-          <p>Loading pending users...</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-blue-100/40 font-black uppercase tracking-widest text-xs">Fetching requests...</p>
+          </div>
         ) : (
           <>
             <Card
               title="🎓 Alumni Requests"
               users={alumni}
-              badgeColor="bg-green-100 text-green-700"
+              badgeColor="bg-green-500/20 text-green-300 border border-green-500/30"
               actions={
                 alumni.length > 0 && (
-                  <div className="flex gap-2 mb-2 px-3">
+                  <div className="flex gap-3">
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-approve", role: "alumni" })}
-                      className="px-3 py-1 text-sm bg-gradient-to-r from-green-600 to-green-500 text-white rounded disabled:opacity-50"
+                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
                     >
-                      Approve Selected
+                      Approve ({selected.length})
                     </button>
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-delete", role: "alumni" })}
-                      className="px-3 py-1 text-sm bg-gradient-to-r from-red-600 to-red-500 text-white rounded disabled:opacity-50"
+                      className="px-6 py-2.5 bg-white/5 hover:bg-red-500/20 text-red-300 rounded-2xl text-sm font-black border border-white/10 transition-all disabled:opacity-30"
                     >
-                      Reject Selected
+                      Reject
                     </button>
                   </div>
                 )
@@ -134,23 +148,23 @@ export default function PendingUsers({
             <Card
               title="🏫 Faculty Requests"
               users={faculty}
-              badgeColor="bg-indigo-100 text-indigo-700"
+              badgeColor="bg-purple-500/20 text-purple-300 border border-purple-500/30"
               actions={
                 faculty.length > 0 && (
-                  <div className="flex gap-2 mb-2 px-3">
+                  <div className="flex gap-3">
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-approve", role: "faculty" })}
-                      className="px-3 py-1 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded disabled:opacity-50"
+                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
                     >
-                      Approve Selected
+                      Approve ({selected.length})
                     </button>
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-delete", role: "faculty" })}
-                      className="px-3 py-1 text-sm bg-gradient-to-r from-red-600 to-red-500 text-white rounded disabled:opacity-50"
+                      className="px-6 py-2.5 bg-white/5 hover:bg-red-500/20 text-red-300 rounded-2xl text-sm font-black border border-white/10 transition-all disabled:opacity-30"
                     >
-                      Reject Selected
+                      Reject
                     </button>
                   </div>
                 )
@@ -172,28 +186,38 @@ export default function PendingUsers({
 
       <AnimatePresence>
         {confirm && (
-          <motion.div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-            <motion.div className="bg-white rounded-xl p-6 w-full max-w-sm">
-              <h3 className="text-lg font-semibold mb-2">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="bg-gray-900 border border-white/20 rounded-[2rem] p-8 w-full max-w-md shadow-2xl"
+            >
+              <h3 className="text-2xl font-black text-white mb-4">
                 {confirm.type.includes("bulk")
                   ? confirm.type.includes("approve")
-                    ? `Approve selected ${confirm.role} users?`
-                    : `Reject selected ${confirm.role} users?`
+                    ? `Approve ${selected.length} users?`
+                    : `Reject ${selected.length} users?`
                   : confirm.type === "approve"
-                  ? "Approve User?"
-                  : "Reject & Delete User?"}
+                    ? "Approve User?"
+                    : "Reject & Delete User?"}
               </h3>
 
               {confirm.user && (
-                <p className="text-sm text-gray-600 mb-4">
-                  {confirm.user.name} ({confirm.user.email})
-                </p>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10 mb-6">
+                  <p className="font-bold text-white text-lg">{confirm.user.name}</p>
+                  <p className="text-blue-100/60 text-sm truncate">{confirm.user.email}</p>
+                </div>
               )}
 
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-3 font-black">
                 <button
                   onClick={() => setConfirm(null)}
-                  className="px-4 py-1.5 border rounded"
+                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition-all"
                 >
                   Cancel
                 </button>
@@ -205,67 +229,91 @@ export default function PendingUsers({
                     if (confirm.type === "delete") await deleteUser(confirm.user._id);
                     setConfirm(null);
                   }}
-                  className={`px-4 py-1.5 text-white rounded ${
-                    confirm.type.includes("delete") ? "bg-red-600" : "bg-green-600"
-                  }`}
+                  className={`px-8 py-3 text-white rounded-2xl shadow-xl active:scale-95 transition-all ${confirm.type.includes("delete") ? "bg-red-600 hover:bg-red-500" : "bg-blue-600 hover:bg-blue-500"
+                    }`}
                 >
-                  Confirm
+                  Yes, Proceed
                 </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 
 /* ---------------- TABLE ---------------- */
 function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDelete, onPromote }) {
-  if (users.length === 0) return <p className="p-5 text-sm text-gray-500">No users.</p>;
+  if (users.length === 0) return null;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="bg-gray-50 border-b">
-          <tr>
-            <th className="p-3">
+    <div className="overflow-x-auto custom-scrollbar">
+      <table className="w-full">
+        <thead>
+          <tr className="text-blue-100/30 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5">
+            <th className="py-4 px-6 text-left">
               <input
                 type="checkbox"
+                className="w-5 h-5 bg-white/5 border-white/10 rounded cursor-pointer accent-blue-500"
                 checked={users.every((u) => selected.includes(u._id))}
                 onChange={() => toggleSelectAll(users)}
               />
             </th>
-            <th className="p-3 text-left">User</th>
-            <th className="p-3 text-left">ID</th>
-            <th className="p-3 text-left">Actions</th>
+            <th className="py-4 px-6 text-left">User Profile</th>
+            <th className="py-4 px-6 text-left md:table-cell hidden">Identification</th>
+            <th className="py-4 px-6 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-white/5">
           {users.map((u) => (
-            <tr key={u._id} className="border-b hover:bg-gray-50">
-              <td className="p-3">
+            <tr key={u._id} className="group hover:bg-white/5 transition-all">
+              <td className="py-5 px-6">
                 <input
                   type="checkbox"
+                  className="w-5 h-5 bg-white/5 border-white/10 rounded cursor-pointer accent-blue-500"
                   checked={selected.includes(u._id)}
                   onChange={() => toggleUser(u._id)}
                 />
               </td>
-              <td className="p-3">
-                <p className="font-medium">{u.name}</p>
-                <p className="text-xs text-gray-500">{u.email}</p>
+              <td className="py-5 px-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-blue-300 font-black text-sm">
+                    {u.name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-extrabold text-white truncate">{u.name}</p>
+                    <p className="text-xs text-blue-100/40 truncate">{u.email}</p>
+                  </div>
+                </div>
               </td>
-              <td className="p-3 text-gray-600">{u.enrollmentNumber || u.employeeId}</td>
-              <td className="p-3 space-x-2">
-                <button onClick={() => onApprove(u)} className="px-3 py-1 bg-green-600 text-white rounded">
-                  Approve
+              <td className="py-5 px-6 md:table-cell hidden">
+                <span className="text-xs font-black text-blue-100/60 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 whitespace-nowrap">
+                  {u.enrollmentNumber || u.employeeId || "N/A"}
+                </span>
+              </td>
+              <td className="py-5 px-6 text-right space-x-2">
+                <button
+                  onClick={() => onApprove(u)}
+                  className="p-2.5 bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 text-blue-300 hover:text-white rounded-xl transition-all shadow-lg active:scale-90"
+                  title="Approve"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
                 </button>
-                <button onClick={() => onDelete(u)} className="px-3 py-1 bg-red-500 text-white rounded">
-                  Reject
+                <button
+                  onClick={() => onDelete(u)}
+                  className="p-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 text-red-400 hover:text-white rounded-xl transition-all active:scale-90"
+                  title="Reject"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 {onPromote && (
-                  <button onClick={() => onPromote(u._id)} className="px-3 py-1 bg-blue-600 text-white rounded">
-                    Make Admin
+                  <button
+                    onClick={() => onPromote(u._id)}
+                    className="p-2.5 bg-purple-600/20 hover:bg-purple-600 border border-purple-500/30 text-purple-300 hover:text-white rounded-xl transition-all active:scale-90"
+                    title="Make Admin"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                   </button>
                 )}
               </td>

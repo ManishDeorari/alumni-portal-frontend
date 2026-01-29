@@ -8,7 +8,7 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
 
     // 🟡 Typing indicator handler
     const handleTyping = ({ postId: incomingId, user }) => {
-      if (incomingId === postId && user !== currentUser._id) {
+      if (incomingId === postId && user !== currentUser?._id) {
         setSomeoneTyping(true);
         setTimeout(() => setSomeoneTyping(false), 3000);
       }
@@ -45,5 +45,5 @@ export default function usePostSocket(postId, currentUser, setSomeoneTyping, set
       socket.off("commentReacted", handleCommentReacted);
       socket.off("updatePostRequest", handleUpdatePostRequest);
     };
-  }, [postId, currentUser._id, setSomeoneTyping, setPosts]);
+  }, [postId, currentUser?._id, setSomeoneTyping, setPosts]);
 }

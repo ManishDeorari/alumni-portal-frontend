@@ -21,13 +21,17 @@ export default function usePostEffects({
 
   // 🔹 Check if current user liked this post
   useEffect(() => {
-    const userId = currentUser._id?.toString();
+    const userId = currentUser?._id?.toString();
+    if (!userId) {
+      setHasLiked(false);
+      return;
+    }
     const normalizeId = (id) =>
       typeof id === "object" ? id._id?.toString() : id?.toString?.();
 
     const liked = post.likes?.some((id) => normalizeId(id) === userId);
     setHasLiked(liked);
-  }, [post.likes, currentUser._id]);
+  }, [post.likes, currentUser?._id]);
 
   // ❌ Removed post auto-scroll. Keeping it only for replies or modal context.
 
@@ -42,7 +46,7 @@ export default function usePostEffects({
   useEffect(() => {
     const socket = require("../../../../utils/socket").default;
     const handleLikeAnimation = ({ postId, userId, isLiked }) => {
-      if (postId === post._id && userId !== currentUser._id) {
+      if (postId === post._id && userId !== currentUser?._id) {
         const ids = [`like-icon-${post._id}`, `like-icon-${post._id}-modal`];
         ids.forEach((id) => {
           const icon = document.getElementById(id);
@@ -57,5 +61,5 @@ export default function usePostEffects({
     };
     socket.on("postLiked", handleLikeAnimation);
     return () => socket.off("postLiked", handleLikeAnimation);
-  }, [post._id, currentUser._id]);
+  }, [post._id, currentUser?._id]);
 }

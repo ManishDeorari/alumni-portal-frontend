@@ -187,7 +187,7 @@ export default function Sidebar() {
         {/* Admin (Only for admins) */}
         {isAdmin && (
           <Link
-            href="/admin"
+            href="/dashboard/admin"
             className="hover:text-gray-200 relative group"
             title="Admin Panel"
           >

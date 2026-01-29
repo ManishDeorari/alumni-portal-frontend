@@ -9,6 +9,8 @@ import PostCard from "../components/Post/PostCard";
 import { motion, AnimatePresence } from "framer-motion";
 import socket from "../../utils/socket";
 
+import PointsScenario from "../components/dashboard/PointsScenario";
+
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -148,136 +150,137 @@ export default function DashboardPage() {
   const SidebarComponent = user.isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white relative">
       <SidebarComponent />
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
-        {/* User info */}
-        <section className="bg-white text-gray-900 p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-2">
-            Welcome, {user?.fullName || "Alumni"}
-          </h2>
-          <p className="text-sm">
-            Enrollment Number: <strong>{user?.enrollmentNumber || "N/A"}</strong>
-          </p>
-          <p className="text-sm">
-            Email: <strong>{user?.email || "N/A"}</strong>
-          </p>
-        </section>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
 
-        {/* Create Post */}
-        <section className="bg-white text-gray-900 p-6 rounded-xl shadow-md space-y-4">
-          <h2 className="text-xl font-bold">📢 Create a Post</h2>
-          <CreatePost setPosts={setPosts} currentUser={user} />
-        </section>
+          {/* Left Column - Points Scenario Widget */}
+          <aside className="lg:w-1/4 order-2 lg:order-1">
+            <div className="lg:sticky lg:top-24">
+              <PointsScenario />
+            </div>
+          </aside>
 
-        {/* Feed Subsections Tabs */}
-        <div className="flex justify-center gap-3 flex-wrap">
-          <button
-            onClick={() => setActiveTab("all")}
-            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "all"
-              ? "bg-white text-blue-700 shadow-lg scale-105"
-              : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            All Posts
-          </button>
-          <button
-            onClick={() => setActiveTab("my")}
-            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "my"
-              ? "bg-white text-blue-700 shadow-lg scale-105"
-              : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            My Posts
-          </button>
-          <button
-            onClick={() => setActiveTab("Session")}
-            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Session"
-              ? "bg-white text-blue-700 shadow-lg scale-105"
-              : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            Session
-          </button>
-          <button
-            onClick={() => setActiveTab("Announcement")}
-            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Announcement"
-              ? "bg-white text-blue-700 shadow-lg scale-105"
-              : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            Announcement
-          </button>
-          <button
-            onClick={() => setActiveTab("Event")}
-            className={`px-4 py-2 rounded-full font-semibold transition-all ${activeTab === "Event"
-              ? "bg-white text-blue-700 shadow-lg scale-105"
-              : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-          >
-            Event
-          </button>
-        </div>
+          {/* Right Column - Feed & Welcome */}
+          <div className="flex-1 lg:w-3/4 space-y-10 order-1 lg:order-2">
+            {/* User info */}
+            <section className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">
+                  <span className="text-4xl">👋</span>
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-1">
+                    Welcome back, {user?.name || "Alumni"}!
+                  </h2>
+                  <div className="flex flex-wrap gap-4 mt-2">
+                    <span className="text-[10px] bg-gray-100 border border-gray-200 px-3 py-1 rounded-full text-gray-500 font-black uppercase tracking-widest">{user?.enrollmentNumber || "N/A"}</span>
+                    <span className="text-[10px] bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-600 font-black uppercase tracking-widest">{user?.role || "Member"}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-        {/* New Posts Notification */}
-        <AnimatePresence>
-          {pendingPosts.length > 0 && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="flex justify-center overflow-hidden"
-            >
-              <button
-                onClick={loadPendingPosts}
-                className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-full font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
-              >
-                ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            {/* Create Post */}
+            <section className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-black text-gray-900 tracking-tight mb-6 flex items-center gap-2">
+                <span className="bg-blue-50 p-2 rounded-xl">📢</span>
+                Create a Post
+              </h2>
+              <CreatePost setPosts={setPosts} currentUser={user} />
+            </section>
 
-        {/* Posts */}
-        <section>
-          {filteredPosts.length === 0 ? (
-            <p className="text-center text-gray-200 mt-10 italic">
-              {activeTab === "my" ? "You haven't posted anything yet." : "No posts yet."}
-            </p>
-          ) : (
-            <>
-              <AnimatePresence>
-                {filteredPosts.map((post) => (
-                  <motion.div
-                    key={post._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    className="mb-6 bg-white text-gray-900 p-6 rounded-xl shadow-md"
-                  >
-                    <PostCard post={post} currentUser={user} setPosts={setPosts} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+            {/* Feed Subsections Tabs */}
+            <div className="flex justify-center gap-3 flex-wrap">
+              {[
+                { id: "all", label: "All Posts" },
+                { id: "my", label: "My Posts" },
+                { id: "Session", label: "Session" },
+                { id: "Announcement", label: "Announcement" },
+                { id: "Event", label: "Event" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === tab.id
+                    ? "bg-white text-blue-700 shadow-xl scale-105"
+                    : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-              {hasMore && activeTab === "all" ? (
-                <div className="text-center mt-6">
+            {/* New Posts Notification */}
+            <AnimatePresence>
+              {pendingPosts.length > 0 && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="flex justify-center overflow-hidden"
+                >
                   <button
-                    onClick={handleLoadMore}
-                    disabled={fetchingMore}
-                    className="px-6 py-2 bg-white text-blue-700 font-bold rounded-full hover:bg-blue-50 transition-all disabled:opacity-50 shadow-md"
+                    onClick={loadPendingPosts}
+                    className="bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
                   >
-                    {fetchingMore ? "Loading..." : "View More Posts"}
+                    ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""}
                   </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Posts */}
+            <section className="space-y-8">
+              {filteredPosts.length === 0 ? (
+                <div className="bg-white rounded-[2.5rem] p-12 text-center border border-gray-200">
+                  <p className="text-gray-400 font-black uppercase tracking-widest text-sm">
+                    {activeTab === "my" ? "You haven't posted anything yet." : "No posts found in this category."}
+                  </p>
                 </div>
               ) : (
-                activeTab === "all" && <p className="text-center mt-10 text-white/60">✨ You&apos;ve reached the end ✨</p>
+                <>
+                  <AnimatePresence mode="popLayout">
+                    {filteredPosts.map((post) => (
+                      <motion.div
+                        key={post._id}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm hover:border-gray-300 transition-all group"
+                      >
+                        <PostCard post={post} currentUser={user} setPosts={setPosts} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {hasMore && activeTab === "all" ? (
+                    <div className="text-center mt-12 pb-8">
+                      <button
+                        onClick={handleLoadMore}
+                        disabled={fetchingMore}
+                        className="px-12 py-4 bg-white text-blue-700 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-50 hover:shadow-2xl transition-all disabled:opacity-50 shadow-xl active:scale-95"
+                      >
+                        {fetchingMore ? "Loading..." : "Load More Posts"}
+                      </button>
+                    </div>
+                  ) : (
+                    activeTab === "all" && (
+                      <div className="text-center py-12 opacity-40">
+                        <p className="text-xs font-black uppercase tracking-[0.3em]">✨ End of the Feed ✨</p>
+                      </div>
+                    )
+                  )}
+                </>
               )}
-            </>
-          )}
-        </section>
+            </section>
+          </div>
+        </div>
       </main>
     </div>
   );

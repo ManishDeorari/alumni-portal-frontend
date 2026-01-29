@@ -60,7 +60,7 @@ export default function MessagesPage() {
                 className="w-10 h-10 rounded-full object-cover"
                 alt={user.name}
               />
-              <Link href={`/dashboard/profile/${user._id}`} className="hover:underline font-semibold text-blue-700">
+              <Link href={`/dashboard/profile?id=${user._id}`} className="hover:underline font-semibold text-blue-700">
                 {user.name}
               </Link>
             </div>

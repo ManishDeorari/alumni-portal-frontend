@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProfileAbout from "../../components/profile/ProfileAbout";
 import ProfileExperience from "../../components/profile/ProfileExperience";
@@ -10,11 +10,21 @@ import ProfileWorkProfile from "../../components/profile/ProfileWorkProfile";
 import ProfileJobPreference from "../../components/profile/ProfileJobPreference";
 import ProfileBasicInfo from "../../components/profile/ProfileBasicInfo";
 
-import { useParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 export default function ProfilePage() {
-  const params = useParams();
-  const profileId = params?.id; // From URL: /dashboard/profile/[id]
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-white">Loading...</div>}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+function ProfileContent() {
+  const searchParams = useSearchParams();
+  const profileId = searchParams.get("id"); // From URL: /dashboard/profile?id=[id]
+  const router = useRouter();
 
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
@@ -27,12 +37,13 @@ export default function ProfilePage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const currentUser = await currentUserRes.json();
+      const currentUserId = currentUser?._id?.toString();
 
-      let targetId = profileId || currentUser._id;
-      const viewingOther = profileId && profileId !== currentUser._id;
+      let targetId = profileId || currentUserId;
+      const viewingOther = !!(profileId && profileId.toString() !== currentUserId);
       setIsPublicView(viewingOther);
 
-      // 1) Profile info (Using public endpoint if viewing others)
+      // 1) Profile info
       const endpoint = viewingOther
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/user/${targetId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/api/user/me`;
@@ -42,17 +53,27 @@ export default function ProfilePage() {
       });
       const profileData = await resProfile.json();
 
-      // 2) Posts
-      const resPosts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`, {
+      // 2) Posts - If viewing other, we might need a different endpoint, or use targetId
+      const postsEndpoint = viewingOther
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/posts?userId=${targetId}&limit=50&type=all`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/user/myposts`;
+
+      const resPosts = await fetch(postsEndpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const postsData = await resPosts.json();
+      const postsRaw = await resPosts.json();
+      const postsData = postsRaw.posts || postsRaw; // Handle both {posts, total} and array formats
 
       // 3) Activity (Interactions)
-      const resActivity = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/activity`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const activityData = await resActivity.json();
+      let activityData = [];
+      if (!viewingOther) {
+        const resActivity = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/activity`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (resActivity.ok) {
+          activityData = await resActivity.json();
+        }
+      }
 
       // 4) Merge into state
       setProfile({
@@ -69,13 +90,24 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [profileId]);
 
-  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
+  if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <Sidebar />
+
+      {/* ⬅️ Back Button */}
+      <div className="max-w-4xl mx-auto px-4 pt-6">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all font-semibold backdrop-blur-md text-white group"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          Back
+        </button>
+      </div>
 
       {/* 🔷 Top Profile Section (Refactored) */}
       <ProfileBasicInfo

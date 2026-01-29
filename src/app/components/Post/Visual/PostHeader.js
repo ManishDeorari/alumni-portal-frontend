@@ -23,7 +23,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
             <span className="text-gray-900">{post.user?.name || "Unknown"}</span>
           ) : (
             <Link
-              href={`/dashboard/profile/${post.user?._id}`}
+              href={`/dashboard/profile?id=${post.user?._id}`}
               className="hover:underline text-blue-700 decoration-blue-400 decoration-2 transition-colors cursor-pointer"
             >
               {post.user?.name || "Unknown"}

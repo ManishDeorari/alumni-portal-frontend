@@ -72,6 +72,11 @@ export default function CommentCard({
     setShowEmoji(!showEmoji);
   };
 
+  // ✅ Safety check: early return if basic data is missing
+  if (!comment || !currentUser || !comment.user) return null;
+
+  const isOwn = comment.user?._id === currentUser?._id;
+
   const [justPosted, setJustPosted] = useState(false);
 
   useEffect(() => {
@@ -86,11 +91,6 @@ export default function CommentCard({
       return () => clearTimeout(timer);
     }
   }, [comment?.justNow, isOwn]);
-
-  // ✅ Safety check: early return if basic data is missing
-  if (!comment || !currentUser || !comment.user) return null;
-
-  const isOwn = comment.user?._id === currentUser?._id;
 
   const toggleReaction = async (emoji) => {
     if (isReply && onReactToReply) {
@@ -156,7 +156,7 @@ export default function CommentCard({
                 <span className="text-gray-900">{comment.user?.name || "Unknown"}</span>
               ) : (
                 <Link
-                  href={`/dashboard/profile/${comment.user?._id}`}
+                  href={`/dashboard/profile?id=${comment.user?._id}`}
                   className="hover:underline text-blue-700 cursor-pointer"
                 >
                   {comment.user?.name || "Unknown"}

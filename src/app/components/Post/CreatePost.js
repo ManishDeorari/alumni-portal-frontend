@@ -102,7 +102,7 @@ const CreatePost = ({ setPosts, currentUser }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="What's on your mind?"
-            className="w-full border rounded-lg p-2 resize-none"
+            className="w-full border border-black rounded-lg p-2 resize-none text-black placeholder-gray-500"
             rows="3"
           />
           <div className="absolute bottom-[100%] right-0">
@@ -124,8 +124,8 @@ const CreatePost = ({ setPosts, currentUser }) => {
                 type="button"
                 onClick={() => setSelectedType(selectedType === tag ? "Regular" : tag)}
                 className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${selectedType === tag
-                  ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105"
-                  : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200"
+                  ? "bg-black text-white border-black shadow-md scale-105"
+                  : "bg-white text-black border-black hover:bg-gray-100"
                   }`}
               >
                 {tag}

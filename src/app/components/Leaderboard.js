@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import PointsDistributionModal from "./profile/PointsDistributionModal";
@@ -59,71 +60,102 @@ export default function Leaderboard() {
   };
 
   const Card = ({ title, users, pointsKey }) => (
-    <div className="bg-white rounded-2xl shadow-md p-6 mb-6 max-w-3xl mx-auto">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">{title}</h2>
-      {users.length === 0 ? (
-        <p className="text-gray-500 text-center">No eligible users.</p>
-      ) : (
-        <ul className="space-y-4">
-          {users.map((user, index) => (
-            <li
-              key={user._id}
-              className="flex items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm"
-            >
-              <div className="flex items-center space-x-4">
-                <span className="text-lg font-bold text-gray-700 w-6">{index + 1}.</span>
-                <Image
-                  src={user.profilePicture || "/default-profile.jpg"}
-                  alt={user.name}
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 rounded-full object-cover border border-gray-300"
-                />
-                <div>
-                  <p className="font-semibold text-lg text-gray-800">{user.name}</p>
-                  <p className="text-sm text-gray-500">{user.enrollmentNumber || "N/A"}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => handlePointClick(user)}
-                className="font-bold text-blue-600 text-lg hover:underline transition-all active:scale-95"
+    <div className="bg-gray-800/80 backdrop-blur-3xl rounded-[2.5rem] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.4)] mb-12 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700">
+      <div className="px-10 py-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
+        <h2 className="text-2xl font-black text-white tracking-tight">{title}</h2>
+        <div className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+          <span className="text-blue-300 font-black text-[10px] uppercase tracking-widest">{users.length} Ranked</span>
+        </div>
+      </div>
+      <div className="p-6 md:p-10">
+        {users.length === 0 ? (
+          <div className="py-20 text-center">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
+              <svg className="w-10 h-10 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <p className="text-blue-100/30 font-bold italic text-lg">No eligible users found for this rank.</p>
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {users.map((user, index) => (
+              <li
+                key={user._id}
+                className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg group hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300"
               >
-                {user[pointsKey]?.total ?? 0} pts
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                <div className="flex items-center space-x-5">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${index === 0 ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 shadow-[0_0_15px_rgba(234,179,8,0.3)]" :
+                    index === 1 ? "bg-slate-300/20 text-slate-300 border border-slate-300/40" :
+                      index === 2 ? "bg-amber-600/20 text-amber-500 border border-amber-600/40" :
+                        "text-blue-100/40"
+                    }`}>
+                    {index + 1}
+                  </div>
+                  <Image
+                    src={user.profilePicture || "/default-profile.jpg"}
+                    alt={user.name}
+                    width={56}
+                    height={56}
+                    className="w-14 h-14 rounded-2xl object-cover border-2 border-white/10 bg-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="min-w-0">
+                    <Link
+                      href={`/dashboard/profile?id=${user._id}`}
+                      className="font-extrabold text-lg text-white hover:text-blue-300 transition-colors block truncate"
+                    >
+                      {user.name}
+                    </Link>
+                    <p className="text-xs font-black text-blue-100/30 tracking-widest uppercase">{user.enrollmentNumber || "Alumni"}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handlePointClick(user)}
+                  className="px-5 py-2.5 bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 text-blue-300 hover:text-white rounded-xl font-black text-lg transition-all shadow-lg active:scale-95"
+                >
+                  {user[pointsKey]?.total ?? 0} <span className="text-[10px] uppercase ml-1 opacity-60">pts</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 
   return (
     <motion.div
       key="leaderboard"
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 relative"
+      className="max-w-4xl mx-auto space-y-10"
     >
-      <div className="flex justify-between items-center mb-6 max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold text-black-700">🏆 Alumni Leaderboard</h1>
-        <input
-          type="text"
-          placeholder="Search by name or enrollment…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 border rounded-md w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-800/90 p-8 rounded-[2rem] border border-white/20 shadow-xl">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3">
+            🏆 Alumni Leaderboard
+          </h1>
+          <p className="text-blue-100/40 text-sm font-bold uppercase tracking-widest">Global Rankings & Points breakdown</p>
+        </div>
+        <div className="relative w-full md:w-80">
+          <input
+            type="text"
+            placeholder="Search by name or enrollment…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/20 font-medium"
+          />
+          <svg className="absolute left-4 top-4 w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        </div>
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-500">Loading leaderboard...</p>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-blue-100/40 font-black uppercase tracking-widest text-xs">Loading Rankings...</p>
+        </div>
       ) : (
         <>
-          {/* Current Year */}
-          <Card title="🎓 Current Year" users={currentFiltered} pointsKey="points" />
-
-          {/* Last Year */}
-          <Card title="🥇 Last Year" users={lastFiltered} pointsKey="lastYearPoints" />
+          <Card title="🥇 Current Season" users={currentFiltered} pointsKey="points" />
+          <Card title="🎓 Historical Hall of Fame" users={lastFiltered} pointsKey="lastYearPoints" />
         </>
       )}
 
