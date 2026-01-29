@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield } from "react-icons/fa";
+import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import ResetPasswordModal from "./ResetPasswordModal";
 import socket from "@/utils/socket";
 
 export default function Sidebar() {
@@ -11,6 +13,9 @@ export default function Sidebar() {
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [shakeNotification, setShakeNotification] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   useEffect(() => {
@@ -108,6 +113,12 @@ export default function Sidebar() {
     setNewPostsCount(0);
   };
 
+  const handleSignout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
+
   return (
     <nav className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-purple-700 text-white px-6 py-4 shadow-md sticky top-0 z-50">
 
@@ -184,7 +195,51 @@ export default function Sidebar() {
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           </Link>
         )}
+
+        {/* Settings */}
+        <div className="relative">
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="hover:text-gray-200 relative group pt-1"
+            title="Settings"
+          >
+            <FaCog className={showSettings ? "rotate-90 transition-transform duration-300" : "transition-transform duration-300"} />
+          </button>
+
+          {showSettings && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowSettings(false)}
+              ></div>
+              <div className="absolute right-0 mt-3 w-48 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <button
+                  onClick={() => {
+                    setShowResetModal(true);
+                    setShowSettings(false);
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm flex items-center gap-3 hover:bg-white/10 transition-colors border-b border-white/10"
+                >
+                  <FaKey className="text-blue-400" />
+                  <span>Reset Password</span>
+                </button>
+                <button
+                  onClick={handleSignout}
+                  className="w-full text-left px-4 py-3 text-sm flex items-center gap-3 hover:bg-red-500/20 text-red-400 transition-colors"
+                >
+                  <FaSignOutAlt />
+                  <span>Signout</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      <ResetPasswordModal
+        isOpen={showResetModal}
+        onClose={() => setShowResetModal(false)}
+      />
 
     </nav>
   );
