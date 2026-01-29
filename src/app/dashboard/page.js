@@ -56,13 +56,20 @@ export default function DashboardPage() {
   // ✅ Fetch posts
   const fetchPosts = async (pageNum = 1, append = false) => {
     try {
-      let queryType = "Regular";
-      if (activeTab === "my") queryType = "all";
-      else if (activeTab !== "all") queryType = activeTab;
+      const token = localStorage.getItem("token");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      let url = `${API_URL}/api/posts?page=${pageNum}&limit=${limit}`;
+      let headers = {};
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?page=${pageNum}&limit=${limit}&type=${queryType}`
-      );
+      if (activeTab === "my") {
+        url = `${API_URL}/api/posts/me?page=${pageNum}&limit=${limit}`;
+        headers = { Authorization: `Bearer ${token}` };
+      } else {
+        const queryType = activeTab === "all" ? "Regular" : activeTab;
+        url += `&type=${queryType}`;
+      }
+
+      const res = await fetch(url, { headers });
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.posts)) return;
 
