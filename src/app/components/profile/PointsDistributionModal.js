@@ -40,7 +40,7 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                             <div className="flex items-center gap-3">
                                 <Award className="w-8 h-8 text-yellow-300" />
                                 <div>
-                                    <h2 className="text-xl font-bold">{user.name}'s Points</h2>
+                                    <h2 className="text-xl font-bold">{user.name}&apos;s Points</h2>
                                     <p className="text-white/80 text-sm">Detailed Breakdown</p>
                                 </div>
                             </div>
