@@ -74,7 +74,7 @@ const PointsScenario = () => {
 
             <div className="mt-4 pt-4 border-t border-gray-100 text-center">
                 <p className="text-[10px] text-gray-400 font-bold italic leading-relaxed">
-                    "Consistent engagement leads to higher ranking!"
+                    &quot;Consistent engagement leads to higher ranking!&quot;
                 </p>
             </div>
         </div>

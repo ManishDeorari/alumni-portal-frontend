@@ -72,11 +72,6 @@ export default function CommentCard({
     setShowEmoji(!showEmoji);
   };
 
-  // ✅ Safety check: early return if basic data is missing
-  if (!comment || !currentUser || !comment.user) return null;
-
-  const isOwn = comment.user?._id === currentUser?._id;
-
   const [justPosted, setJustPosted] = useState(false);
 
   useEffect(() => {
@@ -84,13 +79,20 @@ export default function CommentCard({
   }, [comment?.reactions]);
 
   useEffect(() => {
+    // Only scroll if it's the user's own new comment
+    const isOwn = comment?.user?._id === currentUser?._id;
     if (isOwn && comment?.justNow) {
       commentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       setJustPosted(true);
       const timer = setTimeout(() => setJustPosted(false), 1000);
       return () => clearTimeout(timer);
     }
-  }, [comment?.justNow, isOwn]);
+  }, [comment?.justNow, comment?.user?._id, currentUser?._id]);
+
+  // ✅ Safety check: early return if basic data is missing
+  if (!comment || !currentUser || !comment.user) return null;
+
+  const isOwn = comment.user._id === currentUser._id;
 
   const toggleReaction = async (emoji) => {
     if (isReply && onReactToReply) {
