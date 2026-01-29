@@ -64,64 +64,70 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm px-4">
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-2xl shadow-2xl relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
+            {/* Container with purple-blue theme gradient */}
+            <div className="w-full max-w-md bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden">
+
+                {/* Glow effects */}
+                <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+                    className="absolute top-5 right-5 text-white/50 hover:text-white transition-all hover:rotate-90"
                 >
-                    <FaTimes size={20} />
+                    <FaTimes size={22} />
                 </button>
 
-                <div className="flex flex-col items-center mb-6">
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
-                        <FaLock className="text-blue-400" size={24} />
+                <div className="flex flex-col items-center mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20 transform -rotate-3">
+                        <FaLock className="text-white" size={28} />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">Reset Password</h2>
-                    <p className="text-white/60 text-sm mt-1 text-center">Update your account security</p>
+                    <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-200">Reset Password</h2>
+                    <p className="text-white/50 text-sm mt-2 text-center">Secure your account with a new password</p>
                 </div>
 
                 {message.text && (
-                    <div className={`mb-6 p-3 rounded-lg text-sm text-center ${message.type === "success" ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30"
+                    <div className={`mb-6 p-4 rounded-xl text-sm font-medium text-center animate-in fade-in zoom-in duration-300 ${message.type === "success" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
                         }`}>
                         {message.text}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-white/70 text-sm font-medium mb-1.5 ml-1">Current Password</label>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="group">
+                        <label className="block text-white/60 text-xs font-bold uppercase tracking-wider mb-2 ml-1 transition-colors group-focus-within:text-blue-400">Current Password</label>
                         <input
                             type="password"
                             name="oldPassword"
                             value={formData.oldPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
                             required
                         />
                     </div>
-                    <div>
-                        <label className="block text-white/70 text-sm font-medium mb-1.5 ml-1">New Password</label>
+                    <div className="group">
+                        <label className="block text-white/60 text-xs font-bold uppercase tracking-wider mb-2 ml-1 transition-colors group-focus-within:text-blue-400">New Password</label>
                         <input
                             type="password"
                             name="newPassword"
                             value={formData.newPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
                             required
                         />
                     </div>
-                    <div>
-                        <label className="block text-white/70 text-sm font-medium mb-1.5 ml-1">Confirm New Password</label>
+                    <div className="group">
+                        <label className="block text-white/60 text-xs font-bold uppercase tracking-wider mb-2 ml-1 transition-colors group-focus-within:text-blue-400">Confirm New Password</label>
                         <input
                             type="password"
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
                             required
                         />
                     </div>
@@ -129,13 +135,12 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-500 hover:to-purple-600 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-blue-900/20 transform transition-all active:scale-95 flex justify-center items-center gap-2 mt-4 ${loading ? "opacity-70 cursor-not-allowed" : ""
-                            }`}
+                        className={`w-full bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-500 hover:to-purple-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-blue-500/10 transform transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-3 mt-6 text-lg`}
                     >
                         {loading ? (
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
-                            "Update Password"
+                            "Update Account Security"
                         )}
                     </button>
                 </form>
