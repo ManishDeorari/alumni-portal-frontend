@@ -34,7 +34,7 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
             {/* Header */}
             <div className="p-4 border-b border-white/10 flex items-center gap-3">
                 <Image
-                    src={selectedUser.profilePic || "/default-user.jpg"}
+                    src={selectedUser.profilePicture || "/default-profile.jpg"}
                     width={40}
                     height={40}
                     className="rounded-full object-cover border border-white/10"
@@ -59,8 +59,8 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
                             <div key={index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                                 <div
                                     className={`max-w-[70%] px-4 py-2 rounded-2xl break-words ${isMe
-                                            ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
-                                            : "bg-white/10 text-gray-200 rounded-bl-none border border-white/10"
+                                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
+                                        : "bg-white/10 text-gray-200 rounded-bl-none border border-white/10"
                                         }`}
                                 >
                                     <p>{msg.content}</p>

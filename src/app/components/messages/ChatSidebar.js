@@ -35,13 +35,13 @@ export default function ChatSidebar({ connections, selectedUser, onSelectUser, o
                             key={user._id}
                             onClick={() => onSelectUser(user)}
                             className={`p-3 flex items-center gap-3 rounded-lg cursor-pointer transition-all ${selectedUser?._id === user._id
-                                    ? "bg-blue-600/30 border border-blue-500/50"
-                                    : "hover:bg-white/5"
+                                ? "bg-blue-600/30 border border-blue-500/50"
+                                : "hover:bg-white/5"
                                 }`}
                         >
                             <div className="relative">
                                 <Image
-                                    src={user.profilePic || "/default-user.jpg"}
+                                    src={user.profilePicture || "/default-profile.jpg"}
                                     width={40}
                                     height={40}
                                     className="rounded-full object-cover border border-white/10"
