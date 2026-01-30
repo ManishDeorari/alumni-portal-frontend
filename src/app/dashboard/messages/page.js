@@ -1,90 +1,174 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar"; // ✅ Sidebar imported
-import Link from "next/link";
-import Image from "next/image";
+import Sidebar from "../../components/Sidebar";
+import ChatSidebar from "../../components/messages/ChatSidebar";
+import ChatWindow from "../../components/messages/ChatWindow";
+import socket from "@/utils/socket";
 
 export default function MessagesPage() {
   const [connectedUsers, setConnectedUsers] = useState([]);
+  const [filteredConnections, setFilteredConnections] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [newMessage, setNewMessage] = useState("");
-  const [chats, setChats] = useState({}); // key: userId, value: array of messages
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  // 1. Fetch current user and connections on load
   useEffect(() => {
-    const fetchConnected = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/connected`, {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setCurrentUser(user);
+
+        // Fetch connections
+        // Note: Checking if /api/user/connected exists or using fallback logic
+        let res = await fetch(`${API_URL}/api/user/connected`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await res.json();
-        setConnectedUsers(data);
-        if (data.length) {
-          setSelectedUser(data[0]);
+
+        // Fallback: if /connected route doesn't exist, try getting all connections manually 
+        // (Assuming typical setup: check network/connections)
+        // For now relying on the route existing as per plan, if 404 we will debug.
+
+        if (res.ok) {
+          const data = await res.json();
+          setConnectedUsers(data);
+          setFilteredConnections(data);
+          if (data.length > 0) {
+            // Optionally auto-select first user, but maybe better to let user choose
+            // setSelectedUser(data[0]); 
+          }
+        } else {
+          console.error("Failed to fetch connections");
         }
+
       } catch (err) {
-        console.error("❌ Failed to fetch connections:", err.message);
+        console.error("Error fetching initial data:", err);
       }
     };
 
-    fetchConnected();
-  }, []);
+    fetchData();
+  }, [API_URL]);
 
-  const handleSend = () => {
-    if (!newMessage.trim()) return;
-    const updated = { ...chats };
-    const userId = selectedUser._id;
-    if (!updated[userId]) updated[userId] = [];
-    updated[userId].push({ text: "You: " + newMessage });
-    setChats(updated);
-    setNewMessage("");
+  // 2. Fetch messages when a user is selected
+  useEffect(() => {
+    if (!selectedUser) return;
+
+    const fetchMessages = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_URL}/api/messages/${selectedUser._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setMessages(data);
+        }
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+      }
+    };
+
+    fetchMessages();
+    setNewMessage(""); // Clear input when switching chats
+  }, [selectedUser, API_URL]);
+
+  // 3. Socket.io listener for incoming messages
+  useEffect(() => {
+    const handleReceiveMessage = (msg) => {
+      // Only append if the message belongs to the currently open chat
+      if (selectedUser && (msg.sender._id === selectedUser._id || msg.recipient === selectedUser._id)) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+  }, [selectedUser]); // Re-bind listener when selectedUser changes isn't strictly necessary for logic but keeps scope clean
+
+  // 4. Send Message Logic
+  const handleSendMessage = async (text) => {
+    if (!selectedUser || !text.trim()) return;
+
+    // Optimistic update
+    const tempMsg = {
+      _id: Date.now(), // temp id
+      sender: currentUser,
+      recipient: selectedUser._id,
+      content: text,
+      createdAt: new Date().toISOString()
+    };
+    setMessages((prev) => [...prev, tempMsg]);
+    setNewMessage(""); // Clear input immediately
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/messages/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          recipientId: selectedUser._id,
+          content: text,
+        }),
+      });
+
+      if (res.ok) {
+        const savedMsg = await res.json();
+        // Replace temp message with real one (or just assume success since we optimistic updated)
+        // Ideally we map and replace ID, but appending works for now if we don't duplicate.
+        // Since we optimistic updated, we might get a duplicate if socket also fires back 'receiveMessage' for self.
+        // Usually 'receiveMessage' is broadcast to others, not sender. 
+        // If socket emits to sender too, we need to handle dedup. 
+        // My backend code: req.io.to(recipientId).emit... -> It sends to RECIPIENT, not sender. So optimistic update is fine.
+      } else {
+        console.error("Failed to send message");
+        // Revert optimistic update ideally
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+    }
+  };
+
+  // 5. Search Logic
+  const handleSearch = (term) => {
+    if (!term.trim()) {
+      setFilteredConnections(connectedUsers);
+    } else {
+      const filtered = connectedUsers.filter(u =>
+        u.name.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredConnections(filtered);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white p-6">
-      <Sidebar /> {/* ✅ Sidebar added */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+      <Sidebar />
 
-      <h1 className="text-3xl font-bold mb-4">Messages</h1>
+      <div className="p-6 max-w-7xl mx-auto flex gap-6 mt-6">
+        <ChatSidebar
+          connections={filteredConnections}
+          selectedUser={selectedUser}
+          onSelectUser={setSelectedUser}
+          onSearch={handleSearch}
+        />
 
-      <div className="flex gap-6">
-        <div className="w-1/3 bg-white text-black rounded-lg shadow p-4 space-y-2 h-[70vh] overflow-y-auto">
-          {connectedUsers.map((user) => (
-            <div
-              key={user._id}
-              className={`p-2 flex gap-3 items-center rounded cursor-pointer hover:bg-blue-100 ${selectedUser?._id === user._id ? "bg-blue-200" : ""
-                }`}
-              onClick={() => setSelectedUser(user)}
-            >
-              <Image
-                src={user.profilePic || "/default-user.jpg"}
-                className="w-10 h-10 rounded-full object-cover"
-                alt={user.name}
-              />
-              <Link href={`/dashboard/profile?id=${user._id}`} className="hover:underline font-semibold text-blue-700">
-                {user.name}
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        <div className="w-2/3 bg-white text-black rounded-lg shadow p-4 flex flex-col h-[70vh]">
-          <div className="flex-grow space-y-2 overflow-auto mb-4">
-            {(chats[selectedUser?._id] || []).map((msg, i) => (
-              <p key={i}>{msg.text}</p>
-            ))}
-          </div>
-          <div className="flex">
-            <input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-grow px-4 py-2 rounded-l border"
-            />
-            <button onClick={handleSend} className="bg-blue-600 text-white px-4 rounded-r">
-              Send
-            </button>
-          </div>
-        </div>
+        <ChatWindow
+          selectedUser={selectedUser}
+          messages={messages}
+          currentUser={currentUser}
+          onSendMessage={handleSendMessage}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+        />
       </div>
     </div>
   );

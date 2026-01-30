@@ -74,9 +74,40 @@ export default function Sidebar() {
       }
     };
 
+    // Fetch current user role reliably
+    const fetchUserRole = async () => {
+      try {
+        console.log("🔍 Sidebar: Fetching user role from /api/user/me...");
+        const res = await fetch(`${API_URL}/api/user/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          console.error(`❌ Sidebar: Fetch failed with status ${res.status}`);
+          return;
+        }
+
+        const userData = await res.json();
+        console.log("🔍 Sidebar: API Response User Data:", userData);
+
+        if (userData && (userData.role === "admin" || userData.isAdmin)) {
+          console.log("✅ Sidebar: User verified as ADMIN via API. Updating state.");
+          setIsAdmin(true);
+          // Update local storage to keep it fresh
+          localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+          console.log("ℹ️ Sidebar: User is NOT admin (role:", userData?.role, "isAdmin:", userData?.isAdmin, ")");
+          if (isAdmin) setIsAdmin(false); // Demote if server says so
+        }
+      } catch (err) {
+        console.error("❌ Sidebar: Failed to fetch user role:", err);
+      }
+    };
+
     fetchNotifications();
     fetchPendingRequests();
     fetchNewPosts();
+    fetchUserRole();
 
     socket.emit("join", user._id);
 

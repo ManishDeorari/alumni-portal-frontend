@@ -98,24 +98,27 @@ function ProfileContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <Sidebar />
 
-      {/* ⬅️ Back Button */}
-      <div className="max-w-4xl mx-auto px-4 pt-6">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all font-semibold backdrop-blur-md text-white group"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          Back
-        </button>
-      </div>
+      {/* 🔷 Top Profile Section with Conditional Back Button */}
+      <div className="max-w-4xl mx-auto px-4 pt-6 flex flex-col md:flex-row gap-4 items-start">
+        {isPublicView && (
+          <button
+            onClick={() => router.back()}
+            className="flex-shrink-0 flex items-center justify-center p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all backdrop-blur-md text-white group shadow-lg h-fit mt-2"
+            title="Go Back"
+          >
+            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+          </button>
+        )}
 
-      {/* 🔷 Top Profile Section (Refactored) */}
-      <ProfileBasicInfo
-        profile={profile}
-        setProfile={setProfile}
-        onRefresh={fetchProfile}
-        isPublicView={isPublicView}
-      />
+        <div className="flex-1 w-full">
+          <ProfileBasicInfo
+            profile={profile}
+            setProfile={setProfile}
+            onRefresh={fetchProfile}
+            isPublicView={isPublicView}
+          />
+        </div>
+      </div>
 
       {/* 🔽 Rest Sections */}
       <div className="max-w-4xl mx-auto mt-6 space-y-6 pb-10">
