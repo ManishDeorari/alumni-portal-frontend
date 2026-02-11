@@ -195,7 +195,7 @@ const NetworkPage = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-black text-white">No Result</h2>
-                <p className="text-white/40 font-medium max-w-xs mx-auto mt-2">Try adjusting your filters or search keywords to find what you're looking for.</p>
+                <p className="text-white/40 font-medium max-w-xs mx-auto mt-2">Try adjusting your filters or search keywords to find what you&apos;re looking for.</p>
               </div>
             </div>
           </section>
