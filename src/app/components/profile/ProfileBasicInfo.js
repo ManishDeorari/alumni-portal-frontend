@@ -153,9 +153,11 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         {copied === "email" && <span className="text-green-500 ml-1 text-xs">Copied</span>}
                     </div>
 
-                    {/* Enrollment */}
+                    {/* ID Field (Enrollment or Employee ID) */}
                     <div className="text-sm text-gray-700">
-                        <strong>Enrollment No:</strong> {profile.enrollmentNumber || "N/A"}
+                        <strong>
+                            {profile.role === 'admin' || profile.role === 'faculty' ? 'Employee ID:' : 'Enrollment No:'}
+                        </strong> {profile.role === 'admin' || profile.role === 'faculty' ? (profile.employeeId || "N/A") : (profile.enrollmentNumber || "N/A")}
                     </div>
 
                     {/* Contact Details */}
