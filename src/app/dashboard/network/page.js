@@ -13,6 +13,7 @@ const NetworkPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [requested, setRequested] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [searched, setSearched] = useState(false);
   const [suggestions, setSuggestions] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -58,10 +59,14 @@ const NetworkPage = () => {
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      alert("Please enter a name or keyword to search");
+    // Check if at least one search parameter is provided
+    if (!searchQuery.trim() && !filters.course && !filters.year && !filters.industry) {
+      alert("Please enter a name or select a filter to search");
       return;
     }
+    setAlumni([]); // Clear previous results immediately
+    setSearched(true); // Track that a search was performed
+
     const token = localStorage.getItem("token");
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -181,9 +186,22 @@ const NetworkPage = () => {
           </div>
         </section>
 
-        {/* Search Results - MOVED ABOVE RECOMMENDATIONS */}
-        {alumni.length > 0 && (
+        {/* Search Results */}
+        {searched && alumni.length === 0 ? (
+          <section className="bg-black/20 backdrop-blur-xl p-12 rounded-[2.5rem] border border-white/10 shadow-lg text-center animate-in fade-in zoom-in duration-500">
+            <div className="flex flex-col items-center gap-4">
+              <div className="p-5 bg-white/5 rounded-full border border-white/10 shadow-inner">
+                <svg className="w-12 h-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-white">No Result</h2>
+                <p className="text-white/40 font-medium max-w-xs mx-auto mt-2">Try adjusting your filters or search keywords to find what you're looking for.</p>
+              </div>
+            </div>
+          </section>
+        ) : alumni.length > 0 && (
           <section className="bg-black/20 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-lg space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700 relative overflow-hidden">
+
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
             <div className="flex items-center gap-4">
               <div className="h-10 w-2 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
@@ -240,9 +258,9 @@ const NetworkPage = () => {
         {/* Categorized Suggestions */}
         <div className="space-y-12">
           {[
-            { id: "newAlumni", title: "New to the Portal", icon: "✨", color: "blue", data: suggestions.newAlumni, emptyMsg: "No new alumni found." },
-            { id: "topConnections", title: "Influential Networkers", icon: "⭐", color: "amber", data: suggestions.topConnections, emptyMsg: "No top networkers found." },
-            { id: "relatedPeople", title: "Based on Your Course", icon: "🎓", color: "purple", data: suggestions.relatedPeople, emptyMsg: "No related alumni found." }
+            { id: "randomRecommendations", title: "Random Recommendations", icon: "🎲", color: "blue", data: suggestions.randomRecommendations, emptyMsg: "No recommendations found." },
+            { id: "facultyAndAdmin", title: "Faculty and Admin", icon: "🎓", color: "amber", data: suggestions.facultyAndAdmin, emptyMsg: "No faculty or admin found." },
+            { id: "relatedPeople", title: "Based on Your Course", icon: "🤝", color: "purple", data: suggestions.relatedPeople, emptyMsg: "No related alumni found." }
           ].map((section) => (
             <section key={section.id} className="bg-black/20 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-lg space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-700 relative overflow-hidden">
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${section.color === 'blue' ? 'from-blue-600' : section.color === 'amber' ? 'from-amber-500' : 'from-purple-600'} via-transparent to-transparent opacity-80`}></div>
@@ -270,11 +288,10 @@ const NetworkPage = () => {
                           <Link href={`/dashboard/profile?id=${user._id}`}>
                             <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors truncate">{user.name}</h3>
                           </Link>
-                          <p className="text-[10px] text-white/50 uppercase font-black tracking-widest mt-1">{user.course}</p>
-                          {user.connections_count !== undefined && (
-                            <span className="inline-block mt-2 px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[9px] font-bold rounded-md">
-                              {user.connections_count} Connections
-                            </span>
+                          {user.role === 'admin' || user.role === 'faculty' ? (
+                            <p className="text-[10px] text-amber-400 font-black uppercase tracking-widest mt-1">{user.role}</p>
+                          ) : (
+                            <p className="text-[10px] text-white/50 uppercase font-black tracking-widest mt-1">{user.course}</p>
                           )}
                         </div>
                       </div>
