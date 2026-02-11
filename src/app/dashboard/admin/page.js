@@ -9,13 +9,14 @@ import PendingUsers from "../../components/admin/PendingUsers";
 import AdminsManager from "../../components/admin/AdminsManager";
 import Leaderboard from "../../components/Leaderboard";
 import PointsSystemManagement from "../../components/admin/PointsSystemManagement";
+import AlumniExport from "../../components/admin/AlumniExport";
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("pending"); // pending | admins | leaderboard | points
+  const [activeTab, setActiveTab] = useState("pending"); // pending | admins | leaderboard | points | export
   const [loading, setLoading] = useState(true);
 
   // Pending users
@@ -297,6 +298,7 @@ export default function AdminDashboardPage() {
               <TabButton id="pending" label="Pending Users" />
               <TabButton id="admins" label="Manage Admins" />
               <TabButton id="leaderboard" label="Leaderboard" />
+              <TabButton id="export" label="Export Data" />
               {user?.isMainAdmin && <TabButton id="points" label="Points System" />}
             </nav>
           </div>
@@ -337,6 +339,11 @@ export default function AdminDashboardPage() {
           {/* POINTS SYSTEM */}
           {activeTab === "points" && user?.isMainAdmin && (
             <PointsSystemManagement />
+          )}
+
+          {/* ALUMNI EXPORT */}
+          {activeTab === "export" && (
+            <AlumniExport />
           )}
         </section>
       </main>
