@@ -97,7 +97,7 @@ export default function AdminsManager({
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-800/90 p-8 rounded-[2rem] border border-white/20 shadow-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"

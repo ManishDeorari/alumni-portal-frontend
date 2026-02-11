@@ -165,7 +165,7 @@ export default function PointsSystemManagement() {
     return (
         <div className="space-y-10 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Settings Section */}
-            <section className="bg-gray-800/80 backdrop-blur-3xl p-10 rounded-[2.5rem] border border-white/20 shadow-2xl relative overflow-hidden group hover:border-blue-400/30 transition-all duration-500">
+            <section className="bg-gray-900/40 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-blue-400/30 transition-all duration-500">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
                 <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
                     <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
@@ -216,7 +216,7 @@ export default function PointsSystemManagement() {
             </section>
 
             {/* Manual Award Section */}
-            <section className="bg-gray-800/80 backdrop-blur-3xl p-10 rounded-[2.5rem] border border-white/20 shadow-2xl relative overflow-hidden group hover:border-green-400/30 transition-all duration-500">
+            <section className="bg-gray-900/40 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-green-400/30 transition-all duration-500">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-green-500/10 transition-colors"></div>
                 <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
                     <span className="p-3 bg-green-600/20 rounded-2xl text-green-400">🏆</span>

@@ -60,7 +60,7 @@ export default function Leaderboard() {
   };
 
   const Card = ({ title, users, pointsKey }) => (
-    <div className="bg-gray-800/80 backdrop-blur-3xl rounded-[2.5rem] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.4)] mb-12 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700">
+    <div className="bg-gray-900/40 backdrop-blur-xl rounded-[2.5rem] border border-white/10 shadow-2xl mb-12 overflow-hidden group transition-all hover:border-white/20 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <div className="px-10 py-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
         <h2 className="text-2xl font-black text-white tracking-tight">{title}</h2>
         <div className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
@@ -128,7 +128,7 @@ export default function Leaderboard() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-4xl mx-auto space-y-10"
     >
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-800/90 p-8 rounded-[2rem] border border-white/20 shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3">
             🏆 Alumni Leaderboard

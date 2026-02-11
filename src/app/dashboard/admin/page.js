@@ -283,8 +283,8 @@ export default function AdminDashboardPage() {
 
       <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
-        <section className="bg-gray-800/80 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden animate-in fade-in duration-700">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
+        <section className="bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in fade-in duration-700">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-center lg:text-left">
               <h1 className="text-4xl font-black tracking-tight text-white mb-2">Admin Panel</h1>
