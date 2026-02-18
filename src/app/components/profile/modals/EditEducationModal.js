@@ -38,24 +38,57 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
+    const MANDATORY_DEGREES = [
+        "High School (Secondary - Class 10)",
+        "Intermediate (Higher Secondary - Class 11-12)",
+        "Undergraduate (Bachelor's Degree)",
+        "Postgraduate (Master's Degree)"
+    ];
+
     useEffect(() => {
-        if (currentEducation && isOpen) {
-            const transformed = currentEducation.map(edu => {
+        if (isOpen) {
+            const existingMap = (currentEducation || []).reduce((acc, edu) => {
+                acc[edu.degree] = edu;
+                return acc;
+            }, {});
+
+            const transformed = MANDATORY_DEGREES.map(degree => {
+                const edu = existingMap[degree] || {};
                 const [sMonth, sYear] = (edu.startDate || "").split(" ");
                 const [eMonth, eYear] = (edu.endDate || "").split(" ");
 
                 return {
                     ...edu,
+                    degree, // Ensure it matches exactly
                     startMonth: sMonth || "",
                     startYear: sYear || "",
                     endMonth: eMonth || "",
                     endYear: eYear || "",
+                    institution: edu.institution || "",
                     campus: edu.campus || "",
                     grade: edu.grade || "",
                     activities: edu.activities || "",
-                    description: edu.description || ""
+                    description: edu.description || "",
+                    isMandatory: true
                 };
             });
+
+            // Add non-mandatory educations
+            (currentEducation || []).forEach(edu => {
+                if (!MANDATORY_DEGREES.includes(edu.degree)) {
+                    const [sMonth, sYear] = (edu.startDate || "").split(" ");
+                    const [eMonth, eYear] = (edu.endDate || "").split(" ");
+                    transformed.push({
+                        ...edu,
+                        startMonth: sMonth || "",
+                        startYear: sYear || "",
+                        endMonth: eMonth || "",
+                        endYear: eYear || "",
+                        isMandatory: false
+                    });
+                }
+            });
+
             setEducations(transformed);
         }
     }, [currentEducation, isOpen]);
@@ -88,7 +121,8 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                 endYear: "",
                 grade: "",
                 activities: "",
-                description: ""
+                description: "",
+                isMandatory: false
             },
         ]);
     };
@@ -187,12 +221,14 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
 
                     {educations.map((edu, index) => (
                         <div key={index} className="p-6 border border-gray-200 rounded-2xl bg-white relative shadow-sm hover:shadow-md transition">
-                            <button
-                                onClick={() => removeEducation(index)}
-                                className="absolute top-4 right-4 text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-full transition"
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
+                            {!edu.isMandatory && (
+                                <button
+                                    onClick={() => removeEducation(index)}
+                                    className="absolute top-4 right-4 text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-full transition"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            )}
 
                             <div className="space-y-6">
                                 {/* School */}
@@ -234,11 +270,13 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                         <input
                                             type="text"
                                             list="degree-list-final"
-                                            className={`w-full p-2.5 border rounded-lg text-sm bg-white text-gray-900 focus:ring-2 outline-none transition ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm bg-white text-gray-900 focus:ring-2 outline-none transition ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-500'} ${edu.isMandatory ? 'opacity-70 bg-gray-50 cursor-not-allowed' : ''}`}
                                             value={edu.degree || ""}
-                                            onChange={(e) => handleChange(index, "degree", e.target.value)}
+                                            onChange={(e) => !edu.isMandatory && handleChange(index, "degree", e.target.value)}
                                             placeholder="Ex: Master of Computer Applications - MCA"
+                                            readOnly={edu.isMandatory}
                                         />
+                                        {edu.isMandatory && <p className="text-[10px] text-blue-600 font-bold uppercase mt-1">Mandatory Level (Fixed)</p>}
                                         {errors[`${index}-degree`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-degree`]}</p>}
                                     </div>
                                     <div className="space-y-1.5">
