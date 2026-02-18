@@ -45,58 +45,98 @@ export default function AlumniExport() {
     const downloadCSV = () => {
         if (alumni.length === 0) return;
 
-        // CSV Header
-        const headers = [
-            "Enrollment No",
-            "Name",
-            "Email",
-            "Phone",
-            "WhatsApp",
-            "LinkedIn",
-            "Address",
-            "Course",
-            "Year",
-            "Industry",
-            "Functional Area",
-            "Education Details",
-            "Experience Details",
-            "Job Preferences (Locations)"
+        // Row 1: Group Headers
+        const r1 = [
+            "", "", "", "", "", "ADDRESS", "", "", "EDUCATION",
+            ...Array(17).fill(""), // Spanning Education
+            "EXPERIENCE"
+        ];
+
+        // Row 2: Sub-Groups
+        const r2 = [
+            "", "", "", "", "", "", "", "", "High School", "", "", "Intermediate", "", "", "Undergraduate", "", "", "", "", "", "Postgraduate", "", "", "", "", "", ""
+        ];
+
+        // Row 3: Column Names
+        const r3 = [
+            "S.No", "Enrollment No", "Name", "Email", "Phone",
+            "City", "State", "Country",
+            "School Name", "Year", "Grades/%",
+            "School Name", "Year", "Grades/%",
+            "College Name", "Campus", "Course", "Start Year", "End Year", "Grades/%",
+            "College Name", "Campus", "Course", "Start Year", "End Year", "Grades/%",
+            "Recent Role", "Company", "Duration"
+        ];
+
+        const MANDATORY_DEGREES = [
+            "High School (Secondary - Class 10)",
+            "Intermediate (Higher Secondary - Class 11-12)",
+            "Undergraduate (Bachelor's Degree)",
+            "Postgraduate (Master's Degree)"
         ];
 
         // CSV Data Rows
-        const rows = alumni.map((u) => {
-            const edu = (u.education || []).map(e => `${e.degree} from ${e.institution} (${e.year})`).join(" | ");
-            const exp = (u.experience || []).map(e => `${e.role} at ${e.company} (${e.duration})`).join(" | ");
-            const jobLocs = (u.jobPreferences?.preferredLocations || []).join(", ");
+        const rows = alumni.map((u, index) => {
+            const getEdu = (degreeName) => (u.education || []).find(e => e.degree === degreeName) || {};
+
+            const hs = getEdu(MANDATORY_DEGREES[0]);
+            const inter = getEdu(MANDATORY_DEGREES[1]);
+            const ug = getEdu(MANDATORY_DEGREES[2]);
+            const pg = getEdu(MANDATORY_DEGREES[3]);
+
+            // Experience Logic: Current or Most Recent
+            let recentExp = (u.experience || []).find(e => !e.endDate || e.endDate.toLowerCase().includes("present") || e.endDate.toLowerCase().includes("current"));
+            if (!recentExp && u.experience?.length > 0) {
+                recentExp = [...u.experience].sort((a, b) => {
+                    const yearA = parseInt(a.endDate?.split(" ").pop()) || 0;
+                    const yearB = parseInt(b.endDate?.split(" ").pop()) || 0;
+                    return yearB - yearA;
+                })[0];
+            }
+            recentExp = recentExp || {};
+
+            // Address splitting (simple heuristic: "City, State, Country")
+            const addrParts = (u.address || "").split(",").map(p => p.trim());
+            const city = addrParts[0] || "N/A";
+            const state = addrParts[1] || "N/A";
+            const country = addrParts[2] || "N/A";
 
             return [
+                index + 1,
                 u.enrollmentNumber || "N/A",
                 u.name,
                 u.email,
                 u.phone || "N/A",
-                u.whatsapp || "N/A",
-                u.linkedin || "N/A",
-                u.address || "N/A",
-                u.course || "N/A",
-                u.year || "N/A",
-                u.workProfile?.industry || "N/A",
-                u.workProfile?.functionalArea || "N/A",
-                edu || "N/A",
-                exp || "N/A",
-                jobLocs || "N/A"
+                city, state, country,
+                // HS
+                hs.institution || "NA", hs.endDate?.split(" ").pop() || "NA", hs.grade || "NA",
+                // Intermediate
+                inter.institution || "NA", inter.endDate?.split(" ").pop() || "NA", inter.grade || "NA",
+                // Undergraduate
+                ug.institution || "NA", ug.campus || "NA", ug.fieldOfStudy || "NA", ug.startDate?.split(" ").pop() || "NA", ug.endDate?.split(" ").pop() || "NA", ug.grade || "NA",
+                // Postgraduate
+                pg.institution || "NA", pg.campus || "NA", pg.fieldOfStudy || "NA", pg.startDate?.split(" ").pop() || "NA", pg.endDate?.split(" ").pop() || "NA", pg.grade || "NA",
+                // Experience
+                recentExp.title || "NA", recentExp.company || "NA", recentExp.startDate && recentExp.endDate ? `${recentExp.startDate} - ${recentExp.endDate}` : "NA"
             ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(",");
         });
 
-        const csvContent = [headers.join(","), ...rows].join("\n");
+        const csvContent = [
+            r1.join(","),
+            r2.join(","),
+            r3.join(","),
+            ...rows
+        ].join("\n");
+
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `alumni_data_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", `alumni_data_reshaped_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success("CSV Downloaded Successfully");
+        toast.success("Reshaped CSV Downloaded Successfully");
     };
 
     return (

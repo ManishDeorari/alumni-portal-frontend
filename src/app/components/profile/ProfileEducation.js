@@ -54,7 +54,9 @@ export default function ProfileEducation({ profile, setProfile, isPublicView }) 
                                     {edu.grade && (
                                         <p className="flex items-center gap-1.5">
                                             <Award className="w-3.5 h-3.5 text-yellow-600" />
-                                            <span className="font-bold">Grade: {edu.grade}</span>
+                                            <span className="font-bold">
+                                                {edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Percentage" : "Grade"}: {edu.grade}
+                                            </span>
                                         </p>
                                     )}
                                 </div>

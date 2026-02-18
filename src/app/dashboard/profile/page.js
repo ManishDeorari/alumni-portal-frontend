@@ -123,8 +123,8 @@ function ProfileContent() {
       {/* 🔽 Rest Sections */}
       <div className="max-w-4xl mx-auto mt-6 space-y-6 pb-10">
         <ProfileAbout profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
-        <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileEducation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         {!isPublicView && <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />}
         <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />

@@ -234,7 +234,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                 {/* School */}
                                 <div className="space-y-1.5">
                                     <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-institution`] ? 'text-red-500' : 'text-gray-700'}`}>
-                                        School <span className="text-red-500 font-bold">*</span>
+                                        School/College <span className="text-red-500 font-bold">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -345,14 +345,15 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                 {/* Grade */}
                                 <div className="space-y-1.5 md:w-1/2">
                                     <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                                        <Award className="w-3.5 h-3.5 text-yellow-500" /> Grade
+                                        <Award className="w-3.5 h-3.5 text-yellow-500" />
+                                        {edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Percentage" : "CGPA / Grade"}
                                     </label>
                                     <input
                                         type="text"
                                         className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
                                         value={edu.grade || ""}
                                         onChange={(e) => handleChange(index, "grade", e.target.value)}
-                                        placeholder="Ex: 9.0 CGPA"
+                                        placeholder={edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Ex: 95%" : "Ex: 9.0 CGPA"}
                                     />
                                 </div>
 
