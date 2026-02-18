@@ -97,7 +97,8 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
                         onEmojiSelect={handleEmojiSelect}
                         icon={<FaSmile size={24} className="text-gray-400 hover:text-yellow-400 transition-colors" />}
                         iconSize="w-8 h-8 flex items-center justify-center"
-                        offset={{ x: 0, y: -10 }}
+                        offset={{ x: 0, y: 0 }}
+                        placement="top"
                     />
                 </div>
                 <input

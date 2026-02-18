@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import ResetPasswordModal from "./ResetPasswordModal";
+import SettingsDrawer from "./SettingsDrawer";
 
 export default function AdminSidebar() {
   const [showSettings, setShowSettings] = useState(false);
@@ -51,45 +52,24 @@ export default function AdminSidebar() {
           <FaUserCircle />
         </Link>
 
-        {/* Settings Dropdown */}
+        {/* Settings */}
         <div className="relative">
           <button
-            onClick={() => setShowSettings(!showSettings)}
+            onClick={() => setShowSettings(true)}
             className="hover:text-gray-200 relative group pt-1"
             title="Settings"
           >
             <FaCog className={showSettings ? "rotate-90 transition-transform duration-300" : "transition-transform duration-300"} />
           </button>
-
-          {showSettings && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowSettings(false)}
-              ></div>
-              <div className="absolute right-0 mt-3 w-48 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                <button
-                  onClick={() => {
-                    setShowResetModal(true);
-                    setShowSettings(false);
-                  }}
-                  className="w-full text-left px-4 py-3 text-sm flex items-center gap-3 hover:bg-white/10 transition-colors border-b border-white/10"
-                >
-                  <FaKey className="text-blue-400" />
-                  <span>Reset Password</span>
-                </button>
-                <button
-                  onClick={handleSignout}
-                  className="w-full text-left px-4 py-3 text-sm flex items-center gap-3 hover:bg-red-500/20 text-red-400 transition-colors"
-                >
-                  <FaSignOutAlt />
-                  <span>Signout</span>
-                </button>
-              </div>
-            </>
-          )}
         </div>
       </div>
+
+      <SettingsDrawer
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        onResetPassword={() => setShowResetModal(true)}
+        onSignout={handleSignout}
+      />
 
       <ResetPasswordModal
         isOpen={showResetModal}

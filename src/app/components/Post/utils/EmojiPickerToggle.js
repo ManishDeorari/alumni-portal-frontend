@@ -11,6 +11,7 @@ const EmojiPickerToggle = ({
   iconSize = "text-xl",
   icon = "😀",
   offset = DEFAULT_OFFSET,
+  placement = "auto", // "top", "bottom", or "auto"
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerStyle, setPickerStyle] = useState({ top: "0px", left: "0px" });
@@ -66,12 +67,12 @@ const EmojiPickerToggle = ({
             zIndex: 9999,
           };
 
-          if (tooCloseToTop) {
-            style.top = `${rect.bottom + 8 + offset.y}px`;
-          } else if (tooCloseToBottom) {
+          const showOnTop = placement === "top" || (placement === "auto" && tooCloseToBottom && !tooCloseToTop);
+
+          if (showOnTop) {
             style.bottom = `${windowHeight - rect.top + 8 + offset.y}px`;
           } else {
-            // Default to showing below unless no space
+            // Default to showing below unless forced top or auto-detected bottom
             style.top = `${rect.bottom + 8 + offset.y}px`;
           }
 
