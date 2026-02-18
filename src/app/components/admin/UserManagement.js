@@ -120,7 +120,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                             </div>
                             <h3 className="text-2xl font-black text-white text-center mb-2">Delete Member?</h3>
                             <p className="text-blue-100/60 text-center mb-6">
-                                This will permanently delete <strong>{confirmDelete.name}</strong>'s account. They will receive an email notification.
+                                This will permanently delete <strong>{confirmDelete.name}</strong>&apos;s account. They will receive an email notification.
                             </p>
 
                             <div className="flex justify-center gap-3 font-black">

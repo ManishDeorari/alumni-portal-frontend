@@ -30,14 +30,14 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
 
     if (!selectedUser) {
         return (
-            <div className="w-2/3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center h-[80vh] text-gray-300">
-                <p className="text-lg">Select a connection to start chatting</p>
+            <div className="w-2/3 bg-black border border-white/20 rounded-xl flex items-center justify-center h-[80vh] text-gray-300 shadow-2xl">
+                <p className="text-lg font-semibold text-white/50">Select a connection to start chatting</p>
             </div>
         );
     }
 
     return (
-        <div className="w-2/3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex flex-col h-[80vh]">
+        <div className="w-2/3 bg-black border border-white/20 rounded-xl flex flex-col h-[80vh] shadow-2xl">
             {/* Header */}
             <div className="p-4 border-b border-white/10 flex items-center gap-3">
                 <Image

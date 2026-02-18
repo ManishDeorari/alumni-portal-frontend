@@ -12,7 +12,7 @@ export default function ChatSidebar({ connections, selectedUser, onSelectUser, o
     };
 
     return (
-        <div className="w-1/3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex flex-col h-[80vh]">
+        <div className="w-1/3 bg-black border border-white/20 rounded-xl flex flex-col h-[80vh] shadow-2xl">
             <div className="p-4 border-b border-white/10">
                 <h2 className="text-xl font-bold text-white mb-4">Messages</h2>
                 <input
