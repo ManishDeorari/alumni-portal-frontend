@@ -42,13 +42,8 @@ const LoginPopup = () => {
 
                 toast.success("✅ Login Successful!");
 
-                if (data.role === "admin") {
-                    router.push("/admin/dashboard");
-                } else {
-                    router.push("/dashboard");
-                }
-                // Optionally reload or just rely on router push if already on dashboard
-                // window.location.reload(); 
+                // Stay on current page but trigger reload to clear protection
+                window.location.reload();
             } else {
                 throw new Error("Token not received");
             }
@@ -66,7 +61,7 @@ const LoginPopup = () => {
     };
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-xl px-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
