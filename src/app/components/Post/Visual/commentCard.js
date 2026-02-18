@@ -6,6 +6,7 @@ import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "../hooks/useEmojiAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 
 export default function CommentCard({
@@ -147,9 +148,11 @@ export default function CommentCard({
     >
       <div className="flex justify-between items-start">
         <div className="flex gap-2 w-full">
-          <img
+          <Image
             src={comment.user?.profilePicture || "/default-profile.jpg"}
             alt="User"
+            width={32}
+            height={32}
             className="w-8 h-8 rounded-full border border-black object-cover mt-0.5"
           />
           <div className="w-full">

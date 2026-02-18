@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import AdminSidebar from "../components/AdminSidebar"; // <-- Admin sidebar
@@ -56,7 +56,7 @@ export default function DashboardPage() {
   }, [router]);
 
   // ✅ Fetch posts
-  const fetchPosts = async (pageNum = 1, append = false) => {
+  const fetchPosts = useCallback(async (pageNum = 1, append = false) => {
     try {
       const token = localStorage.getItem("token");
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -81,12 +81,12 @@ export default function DashboardPage() {
     } catch (err) {
       console.error("Failed to fetch posts:", err.message);
     }
-  };
+  }, [activeTab, posts.length]);
 
   useEffect(() => {
     setPage(1);
     fetchPosts(1, false);
-  }, [activeTab]);
+  }, [activeTab, fetchPosts]);
 
   // Load more
   const handleLoadMore = async () => {

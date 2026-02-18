@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import ImageGallery from "../utils/ImageGallery"; // adjust the path if needed
-import FullImageViewer from "../utils/FullImageViewer"; // optional, handled separately
+import Image from "next/image";
+import ImageGallery from "../utils/ImageGallery";
+import FullImageViewer from "../utils/FullImageViewer";
 
 export default function PostMedia({ post, setSelectedImage, currentUser }) {
   if (!(post.images?.length > 0 || post.video || post.image)) return null;
@@ -22,9 +23,11 @@ export default function PostMedia({ post, setSelectedImage, currentUser }) {
       {/* Single fallback image (older posts) */}
       {!post.images?.length && post.image && (
         <div className="relative max-h-96 w-full flex justify-center border rounded-lg overflow-hidden">
-          <img
+          <Image
             src={post.image}
             alt="post"
+            width={800}
+            height={400}
             onContextMenu={(e) => isRestricted && e.preventDefault()}
             onDragStart={(e) => isRestricted && e.preventDefault()}
             className={`rounded-lg max-h-96 w-full object-contain ${isRestricted ? 'select-none' : ''}`}
@@ -43,6 +46,7 @@ export default function PostMedia({ post, setSelectedImage, currentUser }) {
       {post.video?.url && (
         <video
           controls
+          onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           className={`rounded-lg w-full max-h-96 border mt-2 ${isRestricted ? 'select-none' : ''}`}
           controlsList={isRestricted ? "nodownload" : ""}

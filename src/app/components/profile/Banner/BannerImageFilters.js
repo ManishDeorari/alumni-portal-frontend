@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 const filters = [
   { name: "Original", css: "none" },
@@ -39,9 +40,11 @@ export default function BannerImageFilters({ imageSrc, onComplete }) {
     <div className="flex flex-col items-center w-full">
       {/* Preview */}
       <div className="w-full h-40 rounded-lg overflow-hidden mb-4 border-2 border-gray-300">
-        <img
+        <Image
           src={imageSrc}
           alt="Preview"
+          width={800}
+          height={160}
           className="w-full h-full object-cover"
           style={{
             filter: filters.find((f) => f.name === tempFilter)?.css || "none",
@@ -55,16 +58,17 @@ export default function BannerImageFilters({ imageSrc, onComplete }) {
           <button
             key={filter.name}
             onClick={() => setTempFilter(filter.name)}
-            className={`flex flex-col items-center w-20 ${
-              tempFilter === filter.name
+            className={`flex flex-col items-center w-20 ${tempFilter === filter.name
                 ? "text-blue-600 font-bold"
                 : "text-gray-600"
-            }`}
+              }`}
           >
             <div className="w-20 h-12 rounded-md overflow-hidden mb-1 border">
-              <img
+              <Image
                 src={imageSrc}
                 alt={filter.name}
+                width={80}
+                height={48}
                 className="w-full h-full object-cover"
                 style={{ filter: filter.css }}
               />

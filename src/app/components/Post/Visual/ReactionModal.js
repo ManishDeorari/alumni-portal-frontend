@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function ReactionModal({ emoji, users, onClose }) {
   return (
@@ -23,9 +24,11 @@ export default function ReactionModal({ emoji, users, onClose }) {
           <ul className="space-y-2 max-h-[300px] overflow-y-auto">
             {users.map((user) => (
               <li key={user._id} className="flex items-center gap-3">
-                <img
+                <Image
                   src={user.profilePic}
                   alt={user.fullName}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <span className="text-sm font-medium">{user.fullName}</span>

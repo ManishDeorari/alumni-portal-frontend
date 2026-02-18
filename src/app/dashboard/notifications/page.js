@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import { useRouter } from "next/navigation";
 import PostCard from "../../components/Post/PostCard";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -37,7 +38,7 @@ export default function NotificationsPage() {
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/notifications`, {
@@ -52,7 +53,7 @@ export default function NotificationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]);
 
   useEffect(() => {
     const fetchUserAndNotes = async () => {
@@ -77,7 +78,7 @@ export default function NotificationsPage() {
     };
 
     fetchUserAndNotes();
-  }, []);
+  }, [API_URL, fetchNotifications]);
 
   const markAsRead = async (id) => {
     try {
@@ -272,9 +273,11 @@ export default function NotificationsPage() {
                           } backdrop-blur-md`}
                       >
                         <div className="relative">
-                          <img
+                          <Image
                             src={note.sender?.profilePicture || "/default-profile.jpg"}
-                            alt={note.sender?.name}
+                            alt={note.sender?.name || "User"}
+                            width={56}
+                            height={56}
                             className="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 group-hover:border-white transition-colors"
                           />
                           {!note.isRead && (

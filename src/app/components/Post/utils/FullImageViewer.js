@@ -1,4 +1,7 @@
+import React from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 export default function FullImageViewer({ images, startIndex, onClose, isRestricted }) {
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
@@ -17,22 +20,22 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
         >
+          {/* Exit button - moved outside container to match ImageViewerModal */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 z-[10000]"
+          >
+            <X className="text-white" size={28} />
+          </button>
+
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.9 }}
-            className="relative max-w-4xl w-full h-[90vh] flex items-center justify-center rounded-lg overflow-hidden"
+            className="relative w-[90vw] h-[90vh] flex items-center justify-center rounded-lg overflow-hidden shadow-lg"
           >
-            {/* Exit button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 text-white text-3xl z-30 bg-black/20 hover:bg-black/40 rounded-full w-10 h-10 flex items-center justify-center"
-            >
-              ✖
-            </button>
-
             {/* Left/Right Navigation Arrows */}
             {images.length > 1 && (
               <>

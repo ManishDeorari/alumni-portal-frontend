@@ -1,4 +1,7 @@
+import React, { useState } from "react";
 import Image from "next/image";
+import ImageViewerModal from "../../profile/ImageViewerModal";
+import Link from "next/link";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete }) {
   const [showViewer, setShowViewer] = useState(false);
@@ -17,13 +20,19 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
           className={`rounded-full border-2 border-black object-cover w-full h-full cursor-pointer shadow-sm hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
-          onClick={() => setShowViewer(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowViewer(true);
+          }}
         />
         {/* Protective Overlay */}
         {isRestricted && (
           <div
             className="absolute inset-0 z-10 cursor-pointer rounded-full"
-            onClick={() => setShowViewer(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowViewer(true);
+            }}
             onContextMenu={(e) => e.preventDefault()}
           />
         )}

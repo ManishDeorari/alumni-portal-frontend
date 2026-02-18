@@ -13,13 +13,13 @@ export default function useCommentActions({
   const token = localStorage.getItem("token");
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  const checkAuth = () => {
+  const checkAuth = useCallback(() => {
     if (!token) {
       alert("Please log in to interact with posts.");
       return false;
     }
     return true;
-  };
+  }, [token]);
 
   const handleComment = useCallback(
     async (comment) => {
@@ -52,7 +52,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to add comment");
       }
     },
-    [post._id, setPosts, setComment, setShowCommentEmoji]
+    [post._id, setPosts, setComment, setShowCommentEmoji, API_URL, token, checkAuth]
   );
 
   const handleReply = useCallback(
@@ -176,7 +176,7 @@ export default function useCommentActions({
     [post._id, setPosts]
   );
 
-  const handleDeleteReply = async (commentId, replyId) => {
+  const handleDeleteReply = useCallback(async (commentId, replyId) => {
     try {
       const res = await fetch(
         `${API_URL}/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
@@ -196,7 +196,7 @@ export default function useCommentActions({
       console.error("❌ Failed to delete reply:", err);
       toast.error("❌ Failed to delete reply");
     }
-  };
+  }, [post._id, setPosts, API_URL, token]);
 
   const handleReactToReply = useCallback(
     async (commentId, replyId, emoji) => {

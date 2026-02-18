@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     getPendingRequests,
     getSentRequests,
@@ -8,6 +8,7 @@ import {
     cancelConnectionRequest,
 } from "@/api/connect";
 import Link from "next/link";
+import Image from "next/image";
 
 const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
     const [activeTab, setActiveTab] = useState("received"); // 'received' or 'sent'
@@ -18,9 +19,9 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
         if (isOpen) {
             fetchRequests();
         }
-    }, [isOpen, activeTab]);
+    }, [isOpen, activeTab, fetchRequests]);
 
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         setLoading(true);
         try {
             const data =
@@ -30,10 +31,8 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
             setRequests(data || []);
         } catch (err) {
             console.error("Fetch requests error:", err);
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [activeTab]);
 
     const handleAction = async (userId, action) => {
         try {
@@ -99,9 +98,11 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                         requests.map((user) => (
                             <div key={user._id} className="flex items-center justify-between gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group">
                                 <div className="flex items-center gap-3">
-                                    <img
+                                    <Image
                                         src={user.profilePicture || "/default-profile.jpg"}
                                         alt={user.name}
+                                        width={48}
+                                        height={48}
                                         className="w-12 h-12 rounded-full object-cover border border-white/20 bg-gray-800"
                                     />
                                     <div className="min-w-0">

@@ -141,21 +141,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      onClick={(e) => {
-        const interactiveElements = ["BUTTON", "INPUT", "TEXTAREA", "A"];
-        if (
-          interactiveElements.includes(e.target.tagName) ||
-          e.target.closest("button") ||
-          e.target.closest("a") ||
-          e.target.closest("input") ||
-          e.target.closest("textarea")
-        ) {
-          return;
-        }
-        setShowModal(true);
-      }}
       className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
-          cursor-pointer text-black
+          text-black
           ${isMyPost ? "bg-gradient-to-tr from-gray-175 to-blue-50" : "bg-white"}
           hover:shadow-md`}
     >

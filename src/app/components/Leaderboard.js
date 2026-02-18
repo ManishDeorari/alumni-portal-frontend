@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -18,7 +18,7 @@ export default function Leaderboard() {
   const token = localStorage.getItem("token");
 
   // Fetch current & last year leaderboard
-  const fetchLeaderboards = async () => {
+  const fetchLeaderboards = useCallback(async () => {
     setLoading(true);
     try {
       const [resCurrent, resLast] = await Promise.all([
@@ -40,11 +40,11 @@ export default function Leaderboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchLeaderboards();
-  }, []);
+  }, [fetchLeaderboards]);
 
   const filterUsers = (users) =>
     users.filter((u) =>

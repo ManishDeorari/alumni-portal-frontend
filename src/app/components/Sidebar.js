@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -18,116 +18,95 @@ export default function Sidebar() {
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  const fetchNotifications = useCallback(async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const unread = data.filter(n => !n.isRead).length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  }, [API_URL]);
+
+  const fetchPendingRequests = useCallback(async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/api/connect/pending`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setPendingRequestsCount(data.length);
+      }
+    } catch (err) {
+      console.error("Failed to fetch pending requests:", err);
+    }
+  }, [API_URL]);
+
+  const fetchNewPosts = useCallback(async (token) => {
+    try {
+      const lastSeenTimestamp = localStorage.getItem("lastSeenPosts") || new Date(0).toISOString();
+      const res = await fetch(`${API_URL}/api/posts`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const newPosts = data.filter(p => new Date(p.createdAt) > new Date(lastSeenTimestamp));
+        setNewPostsCount(newPosts.length > 0 ? 1 : 0);
+      }
+    } catch (err) {
+      console.error("Failed to fetch posts:", err);
+    }
+  }, [API_URL]);
+
+  const fetchUserRole = useCallback(async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/api/user/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) return;
+
+      const userData = await res.json();
+      if (userData && (userData.role === "admin" || userData.isAdmin)) {
+        setIsAdmin(true);
+        localStorage.setItem("user", JSON.stringify(userData));
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user role:", err);
+    }
+  }, [API_URL]);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) return;
 
     setIsAdmin(user.role === "admin" || user.isAdmin);
-
     const token = localStorage.getItem("token");
 
-    // Fetch initial unread notifications count
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/notifications`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const unread = data.filter(n => !n.isRead).length;
-          setUnreadCount(unread);
-        }
-      } catch (err) {
-        console.error("Failed to fetch notifications:", err);
-      }
-    };
-
-    // Fetch pending connection requests count
-    const fetchPendingRequests = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/connect/pending`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setPendingRequestsCount(data.length);
-        }
-      } catch (err) {
-        console.error("Failed to fetch pending requests:", err);
-      }
-    };
-
-    // Fetch new posts indicator (simple check for now)
-    const fetchNewPosts = async () => {
-      try {
-        const lastSeenTimestamp = localStorage.getItem("lastSeenPosts") || new Date(0).toISOString();
-        const res = await fetch(`${API_URL}/api/posts`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const newPosts = data.filter(p => new Date(p.createdAt) > new Date(lastSeenTimestamp));
-          setNewPostsCount(newPosts.length > 0 ? 1 : 0);
-        }
-      } catch (err) {
-        console.error("Failed to fetch posts:", err);
-      }
-    };
-
-    // Fetch current user role reliably
-    const fetchUserRole = async () => {
-      try {
-        console.log("🔍 Sidebar: Fetching user role from /api/user/me...");
-        const res = await fetch(`${API_URL}/api/user/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!res.ok) {
-          console.error(`❌ Sidebar: Fetch failed with status ${res.status}`);
-          return;
-        }
-
-        const userData = await res.json();
-        console.log("🔍 Sidebar: API Response User Data:", userData);
-
-        if (userData && (userData.role === "admin" || userData.isAdmin)) {
-          console.log("✅ Sidebar: User verified as ADMIN via API. Updating state.");
-          setIsAdmin(true);
-          // Update local storage to keep it fresh
-          localStorage.setItem("user", JSON.stringify(userData));
-        } else {
-          console.log("ℹ️ Sidebar: User is NOT admin (role:", userData?.role, "isAdmin:", userData?.isAdmin, ")");
-          if (isAdmin) setIsAdmin(false); // Demote if server says so
-        }
-      } catch (err) {
-        console.error("❌ Sidebar: Failed to fetch user role:", err);
-      }
-    };
-
-    fetchNotifications();
-    fetchPendingRequests();
-    fetchNewPosts();
-    fetchUserRole();
+    fetchNotifications(token);
+    fetchPendingRequests(token);
+    fetchNewPosts(token);
+    fetchUserRole(token);
 
     socket.emit("join", user._id);
 
     const handleNewNotification = (notification) => {
-      console.log("🔔 Sidebar received notification:", notification);
       setUnreadCount(prev => prev + 1);
-
-      // Trigger shake animation
       setShakeNotification(true);
       setTimeout(() => setShakeNotification(false), 1000);
-
-      // If it's a connection request, update pending count
       if (notification.type === "connect_request") {
         setPendingRequestsCount(prev => prev + 1);
       }
     };
 
-    const handleNewPost = () => {
-      setNewPostsCount(1);
-    };
+    const handleNewPost = () => setNewPostsCount(1);
 
     socket.on("newNotification", handleNewNotification);
     socket.on("newPost", handleNewPost);
@@ -136,7 +115,7 @@ export default function Sidebar() {
       socket.off("newNotification", handleNewNotification);
       socket.off("newPost", handleNewPost);
     };
-  }, []);
+  }, [API_URL, fetchNotifications, fetchPendingRequests, fetchNewPosts, fetchUserRole]);
 
   // Clear new posts indicator when visiting home
   const handleHomeClick = () => {

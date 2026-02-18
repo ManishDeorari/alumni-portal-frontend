@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 const filters = [
   { name: "Original", css: "none" }, // reset option
@@ -39,9 +40,11 @@ export default function ProfileImageFilters({ imageSrc, onComplete }) {
     <div className="flex flex-col items-center">
       {/* Preview */}
       <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-2 border-gray-300">
-        <img
+        <Image
           src={imageSrc}
           alt="Preview"
+          width={160}
+          height={160}
           className="w-full h-full object-cover"
           style={{
             filter: filters.find((f) => f.name === tempFilter)?.css || "none",
@@ -55,16 +58,17 @@ export default function ProfileImageFilters({ imageSrc, onComplete }) {
           <button
             key={filter.name}
             onClick={() => setTempFilter(filter.name)}
-            className={`flex flex-col items-center w-16 ${
-              tempFilter === filter.name
+            className={`flex flex-col items-center w-16 ${tempFilter === filter.name
                 ? "text-blue-600 font-bold"
                 : "text-gray-600"
-            }`}
+              }`}
           >
             <div className="w-12 h-12 rounded-full overflow-hidden mb-1 border">
-              <img
+              <Image
                 src={imageSrc}
                 alt={filter.name}
+                width={48}
+                height={48}
                 className="w-full h-full object-cover"
                 style={{ filter: filter.css }}
               />

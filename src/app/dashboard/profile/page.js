@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProfileAbout from "../../components/profile/ProfileAbout";
 import ProfileExperience from "../../components/profile/ProfileExperience";
@@ -30,7 +30,7 @@ function ProfileContent() {
   const [loading, setLoading] = useState(true);
   const [isPublicView, setIsPublicView] = useState(false);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const currentUserRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
@@ -86,11 +86,11 @@ function ProfileContent() {
     } catch (error) {
       console.error("❌ Error fetching profile:", error.message);
     }
-  };
+  }, [profileId]);
 
   useEffect(() => {
     fetchProfile();
-  }, [profileId]);
+  }, [fetchProfile]);
 
   if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
 

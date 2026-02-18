@@ -16,13 +16,14 @@ export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
       </button>
 
       {/* Full image container */}
-      <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-lg shadow-lg">
-        <img
+      <div className="relative h-[90vh] w-[90vw] overflow-hidden rounded-lg shadow-lg">
+        <Image
           src={imageUrl}
           alt="Full view"
+          fill
+          className={`object-contain ${isRestricted ? 'select-none' : ''}`}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
-          className={`max-h-[90vh] max-w-[90vw] object-contain ${isRestricted ? 'select-none' : ''}`}
         />
 
         {/* Protective Overlay */}

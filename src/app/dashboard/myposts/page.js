@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import PostCard from "../../components/Post/PostCard";
 
@@ -14,16 +14,16 @@ export default function MyPostsPage() {
   const [hasMore, setHasMore] = useState(false);
 
   // fetch current user
-  const fetchUser = async (token) => {
+  const fetchUser = useCallback(async (token) => {
     const resUser = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const userData = await resUser.json();
     setCurrentUser(userData);
-  };
+  }, []);
 
   // fetch only MY posts
-  const fetchMyPosts = async (pageNum = 1, append = false, tokenFromArg) => {
+  const fetchMyPosts = useCallback(async (pageNum = 1, append = false, tokenFromArg) => {
     const token = tokenFromArg || localStorage.getItem("token");
 
     const res = await fetch(
@@ -61,7 +61,7 @@ export default function MyPostsPage() {
     console.error("❌ Unexpected response for my posts:", data);
     setPosts([]);
     setHasMore(false);
-  };
+  }, [posts.length]);
 
   useEffect(() => {
     (async () => {
@@ -74,7 +74,7 @@ export default function MyPostsPage() {
         setInitializing(false);
       }
     })();
-  }, []);
+  }, [fetchUser, fetchMyPosts]);
 
   const handleLoadMore = async () => {
     const next = page + 1;

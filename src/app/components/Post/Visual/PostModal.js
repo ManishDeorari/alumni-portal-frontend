@@ -71,10 +71,10 @@ export default function PostModal({
             if (editing) setEditing(false);
             setShowModal(false);
           }}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-2 bg-gray-100 rounded-full z-20"
+          className="fixed top-10 right-10 text-white hover:text-gray-200 transition-all p-3 bg-black/40 hover:bg-black/60 rounded-full z-[100] shadow-2xl backdrop-blur-md border border-white/20"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 

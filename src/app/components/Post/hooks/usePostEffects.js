@@ -17,7 +17,7 @@ export default function usePostEffects({
     if (saved && !post.content.includes(saved)) {
       setEditContent(saved);
     }
-  }, []);
+  }, [editKey, post.content, setEditContent]);
 
   // 🔹 Check if current user liked this post
   useEffect(() => {

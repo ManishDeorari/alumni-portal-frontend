@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 
 export default function ProfileImageAdjust({ imageUrl, onApply, onReset }) {
   const [brightness, setBrightness] = useState(100);
@@ -131,9 +132,11 @@ export default function ProfileImageAdjust({ imageUrl, onApply, onReset }) {
   return (
     <div className="flex flex-col items-center">
       <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-2 border-gray-300 relative">
-        <img
+        <Image
           src={imageUrl}
           alt="Adjust Preview"
+          width={160}
+          height={160}
           className="w-full h-full object-cover"
           style={{ filter: filterStyle }}
         />
@@ -157,9 +160,8 @@ export default function ProfileImageAdjust({ imageUrl, onApply, onReset }) {
           <button
             key={adj.name}
             onClick={() => setActiveAdjust(adj.name)}
-            className={`px-2 py-1 text-sm rounded-lg border ${
-              activeAdjust === adj.name ? "bg-blue-600 text-white" : "bg-gray-200"
-            }`}
+            className={`px-2 py-1 text-sm rounded-lg border ${activeAdjust === adj.name ? "bg-blue-600 text-white" : "bg-gray-200"
+              }`}
           >
             {adj.name}
           </button>

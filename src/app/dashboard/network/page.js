@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import Link from "next/link";
+import Image from "next/image";
 import {
   sendConnectionRequest,
   acceptConnectionRequest,
@@ -213,8 +214,11 @@ const NetworkPage = () => {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
 
                   <div className="flex items-center gap-5 min-w-0 relative z-10">
-                    <img
+                    <Image
                       src={user.profilePicture || "/default-profile.jpg"}
+                      alt={user.name || "User"}
+                      width={80}
+                      height={80}
                       className="w-20 h-20 rounded-2xl object-cover border-2 border-white/20 shadow-md bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="min-w-0">
@@ -280,8 +284,11 @@ const NetworkPage = () => {
                       <div className={`absolute top-0 right-0 w-24 h-24 ${section.color === 'blue' ? 'bg-blue-500/10' : section.color === 'amber' ? 'bg-amber-500/10' : 'bg-purple-500/10'} rounded-full -mr-12 -mt-12 group-hover:bg-opacity-20 transition-colors`}></div>
 
                       <div className="p-6 flex items-center gap-5 relative z-10">
-                        <img
+                        <Image
                           src={user.profilePicture || "/default-profile.jpg"}
+                          alt={user.name || "User"}
+                          width={64}
+                          height={64}
                           className="w-16 h-16 rounded-2xl object-cover border-2 border-white/10 group-hover:scale-110 transition-transform duration-500 shadow-md"
                         />
                         <div className="min-w-0">

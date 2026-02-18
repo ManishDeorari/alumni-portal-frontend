@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { createPost } from "../../../api/dashboard";
 import toast from "react-hot-toast";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
@@ -174,9 +175,11 @@ const CreatePost = ({ setPosts, currentUser }) => {
           <div className="mt-3 flex flex-wrap gap-3">
             {images.map((img, index) => (
               <div key={index} className="relative w-28 h-28">
-                <img
+                <Image
                   src={URL.createObjectURL(img)}
                   alt={`preview-${index}`}
+                  width={112}
+                  height={112}
                   className="rounded-lg object-cover w-full h-full"
                 />
                 <button
