@@ -32,9 +32,9 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         if (isPublicView && profile._id) {
             fetchConnectionStatus();
         }
-    }, [isPublicView, profile._id]);
+    }, [isPublicView, profile._id, fetchConnectionStatus]);
 
-    const fetchConnectionStatus = async () => {
+    const fetchConnectionStatus = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
             const currentUserRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/me`, {
@@ -67,7 +67,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         } catch (err) {
             console.error("Error fetching connection status:", err);
         }
-    };
+    }, [isPublicView, profile._id]);
 
     const handleConnect = async () => {
         setLoading(true);

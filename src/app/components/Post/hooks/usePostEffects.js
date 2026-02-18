@@ -31,7 +31,7 @@ export default function usePostEffects({
 
     const liked = post.likes?.some((id) => normalizeId(id) === userId);
     setHasLiked(liked);
-  }, [post.likes, currentUser?._id]);
+  }, [post.likes, currentUser?._id, setHasLiked]);
 
   // ❌ Removed post auto-scroll. Keeping it only for replies or modal context.
 
@@ -40,7 +40,7 @@ export default function usePostEffects({
     if (editing && textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, [editing]);
+  }, [editing, textareaRef]);
 
   // 🔹 React animation when other users like this post
   useEffect(() => {

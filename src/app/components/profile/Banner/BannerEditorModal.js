@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 import BannerImageCropper from "./BannerImageCropper";
 import BannerImageFilters from "./BannerImageFilters";
@@ -153,12 +154,12 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
 
         <h2 className="text-lg font-semibold mb-4 text-center">Banner Image</h2>
 
-        {/* Preview */}
-        <div className="flex justify-center mb-4 w-full">
-          <img
+        <div className="flex justify-center mb-4 w-full h-[192px] relative rounded-lg overflow-hidden shadow">
+          <Image
             src={previewUrl || currentImage || "/default_banner.jpg"}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-lg shadow"
+            fill
+            className="object-cover"
           />
         </div>
 

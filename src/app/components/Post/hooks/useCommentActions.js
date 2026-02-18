@@ -88,7 +88,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to reply");
       }
     },
-    [post._id, setPosts]
+    [post._id, setPosts, API_URL, token, checkAuth]
   );
 
   const handleEditComment = useCallback(
@@ -122,7 +122,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to update comment");
       }
     },
-    [post._id, setPosts]
+    [post._id, setPosts, API_URL, token, checkAuth]
   );
 
   const handleDeleteComment = useCallback(
@@ -145,7 +145,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to delete comment");
       }
     },
-    [post._id, setPosts]
+    [post._id, setPosts, API_URL, token]
   );
 
   const handleEditReply = useCallback(
@@ -173,7 +173,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to edit reply");
       }
     },
-    [post._id, setPosts]
+    [post._id, setPosts, API_URL, token, checkAuth]
   );
 
   const handleDeleteReply = useCallback(async (commentId, replyId) => {
@@ -222,7 +222,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to react to reply");
       }
     },
-    [post._id, setPosts]
+    [post._id, setPosts, API_URL, token]
   );
 
   return {

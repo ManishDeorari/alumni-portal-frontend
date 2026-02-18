@@ -33,17 +33,17 @@ const INSTITUTION_SUGGESTIONS = [
 
 const GEHU_CAMPUSES = ["Dehradun", "Bhimtal", "Haldwani"];
 
+const MANDATORY_DEGREES = [
+    "High School (Secondary - Class 10)",
+    "Intermediate (Higher Secondary - Class 11-12)",
+    "Undergraduate (Bachelor's Degree)",
+    "Postgraduate (Master's Degree)"
+];
+
 export default function EditEducationModal({ isOpen, onClose, currentEducation, onSave }) {
     const [educations, setEducations] = useState([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
-
-    const MANDATORY_DEGREES = [
-        "High School (Secondary - Class 10)",
-        "Intermediate (Higher Secondary - Class 11-12)",
-        "Undergraduate (Bachelor's Degree)",
-        "Postgraduate (Master's Degree)"
-    ];
 
     useEffect(() => {
         if (isOpen) {

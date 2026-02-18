@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Link from "next/link";
+import Image from "next/image";
 import { getUserConnections, sendConnectionRequest } from "@/api/connect";
 import { useParams } from "next/navigation";
 
@@ -79,10 +80,12 @@ const UserConnectionsPage = () => {
                             <div key={user._id} className="bg-gray-900/40 backdrop-blur-xl p-5 rounded-[2rem] border border-white/5 flex items-center justify-between gap-5 shadow-lg group hover:border-blue-400/30 transition-all relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full -mr-12 -mt-12 group-hover:bg-blue-500/10 transition-colors"></div>
                                 <div className="flex items-center gap-4 min-w-0 relative z-10">
-                                    <img
+                                    <Image
                                         src={user.profilePicture || "/default-profile.jpg"}
-                                        className="w-16 h-16 rounded-2xl object-cover border-2 border-white/10 bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-xl"
-                                        alt={user.name}
+                                        width={64}
+                                        height={64}
+                                        className="rounded-2xl object-cover border-2 border-white/10 bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-xl"
+                                        alt={user.name || "User"}
                                     />
                                     <div className="min-w-0">
                                         <Link href={`/dashboard/profile?id=${user._id}`}>

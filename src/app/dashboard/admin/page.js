@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
   }, [router]);
 
   // Fetch helpers
-  const fetchPendingUsers = async () => {
+  const fetchPendingUsers = React.useCallback(async () => {
     setPendingLoading(true);
     try {
       const res = await fetch(`${API}/api/admin/pending-users`, {
@@ -86,9 +86,9 @@ export default function AdminDashboardPage() {
     } finally {
       setPendingLoading(false);
     }
-  };
+  }, []);
 
-  const fetchAdminsList = async () => {
+  const fetchAdminsList = React.useCallback(async () => {
     setAdminsLoading(true);
     try {
       const res = await fetch(`${API}/api/admin/admins`, {
@@ -108,9 +108,9 @@ export default function AdminDashboardPage() {
     } finally {
       setAdminsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = React.useCallback(async () => {
     setLeaderboardLoading(true);
     try {
       const res = await fetch(`${API}/api/admin/leaderboard`, {
@@ -125,13 +125,13 @@ export default function AdminDashboardPage() {
     } finally {
       setLeaderboardLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (activeTab === "pending") fetchPendingUsers();
     if (activeTab === "admins") fetchAdminsList();
     if (activeTab === "leaderboard") fetchLeaderboard();
-  }, [activeTab]);
+  }, [activeTab, fetchAdminsList, fetchLeaderboard, fetchPendingUsers]);
 
   // Actions
   const approveUser = async (id) => {

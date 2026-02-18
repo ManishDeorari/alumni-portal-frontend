@@ -47,9 +47,9 @@ export default function PointsSystemManagement() {
 
     useEffect(() => {
         fetchConfig();
-    }, []);
+    }, [fetchConfig]);
 
-    const fetchConfig = async () => {
+    const fetchConfig = React.useCallback(async () => {
         try {
             const res = await fetch(`${API}/api/admin-points-mgmt/config`, {
                 headers: { Authorization: `Bearer ${getToken()}` },
@@ -67,7 +67,7 @@ export default function PointsSystemManagement() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [getToken]);
 
     const handleUpdateConfig = async (e) => {
         e.preventDefault();

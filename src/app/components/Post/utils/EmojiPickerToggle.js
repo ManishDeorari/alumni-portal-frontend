@@ -128,7 +128,7 @@ const EmojiPickerToggle = ({
               data={data}
               onEmojiSelect={(emoji) => {
                 onEmojiSelect(emoji);
-                setShowPicker(false);
+                // setShowPicker(false); // Keep open until click outside
               }}
               theme="dark"
               perLine={8}

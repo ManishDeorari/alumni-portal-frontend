@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 import ProfileImageCropper from "./ProfileImageCropper";
 import ProfileImageFilters from "./ProfileImageFilters";
@@ -211,10 +212,12 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
 
         {/* 🖼️ Preview */}
         <div className="flex justify-center mb-4">
-          <img
+          <Image
             src={previewUrl || "/default-profile.jpg"}
             alt="Preview"
-            className="w-40 h-40 object-cover rounded-full shadow"
+            width={160}
+            height={160}
+            className="object-cover rounded-full shadow"
           />
         </div>
 
@@ -229,8 +232,8 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
               }}
               disabled={!selectedFile}
               className={`bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium ${activeTab === tab
-                  ? "bg-blue-100 text-blue-600"
-                  : "text-black-600"
+                ? "bg-blue-100 text-blue-600"
+                : "text-black-600"
                 } ${!selectedFile ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
               title={!selectedFile ? "Select a new image first" : `Open ${tab}`}
             >

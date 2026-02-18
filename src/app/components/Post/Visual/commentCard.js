@@ -310,7 +310,7 @@ export default function CommentCard({
                       key={emoji}
                       onClick={() => {
                         toggleReaction(emoji);
-                        setShowEmoji(false);
+                        // setShowEmoji(false); // Keep open until click outside
                       }}
                       className="text-xl hover:scale-125 transition-transform"
                     >
