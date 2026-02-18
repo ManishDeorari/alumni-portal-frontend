@@ -15,12 +15,6 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchRequests();
-        }
-    }, [isOpen, activeTab, fetchRequests]);
-
     const fetchRequests = useCallback(async () => {
         setLoading(true);
         try {
@@ -31,8 +25,16 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
             setRequests(data || []);
         } catch (err) {
             console.error("Fetch requests error:", err);
+        } finally {
+            setLoading(false);
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchRequests();
+        }
+    }, [isOpen, activeTab, fetchRequests]);
 
     const handleAction = async (userId, action) => {
         try {

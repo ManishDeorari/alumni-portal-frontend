@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
+import AdminSidebar from "../../components/AdminSidebar";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -87,9 +88,17 @@ const NetworkPage = () => {
     }
   };
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const userObj = currentUser || JSON.parse(localStorage.getItem("user"));
+    setIsAdmin(userObj?.isAdmin || userObj?.role === "admin");
+  }, [currentUser]);
+
+  const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
-      <Sidebar />
+      <SidebarComponent />
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         <header className="flex flex-col md:flex-row justify-between items-center bg-black/20 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">

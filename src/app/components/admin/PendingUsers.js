@@ -9,10 +9,19 @@ export default function PendingUsers({
   approveUser,
   deleteUser,
   promoteToAdmin,
+  bulkApproveUsers,
+  bulkDeleteUsers,
 }) {
   const [search, setSearch] = useState("");
   const [confirm, setConfirm] = useState(null);
   const [selected, setSelected] = useState([]);
+
+  // Safety filter
+  const safePendingUsers = pendingUsers.filter(u =>
+    !u.isMainAdmin &&
+    u.email !== "admin@alumniportal.com" &&
+    u.email !== "manishdeorari377@gmail.com"
+  );
 
   const filterUsers = (role) =>
     pendingUsers.filter(
@@ -45,12 +54,12 @@ export default function PendingUsers({
 
   /* ---------------- BULK ACTIONS ---------------- */
   const bulkApprove = async () => {
-    for (const id of selected) await approveUser(id);
+    if (bulkApproveUsers) await bulkApproveUsers(selected);
     setSelected([]);
   };
 
   const bulkReject = async () => {
-    for (const id of selected) await deleteUser(id);
+    if (bulkDeleteUsers) await bulkDeleteUsers(selected);
     setSelected([]);
   };
 

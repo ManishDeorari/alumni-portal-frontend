@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
+import AdminSidebar from "../../components/AdminSidebar";
 import ChatSidebar from "../../components/messages/ChatSidebar";
 import ChatWindow from "../../components/messages/ChatWindow";
 import socket from "@/utils/socket";
@@ -78,8 +79,12 @@ export default function MessagesPage() {
   // 3. Socket.io listener for incoming messages
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
+      // Defensive check for msg and msg.sender
+      if (!msg || !msg.sender) return;
+
       // Only append if the message belongs to the currently open chat
-      if (selectedUser && (msg.sender._id === selectedUser._id || msg.recipient === selectedUser._id)) {
+      const senderId = msg.sender._id || msg.sender;
+      if (selectedUser && (senderId === selectedUser._id || msg.recipient === selectedUser._id)) {
         setMessages((prev) => [...prev, msg]);
       }
     };
@@ -149,9 +154,17 @@ export default function MessagesPage() {
     }
   };
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const userObj = currentUser || JSON.parse(localStorage.getItem("user"));
+    setIsAdmin(userObj?.isAdmin || userObj?.role === "admin");
+  }, [currentUser]);
+
+  const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
-      <Sidebar />
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+      <SidebarComponent />
 
       <div className="p-6 max-w-7xl mx-auto flex gap-6 mt-6">
         <ChatSidebar

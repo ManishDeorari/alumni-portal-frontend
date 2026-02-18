@@ -1,22 +1,25 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/AdminSidebar"; // adjust path if needed
+import Sidebar from "../../components/Sidebar"; // adjust path if needed
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Shield, Users, Trophy, Download, Settings, Clock } from "lucide-react";
+import AdminSidebar from "../../components/AdminSidebar";
 import PendingUsers from "../../components/admin/PendingUsers";
 import AdminsManager from "../../components/admin/AdminsManager";
 import Leaderboard from "../../components/Leaderboard";
 import PointsSystemManagement from "../../components/admin/PointsSystemManagement";
 import AlumniExport from "../../components/admin/AlumniExport";
+import UserManagement from "../../components/admin/UserManagement";
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("pending"); // pending | admins | leaderboard | points | export
+  const [activeTab, setActiveTab] = useState("pending"); // pending | admins | leaderboard | points | export | users
   const [loading, setLoading] = useState(true);
 
   // Pending users
@@ -31,11 +34,9 @@ export default function AdminDashboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
 
-  // Points Manager
-  const [selectedUserForPoints, setSelectedUserForPoints] = useState(null);
-  const [pointsCategory, setPointsCategory] = useState("profileCompletion");
-  const [pointsValue, setPointsValue] = useState(0);
-  const [pointsLoading, setPointsLoading] = useState(false);
+  // All Users (for User Management)
+  const [allUsers, setAllUsers] = useState([]);
+  const [allUsersLoading, setAllUsersLoading] = useState(false);
 
   const getToken = () => localStorage.getItem("token");
 
@@ -127,11 +128,29 @@ export default function AdminDashboardPage() {
     }
   }, []);
 
+  const fetchAllUsers = React.useCallback(async () => {
+    setAllUsersLoading(true);
+    try {
+      const res = await fetch(`${API}/api/admin/all-users`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch all users");
+      setAllUsers(data);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Could not load all users");
+    } finally {
+      setAllUsersLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeTab === "pending") fetchPendingUsers();
     if (activeTab === "admins") fetchAdminsList();
     if (activeTab === "leaderboard") fetchLeaderboard();
-  }, [activeTab, fetchAdminsList, fetchLeaderboard, fetchPendingUsers]);
+    if (activeTab === "users") fetchAllUsers();
+  }, [activeTab, fetchAdminsList, fetchLeaderboard, fetchPendingUsers, fetchAllUsers]);
 
   // Actions
   const approveUser = async (id) => {
@@ -150,8 +169,8 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const deleteUser = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  const deleteUser = async (id, isBulk = false) => {
+    if (!isBulk && !window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const res = await fetch(`${API}/api/admin/delete-user/${id}`, {
         method: "DELETE",
@@ -159,13 +178,50 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Delete failed");
-      toast.success(data.message || "User deleted");
+      if (!isBulk) {
+        toast.success(data.message || "User deleted");
+        fetchPendingUsers();
+        fetchAdminsList();
+        fetchLeaderboard();
+        fetchAllUsers();
+      }
+    } catch (err) {
+      console.error(err);
+      if (!isBulk) toast.error(err.message || "Delete failed");
+      throw err;
+    }
+  };
+
+  const bulkApproveUsers = async (ids) => {
+    try {
+      await Promise.all(ids.map(id =>
+        fetch(`${API}/api/admin/approve/${id}`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }).then(r => r.json().then(d => { if (!r.ok) throw new Error(d.message); }))
+      ));
+      toast.success(`Successfully approved ${ids.length} users!`, { autoClose: 2000 });
+      fetchPendingUsers();
+    } catch (err) {
+      toast.error("Some approvals failed. Please check list.");
+      fetchPendingUsers();
+    }
+  };
+
+  const bulkDeleteUsers = async (ids) => {
+    try {
+      await Promise.all(ids.map(id => deleteUser(id, true)));
+      toast.success(`Successfully deleted ${ids.length} users!`, { autoClose: 2000 });
       fetchPendingUsers();
       fetchAdminsList();
       fetchLeaderboard();
+      fetchAllUsers();
     } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Delete failed");
+      toast.error("Some deletions failed. Please check list.");
+      fetchPendingUsers();
+      fetchAdminsList();
+      fetchLeaderboard();
+      fetchAllUsers();
     }
   };
 
@@ -210,55 +266,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const assignPoints = async (e) => {
-    e.preventDefault();
-    if (!selectedUserForPoints) {
-      toast.error("Select a user to assign points");
-      return;
-    }
-    setPointsLoading(true);
-    try {
-      const res = await fetch(`${API}/api/admin-points/assign`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: selectedUserForPoints._id,
-          category: pointsCategory,
-          value: Number(pointsValue),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Assign failed");
-      toast.success("Points updated");
-      fetchLeaderboard();
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Assign failed");
-    } finally {
-      setPointsLoading(false);
-    }
-  };
-
-  const resetAllPoints = async () => {
-    if (!window.confirm("Reset all users' points? This cannot be undone.")) return;
-    try {
-      const res = await fetch(`${API}/api/admin-points/reset`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Reset failed");
-      toast.success("All points reset");
-      fetchLeaderboard();
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Reset failed");
-    }
-  };
-
   const TabButton = ({ id, label }) => (
     <button
       onClick={() => setActiveTab(id)}
@@ -278,28 +285,37 @@ export default function AdminDashboardPage() {
     </div>
   );
 
+  // Choose sidebar
+  const SidebarComponent = user?.isAdmin || user?.role === 'admin' ? AdminSidebar : Sidebar;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800 text-white relative">
-      <Sidebar />
+      <SidebarComponent />
 
       <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
-        <section className="bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in fade-in duration-700">
+        <section className="bg-gray-900/40 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in fade-in duration-700">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl font-black tracking-tight text-white mb-2">Admin Panel</h1>
-              <p className="text-blue-100/60 font-medium">
-                Welcome back, <span className="text-white font-bold">{user?.name}</span>
-              </p>
+          <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/20 shadow-inner">
+                <Shield className="w-6 h-6 text-blue-400" />
+              </div>
+              <div className="text-left">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">Admin Panel</h1>
+                <p className="text-blue-100/40 text-xs font-bold uppercase tracking-widest mt-1">
+                  Master Control Center
+                </p>
+              </div>
             </div>
 
-            <nav className="flex flex-wrap justify-center gap-3">
-              <TabButton id="pending" label="Pending Users" />
-              <TabButton id="admins" label="Manage Admins" />
+            <nav className="flex flex-wrap items-center justify-center gap-2 bg-white/5 p-1.5 rounded-[1.5rem] border border-white/5">
+              <TabButton id="pending" label="Pending" />
+              {user?.isMainAdmin && <TabButton id="users" label="User Mgmt" />}
+              <TabButton id="admins" label="Admins" />
               <TabButton id="leaderboard" label="Leaderboard" />
-              <TabButton id="export" label="Export Data" />
-              {user?.isMainAdmin && <TabButton id="points" label="Points System" />}
+              <TabButton id="export" label="Export" />
+              {user?.isMainAdmin && <TabButton id="points" label="Points" />}
             </nav>
           </div>
         </section>
@@ -313,6 +329,18 @@ export default function AdminDashboardPage() {
               approveUser={approveUser}
               deleteUser={deleteUser}
               promoteToAdmin={promoteToAdmin}
+              bulkApproveUsers={bulkApproveUsers}
+              bulkDeleteUsers={bulkDeleteUsers}
+            />
+          )}
+
+          {/* USER MANAGEMENT */}
+          {activeTab === "users" && (
+            <UserManagement
+              users={allUsers}
+              loading={allUsersLoading}
+              onDelete={deleteUser}
+              onRefresh={fetchAllUsers}
             />
           )}
 

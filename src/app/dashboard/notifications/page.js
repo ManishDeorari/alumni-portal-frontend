@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
+import AdminSidebar from "../../components/AdminSidebar";
 import { useRouter } from "next/navigation";
 import PostCard from "../../components/Post/PostCard";
 import Image from "next/image";
@@ -177,6 +178,12 @@ export default function NotificationsPage() {
     return Object.entries(groups).filter(([_, group]) => group.items.length > 0);
   }, [notifications, activeTab]);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const userObj = user || JSON.parse(localStorage.getItem("user"));
+    setIsAdmin(userObj?.isAdmin || userObj?.role === "admin");
+  }, [user]);
+
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white flex items-center justify-center">
       <motion.div
@@ -187,9 +194,11 @@ export default function NotificationsPage() {
     </div>
   );
 
+  const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white pb-20">
-      <Sidebar />
+      <SidebarComponent />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
         {/* Header */}

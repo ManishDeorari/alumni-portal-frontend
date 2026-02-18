@@ -43,11 +43,7 @@ export default function PointsSystemManagement() {
         other: "Other Activities",
     };
 
-    const getToken = () => localStorage.getItem("token");
-
-    useEffect(() => {
-        fetchConfig();
-    }, [fetchConfig]);
+    const getToken = React.useCallback(() => localStorage.getItem("token"), []);
 
     const fetchConfig = React.useCallback(async () => {
         try {
@@ -68,6 +64,10 @@ export default function PointsSystemManagement() {
             setLoading(false);
         }
     }, [getToken]);
+
+    useEffect(() => {
+        fetchConfig();
+    }, [fetchConfig]);
 
     const handleUpdateConfig = async (e) => {
         e.preventDefault();

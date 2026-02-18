@@ -139,6 +139,18 @@ export default function Sidebar() {
 
       {/* Navigation Links - Icon Only */}
       <div className="flex space-x-8 items-center text-2xl">
+        {/* Admin (Only for admins) - Now as the FIRST link */}
+        {isAdmin && (
+          <Link
+            href="/dashboard/admin"
+            className="hover:text-gray-200 relative group"
+            title="Admin Panel"
+          >
+            <FaUserShield className="text-yellow-300" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+          </Link>
+        )}
+
         {/* Home */}
         <Link
           href="/dashboard"
@@ -194,17 +206,6 @@ export default function Sidebar() {
           <FaUserCircle />
         </Link>
 
-        {/* Admin (Only for admins) */}
-        {isAdmin && (
-          <Link
-            href="/dashboard/admin"
-            className="hover:text-gray-200 relative group"
-            title="Admin Panel"
-          >
-            <FaUserShield />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-          </Link>
-        )}
 
         {/* Settings */}
         <div className="relative">

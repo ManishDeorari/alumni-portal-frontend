@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, Suspense, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
+import AdminSidebar from "../../components/AdminSidebar";
 import ProfileAbout from "../../components/profile/ProfileAbout";
 import ProfileExperience from "../../components/profile/ProfileExperience";
 import ProfileEducation from "../../components/profile/ProfileEducation";
@@ -88,29 +89,44 @@ function ProfileContent() {
     }
   }, [profileId]);
 
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user"));
+    setUser(userData);
+  }, []);
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const userObj = user || JSON.parse(localStorage.getItem("user"));
+    setIsAdmin(userObj?.isAdmin || userObj?.role === "admin");
+  }, [user]);
+
   if (loading) return <div className="p-10 text-center text-white">Loading Profile...</div>;
+
+  const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
-      <Sidebar />
+      <SidebarComponent />
 
-      {/* 🔷 Top Profile Section with Conditional Back Button */}
-      <div className="max-w-4xl mx-auto px-4 pt-6 flex flex-col md:flex-row gap-4 items-start">
-        {isPublicView && (
-          <button
-            onClick={() => router.back()}
-            className="flex-shrink-0 flex items-center justify-center p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all backdrop-blur-md text-white group shadow-lg h-fit mt-2"
-            title="Go Back"
-          >
-            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
-          </button>
-        )}
+      {/* 🔷 Top-Left Back Button (Fixed) */}
+      {isPublicView && (
+        <button
+          onClick={() => router.back()}
+          className="fixed top-24 left-8 z-50 flex items-center justify-center p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all backdrop-blur-md text-white group shadow-2xl"
+          title="Go Back"
+        >
+          <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+        </button>
+      )}
 
-        <div className="flex-1 w-full">
+      {/* 🔷 Top Profile Section */}
+      <div className="max-w-4xl mx-auto px-4 pt-6">
+        <div className="w-full">
           <ProfileBasicInfo
             profile={profile}
             setProfile={setProfile}

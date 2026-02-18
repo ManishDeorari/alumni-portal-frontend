@@ -1,9 +1,11 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane, FaSmile } from "react-icons/fa";
+import EmojiPicker from "emoji-picker-react";
 
 export default function ChatWindow({ selectedUser, messages, currentUser, onSendMessage, newMessage, setNewMessage }) {
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -18,7 +20,12 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
         e.preventDefault();
         if (newMessage.trim()) {
             onSendMessage(newMessage);
+            setShowEmojiPicker(false);
         }
+    };
+
+    const onEmojiClick = (emojiData) => {
+        setNewMessage((prev) => prev + emojiData.emoji);
     };
 
     if (!selectedUser) {
@@ -54,7 +61,7 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
                     </div>
                 ) : (
                     messages.map((msg, index) => {
-                        const isMe = msg.sender._id === currentUser._id || msg.sender === currentUser._id;
+                        const isMe = msg?.sender?._id === currentUser?._id || msg?.sender === currentUser?._id;
                         return (
                             <div key={index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                                 <div
@@ -76,7 +83,29 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-black/20 rounded-b-xl flex gap-3">
+            <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-black/20 rounded-b-xl flex gap-3 relative">
+                <div className="relative">
+                    <button
+                        type="button"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        className="text-gray-400 hover:text-yellow-400 h-full px-2"
+                    >
+                        <FaSmile size={24} />
+                    </button>
+                    {showEmojiPicker && (
+                        <div className="absolute bottom-full left-0 mb-2 z-50">
+                            <div className="fixed inset-0" onClick={() => setShowEmojiPicker(false)}></div>
+                            <div className="relative">
+                                <EmojiPicker
+                                    onEmojiClick={onEmojiClick}
+                                    theme="dark"
+                                    width={300}
+                                    height={400}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <input
                     type="text"
                     value={newMessage}

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Copy, Edit, UserPlus, Check } from "lucide-react";
 import toast from "react-hot-toast";
 import ProfileAvatar from "./ProfileAvatar";
@@ -26,13 +26,6 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
             ...updatedProfile,
         }));
     };
-
-    // Fetch connection status when viewing another user's profile
-    useEffect(() => {
-        if (isPublicView && profile._id) {
-            fetchConnectionStatus();
-        }
-    }, [isPublicView, profile._id, fetchConnectionStatus]);
 
     const fetchConnectionStatus = useCallback(async () => {
         try {
@@ -67,7 +60,14 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         } catch (err) {
             console.error("Error fetching connection status:", err);
         }
-    }, [isPublicView, profile._id]);
+    }, [profile._id]);
+
+    // Fetch connection status when viewing another user's profile
+    useEffect(() => {
+        if (isPublicView && profile._id) {
+            fetchConnectionStatus();
+        }
+    }, [isPublicView, profile._id, fetchConnectionStatus]);
 
     const handleConnect = async () => {
         setLoading(true);
