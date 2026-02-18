@@ -1,7 +1,7 @@
 "use client";
 import { X } from "lucide-react";
 
-export default function ImageViewerModal({ imageUrl, onClose }) {
+export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
   if (!imageUrl) return null;
 
   return (
@@ -18,7 +18,9 @@ export default function ImageViewerModal({ imageUrl, onClose }) {
       <img
         src={imageUrl}
         alt="Full view"
-        className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-lg"
+        onContextMenu={(e) => isRestricted && e.preventDefault()}
+        onDragStart={(e) => isRestricted && e.preventDefault()}
+        className={`max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-lg ${isRestricted ? 'select-none' : ''}`}
       />
     </div>
   );

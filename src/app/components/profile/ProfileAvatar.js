@@ -10,6 +10,9 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
 
   const profileImg = image || "/default-profile.jpg";
 
+  const currentUserRole = typeof window !== 'undefined' ? localStorage.getItem("role") : null;
+  const isRestricted = isPublicView && currentUserRole !== 'admin';
+
   return (
     <div className="relative">
       <Image
@@ -18,7 +21,9 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
         width={112}
         height={112}
         onClick={() => setShowViewer(true)} // open full view
-        className="rounded-full border-4 border-white object-cover w-28 h-28 cursor-pointer"
+        onContextMenu={(e) => isRestricted && e.preventDefault()}
+        onDragStart={(e) => isRestricted && e.preventDefault()}
+        className={`rounded-full border-4 border-white object-cover w-28 h-28 cursor-pointer ${isRestricted ? 'select-none' : ''}`}
       />
 
       {!isPublicView && (
@@ -44,7 +49,11 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
       )}
 
       {showViewer && (
-        <ImageViewerModal imageUrl={profileImg} onClose={() => setShowViewer(false)} />
+        <ImageViewerModal
+          imageUrl={profileImg}
+          onClose={() => setShowViewer(false)}
+          isRestricted={isRestricted}
+        />
       )}
     </div>
   );

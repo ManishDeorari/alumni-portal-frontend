@@ -1,5 +1,5 @@
 // components/Post/ImageGallery.js
-export default function ImageGallery({ images, onImageClick }) {
+export default function ImageGallery({ images, onImageClick, isRestricted }) {
   if (!images?.length) return null;
 
   return (
@@ -9,7 +9,9 @@ export default function ImageGallery({ images, onImageClick }) {
           key={index}
           src={image.url} // ✅ fix here
           alt={`image-${index}`}
-          className="h-48 w-auto rounded-lg border cursor-pointer object-contain"
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          onDragStart={(e) => isRestricted && e.preventDefault()}
+          className={`h-48 w-auto rounded-lg border cursor-pointer object-contain ${isRestricted ? 'select-none' : ''}`}
           onClick={() => onImageClick(index)}
         />
       ))}

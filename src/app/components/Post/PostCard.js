@@ -135,6 +135,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   };
 
   const isMyPost = post.user?._id === currentUser._id;
+  const isRestricted = !isMyPost && currentUser?.role !== 'admin';
+
   // ✅ Everything's clean and ready for the `return` section now.
   return (
     <div
@@ -180,6 +182,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
       <PostMedia
         post={post}
+        currentUser={currentUser}
         setSelectedImage={(index) => {
           setStartIndex(index);
           setShowViewer(true);
@@ -315,6 +318,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           images={post.images?.map((img) => img.url)} // ✅ extract URLs
           startIndex={startIndex}
           onClose={() => setShowViewer(false)}
+          isRestricted={isRestricted}
         />
       )}
 

@@ -50,6 +50,7 @@ export default function PostModal({
   likeIconRef,
 }) {
   const isSelf = post.user?._id === currentUser?._id;
+  const isRestricted = !isSelf && currentUser?.role !== 'admin';
   const editKey = `draft-${post._id}`;
 
   return (
@@ -113,6 +114,7 @@ export default function PostModal({
           <div className="mb-6 rounded-xl overflow-hidden border border-gray-100">
             <PostMedia
               post={post}
+              currentUser={currentUser}
               setSelectedImage={(index) => {
                 setStartIndex(index);
                 setShowViewer(true);

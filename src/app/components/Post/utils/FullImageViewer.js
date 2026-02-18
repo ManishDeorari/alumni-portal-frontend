@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function FullImageViewer({ images, startIndex, onClose }) {
+export default function FullImageViewer({ images, startIndex, onClose, isRestricted }) {
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -57,7 +57,9 @@ export default function FullImageViewer({ images, startIndex, onClose }) {
             <img
               src={images[currentIndex]}
               alt={`image-${currentIndex}`}
-              className="rounded-lg max-h-[90vh] w-full object-contain"
+              onContextMenu={(e) => isRestricted && e.preventDefault()}
+              onDragStart={(e) => isRestricted && e.preventDefault()}
+              className={`rounded-lg max-h-[90vh] w-full object-contain ${isRestricted ? 'select-none' : ''}`}
             />
 
             {/* 🔥 Invisible Left/Right Tap Zones */}

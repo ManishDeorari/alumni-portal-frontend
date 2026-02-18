@@ -7,6 +7,9 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
   const [showEditor, setShowEditor] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
 
+  const currentUserRole = typeof window !== 'undefined' ? localStorage.getItem("role") : null;
+  const isRestricted = isPublicView && currentUserRole !== 'admin';
+
   const bannerImg = image || "/default_banner.jpg";
 
   return (
@@ -15,7 +18,9 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
         <img
           src={bannerImg}
           alt="Banner"
-          className="w-full h-full object-cover cursor-pointer"
+          className={`w-full h-full object-cover cursor-pointer ${isRestricted ? 'select-none' : ''}`}
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          onDragStart={(e) => isRestricted && e.preventDefault()}
           onClick={() => setShowViewer(true)}
         />
       </div>
@@ -43,7 +48,11 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
       )}
 
       {showViewer && (
-        <ImageViewerModal imageUrl={bannerImg} onClose={() => setShowViewer(false)} />
+        <ImageViewerModal
+          imageUrl={bannerImg}
+          onClose={() => setShowViewer(false)}
+          isRestricted={isRestricted}
+        />
       )}
     </div>
   );

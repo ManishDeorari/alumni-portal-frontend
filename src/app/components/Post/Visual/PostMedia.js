@@ -3,8 +3,10 @@ import React from "react";
 import ImageGallery from "../utils/ImageGallery"; // adjust the path if needed
 import FullImageViewer from "../utils/FullImageViewer"; // optional, handled separately
 
-export default function PostMedia({ post, setSelectedImage }) {
+export default function PostMedia({ post, setSelectedImage, currentUser }) {
   if (!(post.images?.length > 0 || post.video || post.image)) return null;
+
+  const isRestricted = post.user?._id !== currentUser?._id && currentUser?.role !== 'admin';
 
   return (
     <div className="mt-2">
@@ -13,6 +15,7 @@ export default function PostMedia({ post, setSelectedImage }) {
         <ImageGallery
           images={post.images}
           onImageClick={setSelectedImage}
+          isRestricted={isRestricted} // Assuming ImageGallery might use it
         />
       )}
 
@@ -21,7 +24,9 @@ export default function PostMedia({ post, setSelectedImage }) {
         <img
           src={post.image}
           alt="post"
-          className="rounded-lg max-h-96 w-full object-contain border"
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          onDragStart={(e) => isRestricted && e.preventDefault()}
+          className={`rounded-lg max-h-96 w-full object-contain border ${isRestricted ? 'select-none' : ''}`}
         />
       )}
 
@@ -29,7 +34,9 @@ export default function PostMedia({ post, setSelectedImage }) {
       {post.video?.url && (
         <video
           controls
-          className="rounded-lg w-full max-h-96 border mt-2"
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          className={`rounded-lg w-full max-h-96 border mt-2 ${isRestricted ? 'select-none' : ''}`}
+          controlsList={isRestricted ? "nodownload" : ""}
         >
           <source src={post.video.url} type="video/mp4" />
           Your browser does not support the video tag.
