@@ -2,6 +2,7 @@ import { Camera } from "lucide-react";
 import { useState } from "react";
 import BannerEditorModal from "./Banner/BannerEditorModal";
 import ImageViewerModal from "./ImageViewerModal";
+import Image from "next/image";
 
 export default function ProfileBanner({ image, onUpload, userId, isPublicView }) {
   const [showEditor, setShowEditor] = useState(false);
@@ -14,15 +15,24 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
 
   return (
     <div className="relative w-full h-48 overflow-hidden rounded-lg">
-      <div className="w-full h-full bg-gray-200">
-        <img
+      <div className="w-full h-full bg-gray-200 relative">
+        <Image
           src={bannerImg}
           alt="Banner"
-          className={`w-full h-full object-cover cursor-pointer ${isRestricted ? 'select-none' : ''}`}
+          fill
+          className={`object-cover cursor-pointer ${isRestricted ? 'select-none' : ''}`}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
           onClick={() => setShowViewer(true)}
         />
+        {/* Protective Overlay */}
+        {isRestricted && (
+          <div
+            className="absolute inset-0 z-10 cursor-pointer"
+            onClick={() => setShowViewer(true)}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        )}
       </div>
 
       {!isPublicView && (

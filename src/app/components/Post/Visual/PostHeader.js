@@ -1,22 +1,33 @@
-import React, { useState } from "react";
-import ImageViewerModal from "../../profile/ImageViewerModal";
-import Link from "next/link";
+import Image from "next/image";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete }) {
-  const isRestricted = post.user?._id !== currentUser?._id && currentUser?.role !== 'admin';
+  const [showViewer, setShowViewer] = useState(false);
+  const profileImg = post.user?.profilePicture || "/default-profile.jpg";
+  const isSelf = post.user?._id === currentUser?._id;
+  const isRestricted = !isSelf && currentUser?.role !== 'admin';
 
   return (
     <div className="flex items-center gap-3">
-      <img
-        src={profileImg}
-        alt="User profile"
-        width={112}
-        height={112}
-        onContextMenu={(e) => isRestricted && e.preventDefault()}
-        onDragStart={(e) => isRestricted && e.preventDefault()}
-        className={`rounded-full border-2 border-black object-cover w-12 h-12 cursor-pointer shadow-sm hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
-        onClick={() => setShowViewer(true)}
-      />
+      <div className="relative w-12 h-12">
+        <Image
+          src={profileImg}
+          alt="User profile"
+          width={48}
+          height={48}
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          onDragStart={(e) => isRestricted && e.preventDefault()}
+          className={`rounded-full border-2 border-black object-cover w-full h-full cursor-pointer shadow-sm hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
+          onClick={() => setShowViewer(true)}
+        />
+        {/* Protective Overlay */}
+        {isRestricted && (
+          <div
+            className="absolute inset-0 z-10 cursor-pointer rounded-full"
+            onClick={() => setShowViewer(true)}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        )}
+      </div>
       <div>
         <div className="font-semibold flex items-center gap-1">
           {isSelf ? (

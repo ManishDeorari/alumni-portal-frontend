@@ -1,6 +1,4 @@
-// FullImageViewer.js
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function FullImageViewer({ images, startIndex, onClose, isRestricted }) {
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
@@ -19,18 +17,18 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.9 }}
-            className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center"
+            className="relative max-w-4xl w-full h-[90vh] flex items-center justify-center rounded-lg overflow-hidden"
           >
             {/* Exit button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-white text-2xl z-10"
+              className="absolute top-4 right-4 text-white text-3xl z-30 bg-black/20 hover:bg-black/40 rounded-full w-10 h-10 flex items-center justify-center"
             >
               ✖
             </button>
@@ -40,13 +38,13 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
               <>
                 <button
                   onClick={prev}
-                  className="absolute left-4 text-white text-3xl bg-black bg-opacity-40 px-3 py-1 rounded-full z-10"
+                  className="absolute left-4 text-white text-3xl bg-black bg-opacity-40 px-3 py-1 rounded-full z-30"
                 >
                   ‹
                 </button>
                 <button
                   onClick={next}
-                  className="absolute right-4 text-white text-3xl bg-black bg-opacity-40 px-3 py-1 rounded-full z-10"
+                  className="absolute right-4 text-white text-3xl bg-black bg-opacity-40 px-3 py-1 rounded-full z-30"
                 >
                   ›
                 </button>
@@ -54,21 +52,32 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
             )}
 
             {/* Image Display */}
-            <img
-              src={images[currentIndex]}
-              alt={`image-${currentIndex}`}
-              onContextMenu={(e) => isRestricted && e.preventDefault()}
-              onDragStart={(e) => isRestricted && e.preventDefault()}
-              className={`rounded-lg max-h-[90vh] w-full object-contain ${isRestricted ? 'select-none' : ''}`}
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={images[currentIndex]}
+                alt={`image-${currentIndex}`}
+                fill
+                className={`object-contain ${isRestricted ? 'select-none' : ''}`}
+                onContextMenu={(e) => isRestricted && e.preventDefault()}
+                onDragStart={(e) => isRestricted && e.preventDefault()}
+              />
 
-            {/* 🔥 Invisible Left/Right Tap Zones */}
+              {/* Protective Overlay */}
+              {isRestricted && (
+                <div
+                  className="absolute inset-0 z-20"
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+              )}
+            </div>
+
+            {/* 🔥 Invisible Left/Right Tap Zones - Moved behind arrows but in front of image/overlay */}
             <div
-              className="absolute left-0 top-0 bottom-0 w-1/2 cursor-pointer"
+              className="absolute left-0 top-0 bottom-0 w-1/4 cursor-pointer z-20"
               onClick={prev}
             />
             <div
-              className="absolute right-0 top-0 bottom-0 w-1/2 cursor-pointer"
+              className="absolute right-0 top-0 bottom-0 w-1/4 cursor-pointer z-20"
               onClick={next}
             />
           </motion.div>

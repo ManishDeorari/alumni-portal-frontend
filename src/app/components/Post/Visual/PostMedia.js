@@ -21,13 +21,22 @@ export default function PostMedia({ post, setSelectedImage, currentUser }) {
 
       {/* Single fallback image (older posts) */}
       {!post.images?.length && post.image && (
-        <img
-          src={post.image}
-          alt="post"
-          onContextMenu={(e) => isRestricted && e.preventDefault()}
-          onDragStart={(e) => isRestricted && e.preventDefault()}
-          className={`rounded-lg max-h-96 w-full object-contain border ${isRestricted ? 'select-none' : ''}`}
-        />
+        <div className="relative max-h-96 w-full flex justify-center border rounded-lg overflow-hidden">
+          <img
+            src={post.image}
+            alt="post"
+            onContextMenu={(e) => isRestricted && e.preventDefault()}
+            onDragStart={(e) => isRestricted && e.preventDefault()}
+            className={`rounded-lg max-h-96 w-full object-contain ${isRestricted ? 'select-none' : ''}`}
+          />
+          {/* Protective Overlay */}
+          {isRestricted && (
+            <div
+              className="absolute inset-0 z-10"
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          )}
+        </div>
       )}
 
       {/* Video */}
