@@ -1,8 +1,8 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { FaPaperPlane, FaSmile } from "react-icons/fa";
-import EmojiPicker from "emoji-picker-react";
+import { FaPaperPlane, FaSmile, FaCheckDouble } from "react-icons/fa";
+import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 
 export default function ChatWindow({ selectedUser, messages, currentUser, onSendMessage, newMessage, setNewMessage }) {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -24,8 +24,8 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
         }
     };
 
-    const onEmojiClick = (emojiData) => {
-        setNewMessage((prev) => prev + emojiData.emoji);
+    const handleEmojiSelect = (emoji) => {
+        setNewMessage((prev) => prev + emoji.native);
     };
 
     if (!selectedUser) {
@@ -65,15 +65,23 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
                         return (
                             <div key={index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                                 <div
-                                    className={`max-w-[70%] px-4 py-2 rounded-2xl break-words ${isMe
+                                    className={`max-w-[70%] px-4 py-2 rounded-2xl break-words relative ${isMe
                                         ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
                                         : "bg-white/10 text-gray-200 rounded-bl-none border border-white/10"
                                         }`}
                                 >
                                     <p>{msg.content}</p>
-                                    <p className={`text-[10px] mt-1 text-right ${isMe ? "text-blue-200" : "text-gray-400"}`}>
-                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </p>
+                                    <div className="flex items-center justify-end gap-1 mt-1">
+                                        <p className={`text-[10px] ${isMe ? "text-blue-200" : "text-gray-400"}`}>
+                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        {isMe && (
+                                            <FaCheckDouble
+                                                size={12}
+                                                className={msg.read ? "text-blue-400" : "text-gray-300/50"}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -83,28 +91,14 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-black/20 rounded-b-xl flex gap-3 relative">
-                <div className="relative">
-                    <button
-                        type="button"
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="text-gray-400 hover:text-yellow-400 h-full px-2"
-                    >
-                        <FaSmile size={24} />
-                    </button>
-                    {showEmojiPicker && (
-                        <div className="absolute bottom-full left-0 mb-2 z-50">
-                            <div className="fixed inset-0" onClick={() => setShowEmojiPicker(false)}></div>
-                            <div className="relative">
-                                <EmojiPicker
-                                    onEmojiClick={onEmojiClick}
-                                    theme="dark"
-                                    width={300}
-                                    height={400}
-                                />
-                            </div>
-                        </div>
-                    )}
+            <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-black/20 rounded-b-xl flex gap-3 items-center relative">
+                <div className="flex items-center">
+                    <EmojiPickerToggle
+                        onEmojiSelect={handleEmojiSelect}
+                        icon={<FaSmile size={24} className="text-gray-400 hover:text-yellow-400 transition-colors" />}
+                        iconSize="w-8 h-8 flex items-center justify-center"
+                        offset={{ x: 0, y: -10 }}
+                    />
                 </div>
                 <input
                     type="text"
@@ -116,7 +110,7 @@ export default function ChatWindow({ selectedUser, messages, currentUser, onSend
                 <button
                     type="submit"
                     disabled={!newMessage.trim()}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-full transition-colors flex items-center justify-center"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-full transition-colors flex items-center justify-center shadow-lg"
                 >
                     <FaPaperPlane />
                 </button>

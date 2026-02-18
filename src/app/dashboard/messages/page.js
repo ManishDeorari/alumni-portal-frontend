@@ -73,10 +73,11 @@ export default function MessagesPage() {
     };
 
     fetchMessages();
+    markAsRead(selectedUser._id);
     setNewMessage(""); // Clear input when switching chats
   }, [selectedUser, API_URL]);
 
-  // 3. Socket.io listener for incoming messages
+  // 3. Socket.io listeners
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
       // Defensive check for msg and msg.sender
@@ -86,15 +87,47 @@ export default function MessagesPage() {
       const senderId = msg.sender._id || msg.sender;
       if (selectedUser && (senderId === selectedUser._id || msg.recipient === selectedUser._id)) {
         setMessages((prev) => [...prev, msg]);
+
+        // If message is from the selected user, mark it as read immediately
+        if (senderId === selectedUser._id) {
+          markAsRead(selectedUser._id);
+        }
+      }
+    };
+
+    const handleMessagesRead = ({ readerId }) => {
+      // If the other person read my messages, update local state to show blue ticks
+      if (selectedUser && readerId === selectedUser._id) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.recipient === readerId || m.recipient._id === readerId
+              ? { ...m, read: true }
+              : m
+          )
+        );
       }
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
+    socket.on("messagesRead", handleMessagesRead);
 
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("messagesRead", handleMessagesRead);
     };
-  }, [selectedUser]); // Re-bind listener when selectedUser changes isn't strictly necessary for logic but keeps scope clean
+  }, [selectedUser]);
+
+  const markAsRead = async (otherUserId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_URL}/api/messages/read/${otherUserId}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.error("Error marking messages as read:", err);
+    }
+  };
 
   // 4. Send Message Logic
   const handleSendMessage = async (text) => {
