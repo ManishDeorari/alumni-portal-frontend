@@ -78,7 +78,17 @@ export default function ChatWindow({
                 {/* Messages Area */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                     {messages.map((msg, index) => {
-                        const isMe = msg.sender?._id === currentUser?._id || msg.sender === currentUser?._id;
+                        // Robust ID comparison helper
+                        const getUserId = (u) => {
+                            if (!u) return null;
+                            if (typeof u === 'string') return u;
+                            return u._id || u.id;
+                        };
+
+                        const senderId = getUserId(msg.sender);
+                        const currentId = getUserId(currentUser);
+                        const isMe = senderId && currentId && String(senderId) === String(currentId);
+
                         return (
                             <div key={msg._id || index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                                 <div className={`max-w-[70%] p-4 rounded-3xl shadow-md relative transition-all hover:shadow-lg ${isMe

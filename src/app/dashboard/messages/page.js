@@ -17,6 +17,17 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  const selectedUserRef = React.useRef(selectedUser);
+  const currentUserRef = React.useRef(currentUser);
+
+  useEffect(() => {
+    selectedUserRef.current = selectedUser;
+  }, [selectedUser]);
+
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
   // 1. Fetch current user and connections on load
   useEffect(() => {
     const fetchData = async () => {
@@ -46,19 +57,16 @@ export default function MessagesPage() {
     fetchData();
   }, [API_URL]);
 
-  // 1b. Robust Socket Room Joining (handles reconnection)
+  // 1b. Robust Socket Room Joining
   useEffect(() => {
     if (!currentUser?._id) return;
 
     const joinRoom = () => {
-      console.log(`🔌 [Socket] Emitting join for user: ${currentUser._id}`);
+      console.log(`🔌 [Socket] Joining room: ${currentUser._id}`);
       socket.emit("join", currentUser._id);
     };
 
-    if (socket.connected) {
-      joinRoom();
-    }
-
+    if (socket.connected) joinRoom();
     socket.on("connect", joinRoom);
 
     return () => {
@@ -90,50 +98,48 @@ export default function MessagesPage() {
     setNewMessage(""); // Clear input when switching chats
   }, [selectedUser, API_URL]);
 
-  // 3. Socket.io listeners
+  // 3. Stable Socket.io listeners
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
-      console.log("📩 [Socket] Received message:", msg);
+      console.log("📩 [Socket] Received:", msg);
       if (!msg || !msg.sender) return;
 
-      const senderId = msg.sender._id || msg.sender.id || msg.sender;
-      const currentId = currentUser?._id || currentUser?.id;
+      const senderId = String(msg.sender._id || msg.sender.id || msg.sender);
+      const recipientId = String(msg.recipient._id || msg.recipient.id || msg.recipient);
 
-      // We handle the update based on whether this message belongs to the current conversation
-      // We use a functional update for setMessages to avoid stale closure issues with 'messages'
-      // But we still need to know current 'selectedUser'. However, since we are in a useEffect 
-      // that depends on [selectedUser], the closure *should* be fresh for that specific selectedId.
+      const currentSelected = selectedUserRef.current;
+      const selectedId = currentSelected ? String(currentSelected._id || currentSelected.id) : null;
+      const myId = currentUserRef.current ? String(currentUserRef.current._id || currentUserRef.current.id) : null;
 
-      setSelectedUser(currentSelected => {
-        const selectedId = currentSelected?._id || currentSelected?.id;
+      // Logic: Update messages if the message is part of the ACTIVE conversation
+      const isRelevant = selectedId && (senderId === selectedId || (senderId === myId && recipientId === selectedId));
 
-        if (selectedId && (senderId === selectedId || msg.recipient === selectedId || msg.recipient === currentId)) {
-          setMessages((prev) => {
-            if (prev.find(m => m._id === msg._id)) return prev;
-            return [...prev, msg];
-          });
+      if (isRelevant) {
+        setMessages((prev) => {
+          if (prev.find(m => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
 
-          if (senderId === selectedId) {
-            markAsRead(selectedId);
-          }
+        if (senderId === selectedId) {
+          markAsRead(selectedId);
         }
-        return currentSelected; // Don't actually change selectedUser
-      });
+      } else {
+        console.log("🙈 [Socket] Message ignored: Not the active chat", { senderId, selectedId, myId });
+      }
     };
 
     const handleMessagesRead = ({ readerId }) => {
-      setSelectedUser(currentSelected => {
-        const selectedId = currentSelected?._id || currentSelected?.id;
-        if (selectedId && readerId === selectedId) {
-          setMessages((prev) =>
-            prev.map((m) => {
-              const recipientId = m.recipient?._id || m.recipient?.id || m.recipient;
-              return recipientId === readerId ? { ...m, read: true } : m;
-            })
-          );
-        }
-        return currentSelected;
-      });
+      const currentSelected = selectedUserRef.current;
+      const selectedId = currentSelected ? String(currentSelected._id || currentSelected.id) : null;
+
+      if (selectedId && String(readerId) === selectedId) {
+        setMessages((prev) =>
+          prev.map((m) => {
+            const mRecipientId = String(m.recipient?._id || m.recipient?.id || m.recipient);
+            return mRecipientId === selectedId ? { ...m, read: true } : m;
+          })
+        );
+      }
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
@@ -143,7 +149,7 @@ export default function MessagesPage() {
       socket.off("receiveMessage", handleReceiveMessage);
       socket.off("messagesRead", handleMessagesRead);
     };
-  }, [selectedUser, currentUser]);
+  }, []); // Empty deps = listeners are stable and never re-bind
 
   const markAsRead = async (otherUserId) => {
     try {
