@@ -8,7 +8,7 @@ import { X, User, Lock, LogIn, ArrowLeft, UserPlus } from "lucide-react";
 
 const LoginPopup = () => {
     const router = useRouter();
-    const [form, setForm] = useState({ email: "", password: "", enrollmentNumber: "" });
+    const [form, setForm] = useState({ identifier: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -26,7 +26,10 @@ const LoginPopup = () => {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
-                    body: JSON.stringify(form),
+                    body: JSON.stringify({
+                        identifier: form.identifier,
+                        password: form.password
+                    }),
                 }
             );
 
@@ -88,11 +91,6 @@ const LoginPopup = () => {
                 </div>
 
                 <div className="p-5 md:p-6 space-y-4 bg-gray-50/50 flex-grow">
-                    <div className="text-center">
-                        <p className="text-gray-600 font-medium text-sm">
-                            Please login with your university credentials to continue.
-                        </p>
-                    </div>
 
                     {error && (
                         <div className="bg-red-50 border border-red-200 text-red-600 text-[13px] p-2.5 rounded-xl flex items-center gap-2 animate-shake">
@@ -103,30 +101,16 @@ const LoginPopup = () => {
                     <form onSubmit={handleSubmit} className="space-y-3">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-gray-700 flex items-center gap-1">
-                                <User className="w-3.5 h-3.5 text-blue-500" /> Email Address
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                value={form.email}
-                                onChange={handleChange}
-                                className="w-full p-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-1">
-                            <label className="text-xs font-semibold text-gray-700 flex items-center gap-1">
-                                <User className="w-3.5 h-3.5 text-purple-500" /> ID
+                                <User className="w-3.5 h-3.5 text-blue-500" /> Email or ID
                             </label>
                             <input
                                 type="text"
-                                name="enrollmentNumber"
-                                placeholder="Enter your ID"
-                                value={form.enrollmentNumber}
+                                name="identifier"
+                                placeholder="Enter your email or ID"
+                                value={form.identifier}
                                 onChange={handleChange}
                                 className="w-full p-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                required
                             />
                         </div>
 

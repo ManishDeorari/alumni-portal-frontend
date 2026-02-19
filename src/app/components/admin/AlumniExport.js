@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -42,8 +44,11 @@ export default function AlumniExport() {
         }
     };
 
-    const downloadCSV = () => {
+    const downloadExcel = async () => {
         if (alumni.length === 0) return;
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Alumni Data");
 
         // Row 1: Group Headers
         const r1 = [
@@ -68,6 +73,10 @@ export default function AlumniExport() {
             "Recent Role", "Company", "Duration"
         ];
 
+        worksheet.addRow(r1);
+        worksheet.addRow(r2);
+        worksheet.addRow(r3);
+
         const MANDATORY_DEGREES = [
             "High School (Secondary - Class 10)",
             "Intermediate (Higher Secondary - Class 11-12)",
@@ -75,8 +84,19 @@ export default function AlumniExport() {
             "Postgraduate (Master's Degree)"
         ];
 
-        // CSV Data Rows
-        const rows = alumni.map((u, index) => {
+        const formatPhone = (phone) => {
+            if (!phone || phone === "N/A") return "N/A";
+            let cleaned = String(phone).replace(/\D/g, "");
+            if (cleaned.startsWith("91") && cleaned.length === 12) {
+                return `+91 ${cleaned.substring(2)}`;
+            }
+            if (cleaned.length === 10) {
+                return `+91 ${cleaned}`;
+            }
+            return phone.startsWith("+") ? phone : `+${cleaned}`;
+        };
+
+        alumni.forEach((u, index) => {
             const getEdu = (degreeName) => (u.education || []).find(e => e.degree === degreeName) || {};
 
             const hs = getEdu(MANDATORY_DEGREES[0]);
@@ -84,7 +104,6 @@ export default function AlumniExport() {
             const ug = getEdu(MANDATORY_DEGREES[2]);
             const pg = getEdu(MANDATORY_DEGREES[3]);
 
-            // Experience Logic: Current or Most Recent
             let recentExp = (u.experience || []).find(e => !e.endDate || e.endDate.toLowerCase().includes("present") || e.endDate.toLowerCase().includes("current"));
             if (!recentExp && u.experience?.length > 0) {
                 recentExp = [...u.experience].sort((a, b) => {
@@ -95,48 +114,48 @@ export default function AlumniExport() {
             }
             recentExp = recentExp || {};
 
-            // Address splitting (simple heuristic: "City, State, Country")
             const addrParts = (u.address || "").split(",").map(p => p.trim());
             const city = addrParts[0] || "N/A";
             const state = addrParts[1] || "N/A";
             const country = addrParts[2] || "N/A";
 
-            return [
+            worksheet.addRow([
                 index + 1,
                 u.enrollmentNumber || "N/A",
                 u.name,
                 u.email,
-                u.phone || "N/A",
+                formatPhone(u.phone),
                 city, state, country,
-                // HS
                 hs.institution || "NA", hs.endDate?.split(" ").pop() || "NA", hs.grade || "NA",
-                // Intermediate
                 inter.institution || "NA", inter.endDate?.split(" ").pop() || "NA", inter.grade || "NA",
-                // Undergraduate
                 ug.institution || "NA", ug.campus || "NA", ug.fieldOfStudy || "NA", ug.startDate?.split(" ").pop() || "NA", ug.endDate?.split(" ").pop() || "NA", ug.grade || "NA",
-                // Postgraduate
                 pg.institution || "NA", pg.campus || "NA", pg.fieldOfStudy || "NA", pg.startDate?.split(" ").pop() || "NA", pg.endDate?.split(" ").pop() || "NA", pg.grade || "NA",
-                // Experience
                 recentExp.title || "NA", recentExp.company || "NA", recentExp.startDate && recentExp.endDate ? `${recentExp.startDate} - ${recentExp.endDate}` : "NA"
-            ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(",");
+            ]);
         });
 
-        const csvContent = [
-            r1.join(","),
-            r2.join(","),
-            r3.join(","),
-            ...rows
-        ].join("\n");
+        // Styling
+        worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell) => {
+                // Center alignment for all cells
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `alumni_data_reshaped_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success("Reshaped CSV Downloaded Successfully");
+                // Bold style for headers (Rows 1, 2, 3)
+                if (rowNumber <= 3) {
+                    cell.font = { bold: true };
+                }
+            });
+        });
+
+        // Set column widths for better readability
+        worksheet.columns.forEach(column => {
+            column.width = 15;
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `alumni_data_${new Date().toISOString().split('T')[0]}.xlsx`);
+        toast.success("Excel File Downloaded Successfully");
     };
 
     return (
@@ -210,11 +229,11 @@ export default function AlumniExport() {
                             <h2 className="text-2xl font-black text-white tracking-tight">Export Preview ({alumni.length})</h2>
                         </div>
                         <button
-                            onClick={downloadCSV}
+                            onClick={downloadExcel}
                             className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-2xl font-black transition-all shadow-xl flex items-center gap-2 active:scale-95"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                            Download CSV
+                            Download Excel
                         </button>
                     </div>
 

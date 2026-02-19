@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 export default function LoginPage() {
   const router = useRouter();
   const [view, setView] = useState("LOGIN"); // LOGIN | FORGOT_EMAIL | FORGOT_OTP
-  const [form, setForm] = useState({ email: "", password: "", enrollmentNumber: "" });
+  const [form, setForm] = useState({ identifier: "", password: "" });
 
   // Forgot Password States
   const [resetEmail, setResetEmail] = useState("");
@@ -44,7 +44,10 @@ export default function LoginPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify(form),
+          body: JSON.stringify({
+            identifier: form.identifier,
+            password: form.password
+          }),
         });
 
       const data = await res.json();
@@ -139,21 +142,13 @@ export default function LoginPage() {
 
             <div className="space-y-3">
               <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
+                type="text"
+                name="identifier"
+                placeholder="Email or ID"
+                value={form.identifier}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-              />
-              <input
-                type="text"
-                name="enrollmentNumber"
-                placeholder="ID"
-                value={form.enrollmentNumber}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="password"
