@@ -5,8 +5,10 @@ import AdminSidebar from "../../components/AdminSidebar";
 import ChatSidebar from "../../components/messages/ChatSidebar";
 import ChatWindow from "../../components/messages/ChatWindow";
 import socket from "@/utils/socket";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function MessagesPage() {
+  const { darkMode } = useTheme();
   const [connectedUsers, setConnectedUsers] = useState([]);
   const [filteredConnections, setFilteredConnections] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -23,24 +25,20 @@ export default function MessagesPage() {
         const user = JSON.parse(localStorage.getItem("user"));
         setCurrentUser(user);
 
+        // Join socket room for notifications and messages
+        if (user?._id) {
+          socket.emit("join", user._id);
+        }
+
         // Fetch connections
-        // Note: Checking if /api/user/connected exists or using fallback logic
         let res = await fetch(`${API_URL}/api/user/connected`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        // Fallback: if /connected route doesn't exist, try getting all connections manually 
-        // (Assuming typical setup: check network/connections)
-        // For now relying on the route existing as per plan, if 404 we will debug.
 
         if (res.ok) {
           const data = await res.json();
           setConnectedUsers(data);
           setFilteredConnections(data);
-          if (data.length > 0) {
-            // Optionally auto-select first user, but maybe better to let user choose
-            // setSelectedUser(data[0]); 
-          }
         } else {
           console.error("Failed to fetch connections");
         }
@@ -80,22 +78,18 @@ export default function MessagesPage() {
   // 3. Socket.io listeners
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
-      // Defensive check for msg and msg.sender
       if (!msg || !msg.sender) return;
 
       const senderId = msg.sender._id || msg.sender.id || msg.sender;
       const selectedId = selectedUser?._id || selectedUser?.id;
       const currentId = currentUser?._id || currentUser?.id;
 
-      // Only append if the message belongs to the currently open chat
       if (selectedId && (senderId === selectedId || msg.recipient === selectedId || msg.recipient === currentId)) {
-        // Prevent duplicates (especially if optimistic update didn't resolve yet)
         setMessages((prev) => {
           if (prev.find(m => m._id === msg._id)) return prev;
           return [...prev, msg];
         });
 
-        // If message is from the selected user, mark it as read immediately
         if (senderId === selectedId) {
           markAsRead(selectedId);
         }
@@ -104,7 +98,6 @@ export default function MessagesPage() {
 
     const handleMessagesRead = ({ readerId }) => {
       const selectedId = selectedUser?._id || selectedUser?.id;
-      // If the other person read my messages, update local state to show blue ticks
       if (selectedId && readerId === selectedId) {
         setMessages((prev) =>
           prev.map((m) => {
@@ -140,16 +133,15 @@ export default function MessagesPage() {
   const handleSendMessage = async (text) => {
     if (!selectedUser || !text.trim()) return;
 
-    // Optimistic update
     const tempMsg = {
-      _id: Date.now(), // temp id
+      _id: Date.now(),
       sender: currentUser,
       recipient: selectedUser._id,
       content: text,
       createdAt: new Date().toISOString()
     };
     setMessages((prev) => [...prev, tempMsg]);
-    setNewMessage(""); // Clear input immediately
+    setNewMessage("");
 
     try {
       const token = localStorage.getItem("token");
@@ -165,24 +157,14 @@ export default function MessagesPage() {
         }),
       });
 
-      if (res.ok) {
-        const savedMsg = await res.json();
-        // Replace temp message with real one (or just assume success since we optimistic updated)
-        // Ideally we map and replace ID, but appending works for now if we don't duplicate.
-        // Since we optimistic updated, we might get a duplicate if socket also fires back 'receiveMessage' for self.
-        // Usually 'receiveMessage' is broadcast to others, not sender. 
-        // If socket emits to sender too, we need to handle dedup. 
-        // My backend code: req.io.to(recipientId).emit... -> It sends to RECIPIENT, not sender. So optimistic update is fine.
-      } else {
+      if (!res.ok) {
         console.error("Failed to send message");
-        // Revert optimistic update ideally
       }
     } catch (err) {
       console.error("Error sending message:", err);
     }
   };
 
-  // 5. Search Logic
   const handleSearch = (term) => {
     if (!term.trim()) {
       setFilteredConnections(connectedUsers);
@@ -203,7 +185,7 @@ export default function MessagesPage() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+    <div className={`min-h-screen transition-colors duration-300 relative ${darkMode ? "bg-gray-950 text-white" : "bg-white text-black"}`}>
       <SidebarComponent />
 
       <div className="p-6 max-w-7xl mx-auto flex gap-6 mt-6">
