@@ -144,7 +144,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[500px]"
+          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16"
         >
           <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-white text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-6 px-8 md:py-8 md:px-10 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-500`}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
@@ -330,14 +330,26 @@ export default function LoginPage() {
             )}
 
             {/* Back to Home Inside the Div */}
-            <div className="pt-2 border-t border-white/5 text-center">
+            <div className="pt-4 border-t border-white/5 text-center">
               <Link
                 href="/"
-                className={`inline-flex items-center gap-3 ${darkMode ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-gray-800"} transition-all group`}
+                className={`group inline-flex items-center gap-2.5 px-6 py-2 rounded-full transition-all duration-300 ${darkMode
+                    ? "text-gray-400 hover:text-white hover:bg-white/5"
+                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                  }`}
               >
-                <span className={`w-3 h-[1px] ${darkMode ? "bg-gray-700" : "bg-gray-300"} group-hover:w-8 transition-all`}></span>
-                <span className="text-[10px] uppercase tracking-[0.3em] font-black">Back to Home</span>
-                <span className={`w-3 h-[1px] ${darkMode ? "bg-gray-700" : "bg-gray-300"} group-hover:w-8 transition-all`}></span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1 ${darkMode ? "text-gray-500 group-hover:text-blue-400" : "text-gray-400 group-hover:text-blue-500"}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span className="text-[11px] uppercase tracking-[0.2em] font-black italic">
+                  Return to Home
+                </span>
               </Link>
             </div>
           </div>

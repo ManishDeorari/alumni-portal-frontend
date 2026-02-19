@@ -25,11 +25,6 @@ export default function MessagesPage() {
         const user = JSON.parse(localStorage.getItem("user"));
         setCurrentUser(user);
 
-        // Join socket room for notifications and messages
-        if (user?._id) {
-          socket.emit("join", user._id);
-        }
-
         // Fetch connections
         let res = await fetch(`${API_URL}/api/user/connected`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -50,6 +45,26 @@ export default function MessagesPage() {
 
     fetchData();
   }, [API_URL]);
+
+  // 1b. Robust Socket Room Joining (handles reconnection)
+  useEffect(() => {
+    if (!currentUser?._id) return;
+
+    const joinRoom = () => {
+      console.log(`🔌 [Socket] Emitting join for user: ${currentUser._id}`);
+      socket.emit("join", currentUser._id);
+    };
+
+    if (socket.connected) {
+      joinRoom();
+    }
+
+    socket.on("connect", joinRoom);
+
+    return () => {
+      socket.off("connect", joinRoom);
+    };
+  }, [currentUser]);
 
   // 2. Fetch messages when a user is selected
   useEffect(() => {
@@ -78,34 +93,47 @@ export default function MessagesPage() {
   // 3. Socket.io listeners
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
+      console.log("📩 [Socket] Received message:", msg);
       if (!msg || !msg.sender) return;
 
       const senderId = msg.sender._id || msg.sender.id || msg.sender;
-      const selectedId = selectedUser?._id || selectedUser?.id;
       const currentId = currentUser?._id || currentUser?.id;
 
-      if (selectedId && (senderId === selectedId || msg.recipient === selectedId || msg.recipient === currentId)) {
-        setMessages((prev) => {
-          if (prev.find(m => m._id === msg._id)) return prev;
-          return [...prev, msg];
-        });
+      // We handle the update based on whether this message belongs to the current conversation
+      // We use a functional update for setMessages to avoid stale closure issues with 'messages'
+      // But we still need to know current 'selectedUser'. However, since we are in a useEffect 
+      // that depends on [selectedUser], the closure *should* be fresh for that specific selectedId.
 
-        if (senderId === selectedId) {
-          markAsRead(selectedId);
+      setSelectedUser(currentSelected => {
+        const selectedId = currentSelected?._id || currentSelected?.id;
+
+        if (selectedId && (senderId === selectedId || msg.recipient === selectedId || msg.recipient === currentId)) {
+          setMessages((prev) => {
+            if (prev.find(m => m._id === msg._id)) return prev;
+            return [...prev, msg];
+          });
+
+          if (senderId === selectedId) {
+            markAsRead(selectedId);
+          }
         }
-      }
+        return currentSelected; // Don't actually change selectedUser
+      });
     };
 
     const handleMessagesRead = ({ readerId }) => {
-      const selectedId = selectedUser?._id || selectedUser?.id;
-      if (selectedId && readerId === selectedId) {
-        setMessages((prev) =>
-          prev.map((m) => {
-            const recipientId = m.recipient?._id || m.recipient?.id || m.recipient;
-            return recipientId === readerId ? { ...m, read: true } : m;
-          })
-        );
-      }
+      setSelectedUser(currentSelected => {
+        const selectedId = currentSelected?._id || currentSelected?.id;
+        if (selectedId && readerId === selectedId) {
+          setMessages((prev) =>
+            prev.map((m) => {
+              const recipientId = m.recipient?._id || m.recipient?.id || m.recipient;
+              return recipientId === readerId ? { ...m, read: true } : m;
+            })
+          );
+        }
+        return currentSelected;
+      });
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
@@ -185,26 +213,35 @@ export default function MessagesPage() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 relative ${darkMode ? "bg-gray-950 text-white" : "bg-white text-black"}`}>
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white">
       <SidebarComponent />
 
-      <div className="p-6 max-w-7xl mx-auto flex gap-6 mt-6">
-        <ChatSidebar
-          connections={filteredConnections}
-          selectedUser={selectedUser}
-          onSelectUser={setSelectedUser}
-          onSearch={handleSearch}
-        />
+      <main className="p-4 max-w-7xl mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
+        {/* Main Content Container with Gradient Border */}
+        <div className="relative p-[2px] rounded-3xl shadow-2xl overflow-hidden h-full">
+          {/* Gradient Border Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
-        <ChatWindow
-          selectedUser={selectedUser}
-          messages={messages}
-          currentUser={currentUser}
-          onSendMessage={handleSendMessage}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-        />
-      </div>
+          <div className={`relative flex gap-6 p-6 rounded-[22px] transition-colors duration-300 ${darkMode ? "bg-gray-950/90" : "bg-white/90"
+            }`}>
+            <ChatSidebar
+              connections={filteredConnections}
+              selectedUser={selectedUser}
+              onSelectUser={setSelectedUser}
+              onSearch={handleSearch}
+            />
+
+            <ChatWindow
+              selectedUser={selectedUser}
+              messages={messages}
+              currentUser={currentUser}
+              onSendMessage={handleSendMessage}
+              newMessage={newMessage}
+              setNewMessage={setNewMessage}
+            />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
