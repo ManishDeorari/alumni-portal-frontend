@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Award, Target, Zap, Heart, MessageSquare } from "lucide-react";
 
-const PointsScenario = () => {
+const PointsScenario = ({ darkMode = false }) => {
     const [config, setConfig] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -25,9 +25,9 @@ const PointsScenario = () => {
     }, []);
 
     if (loading) return (
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-200 animate-pulse space-y-4">
-            <div className="h-4 bg-gray-100 rounded w-3/4"></div>
-            <div className="h-20 bg-gray-50 rounded-2xl"></div>
+        <div className={`${darkMode ? "bg-slate-900" : "bg-white"} p-6 rounded-[2rem] animate-pulse space-y-4`}>
+            <div className={`h-4 ${darkMode ? "bg-white/5" : "bg-gray-100"} rounded w-3/4`}></div>
+            <div className={`h-20 ${darkMode ? "bg-white/5" : "bg-gray-50"} rounded-2xl`}></div>
         </div>
     );
 
@@ -42,38 +42,42 @@ const PointsScenario = () => {
     ];
 
     return (
-        <div className="bg-white p-4 rounded-[2rem] border border-gray-200 shadow-xl relative overflow-hidden group">
+        <div className={`${darkMode ? "bg-slate-900" : "bg-white"} p-6 rounded-[2rem] shadow-xl relative overflow-hidden group transition-colors duration-500 min-h-[460px] flex flex-col justify-between`}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-amber-500"></div>
 
-            <div className="mb-3">
-                <h3 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-                    🎖️ Points System
-                </h3>
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Earn & Rank Up</p>
-            </div>
+            <div>
+                <div className="mb-4">
+                    <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
+                        🎖️ Points System
+                    </h3>
+                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-widest mt-1`}>Earn & Rank Up</p>
+                </div>
 
-            <div className="space-y-2">
-                {scenarios.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-transparent hover:border-gray-200 transition-all hover:bg-white group/item shadow-sm hover:shadow-md">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white rounded-lg group-hover/item:scale-110 transition-transform shadow-sm">
-                                {item.icon}
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-gray-800 leading-tight">{item.label}</p>
-                                <p className="text-[10px] text-gray-500 font-medium leading-tight">{item.desc}</p>
+                <div className="space-y-1.5">
+                    {scenarios.map((item, idx) => (
+                        <div key={idx} className="p-[1px] bg-gradient-to-tr from-blue-600 to-purple-700 rounded-xl">
+                            <div className={`flex items-center justify-between py-2.5 px-3.5 ${darkMode ? "bg-[#1e293b]" : "bg-white"} rounded-[11px] group/item shadow-sm hover:shadow-md transition-all`}>
+                                <div className="flex items-center gap-3">
+                                    <div className={`p-2 ${darkMode ? "bg-white/5" : "bg-gray-50"} rounded-lg group-hover/item:scale-110 transition-transform shadow-sm`}>
+                                        {item.icon}
+                                    </div>
+                                    <div>
+                                        <p className={`text-xs font-bold ${darkMode ? "text-white" : "text-gray-800"} leading-tight`}>{item.label}</p>
+                                        <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-500"} font-medium leading-tight`}>{item.desc}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>+{item.value}</span>
+                                    <p className={`text-[9px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-tighter`}>pts</p>
+                                </div>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <span className="text-sm font-black text-gray-900">+{item.value}</span>
-                            <p className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">pts</p>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-                <p className="text-[10px] text-gray-400 font-bold italic leading-relaxed">
+            <div className={`mt-6 pt-6 ${darkMode ? "border-white/5" : "border-gray-100"} border-t text-center`}>
+                <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-bold italic leading-relaxed`}>
                     &quot;Consistent engagement leads to higher ranking!&quot;
                 </p>
             </div>

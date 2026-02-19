@@ -23,7 +23,7 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
         onClick={() => setShowViewer(true)} // open full view
         onContextMenu={(e) => isRestricted && e.preventDefault()}
         onDragStart={(e) => isRestricted && e.preventDefault()}
-        className={`rounded-full border-4 border-white object-cover w-28 h-28 cursor-pointer ${isRestricted ? 'select-none' : ''}`}
+        className={`rounded-full border-4 border-black object-cover w-28 h-28 cursor-pointer shadow-[0_15px_35px_rgba(37,99,235,0.25),0_10px_25px_rgba(168,85,247,0.25)] hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
       />
 
       {!isPublicView && (

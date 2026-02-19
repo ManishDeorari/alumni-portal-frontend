@@ -12,6 +12,8 @@ const EmojiPickerToggle = ({
   icon = "😀",
   offset = DEFAULT_OFFSET,
   placement = "auto", // "top", "bottom", or "auto"
+  isCentered = false, // New prop for viewport centering
+  darkMode = false,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerStyle, setPickerStyle] = useState({ top: "0px", left: "0px" });
@@ -45,54 +47,85 @@ const EmojiPickerToggle = ({
       document.addEventListener("mousedown", handleClickOutside);
 
       const updatePosition = () => {
+        if (isCentered) {
+          setPickerStyle({
+            position: "fixed",
+            zIndex: 9999,
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          });
+          return;
+        }
+
         if (buttonRef.current) {
           const rect = buttonRef.current.getBoundingClientRect();
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
 
-          const pickerWidth = 500;
-          const pickerHeight = 600;
+          // Dimensions for the picker
+          const pickerWidth = 352;
+          const pickerHeight = 440;
 
-          const spaceRight = windowWidth - rect.left;
-          const spaceBottom = windowHeight - rect.bottom;
-          const spaceTop = rect.top;
-
-          const tooCloseToRight = spaceRight < pickerWidth;
-          const tooCloseToBottom = spaceBottom < pickerHeight;
-          const tooCloseToTop = spaceTop < pickerHeight;
-
-          // Calculate absolute fixed position based on viewport
           const style = {
             position: "fixed",
             zIndex: 9999,
           };
 
-          const showOnTop = placement === "top" || (placement === "auto" && tooCloseToBottom && !tooCloseToTop);
+          // Vertical placement decision
+          const spaceBelow = windowHeight - rect.bottom;
+          const spaceAbove = rect.top;
 
-          if (showOnTop) {
+          const PICKER_BUFFER = 40; // Avoid flipping too easily
+
+          let finalPlacement = placement;
+          if (placement === "auto") {
+            // If current placement is bottom but space is tight, flip to top
+            if (spaceBelow < pickerHeight + PICKER_BUFFER && spaceAbove > pickerHeight + PICKER_BUFFER) {
+              finalPlacement = "top";
+            } else if (spaceAbove < pickerHeight + PICKER_BUFFER && spaceBelow > pickerHeight + PICKER_BUFFER) {
+              finalPlacement = "bottom";
+            } else {
+              // Default to where there's more space
+              finalPlacement = spaceBelow > spaceAbove ? "bottom" : "top";
+            }
+          }
+
+          if (finalPlacement === "top") {
             style.bottom = `${windowHeight - rect.top + 8 + offset.y}px`;
           } else {
-            // Default to showing below unless forced top or auto-detected bottom
             style.top = `${rect.bottom + 8 + offset.y}px`;
           }
 
-          if (tooCloseToRight) {
-            style.right = `${windowWidth - rect.right + offset.x}px`;
-          } else {
-            style.left = `${rect.left + offset.x}px`;
+          // Horizontal placement (center relative to button, but stay in viewport)
+          let leftPos = rect.left + (rect.width / 2) - (pickerWidth / 2) + offset.x;
+
+          // boundary checks
+          if (leftPos < 10) leftPos = 10;
+          if (leftPos + pickerWidth > windowWidth - 10) {
+            leftPos = windowWidth - pickerWidth - 10;
           }
+
+          style.left = `${leftPos}px`;
 
           setPickerStyle(style);
         }
       };
 
+      let rafId = null;
+      const onScrollOrResize = () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(updatePosition);
+      };
+
       updatePosition();
-      window.addEventListener("scroll", updatePosition, true);
-      window.addEventListener("resize", updatePosition);
+      window.addEventListener("scroll", onScrollOrResize, { capture: true, passive: true });
+      window.addEventListener("resize", onScrollOrResize);
 
       return () => {
-        window.removeEventListener("scroll", updatePosition, true);
-        window.removeEventListener("resize", updatePosition);
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener("scroll", onScrollOrResize, { capture: true });
+        window.removeEventListener("resize", onScrollOrResize);
       };
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -101,7 +134,16 @@ const EmojiPickerToggle = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showPicker, offset]);
+  }, [showPicker, offset, isCentered, placement]);
+
+  // Responsive settings
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <div className="inline-block">
@@ -120,21 +162,20 @@ const EmojiPickerToggle = ({
             ref={pickerRef}
             className="shadow-2xl rounded-xl overflow-hidden ring-1 ring-black ring-opacity-5"
             style={pickerStyle}
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            initial={isCentered ? { opacity: 0, scale: 0.9 } : { opacity: 0, scale: 0.9, y: 10 }}
+            animate={isCentered ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={isCentered ? { opacity: 0, scale: 0.9 } : { opacity: 0, scale: 0.9, y: 10 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
             <Picker
               data={data}
               onEmojiSelect={(emoji) => {
                 onEmojiSelect(emoji);
-                // setShowPicker(false); // Keep open until click outside
               }}
-              theme="dark"
-              perLine={8}
-              emojiSize={24}
-              emojiButtonSize={36}
+              theme={darkMode ? "dark" : "light"}
+              perLine={isMobile ? 7 : 8}
+              emojiSize={isMobile ? 22 : 24}
+              emojiButtonSize={isMobile ? 32 : 36}
             />
           </motion.div>
         </AnimatePresence>,

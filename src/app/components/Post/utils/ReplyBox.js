@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 
-export default function ReplyBox({ parentId, onSubmit }) {
+export default function ReplyBox({ parentId, onSubmit, darkMode = false }) {
   const [replyText, setReplyText] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [sending, setSending] = useState(false);
@@ -28,7 +28,7 @@ export default function ReplyBox({ parentId, onSubmit }) {
         value={replyText}
         onChange={(e) => setReplyText(e.target.value)}
         placeholder="Write a reply..."
-        className="flex-grow border rounded px-2 py-1 text-sm"
+        className={`flex-grow border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-black bg-white text-black"} rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-blue-500`}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -37,12 +37,10 @@ export default function ReplyBox({ parentId, onSubmit }) {
         }}
       />
       <EmojiPickerToggle
-        show={showEmoji}
         onEmojiSelect={(emoji) =>
           setReplyText((prev) => prev + emoji.native)
         }
-        onToggle={() => setShowEmoji((prev) => !prev)}
-        positionClass="absolute top-10 left-2"
+        placement="top"
       />
       <button
         onClick={handleSend}

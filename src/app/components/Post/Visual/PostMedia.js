@@ -4,7 +4,7 @@ import Image from "next/image";
 import ImageGallery from "../utils/ImageGallery";
 import FullImageViewer from "../utils/FullImageViewer";
 
-export default function PostMedia({ post, setSelectedImage, currentUser }) {
+export default function PostMedia({ post, setSelectedImage, currentUser, darkMode = false }) {
   if (!(post.images?.length > 0 || post.video || post.image)) return null;
 
   const isRestricted = post.user?._id !== currentUser?._id && currentUser?.role !== 'admin';
@@ -22,7 +22,7 @@ export default function PostMedia({ post, setSelectedImage, currentUser }) {
 
       {/* Single fallback image (older posts) */}
       {!post.images?.length && post.image && (
-        <div className="relative max-h-96 w-full flex justify-center border rounded-lg overflow-hidden">
+        <div className={`relative max-h-96 w-full flex justify-center border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-lg overflow-hidden`}>
           <Image
             src={post.image}
             alt="post"
@@ -48,7 +48,7 @@ export default function PostMedia({ post, setSelectedImage, currentUser }) {
           controls
           onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
-          className={`rounded-lg w-full max-h-96 border mt-2 ${isRestricted ? 'select-none' : ''}`}
+          className={`rounded-lg w-full max-h-96 border ${darkMode ? "border-white/10" : "border-gray-200"} mt-2 ${isRestricted ? 'select-none' : ''}`}
           controlsList={isRestricted ? "nodownload" : ""}
         >
           <source src={post.video.url} type="video/mp4" />

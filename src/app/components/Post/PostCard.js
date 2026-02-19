@@ -22,7 +22,7 @@ import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
-export default function PostCard({ post, currentUser, setPosts, initialShowComments = false }) {
+export default function PostCard({ post, currentUser, setPosts, initialShowComments = false, darkMode = false }) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content || "");
   const [showEditEmoji, setShowEditEmoji] = useState(false);
@@ -141,181 +141,194 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      className={`relative rounded-lg border border-black p-4 space-y-3 shadow transition-all duration-300
-          text-black
-          ${isMyPost ? "bg-gradient-to-tr from-gray-175 to-blue-50" : "bg-white"}
-          hover:shadow-md`}
+      className={`relative p-4 ${darkMode ? "bg-slate-900 shadow-none" : "bg-white shadow-[0_20px_60px_rgba(37,99,235,0.2)]"} rounded-[3rem] transition-all duration-500`}
     >
-      <PostHeader {...{
-        post, currentUser, editing, toggleEdit: () =>
-          toggleEdit(editKey, setEditContent, editing, post.content), handleDelete
-      }} />
+      <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[2.6rem]`}>
+        <div className={`relative rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-slate-900" : "bg-white")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+          <PostHeader {...{
+            post, currentUser, editing, toggleEdit: () =>
+              toggleEdit(editKey, setEditContent, editing, post.content), handleDelete, darkMode
+          }} />
 
-      <PostContent
-        {...{
-          post,
-          editing,
-          editContent,
-          setEditContent,
-          handleEditSave,
-          handleBlurSave,
-          showEditEmoji,
-          setShowEditEmoji,
-          textareaRef,
-          getEmojiFromUnified,
-          setShowModal,
-        }}
-      />
-
-      <PostMedia
-        post={post}
-        currentUser={currentUser}
-        setSelectedImage={(index) => {
-          setStartIndex(index);
-          setShowViewer(true);
-        }}
-      />
-
-      <PostReactions
-        {...{
-          post,
-          hasLiked,
-          handleReact,
-          userReacted,
-          getReactionCount,
-          setShowModal,
-          likeIconRef,
-          isLiking,
-          setVisibleComments,
-          setReactionEffect,
-          reactionEffect,
-          showComments,
-          setShowComments,
-          setShowReactionModal,
-          setReactionModalEmoji,
-          setReactionModalUsers,
-        }}
-      />
-
-      {showComments && (
-        <div className="pt-2 border-t border-black space-y-2">
-          {(post.comments || [])
-            .slice()
-            .reverse()
-            .slice(0, visibleComments)
-            .map((c) => (
-              <CommentCard
-                key={c._id}
-                comment={c}
-                currentUser={currentUser}
-                onReply={handleReply}
-                onDelete={handleDeleteComment}
-                onEdit={handleEditComment}
-                replies={c.replies || []}
-                postId={post._id}
-                onEditReply={handleEditReply}
-                onDeleteReply={handleDeleteReply}
-                onReactToReply={handleReactToReply}
-              />
-            ))}
-
-          {(post.comments || []).length > visibleComments && (
-            <button
-              onClick={handleLoadMore}
-              className="mt-2 text-sm text-blue-600 hover:underline"
-            >
-              Load more comments
-            </button>
-          )}
-
-          {visibleComments > 2 && (
-            <button
-              onClick={() => setVisibleComments(2)}
-              className="mt-1 text-sm text-red-500 hover:underline"
-            >
-              Show less comments
-            </button>
-          )}
-        </div>
-      )}
-
-      <CommentInput
-        comment={comment}
-        setComment={setComment}
-        onEmojiClick={(emoji) => setComment((prev) => prev + emoji)}
-        onSubmit={() => handleComment(comment)} // ✅ Correct
-        showCommentEmoji={showCommentEmoji}
-        setShowCommentEmoji={setShowCommentEmoji}
-        typing={someoneTyping}
-        isTyping={(val) => setSomeoneTyping(val)}
-      />
-
-      {someoneTyping && (
-        <p className="text-xs text-gray-400 mt-1 ml-2 italic">
-          Someone is typing...
-        </p>
-      )}
-
-      <hr className="my-6 border-black" />
-
-      <AnimatePresence>
-        {showModal && (
-          <PostModal
+          <PostContent
             {...{
               post,
-              currentUser,
-              showModal,
-              setShowModal,
-              toggleEdit,
-              handleReact,
-              userReacted,
-              getReactionCount,
-              showThread,
-              setShowThread,
-              handleReply,
-              handleDeleteComment,
-              handleComment,
-              handleEditComment,
-              handleEditReply,
-              handleDeleteReply,
-              handleReactToReply,
-              comment,
-              setComment,
               editing,
-              setEditing,
               editContent,
               setEditContent,
               handleEditSave,
               handleBlurSave,
-              toggleEdit,
-              handleDelete,
               showEditEmoji,
               setShowEditEmoji,
               textareaRef,
-              // ✅ ADD THESE for FullImageViewer support
-              setShowViewer,
-              setStartIndex,
+              getEmojiFromUnified,
+              setShowModal,
+              darkMode
             }}
           />
-        )}
-      </AnimatePresence>
 
-      {showViewer && (
-        <FullImageViewer
-          images={post.images?.map((img) => img.url)} // ✅ extract URLs
-          startIndex={startIndex}
-          onClose={() => setShowViewer(false)}
-          isRestricted={isRestricted}
-        />
-      )}
+          <PostMedia
+            post={post}
+            currentUser={currentUser}
+            setSelectedImage={(index) => {
+              setStartIndex(index);
+              setShowViewer(true);
+            }}
+            darkMode={darkMode}
+          />
+          {/* Gradient Separator before Reactions */}
+          <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-blue-500/30" : "via-blue-600/50"} to-transparent my-2`} />
 
-      {showReactionModal && (
-        <ReactionModal
-          emoji={reactionModalEmoji}
-          users={reactionModalUsers}
-          onClose={() => setShowReactionModal(false)}
-        />
-      )}
+          <PostReactions
+            {...{
+              post,
+              hasLiked,
+              handleReact,
+              userReacted,
+              getReactionCount,
+              setShowModal,
+              likeIconRef,
+              isLiking,
+              setVisibleComments,
+              setReactionEffect,
+              reactionEffect,
+              showComments,
+              setShowComments,
+              setShowReactionModal,
+              setReactionModalEmoji,
+              setReactionModalUsers,
+              darkMode
+            }}
+          />
+
+
+          <CommentInput
+            comment={comment}
+            setComment={setComment}
+            onEmojiClick={(emoji) => setComment((prev) => prev + emoji)}
+            onSubmit={() => handleComment(comment)} // ✅ Correct
+            showCommentEmoji={showCommentEmoji}
+            setShowCommentEmoji={setShowCommentEmoji}
+            typing={someoneTyping}
+            isTyping={(val) => setSomeoneTyping(val)}
+            darkMode={darkMode}
+          />
+
+          {someoneTyping && (
+            <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-400"} mt-1 ml-2 italic`}>
+              Someone is typing...
+            </p>
+          )}
+
+          {/* Gradient Separator after Comment Input */}
+          {showComments && (
+            <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-purple-500/30" : "via-purple-600/50"} to-transparent my-4`} />
+          )}
+
+          {showComments && (
+            <div className="pt-2 space-y-3">
+              {(post.comments || [])
+                .slice()
+                .reverse()
+                .slice(0, visibleComments)
+                .map((c) => (
+                  <CommentCard
+                    key={c._id}
+                    comment={c}
+                    currentUser={currentUser}
+                    onReply={handleReply}
+                    onDelete={handleDeleteComment}
+                    onEdit={handleEditComment}
+                    replies={c.replies || []}
+                    postId={post._id}
+                    onEditReply={handleEditReply}
+                    onDeleteReply={handleDeleteReply}
+                    onReactToReply={handleReactToReply}
+                    darkMode={darkMode}
+                  />
+                ))}
+
+              {(post.comments || []).length > visibleComments && (
+                <button
+                  onClick={handleLoadMore}
+                  className="mt-2 text-sm text-blue-600 hover:underline"
+                >
+                  Load more comments
+                </button>
+              )}
+
+              {visibleComments > 2 && (
+                <button
+                  onClick={() => setVisibleComments(2)}
+                  className="mt-1 text-sm text-red-500 hover:underline"
+                >
+                  Show less comments
+                </button>
+              )}
+            </div>
+          )}
+
+          <AnimatePresence>
+            {showModal && (
+              <PostModal
+                {...{
+                  post,
+                  currentUser,
+                  showModal,
+                  setShowModal,
+                  toggleEdit,
+                  handleReact,
+                  userReacted,
+                  getReactionCount,
+                  showThread,
+                  setShowThread,
+                  handleReply,
+                  handleDeleteComment,
+                  handleComment,
+                  handleEditComment,
+                  handleEditReply,
+                  handleDeleteReply,
+                  handleReactToReply,
+                  comment,
+                  setComment,
+                  editing,
+                  setEditing,
+                  editContent,
+                  setEditContent,
+                  handleEditSave,
+                  handleBlurSave,
+                  toggleEdit,
+                  handleDelete,
+                  showEditEmoji,
+                  setShowEditEmoji,
+                  textareaRef,
+                  // ✅ ADD THESE for FullImageViewer support
+                  setShowViewer,
+                  setStartIndex,
+                  darkMode
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {showViewer && (
+            <FullImageViewer
+              images={post.images?.map((img) => img.url)} // ✅ extract URLs
+              startIndex={startIndex}
+              onClose={() => setShowViewer(false)}
+              isRestricted={isRestricted}
+            />
+          )}
+
+          {showReactionModal && (
+            <ReactionModal
+              emoji={reactionModalEmoji}
+              users={reactionModalUsers}
+              onClose={() => setShowReactionModal(false)}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

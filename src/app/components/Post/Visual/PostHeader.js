@@ -3,7 +3,7 @@ import Image from "next/image";
 import ImageViewerModal from "../../profile/ImageViewerModal";
 import Link from "next/link";
 
-export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete }) {
+export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, darkMode = false }) {
   const [showViewer, setShowViewer] = useState(false);
   const profileImg = post.user?.profilePicture || "/default-profile.jpg";
   const isSelf = post.user?._id === currentUser?._id;
@@ -19,7 +19,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
           height={48}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
-          className={`rounded-full border-2 border-black object-cover w-full h-full cursor-pointer shadow-sm hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
+          className={`rounded-full border-2 ${darkMode ? "border-blue-500" : "border-black"} object-cover w-full h-full cursor-pointer hover:scale-110 transition-transform ${isRestricted ? 'select-none' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
             setShowViewer(true);
@@ -38,13 +38,13 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
         )}
       </div>
       <div>
-        <div className="font-semibold flex items-center gap-1">
+        <div className={`font-semibold flex items-center gap-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
           {isSelf ? (
-            <span className="text-gray-900">{post.user?.name || "Unknown"}</span>
+            <span>{post.user?.name || "Unknown"}</span>
           ) : (
             <Link
               href={`/dashboard/profile?id=${post.user?._id}`}
-              className="hover:underline text-blue-700 decoration-blue-400 decoration-2 transition-colors cursor-pointer"
+              className={`hover:underline ${darkMode ? "text-blue-400 decoration-blue-500" : "text-blue-700 decoration-blue-400"} decoration-2 transition-colors cursor-pointer`}
             >
               {post.user?.name || "Unknown"}
             </Link>
@@ -63,15 +63,15 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
             </span>
           )}
         </div>
-        <p className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+        <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"}`}>{new Date(post.createdAt).toLocaleString()}</p>
       </div>
 
       {post.user?._id === currentUser._id && (
         <div className="ml-auto flex gap-2">
-          <button onClick={toggleEdit} className="text-blue-600 text-sm hover:underline">
+          <button onClick={toggleEdit} className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-sm hover:underline font-bold`}>
             {editing ? "Cancel" : "Edit"}
           </button>
-          <button onClick={handleDelete} className="text-red-600 text-sm hover:underline">
+          <button onClick={handleDelete} className={`${darkMode ? "text-red-400" : "text-red-600"} text-sm hover:underline font-bold`}>
             Delete
           </button>
         </div>

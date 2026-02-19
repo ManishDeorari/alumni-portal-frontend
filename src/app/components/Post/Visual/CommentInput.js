@@ -8,6 +8,7 @@ export default function CommentInput({
   onSubmit,
   postId,
   currentUser,
+  darkMode = false
 }) {
   const inputRef = useRef(null);
 
@@ -16,13 +17,13 @@ export default function CommentInput({
   };
 
   const handleTyping = (value) => {
-  setComment(value);
-  if (!currentUser || !currentUser._id) return;
-  socket.emit("typing", {
-    postId,
-    user: currentUser._id,
-  });
-};
+    setComment(value);
+    if (!currentUser || !currentUser._id) return;
+    socket.emit("typing", {
+      postId,
+      user: currentUser._id,
+    });
+  };
 
   return (
     <div className="relative mt-2">
@@ -38,7 +39,7 @@ export default function CommentInput({
             }
           }}
           placeholder="Write a comment..."
-          className="flex-1 border border-black-300 rounded-full px-4 py-2 text-sm focus:outline-none"
+          className={`flex-1 border ${darkMode ? "border-white/20 bg-slate-800 text-white" : "border-black bg-white text-gray-900"} rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
           ref={inputRef}
         />
 
@@ -46,6 +47,8 @@ export default function CommentInput({
           onEmojiSelect={handleEmojiClick}
           icon="😊"
           iconSize="text-xl"
+          placement="top"
+          darkMode={darkMode}
         />
 
         <button

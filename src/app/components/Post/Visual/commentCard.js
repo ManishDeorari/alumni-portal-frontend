@@ -21,6 +21,7 @@ export default function CommentCard({
   onEditReply,
   onDeleteReply,
   onReactToReply,
+  darkMode = false
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
@@ -54,19 +55,13 @@ export default function CommentCard({
     if (!showEmoji && reactButtonRef.current) {
       const rect = reactButtonRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const spaceAbove = rect.top;
 
       const style = {
         position: "fixed",
         zIndex: 9999,
         left: `${rect.left}px`,
+        bottom: `${windowHeight - rect.top + 8}px`, // Forced Above
       };
-
-      if (spaceAbove > 150) {
-        style.bottom = `${windowHeight - rect.top + 8}px`;
-      } else {
-        style.top = `${rect.bottom + 8}px`;
-      }
 
       setPickerStyle(style);
     }
@@ -134,16 +129,16 @@ export default function CommentCard({
   return (
     <div
       ref={commentRef}
-      className={`mt-2 rounded-md space-y-2 py-2 px-2 relative transition-all duration-500
+      className={`mt-2 rounded-xl space-y-2 py-3 px-3 relative transition-all duration-500 border
         ${isReply
           ? isOwn
-            ? "bg-yellow-100 border border-yellow-400 pl-6 ml-3 border-l-[3px] border-blue-300"
-            : "bg-white text-black border border-black pl-6 ml-3 border-l-[3px] border-blue-300"
+            ? `${darkMode ? "bg-blue-500/10 border-blue-500/50" : "bg-yellow-100 border-black"} pl-6 ml-3 border-l-[3px] border-blue-500`
+            : `${darkMode ? "bg-slate-800/50 border-white/20 text-gray-200" : "bg-white text-black border-black"} pl-6 ml-3 border-l-[3px] border-blue-300`
           : isOwn
-            ? "bg-yellow-50 border border-yellow-400"
-            : "bg-white border border-black"
+            ? `${darkMode ? "bg-blue-600/10 border-blue-600/40" : "bg-yellow-50 border-black"}`
+            : `${darkMode ? "bg-slate-800 border-white/20 text-gray-200" : "bg-white border-black"}`
         }
-        ${justPosted ? "ring-2 ring-yellow-400" : ""}
+        ${justPosted ? "ring-2 ring-blue-400" : ""}
       `}
     >
       <div className="flex justify-between items-start">
@@ -153,22 +148,22 @@ export default function CommentCard({
             alt="User"
             width={32}
             height={32}
-            className="w-8 h-8 rounded-full border border-black object-cover mt-0.5"
+            className={`w-8 h-8 rounded-full border ${darkMode ? "border-white/20" : "border-black"} object-cover mt-0.5`}
           />
           <div className="w-full">
-            <div className="text-sm font-semibold flex items-center gap-1">
+            <div className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? "text-white" : ""}`}>
               {isOwn ? (
-                <span className="text-gray-900">{comment.user?.name || "Unknown"}</span>
+                <span>{comment.user?.name || "Unknown"}</span>
               ) : (
                 <Link
                   href={`/dashboard/profile?id=${comment.user?._id}`}
-                  className="hover:underline text-blue-700 cursor-pointer"
+                  className={`hover:underline ${darkMode ? "text-blue-400" : "text-blue-700"} cursor-pointer`}
                 >
                   {comment.user?.name || "Unknown"}
                 </Link>
               )}
               {isOwn && (
-                <span className="text-[10px] text-green-700 bg-green-100 px-1 rounded">
+                <span className={`text-[10px] ${darkMode ? "text-blue-400 bg-blue-500/10" : "text-green-700 bg-green-100"} px-2 rounded-full font-bold`}>
                   You
                 </span>
               )}
@@ -180,16 +175,16 @@ export default function CommentCard({
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   placeholder="Edit your comment..."
-                  className="w-full border rounded px-2 py-1 text-sm"
+                  className={`w-full border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-gray-200 bg-white text-gray-900"} rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none`}
                 />
                 <EmojiPickerToggle
-                  show={showEmoji}
                   onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
-                  positionClass="absolute top-10 left-40"
+                  isCentered={true}
+                  darkMode={darkMode}
                 />
               </div>
             ) : (
-              <p>{comment.text}</p>
+              <p className={`${darkMode ? "text-gray-200" : "text-gray-800"}`}>{comment.text}</p>
             )}
 
             <p className="text-xs text-gray-400">
@@ -273,7 +268,9 @@ export default function CommentCard({
                 key={emoji}
                 onClick={() => toggleReaction(emoji)}
                 className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 transition-all border 
-                  ${reacted ? "bg-blue-50 border-blue-400 text-blue-700" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200"}`}
+                  ${reacted
+                    ? (darkMode ? "bg-blue-500/10 border-blue-500/30 text-blue-400" : "bg-blue-50 border-blue-400 text-blue-700")
+                    : (darkMode ? "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200")}`}
               >
                 <span>{emoji}</span>
                 <span className="font-semibold">{users.length}</span>
@@ -290,7 +287,7 @@ export default function CommentCard({
           <button
             ref={reactButtonRef}
             onClick={toggleEmojiPicker}
-            className="text-gray-500 hover:text-blue-600 transition flex items-center gap-1"
+            className={`${darkMode ? "text-gray-400 hover:text-blue-400" : "text-gray-500 hover:text-blue-600"} font-bold transition flex items-center gap-1`}
           >
             👍 React
           </button>
@@ -303,7 +300,7 @@ export default function CommentCard({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-white border border-gray-200 shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5"
+                  className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-200"} border shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5`}
                 >
                   {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
                     <button
@@ -327,7 +324,7 @@ export default function CommentCard({
         {!isReply && (
           <button
             onClick={() => setShowReplyBox((v) => !v)}
-            className="text-gray-500 hover:text-blue-600 transition"
+            className={`${darkMode ? "text-gray-400 hover:text-blue-400" : "text-gray-500 hover:text-blue-600"} font-bold transition`}
           >
             {showReplyBox ? "Cancel" : "Reply"}
           </button>
@@ -339,7 +336,7 @@ export default function CommentCard({
               setShowReplies((prev) => !prev);
               setVisibleReplies(2);
             }}
-            className="text-gray-500 hover:underline"
+            className={`${darkMode ? "text-gray-500 hover:text-blue-400" : "text-gray-500 hover:underline"} font-bold`}
           >
             {showReplies
               ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
@@ -356,6 +353,7 @@ export default function CommentCard({
             onReply(comment._id, text);
             setShowReplyBox(false);
           }}
+          darkMode={darkMode}
         />
       )}
 
@@ -386,6 +384,7 @@ export default function CommentCard({
                   onEditReply={onEditReply}
                   onDeleteReply={onDeleteReply}
                   onReactToReply={onReactToReply}
+                  darkMode={darkMode}
                 />
               ))}
 

@@ -10,10 +10,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import socket from "../../utils/socket";
 
 import PointsScenario from "../components/dashboard/PointsScenario";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const { darkMode } = useTheme();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -76,12 +78,12 @@ export default function DashboardPage() {
       if (!res.ok || !Array.isArray(data.posts)) return;
 
       setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
-      const loaded = (append ? posts.length : 0) + data.posts.length;
-      setHasMore(loaded < data.total);
+      // Use data.posts directly for calculation to avoid stale closure issues
+      setHasMore(data.posts.length === limit);
     } catch (err) {
       console.error("Failed to fetch posts:", err.message);
     }
-  }, [activeTab, posts.length]);
+  }, [activeTab]);
 
   useEffect(() => {
     setPage(1);
@@ -150,47 +152,43 @@ export default function DashboardPage() {
   const SidebarComponent = user.isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 text-white relative">
+    <div className={`min-h-screen transition-colors duration-500 bg-gradient-to-b from-blue-600 to-purple-700 text-white relative`}>
       <SidebarComponent />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 pb-32 md:pb-8">
         <div className="flex flex-col lg:flex-row gap-8">
 
-          {/* Left Column - Points Scenario Widget */}
-          <aside className="lg:w-1/4 order-2 lg:order-1">
-            <div className="lg:sticky lg:top-24">
-              <PointsScenario />
+          {/* Left Column - Points Scenario Widget - Hidden on mobile or pushed down */}
+          <aside className="lg:w-80 order-2 lg:order-1 relative">
+            <div className="lg:fixed lg:top-24 lg:w-80 z-40">
+              <PointsScenario darkMode={darkMode} />
             </div>
           </aside>
 
           {/* Right Column - Feed & Welcome */}
-          <div className="flex-1 lg:w-3/4 space-y-10 order-1 lg:order-2">
+          <div className="flex-1 space-y-8 order-1 lg:order-2">
             {/* User info */}
-            <section className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm relative overflow-hidden group">
+            <section className={`${darkMode ? "bg-slate-900 border-white/10" : "bg-white border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
-              <div className="flex items-center gap-6">
-                <div className="w-20 h-20 rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">
-                  <span className="text-4xl">👋</span>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">
+                  <span className="text-3xl md:text-4xl">👋</span>
                 </div>
-                <div>
-                  <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-1">
+                <div className="text-center sm:text-left">
+                  <h2 className={`text-2xl md:text-3xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-1`}>
                     Welcome back, {user?.name || "Alumni"}!
                   </h2>
-                  <div className="flex flex-wrap gap-4 mt-2">
-                    <span className="text-[10px] bg-gray-100 border border-gray-200 px-3 py-1 rounded-full text-gray-500 font-black uppercase tracking-widest">{user?.enrollmentNumber || "N/A"}</span>
-                    <span className="text-[10px] bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-600 font-black uppercase tracking-widest">{user?.role || "Member"}</span>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-2 md:gap-4 mt-2">
+                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-white/5 border-white/10 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-500"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.enrollmentNumber || "N/A"}</span>
+                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.role || "Member"}</span>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Create Post */}
-            <section className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm">
-              <h2 className="text-xl font-black text-gray-900 tracking-tight mb-6 flex items-center gap-2">
-                <span className="bg-blue-50 p-2 rounded-xl">📢</span>
-                Create a Post
-              </h2>
-              <CreatePost setPosts={setPosts} currentUser={user} />
+            <section className="transition-all duration-500">
+              <CreatePost setPosts={setPosts} currentUser={user} darkMode={darkMode} />
             </section>
 
             {/* Feed Subsections Tabs */}
@@ -222,11 +220,11 @@ export default function DashboardPage() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="flex justify-center overflow-hidden"
+                  className="flex justify-center mt-6 mb-2 relative z-[500]"
                 >
                   <button
                     onClick={loadPendingPosts}
-                    className="bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
+                    className="relative z-[501] bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
                   >
                     ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""}
                   </button>
@@ -244,20 +242,13 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <>
-                  <AnimatePresence mode="popLayout">
+                  <div className="space-y-6">
                     {filteredPosts.map((post) => (
-                      <motion.div
-                        key={post._id}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                        className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm hover:border-gray-300 transition-all group"
-                      >
-                        <PostCard post={post} currentUser={user} setPosts={setPosts} />
-                      </motion.div>
+                      <div key={post._id}>
+                        <PostCard post={post} currentUser={user} setPosts={setPosts} darkMode={darkMode} />
+                      </div>
                     ))}
-                  </AnimatePresence>
+                  </div>
 
                   {hasMore && activeTab === "all" ? (
                     <div className="text-center mt-12 pb-8">

@@ -39,22 +39,58 @@ body {
 
 /* Global CSS or module */
 @keyframes like-bounce {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.4); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes unlike-shake {
-  0% { transform: rotate(0); }
-  25% { transform: rotate(-10deg); }
-  75% { transform: rotate(10deg); }
-  100% { transform: rotate(0); }
+  0% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(-10deg);
+  }
+
+  75% {
+    transform: rotate(10deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 .animate-shake {
@@ -70,3 +106,52 @@ body {
 }
 
 
+
+.gradient-border-input {
+  border: 1.5px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: all 0.3s ease;
+}
+
+.gradient-border-input-light {
+  background-image: linear-gradient(white, white),
+    linear-gradient(to right, #3b82f6, #a855f7);
+}
+
+.gradient-border-input-dark {
+  background-image: linear-gradient(#111827, #111827),
+    linear-gradient(to right, #3b82f6, #a855f7);
+}
+
+.gradient-border-input:focus {
+  border: 1.5px solid transparent;
+  box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.5), 0 0 20px -5px rgba(147, 51, 234, 0.5);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Smooth scrolling for PWA feel */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep functionality for a cleaner mobile look */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

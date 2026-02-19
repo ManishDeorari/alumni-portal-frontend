@@ -11,7 +11,8 @@ export default function PostContent({
   handleBlurSave,
   post,
   textareaRef,
-  setShowModal
+  setShowModal,
+  darkMode = false
 }) {
   const handleEmojiSelect = (emoji) => {
     setEditContent((prev) => prev + emoji.native);
@@ -35,19 +36,21 @@ export default function PostContent({
               onChange={(e) => setEditContent(e.target.value)}
               onBlur={() => handleBlurSave(editContent, `edit-${post._id}`)}
               rows={3}
-              className="w-full border rounded p-2 resize-none"
+              className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-white text-gray-900"} rounded-xl p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
               placeholder="Edit your post..."
             />
             <EmojiPickerToggle
               onEmojiSelect={handleEmojiSelect}
               icon="😀"
               iconSize="text-2xl"
+              isCentered={true}
+              darkMode={darkMode}
             />
           </div>
 
-          <div className="p-2 border border-gray-300 rounded bg-gray-50">
-            <p className="text-sm text-gray-500 font-semibold">Preview:</p>
-            <p className="whitespace-pre-wrap">{editContent}</p>
+          <div className={`p-3 border ${darkMode ? "border-white/10 bg-white/5" : "border-gray-300 bg-gray-50"} rounded-xl`}>
+            <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"} font-semibold mb-1`}>Preview:</p>
+            <p className={`whitespace-pre-wrap ${darkMode ? "text-gray-300" : "text-gray-800"}`}>{editContent}</p>
           </div>
 
           <button
@@ -64,10 +67,10 @@ export default function PostContent({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <p className="whitespace-pre-wrap">{post.content}</p>
+          <p className={`whitespace-pre-wrap leading-relaxed ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{post.content}</p>
           <div
             onClick={() => setShowModal(true)}
-            className="cursor-pointer text-sm text-blue-600 underline mt-1"
+            className={`cursor-pointer text-sm font-bold ${darkMode ? "text-blue-400" : "text-blue-600"} hover:underline mt-2 inline-block`}
           >
             View full post
           </div>

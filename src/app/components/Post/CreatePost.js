@@ -5,7 +5,7 @@ import { createPost } from "../../../api/dashboard";
 import toast from "react-hot-toast";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 
-const CreatePost = ({ setPosts, currentUser }) => {
+const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [content, setContent] = useState("");
   const [video, setVideo] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
@@ -96,127 +96,145 @@ const CreatePost = ({ setPosts, currentUser }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow mb-4">
-      <form onSubmit={handleSubmit}>
-        <div className="relative">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What's on your mind?"
-            className="w-full border border-black rounded-lg p-2 resize-none text-black placeholder-gray-500"
-            rows="3"
-          />
-          <div className="absolute bottom-[100%] right-0">
-            <EmojiPickerToggle
-              onEmojiSelect={handleEmojiSelect}
-              icon="😀"
-              iconSize="text-2xl"
-              offset={{ x: -60, y: 0 }} // 🔥 shift picker 60px to left
-              cursorPositioned={true}
-            />
-          </div>
-        </div>
+    <div className={`w-full ${darkMode ? "bg-slate-900" : "bg-white"} p-8 rounded-[2.5rem] shadow-sm transition-colors duration-500`}>
+      <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-6 flex items-center gap-2`}>
+        <span className={`${darkMode ? "bg-blue-900/40" : "bg-blue-50"} p-2 rounded-xl`}>📢</span>
+        Create a Post
+      </h2>
 
-        {availableTags.length > 0 && (
-          <div className="flex gap-2 mt-4 flex-wrap">
-            {availableTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => setSelectedType(selectedType === tag ? "Regular" : tag)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${selectedType === tag
-                  ? "bg-black text-white border-black shadow-md scale-105"
-                  : "bg-white text-black border-black hover:bg-gray-100"
-                  }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        )}
+      <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900 shadow-none border border-white/10" : "bg-gradient-to-tr from-blue-600 to-purple-700 shadow-[0_20px_60px_rgba(37,99,235,0.2)]"} rounded-[2.6rem] transition-all duration-500`}>
+        <div className={`relative rounded-[2.5rem] p-6 space-y-4 transition-all duration-500 ${darkMode ? "bg-slate-900 text-white" : "bg-white text-gray-900"}`}>
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col space-y-3">
+              <div className="flex-1 space-y-2">
+                <div className="relative">
+                  <div className={`p-[1px] bg-gradient-to-tr from-blue-600 to-purple-700 rounded-2xl shadow-lg transition-all duration-500`}>
+                    <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="What's on your mind?"
+                      className={`w-full border-2 ${darkMode ? "border-white/20 bg-[#0f172a] text-white" : "border-black bg-white text-black"} rounded-[15px] p-3 resize-none placeholder-gray-500 focus:ring-0 transition-all duration-500`}
+                      rows="3"
+                    />
+                  </div>
+                </div>
 
-        <div className="flex gap-4 items-center justify-between mt-4 flex-wrap">
-          <label className="cursor-pointer text-blue-600">
-            📷 Add Photo
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              className="hidden"
-            />
-          </label>
+                <div className="flex items-center justify-between gap-4">
+                  {availableTags.length > 0 && (
+                    <div className="flex gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar">
+                      {availableTags.map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setSelectedType(selectedType === tag ? "Regular" : tag)}
+                          className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${selectedType === tag
+                            ? "bg-black text-white border-black shadow-md"
+                            : `${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`
+                            }`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-          <label className="cursor-pointer text-purple-600">
-            🎥 Add Video
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleVideoChange}
-              className="hidden"
-            />
-          </label>
+                  <div className="flex-shrink-0">
+                    <EmojiPickerToggle
+                      onEmojiSelect={handleEmojiSelect}
+                      icon="😀"
+                      iconSize="text-2xl"
+                      offset={{ x: 0, y: 0 }}
+                      placement="top"
+                      darkMode={darkMode}
+                    />
+                  </div>
+                </div>
 
-          <button
-            type="submit"
-            disabled={loading || !hasContent}
-            className={`bg-blue-600 text-white px-4 py-2 rounded-lg transition-all ${loading || !hasContent
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-blue-700"
-              }`}
-          >
-            {loading ? "Posting..." : "Post"}
-          </button>
-        </div>
+                <div className="flex items-center justify-between border-t border-gray-100 dark:border-white/5 pt-3">
+                  <div className="flex items-center gap-4">
+                    <label className={`cursor-pointer ${darkMode ? "text-blue-400" : "text-blue-600"} font-bold hover:underline text-sm flex items-center gap-1.5`}>
+                      <span>📷</span> Photo
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
 
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                    <label className={`cursor-pointer ${darkMode ? "text-purple-400" : "text-purple-600"} font-bold hover:underline text-sm flex items-center gap-1.5`}>
+                      <span>🎥</span> Video
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={handleVideoChange}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
 
-        {images.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-3">
-            {images.map((img, index) => (
-              <div key={index} className="relative w-28 h-28">
-                <Image
-                  src={URL.createObjectURL(img)}
-                  alt={`preview-${index}`}
-                  width={112}
-                  height={112}
-                  className="rounded-lg object-cover w-full h-full"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const updated = images.filter((_, i) => i !== index);
-                    setImages(updated);
-                  }}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white px-1 rounded-full text-xs"
-                >
-                  ❌
-                </button>
+                  <button
+                    type="submit"
+                    disabled={loading || !hasContent}
+                    className="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                  >
+                    {loading ? "Posting..." : "Post Now"}
+                  </button>
+                </div>
+
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+                {images.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {images.map((img, index) => (
+                      <div key={index} className="relative w-28 h-28">
+                        <Image
+                          src={URL.createObjectURL(img)}
+                          alt={`preview-${index}`}
+                          width={112}
+                          height={112}
+                          className="rounded-lg object-cover w-full h-full"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = images.filter((_, i) => i !== index);
+                            setImages(updated);
+                          }}
+                          className="absolute top-1 right-1 bg-black bg-opacity-50 text-white px-1 rounded-full text-xs"
+                        >
+                          ❌
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {previewVideo && (
+                  <div className="relative mt-3 max-h-64">
+                    <video
+                      src={previewVideo}
+                      controls
+                      className="rounded-lg max-h-64 w-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVideo(null);
+                        setPreviewVideo(null);
+                      }}
+                      className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-sm"
+                    >
+                      ❌
+                    </button>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        )}
-
-        {previewVideo && (
-          <div className="relative mt-3 max-h-64">
-            <video
-              src={previewVideo}
-              controls
-              className="rounded-lg max-h-64 w-full"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setVideo(null);
-                setPreviewVideo(null);
-              }}
-              className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-sm"
-            >
-              ❌
-            </button>
-          </div>
-        )}
-      </form>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

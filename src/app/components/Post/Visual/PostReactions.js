@@ -24,6 +24,7 @@ export default function PostReactions({
   reactionEffect,
   showComments,
   setShowComments,
+  darkMode = false
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [hoveredEmoji, setHoveredEmoji] = useState(null);
@@ -55,19 +56,12 @@ export default function PostReactions({
       const spaceBelow = viewportHeight - rect.bottom;
       const spaceAbove = rect.top;
 
-      const style = {
+      setPickerStyle({
         position: "fixed",
-        zIndex: 9999,
+        zIndex: 99999,
         left: `${rect.left}px`,
-      };
-
-      if (spaceBelow < 150 && spaceAbove > 150) {
-        style.bottom = `${viewportHeight - rect.top + 8}px`;
-      } else {
-        style.top = `${rect.bottom + 8}px`;
-      }
-
-      setPickerStyle(style);
+        bottom: `${viewportHeight - rect.top + 8}px`,
+      });
     }
     setShowEmojiPicker((prev) => !prev);
   };
@@ -82,8 +76,8 @@ export default function PostReactions({
             return (
               <div
                 key={emoji}
-                className={`text-lg px-2 py-1 bg-gray-100 rounded-full flex items-center gap-1 ${userReacted(emoji)
-                  ? "border border-blue-500 bg-blue-50"
+                className={`text-lg px-2 py-1 ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-100"} border rounded-full flex items-center gap-1 ${userReacted(emoji)
+                  ? (darkMode ? "border-blue-500 bg-blue-500/10" : "border-blue-500 bg-blue-50")
                   : ""
                   }`}
               >
@@ -97,11 +91,11 @@ export default function PostReactions({
 
       {/* React + Comment Buttons */}
       <div className="relative mt-2">
-        <div className="flex items-center justify-between border-t border-black-300 pt-2">
+        <div className="flex items-center justify-between">
           {/* React Button (left) */}
           <button
             onClick={handleEmojiButtonClick}
-            className="font-semibold text-base text-gray-600 hover:underline transition flex items-center gap-1"
+            className={`font-semibold text-base ${darkMode ? "text-gray-400" : "text-gray-600"} hover:underline transition flex items-center gap-1`}
             ref={buttonRef}
           >
             👍 React
@@ -110,7 +104,7 @@ export default function PostReactions({
           {/* Comment Button (right, slightly left-pushed) */}
           <button
             onClick={() => setShowComments((prev) => !prev)}
-            className="font-semibold text-base text-gray-600 hover:underline cursor-pointer transition mr-2"
+            className={`font-semibold text-base ${darkMode ? "text-gray-400" : "text-gray-600"} hover:underline cursor-pointer transition mr-2`}
           >
             💬 Comment ({(post.comments || []).length})
           </button>
@@ -118,14 +112,14 @@ export default function PostReactions({
 
         {/* Emoji Picker */}
         {showEmojiPicker && createPortal(
-          <div style={pickerStyle} className="fixed z-[9999]">
+          <div style={pickerStyle} className="fixed z-[99999]">
             <AnimatePresence>
               <motion.div
                 ref={pickerRef}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white border border-gray-300 shadow-2xl rounded-full px-4 py-2 flex gap-3 ring-1 ring-black ring-opacity-5"
+                className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-300"} border shadow-2xl rounded-full px-4 py-2 flex gap-3 ring-1 ring-black ring-opacity-5`}
               >
                 {Object.keys(emojiLabels).map((emoji) => (
                   <motion.button

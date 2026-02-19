@@ -83,27 +83,34 @@ export default function MessagesPage() {
       // Defensive check for msg and msg.sender
       if (!msg || !msg.sender) return;
 
+      const senderId = msg.sender._id || msg.sender.id || msg.sender;
+      const selectedId = selectedUser?._id || selectedUser?.id;
+      const currentId = currentUser?._id || currentUser?.id;
+
       // Only append if the message belongs to the currently open chat
-      const senderId = msg.sender._id || msg.sender;
-      if (selectedUser && (senderId === selectedUser._id || msg.recipient === selectedUser._id)) {
-        setMessages((prev) => [...prev, msg]);
+      if (selectedId && (senderId === selectedId || msg.recipient === selectedId || msg.recipient === currentId)) {
+        // Prevent duplicates (especially if optimistic update didn't resolve yet)
+        setMessages((prev) => {
+          if (prev.find(m => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
 
         // If message is from the selected user, mark it as read immediately
-        if (senderId === selectedUser._id) {
-          markAsRead(selectedUser._id);
+        if (senderId === selectedId) {
+          markAsRead(selectedId);
         }
       }
     };
 
     const handleMessagesRead = ({ readerId }) => {
+      const selectedId = selectedUser?._id || selectedUser?.id;
       // If the other person read my messages, update local state to show blue ticks
-      if (selectedUser && readerId === selectedUser._id) {
+      if (selectedId && readerId === selectedId) {
         setMessages((prev) =>
-          prev.map((m) =>
-            m.recipient === readerId || m.recipient._id === readerId
-              ? { ...m, read: true }
-              : m
-          )
+          prev.map((m) => {
+            const recipientId = m.recipient?._id || m.recipient?.id || m.recipient;
+            return recipientId === readerId ? { ...m, read: true } : m;
+          })
         );
       }
     };
@@ -115,7 +122,7 @@ export default function MessagesPage() {
       socket.off("receiveMessage", handleReceiveMessage);
       socket.off("messagesRead", handleMessagesRead);
     };
-  }, [selectedUser]);
+  }, [selectedUser, currentUser]);
 
   const markAsRead = async (otherUserId) => {
     try {

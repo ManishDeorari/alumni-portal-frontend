@@ -1,12 +1,13 @@
 "use client";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import Image from "next/image";
 
 export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
   if (!imageUrl) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/90 z-[10000] flex items-center justify-center p-4">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -34,6 +35,7 @@ export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
           />
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
