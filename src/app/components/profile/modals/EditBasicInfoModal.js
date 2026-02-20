@@ -4,8 +4,10 @@ import { X, Save, Phone, MapPin, Globe, Linkedin, MessageCircle, User } from "lu
 import { Country, State, City } from "country-state-city";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, onSave }) {
+    const { darkMode } = useTheme();
     const [formData, setFormData] = useState({
         name: "",
         phone: "", // Will store the full phone number from PhoneInput
@@ -150,8 +152,8 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
+            <div className={`${darkMode ? 'bg-slate-900' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -165,10 +167,10 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                     </button>
                 </div>
 
-                <div className="p-6 space-y-5 overflow-y-auto custom-scrollbar">
+                <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                             <User className="w-4 h-4 text-purple-500" /> Full Name
                         </label>
                         <input
@@ -177,14 +179,14 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Your Name"
-                            className={`w-full p-2 border rounded-lg outline-none transition ${errors.name ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.name ? 'border-red-500' : ''}`}
                         />
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                     </div>
 
                     {/* Phone */}
                     <div className="phone-input-container">
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                             <Phone className="w-4 h-4 text-blue-500" /> Phone Number
                         </label>
                         <PhoneInput
@@ -195,13 +197,19 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                 width: "100%",
                                 height: "42px",
                                 borderRadius: "8px",
-                                border: errors.phone ? "1px solid #ef4444" : "1px solid #d1d5db",
+                                border: errors.phone ? "1px solid #ef4444" : (darkMode ? "1px solid #334155" : "1px solid #d1d5db"),
                                 fontSize: "14px",
+                                backgroundColor: darkMode ? "#1e293b" : "#fff",
+                                color: darkMode ? "#fff" : "#111827",
                             }}
                             buttonStyle={{
                                 borderRadius: "8px 0 0 8px",
-                                border: errors.phone ? "1px solid #ef4444" : "1px solid #d1d5db",
-                                backgroundColor: "#f9fafb",
+                                border: errors.phone ? "1px solid #ef4444" : (darkMode ? "1px solid #334155" : "1px solid #d1d5db"),
+                                backgroundColor: darkMode ? "#1e293b" : "#f9fafb",
+                            }}
+                            dropdownStyle={{
+                                backgroundColor: darkMode ? "#1e293b" : "#fff",
+                                color: darkMode ? "#fff" : "#111827",
                             }}
                             containerStyle={{
                                 marginTop: "4px",
@@ -212,7 +220,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
 
                     {/* Address Dropdowns */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                        <label className={`block text-sm font-semibold mb-2 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                             <MapPin className="w-4 h-4 text-red-500" /> Location (Address)
                         </label>
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -224,7 +232,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                     setSelectedState("");
                                     setSelectedCity("");
                                 }}
-                                className="w-full p-2 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                             >
                                 <option value="">Select Country</option>
                                 {Country.getAllCountries().map((c) => (
@@ -240,7 +248,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                     setSelectedState(e.target.value);
                                     setSelectedCity("");
                                 }}
-                                className="w-full p-2 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition disabled:opacity-50 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                             >
                                 <option value="">Select State</option>
                                 {selectedCountry && State.getStatesOfCountry(selectedCountry).map((s) => (
@@ -253,7 +261,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                 value={selectedCity}
                                 disabled={!selectedState}
                                 onChange={(e) => setSelectedCity(e.target.value)}
-                                className="w-full p-2 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition disabled:opacity-50 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                             >
                                 <option value="">Select City</option>
                                 {selectedState && City.getCitiesOfState(selectedCountry, selectedState).map((city) => (
@@ -265,7 +273,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
 
                     {/* WhatsApp */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                             <MessageCircle className="w-4 h-4 text-green-500" /> WhatsApp Number
                         </label>
                         <input
@@ -274,43 +282,43 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                             value={formData.whatsapp}
                             onChange={handleChange}
                             placeholder="Ex: 919876543210"
-                            className={`w-full p-2 border rounded-lg outline-none transition ${errors.whatsapp ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.whatsapp ? 'border-red-500' : ''}`}
                         />
                         {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
-                        <p className="text-[10px] text-gray-500 mt-1 italic">* Enter digits only, including country code (e.g. 91...)</p>
+                        <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>* Enter digits only, including country code (e.g. 91...)</p>
                     </div>
 
                     {/* LinkedIn */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                             <Linkedin className="w-4 h-4 text-blue-700" /> LinkedIn URL
                         </label>
                         <div className="relative">
-                            <Globe className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+                            <Globe className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
                             <input
                                 type="text"
                                 name="linkedin"
                                 value={formData.linkedin}
                                 onChange={handleChange}
                                 placeholder="https://linkedin.com/in/username"
-                                className={`w-full pl-9 p-2 border rounded-lg outline-none transition ${errors.linkedin ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+                                className={`w-full pl-9 p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.linkedin ? 'border-red-500' : ''}`}
                             />
                         </div>
                         {errors.linkedin && <p className="text-red-500 text-xs mt-1">{errors.linkedin}</p>}
                     </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 flex justify-end gap-3 flex-shrink-0">
+                <div className={`p-4 flex justify-end gap-3 flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-t border-white/5' : 'bg-gray-50 border-t'}`}>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+                        className={`px-5 py-2 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-8 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
                         <Save className="w-4 h-4" />
                         {loading ? "Saving..." : "Save Changes"}
@@ -323,17 +331,21 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
           width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
+          background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #d1d5db;
+          background: ${darkMode ? "#334155" : "#d1d5db"};
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #9ca3af;
+          background: ${darkMode ? "#475569" : "#9ca3af"};
         }
         :global(.react-tel-input .form-control) {
           width: 100% !important;
+        }
+        :global(.react-tel-input .selected-flag:hover),
+        :global(.react-tel-input .selected-flag:focus) {
+          background-color: transparent !important;
         }
       `}</style>
         </div>

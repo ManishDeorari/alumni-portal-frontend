@@ -209,7 +209,7 @@ export default function LoginPage() {
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50"
                   style={{ boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.5)' }}
                 >
-                  {loading ? "Authenticating..." : "Login to Dashboard"}
+                  {loading ? "Authenticating..." : "Login"}
                 </button>
 
                 <div className="pt-2 text-center">
@@ -334,8 +334,8 @@ export default function LoginPage() {
               <Link
                 href="/"
                 className={`group inline-flex items-center gap-2.5 px-6 py-2 rounded-full transition-all duration-300 ${darkMode
-                    ? "text-gray-400 hover:text-white hover:bg-white/5"
-                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                  ? "text-gray-400 hover:text-white hover:bg-white/5"
+                  : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
                   }`}
               >
                 <svg

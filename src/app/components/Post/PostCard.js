@@ -22,7 +22,7 @@ import useEmojiAnimation from "./hooks/useEmojiAnimation";
 import useCommentActions from "./hooks/useCommentActions";
 import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 
-export default function PostCard({ post, currentUser, setPosts, initialShowComments = false, darkMode = false }) {
+export default function PostCard({ post, currentUser, setPosts, initialShowComments = false, darkMode = false, hideActions = false, transparentBackground = false }) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content || "");
   const [showEditEmoji, setShowEditEmoji] = useState(false);
@@ -141,13 +141,13 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      className={`relative p-4 ${darkMode ? "bg-slate-900 shadow-none" : "bg-white shadow-[0_20px_60px_rgba(37,99,235,0.2)]"} rounded-[3rem] transition-all duration-500`}
+      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-slate-900 shadow-none" : "bg-white shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-4"} rounded-[3rem] transition-all duration-500`}
     >
       <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[2.6rem]`}>
         <div className={`relative rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-slate-900" : "bg-white")} ${darkMode ? "text-white" : "text-gray-900"}`}>
           <PostHeader {...{
             post, currentUser, editing, toggleEdit: () =>
-              toggleEdit(editKey, setEditContent, editing, post.content), handleDelete, darkMode
+              toggleEdit(editKey, setEditContent, editing, post.content), handleDelete, darkMode, hideActions
           }} />
 
           <PostContent

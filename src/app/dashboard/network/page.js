@@ -9,8 +9,10 @@ import {
   acceptConnectionRequest,
 } from "@/api/connect";
 import RequestsModal from "../../components/network/RequestsModal";
+import { useTheme } from "@/context/ThemeContext";
 
 const NetworkPage = () => {
+  const { darkMode } = useTheme();
   const [alumni, setAlumni] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [requested, setRequested] = useState({});
@@ -101,38 +103,39 @@ const NetworkPage = () => {
       <SidebarComponent />
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <header className="flex flex-col md:flex-row justify-between items-center bg-black/20 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-70"></div>
-          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight">Network</h1>
-            <p className="text-blue-100/60 font-medium">Build your professional circle with alumni</p>
+        <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950 text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row justify-between items-center gap-6`}>
+            <div>
+              <h1 className={`text-4xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
+              <p className={`${darkMode ? 'text-blue-200/60' : 'text-slate-600'} font-medium`}>Build your professional circle with alumni</p>
+            </div>
+            <div className="flex gap-4 mt-6 md:mt-0">
+              <Link href="/dashboard/myconnections" className={`relative group px-6 py-3 border rounded-2xl font-bold transition-all shadow-lg backdrop-blur-md flex items-center gap-3 ${darkMode ? 'bg-white/10 border-white/10 text-white hover:bg-white/20' : 'bg-gray-100 border-gray-200 text-slate-900 hover:bg-gray-200'}`}>
+                My Network
+                {currentUser?.connections?.length > 0 && (
+                  <span className="bg-blue-600 text-white text-[11px] px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]">
+                    {currentUser.connections.length}
+                  </span>
+                )}
+              </Link>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="relative px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-xl flex items-center gap-3 group active:scale-95"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                Requests
+                {currentUser?.pendingRequests?.length > 0 && (
+                  <span className="absolute -top-2.5 -right-2.5 bg-red-500 text-white text-[11px] w-7 h-7 flex items-center justify-center rounded-full border-2 border-white shadow-[0_0_20px_rgba(239,68,68,0.8)] animate-bounce font-black">
+                    {currentUser.pendingRequests.length}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
-          <div className="flex gap-4 mt-6 md:mt-0">
-            <Link href="/dashboard/myconnections" className="relative group px-6 py-3 bg-white/10 border border-white/10 text-white rounded-2xl font-bold hover:bg-white/20 transition-all shadow-lg backdrop-blur-md flex items-center gap-3">
-              My Network
-              {currentUser?.connections?.length > 0 && (
-                <span className="bg-blue-500 text-white text-[11px] px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]">
-                  {currentUser.connections.length}
-                </span>
-              )}
-            </Link>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="relative px-6 py-3 bg-white text-blue-700 rounded-2xl font-bold hover:bg-blue-50 transition-all shadow-xl flex items-center gap-3 group active:scale-95"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-              Requests
-              {currentUser?.pendingRequests?.length > 0 && (
-                <span className="absolute -top-2.5 -right-2.5 bg-red-500 text-white text-[11px] w-7 h-7 flex items-center justify-center rounded-full border-2 border-white shadow-[0_0_20px_rgba(239,68,68,0.8)] animate-bounce font-black">
-                  {currentUser.pendingRequests.length}
-                </span>
-              )}
-            </button>
-          </div>
-        </header>
+        </div>
 
         {/* Search & Filters */}
-        <section className="bg-black/20 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-lg space-y-8 relative overflow-hidden">
+        <section className={`p-8 rounded-[2.5rem] border shadow-2xl space-y-8 relative overflow-hidden ${darkMode ? 'bg-slate-950 border-white/10' : 'bg-white border-gray-100'}`}>
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -142,13 +145,13 @@ const NetworkPage = () => {
                 value={searchQuery}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/30 shadow-inner"
+                className={`w-full pl-12 pr-4 py-3.5 border rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all shadow-inner ${darkMode ? 'bg-white/5 border-white/10 text-white placeholder-white/30' : 'bg-gray-50 border-gray-200 text-slate-900 placeholder-gray-400'}`}
               />
-              <svg className="absolute left-4 top-4 w-5 h-5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className={`absolute left-4 top-4 w-5 h-5 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
             <button
               onClick={handleSearch}
-              className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all shadow-lg active:scale-95"
+              className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95"
             >
               Search Alumni
             </button>
@@ -156,11 +159,11 @@ const NetworkPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-bold">Course</label>
+              <label className={`text-[10px] uppercase tracking-widest ml-2 font-black ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Course</label>
               <select
                 value={filters.course}
                 onChange={(e) => setFilters({ ...filters, course: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
+                className={`w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer font-bold ${darkMode ? 'bg-white/5 border-white/10 text-white' : 'bg-gray-50 border-gray-200 text-slate-900'}`}
               >
                 <option value="" className="text-gray-900">All Courses</option>
                 <option value="B.Tech" className="text-gray-900">B.Tech</option>
@@ -171,11 +174,11 @@ const NetworkPage = () => {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-bold">Graduation Year</label>
+              <label className={`text-[10px] uppercase tracking-widest ml-2 font-black ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Graduation Year</label>
               <select
                 value={filters.year}
                 onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
+                className={`w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer font-bold ${darkMode ? 'bg-white/5 border-white/10 text-white' : 'bg-gray-50 border-gray-200 text-slate-900'}`}
               >
                 <option value="" className="text-gray-900">All Years</option>
                 {Array.from({ length: 25 }, (_, i) => 2010 + i).map(y => (
@@ -184,13 +187,13 @@ const NetworkPage = () => {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-bold">Industry</label>
+              <label className={`text-[10px] uppercase tracking-widest ml-2 font-black ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Industry</label>
               <input
                 type="text"
                 placeholder="e.g. IT, Finance"
                 value={filters.industry}
                 onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 placeholder-white/20"
+                className={`w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400 font-bold ${darkMode ? 'bg-white/5 border-white/10 text-white placeholder-white/20' : 'bg-gray-50 border-gray-200 text-slate-900 placeholder-gray-400'}`}
               />
             </div>
           </div>

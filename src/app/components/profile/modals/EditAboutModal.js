@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { X, Save, Info } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) {
+    const { darkMode } = useTheme();
     const [bio, setBio] = useState(currentBio || "");
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +39,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn">
+            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -53,9 +55,9 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
                 <div className="p-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Your Bio</label>
+                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Your Bio</label>
                         <textarea
-                            className="w-full p-3 border border-gray-300 rounded-lg h-40 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition custom-scrollbar"
+                            className={`w-full p-3 rounded-lg h-40 outline-none transition custom-scrollbar focus:ring-2 focus:ring-blue-500 ${darkMode ? 'bg-slate-800 border-white/10 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'}`}
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             placeholder="Write something about yourself..."
@@ -63,10 +65,10 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
                     </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t">
+                <div className={`p-4 flex justify-end gap-3 border-t transition-colors ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+                        className={`px-4 py-2 border rounded-lg transition ${darkMode ? 'border-white/10 text-gray-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
                     >
                         Cancel
                     </button>

@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 
 const UserConnectionsPage = () => {
     const { id } = useParams();
+    const { darkMode } = useTheme();
     const [connections, setConnections] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [userName, setUserName] = useState("");
@@ -52,70 +53,77 @@ const UserConnectionsPage = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
             <Sidebar />
             <main className="max-w-4xl mx-auto px-4 py-10 space-y-8">
-                <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-gray-800/80 backdrop-blur-2xl p-6 rounded-3xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 opacity-50"></div>
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => window.history.back()} className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-white/5">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                        </button>
-                        <h1 className="text-3xl font-black tracking-tight">Connections</h1>
+                <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+                    <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950' : 'bg-white'} flex flex-col md:flex-row items-center justify-between gap-6`}>
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => window.history.back()} className={`p-2.5 rounded-xl transition-all border ${darkMode ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-gray-100 border-gray-200 hover:bg-gray-200 text-slate-900"}`}>
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            </button>
+                            <h1 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Connections</h1>
+                        </div>
+                        <span className={`px-5 py-2 border rounded-2xl text-sm font-black shadow-lg ${darkMode ? 'bg-white/5 border-white/10 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+                            {connections.length} Total
+                        </span>
                     </div>
-                    <span className="px-5 py-2 bg-white/5 border border-white/10 text-blue-100 rounded-2xl text-sm font-black shadow-lg">
-                        {connections.length} Total
-                    </span>
-                </header>
+                </div>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-4">
-                        <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-blue-100/60 font-black uppercase tracking-widest text-xs">Loading network...</p>
+                        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                        <p className="text-white font-black uppercase tracking-widest text-[10px]">Loading network...</p>
                     </div>
                 ) : connections.length === 0 ? (
-                    <div className="text-center py-24 bg-gray-800/40 backdrop-blur-md rounded-[2.5rem] border border-dashed border-white/10">
-                        <p className="text-blue-100/60 font-bold italic">No connections found for this user.</p>
+                    <div className={`text-center py-24 rounded-[3rem] border border-dashed border-white/20 backdrop-blur-md ${darkMode ? 'bg-slate-950/50' : 'bg-white/10'}`}>
+                        <p className="text-white/60 font-bold italic">No connections found for this user.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
                         {connections.map((user) => (
-                            <div key={user._id} className="bg-gray-900/40 backdrop-blur-xl p-5 rounded-[2rem] border border-white/5 flex items-center justify-between gap-5 shadow-lg group hover:border-blue-400/30 transition-all relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full -mr-12 -mt-12 group-hover:bg-blue-500/10 transition-colors"></div>
+                            <div key={user._id} className={`p-6 rounded-[2.5rem] border flex items-center justify-between gap-5 shadow-2xl group transition-all relative overflow-hidden ${darkMode ? 'bg-slate-900 border-white/5 hover:border-blue-500/30' : 'bg-white border-gray-100 hover:border-blue-400/30'}`}>
+                                <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-colors ${darkMode ? 'bg-blue-500/5 group-hover:bg-blue-500/10' : 'bg-blue-50/50 group-hover:bg-blue-100/50'}`}></div>
                                 <div className="flex items-center gap-4 min-w-0 relative z-10">
                                     <Image
                                         src={user.profilePicture || "/default-profile.jpg"}
                                         width={64}
                                         height={64}
-                                        className="rounded-2xl object-cover border-2 border-white/10 bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-xl"
+                                        className={`rounded-2xl object-cover border-2 bg-gray-800 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-xl ${darkMode ? 'border-white/10' : 'border-gray-100'}`}
                                         alt={user.name || "User"}
                                     />
                                     <div className="min-w-0">
                                         <Link href={`/dashboard/profile?id=${user._id}`}>
-                                            <h3 className="font-extrabold text-white group-hover:text-blue-300 truncate transition-colors text-lg tracking-tight">{user.name}</h3>
+                                            <h3 className={`font-black tracking-tight truncate transition-colors text-lg ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>{user.name}</h3>
                                         </Link>
-                                        <p className="text-xs text-blue-100/60 font-medium truncate">{user.course} • {user.year}</p>
-                                        <p className="text-[10px] text-blue-400 font-black mt-2 truncate uppercase tracking-[0.15em] bg-blue-400/10 w-fit px-3 py-1 rounded-full">{user.workProfile?.industry || "Alumni"}</p>
+                                        <p className={`text-xs font-bold truncate uppercase tracking-tighter ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{user.course} • {user.year}</p>
+                                        <div className={`mt-2 flex items-center gap-2`}>
+                                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${darkMode ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-600 border-blue-100"}`}>
+                                                {user.workProfile?.industry || "Alumni"}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {currentUser && user._id === currentUser._id ? (
-                                    <span className="px-6 py-2.5 bg-blue-500/20 text-blue-300 rounded-xl text-sm font-black border border-blue-500/30 ring-1 ring-blue-400/20">
-                                        You
-                                    </span>
-                                ) : user.connectionStatus === "connected" ? (
-                                    <span className="px-5 py-2.5 bg-green-500/20 text-green-300 rounded-2xl text-sm font-black flex items-center gap-2 border border-green-500/30">
-                                        Friends
-                                    </span>
-                                ) : (
-                                    <button
-                                        onClick={() => handleConnect(user._id)}
-                                        disabled={requested[user._id]}
-                                        className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex-shrink-0 ${requested[user._id]
-                                            ? "bg-white/5 text-white/30 cursor-not-allowed border border-white/5"
-                                            : "bg-white text-blue-700 hover:bg-blue-50"
-                                            }`}
-                                    >
-                                        {requested[user._id] ? "Requested" : "Connect"}
-                                    </button>
-                                )}
+                                <div className="relative z-10">
+                                    {currentUser && user._id === currentUser._id ? (
+                                        <span className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${darkMode ? "bg-blue-600/20 text-blue-300 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]" : "bg-blue-50 text-blue-600 border-blue-200"}`}>
+                                            You
+                                        </span>
+                                    ) : user.connectionStatus === "connected" ? (
+                                        <span className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${darkMode ? "bg-green-600/20 text-green-300 border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]" : "bg-green-50 text-green-600 border-green-200"}`}>
+                                            Friends
+                                        </span>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleConnect(user._id)}
+                                            disabled={requested[user._id]}
+                                            className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 ${requested[user._id]
+                                                ? "bg-white/5 text-white/30 cursor-not-allowed border border-white/5"
+                                                : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/20"
+                                                }`}
+                                        >
+                                            {requested[user._id] ? "Pending" : "Connect"}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>

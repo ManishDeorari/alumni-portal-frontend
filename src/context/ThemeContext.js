@@ -10,7 +10,13 @@ export const ThemeProvider = ({ children }) => {
     useEffect(() => {
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme !== null) {
-            setDarkMode(savedTheme === "true");
+            const isDark = savedTheme === "true";
+            setDarkMode(isDark);
+            if (isDark) {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
         }
     }, []);
 
@@ -18,6 +24,11 @@ export const ThemeProvider = ({ children }) => {
         const newMode = !darkMode;
         setDarkMode(newMode);
         localStorage.setItem("darkMode", newMode.toString());
+        if (newMode) {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
     };
 
     return (

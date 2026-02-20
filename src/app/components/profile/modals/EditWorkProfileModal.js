@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Save, Briefcase, BarChart, Settings, Layers, Code } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 const FUNCTIONAL_AREAS = [
     "Software Engineering", "Frontend Development", "Backend Development", "Full Stack Development",
@@ -19,6 +20,7 @@ const EXPERIENCE_LEVELS = [
 ];
 
 export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfile, currentSkills, onSave }) {
+    const { darkMode } = useTheme();
     const [workProfile, setWorkProfile] = useState({
         functionalArea: "",
         subFunctionalArea: "",
@@ -78,10 +80,10 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 text-gray-900">
-            <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
+            <div className={`${darkMode ? 'bg-slate-900 border border-white/5' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <Briefcase className="w-5 h-5" /> Work Profile & Skills
                     </h2>
@@ -90,7 +92,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                     </button>
                 </div>
 
-                <div className="p-6 space-y-5">
+                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
                     <datalist id="area-suggestions">
                         {FUNCTIONAL_AREAS.map(a => <option key={a} value={a} />)}
                     </datalist>
@@ -103,13 +105,13 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
 
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                                <BarChart className="w-3.5 h-3.5" /> Functional Area
+                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                <BarChart className={`w-3.5 h-3.5 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} /> Functional Area
                             </label>
                             <input
                                 type="text"
                                 list="area-suggestions"
-                                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={workProfile.functionalArea}
                                 onChange={(e) => handleChange("functionalArea", e.target.value)}
                                 placeholder="Ex: Software Engineering"
@@ -117,12 +119,12 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                                <Settings className="w-3.5 h-3.5" /> Sub-Functional Area
+                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                <Settings className={`w-3.5 h-3.5 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} /> Sub-Functional Area
                             </label>
                             <input
                                 type="text"
-                                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={workProfile.subFunctionalArea}
                                 onChange={(e) => handleChange("subFunctionalArea", e.target.value)}
                                 placeholder="Ex: Backend Development"
@@ -131,26 +133,26 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                                    <Layers className="w-3.5 h-3.5" /> Experience
+                                <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                    <Layers className={`w-3.5 h-3.5 ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`} /> Experience
                                 </label>
                                 <input
                                     type="text"
                                     list="exp-suggestions"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                     value={workProfile.experience}
                                     onChange={(e) => handleChange("experience", e.target.value)}
                                     placeholder="Ex: 1-3 Years"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                                    <BarChart className="w-3.5 h-3.5" /> Industry
+                                <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                    <BarChart className={`w-3.5 h-3.5 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} /> Industry
                                 </label>
                                 <input
                                     type="text"
                                     list="industry-suggestions"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                     value={workProfile.industry}
                                     onChange={(e) => handleChange("industry", e.target.value)}
                                     placeholder="Ex: Fintech"
@@ -159,12 +161,12 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                         </div>
 
                         {/* Skills Field */}
-                        <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                        <div className={`space-y-1.5 pt-2 border-t ${darkMode ? 'border-slate-800' : 'border-gray-100'}`}>
+                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                                 <Code className="w-3.5 h-3.5 text-blue-500" /> Key Skills (comma separated)
                             </label>
                             <textarea
-                                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition h-20"
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none h-24 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                                 placeholder="Ex: React, Node.js, Python, Leadership"
@@ -173,20 +175,40 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                     </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t">
-                    <button onClick={onClose} className="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-sm">
+                {/* Footer */}
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50'}`}>
+                    <button
+                        onClick={onClose}
+                        className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                    >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm"
+                        className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
                         <Save className="w-4 h-4" />
                         {loading ? "Saving..." : "Save Changes"}
                     </button>
                 </div>
             </div>
+
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: ${darkMode ? '#334155' : '#d1d5db'};
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: ${darkMode ? '#475569' : '#9ca3af'};
+                }
+            `}</style>
         </div>
     );
 }

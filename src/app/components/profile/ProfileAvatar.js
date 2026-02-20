@@ -14,17 +14,19 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
   const isRestricted = isPublicView && currentUserRole !== 'admin';
 
   return (
-    <div className="relative">
-      <Image
-        src={profileImg}
-        alt="Profile"
-        width={112}
-        height={112}
-        onClick={() => setShowViewer(true)} // open full view
-        onContextMenu={(e) => isRestricted && e.preventDefault()}
-        onDragStart={(e) => isRestricted && e.preventDefault()}
-        className={`rounded-full border-4 border-black object-cover w-28 h-28 cursor-pointer shadow-[0_15px_35px_rgba(37,99,235,0.25),0_10px_25px_rgba(168,85,247,0.25)] hover:scale-105 transition-transform ${isRestricted ? 'select-none' : ''}`}
-      />
+    <div className="relative group">
+      <div className="p-[3px] bg-gradient-to-tr from-blue-600 via-purple-500 to-pink-500 rounded-full shadow-2xl transition-transform duration-300 group-hover:scale-105">
+        <Image
+          src={profileImg}
+          alt="Profile"
+          width={160}
+          height={160}
+          onClick={() => setShowViewer(true)} // open full view
+          onContextMenu={(e) => isRestricted && e.preventDefault()}
+          onDragStart={(e) => isRestricted && e.preventDefault()}
+          className={`rounded-full object-cover w-40 h-40 cursor-pointer ${isRestricted ? 'select-none' : ''}`}
+        />
+      </div>
 
       {!isPublicView && (
         <button

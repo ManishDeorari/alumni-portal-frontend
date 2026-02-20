@@ -132,11 +132,11 @@ export default function CommentCard({
       className={`mt-2 rounded-xl space-y-2 py-3 px-3 relative transition-all duration-500 border
         ${isReply
           ? isOwn
-            ? `${darkMode ? "bg-blue-500/10 border-blue-500/50" : "bg-yellow-100 border-black"} pl-6 ml-3 border-l-[3px] border-blue-500`
-            : `${darkMode ? "bg-slate-800/50 border-white/20 text-gray-200" : "bg-white text-black border-black"} pl-6 ml-3 border-l-[3px] border-blue-300`
+            ? `${darkMode ? "bg-blue-600/10 border-blue-500/30" : "bg-blue-50 border-blue-200"} pl-6 ml-3 border-l-[3px] border-blue-500`
+            : `${darkMode ? "bg-slate-900 border-white/10 text-gray-200" : "bg-gray-50 text-black border-gray-200"} pl-6 ml-3 border-l-[3px] border-blue-300`
           : isOwn
-            ? `${darkMode ? "bg-blue-600/10 border-blue-600/40" : "bg-yellow-50 border-black"}`
-            : `${darkMode ? "bg-slate-800 border-white/20 text-gray-200" : "bg-white border-black"}`
+            ? `${darkMode ? "bg-blue-600/10 border-blue-600/30" : "bg-blue-50 border-blue-200"}`
+            : `${darkMode ? "bg-slate-900 border-white/10 text-gray-200" : "bg-white border-gray-200"}`
         }
         ${justPosted ? "ring-2 ring-blue-400" : ""}
       `}
@@ -148,22 +148,22 @@ export default function CommentCard({
             alt="User"
             width={32}
             height={32}
-            className={`w-8 h-8 rounded-full border ${darkMode ? "border-white/20" : "border-black"} object-cover mt-0.5`}
+            className={`w-8 h-8 rounded-full border ${darkMode ? "border-white/20" : "border-gray-200"} object-cover mt-0.5`}
           />
           <div className="w-full">
-            <div className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? "text-white" : ""}`}>
+            <div className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
               {isOwn ? (
                 <span>{comment.user?.name || "Unknown"}</span>
               ) : (
                 <Link
                   href={`/dashboard/profile?id=${comment.user?._id}`}
-                  className={`hover:underline ${darkMode ? "text-blue-400" : "text-blue-700"} cursor-pointer`}
+                  className={`hover:underline ${darkMode ? "text-blue-400 font-bold" : "text-blue-700 font-bold"} cursor-pointer`}
                 >
                   {comment.user?.name || "Unknown"}
                 </Link>
               )}
               {isOwn && (
-                <span className={`text-[10px] ${darkMode ? "text-blue-400 bg-blue-500/10" : "text-green-700 bg-green-100"} px-2 rounded-full font-bold`}>
+                <span className={`text-[10px] px-2 rounded-full font-bold ${darkMode ? "text-blue-300 bg-blue-600/30 border border-blue-500/30" : "text-blue-700 bg-blue-100 border border-blue-200"}`}>
                   You
                 </span>
               )}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X } from "lucide-react";
+import { X, Briefcase, BarChart, Settings, Layers, Code, Heart, MapPin, Clock, DollarSign, FileText } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSave }) {
+    const { darkMode } = useTheme();
     const [workProfile, setWorkProfile] = useState({});
     const [jobPreferences, setJobPreferences] = useState({});
     const [skills, setSkills] = useState("");
@@ -27,7 +29,6 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
     };
 
     const handleLocationsChange = (value) => {
-        // Split by comma and clean up whitespace
         const locations = value.split(",").map((loc) => loc.trim());
         setJobPreferences((prev) => ({ ...prev, preferredLocations: locations }));
     };
@@ -68,66 +69,63 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-            <div className="bg-white p-6 rounded-lg w-full max-w-2xl shadow-lg relative my-10">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-                    <X className="w-5 h-5" />
-                </button>
-                <h2 className="text-xl font-bold mb-4">Edit Job Info & Skills</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
+            <div className={`${darkMode ? 'bg-slate-900 border border-white/5' : 'bg-white'} rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+                {/* Header */}
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
+                    <h2 className="text-lg font-bold flex items-center gap-2">
+                        <Briefcase className="w-5 h-5" /> Edit Job Info & Skills
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
 
-                <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
                     {/* Work Profile Section */}
-                    <div className="border p-4 rounded bg-gray-50">
-                        <h3 className="font-semibold mb-3 text-blue-700">Current Work Profile</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-xs text-gray-500">Functional Area</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
-                                    value={workProfile.functionalArea || ""}
-                                    onChange={(e) => handleWorkChange("functionalArea", e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs text-gray-500">Sub-Functional Area</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
-                                    value={workProfile.subFunctionalArea || ""}
-                                    onChange={(e) => handleWorkChange("subFunctionalArea", e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs text-gray-500">Experience</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
-                                    value={workProfile.experience || ""}
-                                    onChange={(e) => handleWorkChange("experience", e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs text-gray-500">Industry</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
-                                    value={workProfile.industry || ""}
-                                    onChange={(e) => handleWorkChange("industry", e.target.value)}
-                                />
-                            </div>
+                    <div className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/60' : 'bg-gray-50/50 border-gray-200 hover:bg-gray-50'}`}>
+                        <h3 className={`font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-blue-400' : 'text-blue-700'}`}>
+                            <Settings className="w-4 h-4" /> Current Work Profile
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {[
+                                { label: "Functional Area", field: "functionalArea", target: "work" },
+                                { label: "Sub-Functional Area", field: "subFunctionalArea", target: "work" },
+                                { label: "Experience", field: "experience", target: "work" },
+                                { label: "Industry", field: "industry", target: "work" }
+                            ].map((item) => (
+                                <div key={item.field}>
+                                    <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                        {item.label}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                        value={workProfile[item.field] || ""}
+                                        onChange={(e) => handleWorkChange(item.field, e.target.value)}
+                                        placeholder={`Enter ${item.label.toLowerCase()}`}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
 
                     {/* Skills Section */}
-                    <div className="border p-4 rounded bg-gray-50">
-                        <h3 className="font-semibold mb-3 text-blue-700">Skills</h3>
+                    <div className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/60' : 'bg-gray-50/50 border-gray-200 hover:bg-gray-50'}`}>
+                        <h3 className={`font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-purple-400' : 'text-purple-700'}`}>
+                            <Code className="w-4 h-4" /> Professional Skills
+                        </h3>
                         <div>
-                            <label className="text-xs text-gray-500">Skills (comma separated)</label>
+                            <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                Skills (comma separated)
+                            </label>
                             <input
                                 type="text"
                                 placeholder="Java, Python, Leadership, etc."
-                                className="w-full p-2 border rounded text-sm bg-white"
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                             />
@@ -135,71 +133,108 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                     </div>
 
                     {/* Job Preferences Section */}
-                    <div className="border p-4 rounded bg-gray-50">
-                        <h3 className="font-semibold mb-3 text-blue-700">Job Preferences</h3>
-                        <div className="grid grid-cols-2 gap-4">
+                    <div className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/60' : 'bg-gray-50/50 border-gray-200 hover:bg-gray-50'}`}>
+                        <h3 className={`font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
+                            <Heart className="w-4 h-4" /> Job Preferences
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs text-gray-500">Preferred Functional Area</label>
+                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Preferred Functional Area
+                                </label>
                                 <input
                                     type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.functionalArea || ""}
                                     onChange={(e) => handleJobChange("functionalArea", e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label className="text-xs text-gray-500">Preferred Locations (comma separated)</label>
+                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Preferred Locations
+                                </label>
                                 <input
                                     type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.preferredLocations ? jobPreferences.preferredLocations.join(", ") : ""}
                                     onChange={(e) => handleLocationsChange(e.target.value)}
+                                    placeholder="City names separated by commas"
                                 />
                             </div>
                             <div>
-                                <label className="text-xs text-gray-500">Notice Period</label>
+                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Notice Period
+                                </label>
                                 <input
                                     type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.noticePeriod || ""}
                                     onChange={(e) => handleJobChange("noticePeriod", e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label className="text-xs text-gray-500">Expected Salary</label>
+                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Expected Salary
+                                </label>
                                 <input
                                     type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.salary || ""}
                                     onChange={(e) => handleJobChange("salary", e.target.value)}
                                 />
                             </div>
-                            <div className="col-span-2">
-                                <label className="text-xs text-gray-500">Resume Link</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded text-sm bg-white"
-                                    value={jobPreferences.resumeLink || ""}
-                                    onChange={(e) => handleJobChange("resumeLink", e.target.value)}
-                                />
+                            <div className="md:col-span-2">
+                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Resume Link
+                                </label>
+                                <div className="relative">
+                                    <FileText className={`absolute left-3 top-2.5 w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />
+                                    <input
+                                        type="text"
+                                        className={`w-full pl-9 p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                        value={jobPreferences.resumeLink || ""}
+                                        onChange={(e) => handleJobChange("resumeLink", e.target.value)}
+                                        placeholder="https://drive.google.com/..."
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-6 border-t pt-4">
-                    <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-gray-800">
+                {/* Footer */}
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50'}`}>
+                    <button
+                        onClick={onClose}
+                        className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                    >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
+                        className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                     >
-                        {loading ? "Saving..." : "Save"}
+                        {loading ? "Saving..." : "Save All Changes"}
                     </button>
                 </div>
             </div>
+
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: ${darkMode ? '#334155' : '#d1d5db'};
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: ${darkMode ? '#475569' : '#9ca3af'};
+                }
+            `}</style>
         </div>
     );
 }
