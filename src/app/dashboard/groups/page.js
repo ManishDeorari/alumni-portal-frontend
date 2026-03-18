@@ -38,9 +38,24 @@ export default function MessagesPage() {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const user = JSON.parse(localStorage.getItem("user"));
+                const role = localStorage.getItem("role");
+                
+                // Initial check from localStorage
+                let user = JSON.parse(localStorage.getItem("user"));
+                
+                // If user object is missing, fetch it
+                if (!user && token) {
+                    const userRes = await fetch(`${API_URL}/api/user/me`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (userRes.ok) {
+                        user = await userRes.json();
+                        localStorage.setItem("user", JSON.stringify(user));
+                    }
+                }
+
                 setCurrentUser(user);
-                setIsAdmin(user?.isAdmin || user?.role === "admin");
+                setIsAdmin(user?.isAdmin || user?.role === "admin" || role === "admin");
 
                 // Fetch groups
                 const res = await fetch(`${API_URL}/api/groups`, {

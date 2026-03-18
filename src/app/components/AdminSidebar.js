@@ -39,13 +39,39 @@ export default function AdminSidebar() {
     }
   }, [API_URL]);
 
-  React.useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
-    if (!token || !user) return;
+  const fetchUser = React.useCallback(async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/api/user/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        localStorage.setItem("user", JSON.stringify(userData));
+        return userData;
+      }
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+    }
+    return null;
+  }, [API_URL]);
 
-    fetchNotifications(token);
-    socket.emit("join", user._id);
+  React.useEffect(() => {
+    const initialize = async () => {
+      let user = JSON.parse(localStorage.getItem("user"));
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      if (!user) {
+        user = await fetchUser(token);
+      }
+      
+      if (user) {
+        fetchNotifications(token);
+        socket.emit("join", user._id);
+      }
+    };
+
+    initialize();
 
     const handleNewNotification = (notification) => {
       const newNotif = { ...notification, isRead: false };
@@ -55,7 +81,7 @@ export default function AdminSidebar() {
 
     socket.on("newNotification", handleNewNotification);
     return () => socket.off("newNotification", handleNewNotification);
-  }, [fetchNotifications]);
+  }, [fetchNotifications, fetchUser]);
 
   const handleSignout = () => {
     localStorage.removeItem("token");

@@ -84,11 +84,13 @@ export default function Sidebar() {
       if (!res.ok) return;
 
       const userData = await res.json();
-      if (userData && (userData.role === "admin" || userData.isAdmin)) {
-        setIsAdmin(true);
+      if (userData) {
         localStorage.setItem("user", JSON.stringify(userData));
-      } else {
-        setIsAdmin(false);
+        if (userData.role === "admin" || userData.isAdmin) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch user role:", err);
