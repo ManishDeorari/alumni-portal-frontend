@@ -78,8 +78,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     return (
         <>
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                <div className={`relative w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
-                    <div className="p-8">
+            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
+                <div className="p-8 overflow-y-auto custom-scrollbar">
                         <div className="flex justify-between items-center mb-8">
                             <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-800"}`}>Create Group</h2>
                             <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">

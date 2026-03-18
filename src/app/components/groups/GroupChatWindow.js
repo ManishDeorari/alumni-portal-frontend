@@ -104,7 +104,7 @@ export default function GroupChatWindow({
 
     if (!selectedGroup) {
         return (
-            <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-140px)]">
+            <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-40" />
                 <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-white/95"}`}>
                     <div className="text-center p-8">
@@ -120,7 +120,7 @@ export default function GroupChatWindow({
     const canMessage = isAdmin || currentUser?.role !== "faculty" || selectedGroup.allowFacultyMessaging;
 
     return (
-        <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-140px)]">
+        <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500" />
 
             <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-white/95 text-gray-900"}`}>
@@ -128,11 +128,7 @@ export default function GroupChatWindow({
                 <div className="p-4 flex items-center justify-between relative bg-black/5">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
                         <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform">
-                            {selectedGroup.profileImage ? (
-                                <Image src={selectedGroup.profileImage} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
-                            ) : (
-                                <FaUsers className="text-gray-400" size={20} />
-                            )}
+                            <Image src={selectedGroup.profileImage || "/default-group.jpg"} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
                         </div>
                         <div>
                             <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-800"}`}>{selectedGroup.name}</h3>

@@ -40,9 +40,9 @@ export default function GroupsPage() {
             try {
                 const token = localStorage.getItem("token");
                 const role = localStorage.getItem("role");
-                
+
                 let user = JSON.parse(localStorage.getItem("user"));
-                
+
                 if (!user && token) {
                     const userRes = await fetch(`${API_URL}/api/user/me`, {
                         headers: { Authorization: `Bearer ${token}` },
@@ -108,7 +108,7 @@ export default function GroupsPage() {
         };
 
         fetchMessages();
-        
+
         socket.emit("joinGroup", selectedGroup._id);
 
         return () => {
@@ -129,7 +129,7 @@ export default function GroupsPage() {
         };
 
         const handleReactionUpdate = ({ messageId, reactions }) => {
-            setMessages((prev) => prev.map(m => 
+            setMessages((prev) => prev.map(m =>
                 m._id === messageId ? { ...m, reactions } : m
             ));
         };
@@ -269,43 +269,47 @@ export default function GroupsPage() {
         <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white overflow-hidden">
             <SidebarComponent />
 
-            <main className="p-4 max-w-[1600px] mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
+            <main className="p-4 max-w-[1200px] mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
                 <div className="relative p-[2px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
-                    <div className={`relative flex gap-1 p-1 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full ${darkMode ? "bg-gray-950/90" : "bg-white/90"}`}>
-                        <GroupSidebar
-                            groups={filteredGroups}
-                            selectedGroup={selectedGroup}
-                            onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsPanel(false); }}
-                            onSearch={(term) => {
-                                const filtered = groups.filter(g => g.name.toLowerCase().includes(term.toLowerCase()));
-                                setFilteredGroups(filtered);
-                            }}
-                            isAdmin={isAdmin}
-                            onCreateGroup={() => setShowCreateModal(true)}
-                        />
+                    <div className={`relative flex gap-10 px-10 py-8 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full justify-center ${darkMode ? "bg-gray-950/90" : "bg-white/90"}`}>
+                        <div className="w-[32%] flex-shrink-0">
+                            <GroupSidebar
+                                groups={filteredGroups}
+                                selectedGroup={selectedGroup}
+                                onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsPanel(false); }}
+                                onSearch={(term) => {
+                                    const filtered = groups.filter(g => g.name.toLowerCase().includes(term.toLowerCase()));
+                                    setFilteredGroups(filtered);
+                                }}
+                                isAdmin={isAdmin}
+                                onCreateGroup={() => setShowCreateModal(true)}
+                            />
+                        </div>
 
-                        <GroupChatWindow
-                            selectedGroup={selectedGroup}
-                            messages={messages}
-                            currentUser={currentUser}
-                            onSendMessage={handleSendMessage}
-                            isAdmin={isAdmin}
-                            onEditGroup={() => setShowEditModal(true)}
-                            onInviteMembers={() => setShowInviteModal(true)}
-                            onToggleDetails={() => setShowDetailsPanel(!showDetailsPanel)}
-                            onReact={(msgId, emoji) => {
-                                const token = localStorage.getItem("token");
-                                fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                                    body: JSON.stringify({ messageId: msgId, emoji }),
-                                });
-                            }}
-                        />
+                        <div className="w-[66%] flex-shrink-0">
+                            <GroupChatWindow
+                                selectedGroup={selectedGroup}
+                                messages={messages}
+                                currentUser={currentUser}
+                                onSendMessage={handleSendMessage}
+                                isAdmin={isAdmin}
+                                onEditGroup={() => setShowEditModal(true)}
+                                onInviteMembers={() => setShowInviteModal(true)}
+                                onToggleDetails={() => setShowDetailsPanel(!showDetailsPanel)}
+                                onReact={(msgId, emoji) => {
+                                    const token = localStorage.getItem("token");
+                                    fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                        body: JSON.stringify({ messageId: msgId, emoji }),
+                                    });
+                                }}
+                            />
+                        </div>
 
-                        <GroupDetailsPanel 
+                        <GroupDetailsPanel
                             isOpen={showDetailsPanel}
                             onClose={() => setShowDetailsPanel(false)}
                             group={selectedGroup}
@@ -319,25 +323,25 @@ export default function GroupsPage() {
             </main>
 
             {/* Modals */}
-            <CreateGroupModal 
-                isOpen={showCreateModal} 
-                onClose={() => setShowCreateModal(false)} 
-                onCreate={handleCreateGroup} 
+            <CreateGroupModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onCreate={handleCreateGroup}
             />
-            
+
             {showEditModal && (
-                <EditGroupModal 
-                    isOpen={showEditModal} 
-                    onClose={() => setShowEditModal(false)} 
-                    onUpdate={handleUpdateGroup} 
+                <EditGroupModal
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onUpdate={handleUpdateGroup}
                     group={selectedGroup}
                 />
             )}
 
             {showInviteModal && (
-                <InviteMembersModal 
-                    isOpen={showInviteModal} 
-                    onClose={() => setShowInviteModal(false)} 
+                <InviteMembersModal
+                    isOpen={showInviteModal}
+                    onClose={() => setShowInviteModal(false)}
                     onInvite={async (groupId, data) => {
                         const token = localStorage.getItem("token");
                         const res = await fetch(`${API_URL}/api/groups/${groupId}/invite`, {
@@ -350,8 +354,9 @@ export default function GroupsPage() {
                             setShowInviteModal(false);
                             fetchGroupDetails(groupId);
                         }
-                    }} 
+                    }}
                     groupId={selectedGroup?._id}
+                    existingMemberIds={selectedGroup?.members?.map(m => m._id || m) || []}
                 />
             )}
         </div>

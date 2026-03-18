@@ -22,7 +22,7 @@ export default function GroupSidebar({
     };
 
     return (
-        <div className="w-1/3 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 h-[calc(100vh-140px)]">
+        <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 h-full">
             {/* Gradient Border Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500" />
 
@@ -41,16 +41,15 @@ export default function GroupSidebar({
                             </button>
                         )}
                     </div>
-                    <div className="relative p-[1px] rounded-xl bg-gradient-to-r from-blue-400 to-purple-500 shadow-sm focus-within:shadow-md transition-all">
-                        <div className="flex items-center px-3 gap-2">
+                    <div className={`relative px-3 rounded-xl border-2 transition-all ${darkMode ? "bg-gray-800 border-gray-700 focus-within:border-blue-500" : "bg-gray-50 border-gray-100 focus-within:border-blue-500"}`}>
+                        <div className="flex items-center gap-2">
                              <FaSearch className="text-gray-400" size={14} />
                             <input
                                 type="text"
                                 placeholder="Search groups..."
                                 value={searchTerm}
                                 onChange={handleSearch}
-                                className={`w-full rounded-xl py-2.5 font-bold text-sm placeholder-gray-400 focus:outline-none transition-colors ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-                                    }`}
+                                className="w-full bg-transparent py-2.5 font-bold text-sm placeholder-gray-400 focus:outline-none"
                             />
                         </div>
                     </div>
@@ -75,24 +74,28 @@ export default function GroupSidebar({
                                     }`}
                             >
                                 <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm flex-shrink-0 w-12 h-12 flex items-center justify-center overflow-hidden bg-gray-100">
-                                    {group.profileImage ? (
-                                        <Image
-                                            src={group.profileImage}
-                                            width={48}
-                                            height={48}
-                                            className="rounded-full object-cover"
-                                            alt={group.name}
-                                        />
-                                    ) : (
-                                        <FaUsers size={24} className="text-gray-400" />
-                                    )}
+                                    <Image
+                                        src={group.profileImage || "/default-group.jpg"}
+                                        width={48}
+                                        height={48}
+                                        className="rounded-full object-cover"
+                                        alt={group.name}
+                                    />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <h3 className={`font-bold truncate ${darkMode ? "text-white" : "text-gray-800"}`}>{group.name}</h3>
-                                    <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">
-                                        {group.description || "No description"}
-                                    </p>
+                                    <div className={`p-[1px] rounded-lg transition-all ${selectedGroup?._id === group._id 
+                                        ? "bg-gradient-to-r from-blue-400 to-pink-500 scale-[1.02] shadow-lg shadow-blue-500/10" 
+                                        : (darkMode ? "bg-white/10" : "bg-gray-200")}`}>
+                                        <div className={`p-2 rounded-[7px] ${selectedGroup?._id === group._id 
+                                            ? (darkMode ? "bg-gray-900" : "bg-white") 
+                                            : (darkMode ? "bg-gray-900/50" : "bg-white/50")}`}>
+                                            <h3 className={`font-black truncate text-xs ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
+                                            <p className="text-[9px] font-bold text-gray-500 truncate uppercase mt-0.5">
+                                                {group.description || "Active Group"}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))

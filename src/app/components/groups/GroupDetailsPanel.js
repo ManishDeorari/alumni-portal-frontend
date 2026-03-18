@@ -49,13 +49,12 @@ export default function GroupDetailsPanel({
                     {/* Group Info Section */}
                     <div className="p-8 flex flex-col items-center text-center">
                         <div className="relative w-32 h-32 rounded-[2.5rem] overflow-hidden border-4 border-blue-500/20 shadow-2xl mb-6 group">
-                            {group.profileImage ? (
-                                <Image src={group.profileImage} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={group.name} />
-                            ) : (
-                                <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                    <FaUsers size={48} className="text-gray-400" />
-                                </div>
-                            )}
+                             <Image 
+                                 src={group.profileImage || "/default-group.jpg"} 
+                                 fill 
+                                 className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                                 alt={group.name} 
+                             />
                         </div>
                         <h3 className="text-2xl font-black tracking-tight mb-2">{group.name}</h3>
                         <p className="text-sm font-medium text-gray-500 px-4 leading-relaxed">
