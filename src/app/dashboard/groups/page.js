@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import AdminSidebar from "../../components/AdminSidebar";
 import GroupSidebar from "../../components/groups/GroupSidebar";
 import GroupChatWindow from "../../components/groups/GroupChatWindow";
+import GroupDetailsPanel from "../../components/groups/GroupDetailsPanel";
 import socket from "@/utils/socket";
 import { useTheme } from "@/context/ThemeContext";
 import CreateGroupModal from "../../components/groups/modals/CreateGroupModal";
@@ -11,15 +12,15 @@ import EditGroupModal from "../../components/groups/modals/EditGroupModal";
 import InviteMembersModal from "../../components/groups/modals/InviteMembersModal";
 import { toast } from "react-hot-toast";
 
-export default function MessagesPage() {
+export default function GroupsPage() {
     const { darkMode } = useTheme();
     const [groups, setGroups] = useState([]);
     const [filteredGroups, setFilteredGroups] = useState([]);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [messages, setMessages] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
-    const [newMessage, setNewMessage] = useState("");
     const [isAdmin, setIsAdmin] = useState(false);
+    const [showDetailsPanel, setShowDetailsPanel] = useState(false);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
     // Modal States
@@ -40,10 +41,8 @@ export default function MessagesPage() {
                 const token = localStorage.getItem("token");
                 const role = localStorage.getItem("role");
                 
-                // Initial check from localStorage
                 let user = JSON.parse(localStorage.getItem("user"));
                 
-                // If user object is missing, fetch it
                 if (!user && token) {
                     const userRes = await fetch(`${API_URL}/api/user/me`, {
                         headers: { Authorization: `Bearer ${token}` },
@@ -57,7 +56,6 @@ export default function MessagesPage() {
                 setCurrentUser(user);
                 setIsAdmin(user?.isAdmin || user?.role === "admin" || role === "admin");
 
-                // Fetch groups
                 const res = await fetch(`${API_URL}/api/groups`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -75,9 +73,24 @@ export default function MessagesPage() {
         fetchData();
     }, [API_URL]);
 
-    // 2. Fetch messages when a group is selected
+    // 2. Fetch full group details and messages when a group is selected
+    const fetchGroupDetails = useCallback(async (groupId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${API_URL}/api/groups/${groupId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setSelectedGroup(data);
+            }
+        } catch (err) {
+            console.error("Error fetching group details:", err);
+        }
+    }, [API_URL]);
+
     useEffect(() => {
-        if (!selectedGroup) return;
+        if (!selectedGroup?._id) return;
 
         const fetchMessages = async () => {
             try {
@@ -95,15 +108,13 @@ export default function MessagesPage() {
         };
 
         fetchMessages();
-        setNewMessage(""); 
-
-        // Join socket room
+        
         socket.emit("joinGroup", selectedGroup._id);
 
         return () => {
             socket.emit("leaveGroup", selectedGroup._id);
         };
-    }, [selectedGroup, API_URL]);
+    }, [selectedGroup?._id, API_URL]);
 
     // 3. Socket.io listeners
     useEffect(() => {
@@ -123,18 +134,24 @@ export default function MessagesPage() {
             ));
         };
 
+        const handleMessageDeleted = (messageId) => {
+            setMessages(prev => prev.filter(m => m._id !== messageId));
+        };
+
         socket.on("receiveGroupMessage", handleReceiveMessage);
         socket.on("messageReactionUpdate", handleReactionUpdate);
+        socket.on("messageDeleted", handleMessageDeleted);
 
         return () => {
             socket.off("receiveGroupMessage", handleReceiveMessage);
             socket.off("messageReactionUpdate", handleReactionUpdate);
+            socket.off("messageDeleted", handleMessageDeleted);
         };
     }, []);
 
-    // 4. Send Message Logic
-    const handleSendMessage = async (text) => {
-        if (!selectedGroup || !text.trim()) return;
+    // 4. Group Handlers
+    const handleSendMessage = async (text, mediaData = {}) => {
+        if (!selectedGroup) return;
 
         try {
             const token = localStorage.getItem("token");
@@ -147,12 +164,11 @@ export default function MessagesPage() {
                 body: JSON.stringify({
                     groupId: selectedGroup._id,
                     content: text,
+                    ...mediaData
                 }),
             });
 
-            if (res.ok) {
-                setNewMessage("");
-            } else {
+            if (!res.ok) {
                 const data = await res.json();
                 toast.error(data.message || "Failed to send message");
             }
@@ -162,14 +178,37 @@ export default function MessagesPage() {
         }
     };
 
-    const handleSearch = (term) => {
-        if (!term.trim()) {
-            setFilteredGroups(groups);
-        } else {
-            const filtered = groups.filter(g =>
-                g.name.toLowerCase().includes(term.toLowerCase())
-            );
-            setFilteredGroups(filtered);
+    const handleRemoveMember = async (memberId) => {
+        if (!window.confirm("Are you sure you want to remove this member?")) return;
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${API_URL}/api/groups/${selectedGroup._id}/members/${memberId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                toast.success("Member removed");
+                fetchGroupDetails(selectedGroup._id); // Refresh details
+            }
+        } catch (err) {
+            console.error("Error removing member:", err);
+        }
+    };
+
+    const handleDeleteMedia = async (messageId) => {
+        if (!window.confirm("Are you sure you want to delete this media? It will be removed from Cloudinary as well.")) return;
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${API_URL}/api/groups/${selectedGroup._id}/messages/${messageId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                toast.success("Media deleted");
+                setMessages(prev => prev.filter(m => m._id !== messageId));
+            }
+        } catch (err) {
+            console.error("Error deleting media:", err);
         }
     };
 
@@ -224,62 +263,25 @@ export default function MessagesPage() {
         }
     };
 
-    const handleInviteMembers = async (groupId, inviteData) => {
-        try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`${API_URL}/api/groups/${groupId}/invite`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(inviteData),
-            });
-
-            if (res.ok) {
-                setShowInviteModal(false);
-                toast.success("Members invited successfully!");
-            }
-        } catch (err) {
-            console.error("Error inviting members:", err);
-            toast.error("Failed to invite members");
-        }
-    };
-
-    const handleReact = async (messageId, emoji) => {
-        if (!selectedGroup) return;
-        try {
-            const token = localStorage.getItem("token");
-            await fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ messageId, emoji }),
-            });
-        } catch (err) {
-            console.error("Error reacting:", err);
-        }
-    };
-
     const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white">
+        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white overflow-hidden">
             <SidebarComponent />
 
-            <main className="p-4 max-w-7xl mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
-                <div className="relative p-[2px] rounded-3xl shadow-2xl overflow-hidden h-full">
+            <main className="p-4 max-w-[1600px] mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
+                <div className="relative p-[2px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
-                    <div className={`relative flex gap-6 p-6 rounded-[22px] transition-colors duration-300 h-full ${darkMode ? "bg-gray-950/90" : "bg-white/90"
-                        }`}>
+                    <div className={`relative flex gap-1 p-1 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full ${darkMode ? "bg-gray-950/90" : "bg-white/90"}`}>
                         <GroupSidebar
                             groups={filteredGroups}
                             selectedGroup={selectedGroup}
-                            onSelectGroup={setSelectedGroup}
-                            onSearch={handleSearch}
+                            onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsPanel(false); }}
+                            onSearch={(term) => {
+                                const filtered = groups.filter(g => g.name.toLowerCase().includes(term.toLowerCase()));
+                                setFilteredGroups(filtered);
+                            }}
                             isAdmin={isAdmin}
                             onCreateGroup={() => setShowCreateModal(true)}
                         />
@@ -289,12 +291,28 @@ export default function MessagesPage() {
                             messages={messages}
                             currentUser={currentUser}
                             onSendMessage={handleSendMessage}
-                            newMessage={newMessage}
-                            setNewMessage={setNewMessage}
                             isAdmin={isAdmin}
                             onEditGroup={() => setShowEditModal(true)}
                             onInviteMembers={() => setShowInviteModal(true)}
-                            onReact={handleReact}
+                            onToggleDetails={() => setShowDetailsPanel(!showDetailsPanel)}
+                            onReact={(msgId, emoji) => {
+                                const token = localStorage.getItem("token");
+                                fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                    body: JSON.stringify({ messageId: msgId, emoji }),
+                                });
+                            }}
+                        />
+
+                        <GroupDetailsPanel 
+                            isOpen={showDetailsPanel}
+                            onClose={() => setShowDetailsPanel(false)}
+                            group={selectedGroup}
+                            messages={messages}
+                            currentUser={currentUser}
+                            onRemoveMember={handleRemoveMember}
+                            onDeleteMedia={handleDeleteMedia}
                         />
                     </div>
                 </div>
@@ -320,7 +338,19 @@ export default function MessagesPage() {
                 <InviteMembersModal 
                     isOpen={showInviteModal} 
                     onClose={() => setShowInviteModal(false)} 
-                    onInvite={handleInviteMembers} 
+                    onInvite={async (groupId, data) => {
+                        const token = localStorage.getItem("token");
+                        const res = await fetch(`${API_URL}/api/groups/${groupId}/invite`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            body: JSON.stringify(data),
+                        });
+                        if (res.ok) {
+                            toast.success("Members added");
+                            setShowInviteModal(false);
+                            fetchGroupDetails(groupId);
+                        }
+                    }} 
                     groupId={selectedGroup?._id}
                 />
             )}

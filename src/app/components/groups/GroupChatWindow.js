@@ -1,26 +1,32 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers } from "react-icons/fa";
+import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers, FaImage, FaTimes, FaExpand } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import EmojiPicker from 'emoji-picker-react';
+import { toast } from "react-hot-toast";
 
 export default function GroupChatWindow({
     selectedGroup,
     messages,
     currentUser,
     onSendMessage,
-    newMessage,
-    setNewMessage,
     onEditGroup,
     onInviteMembers,
+    onToggleDetails,
     isAdmin,
     onReact
 }) {
     const { darkMode } = useTheme();
     const messagesEndRef = useRef(null);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const fileInputRef = useRef(null);
     const emojiPickerRef = useRef(null);
+    
+    const [newMessage, setNewMessage] = useState("");
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [mediaPreview, setMediaPreview] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,9 +46,55 @@ export default function GroupChatWindow({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleSend = (e) => {
-        e.preventDefault();
-        onSendMessage(newMessage);
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select an image file.");
+            return;
+        }
+        setSelectedFile(file);
+        setMediaPreview(URL.createObjectURL(file));
+    };
+
+    const handleSend = async (e) => {
+        if (e) e.preventDefault();
+        if (!newMessage.trim() && !selectedFile) return;
+
+        let mediaData = { mediaUrl: null, mediaPublicId: null, type: "text" };
+
+        if (selectedFile) {
+            setUploading(true);
+            try {
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+                formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+                
+                const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.secure_url) {
+                    mediaData = { 
+                        mediaUrl: data.secure_url, 
+                        mediaPublicId: data.public_id,
+                        type: "image"
+                    };
+                }
+            } catch (err) {
+                console.error("Upload error:", err);
+                toast.error("Failed to upload image.");
+                setUploading(false);
+                return;
+            }
+        }
+
+        onSendMessage(newMessage, mediaData);
+        setNewMessage("");
+        setMediaPreview(null);
+        setSelectedFile(null);
+        setUploading(false);
     };
 
     const onEmojiClick = (emojiData) => {
@@ -52,14 +104,13 @@ export default function GroupChatWindow({
 
     if (!selectedGroup) {
         return (
-            <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 h-[calc(100vh-140px)]">
+            <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-140px)]">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-40" />
-                <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-white/95"
-                    }`}>
-                    <div className={`text-center p-8 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-white/95"}`}>
+                    <div className="text-center p-8">
                         <div className="text-7xl mb-6 animate-bounce">👥</div>
                         <h2 className={`text-3xl font-black mb-3 ${darkMode ? "text-white" : "text-gray-800"}`}>Select a Group</h2>
-                        <p className="max-w-xs mx-auto text-lg opacity-80 font-medium">Join or select a group to start communicating with your alumni network!</p>
+                        <p className={`max-w-xs mx-auto text-lg font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Select a group to start communicating!</p>
                     </div>
                 </div>
             </div>
@@ -69,124 +120,100 @@ export default function GroupChatWindow({
     const canMessage = isAdmin || currentUser?.role !== "faculty" || selectedGroup.allowFacultyMessaging;
 
     return (
-        <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 h-[calc(100vh-140px)]">
-            {/* Gradient Border Background */}
+        <div className="flex-1 relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-140px)]">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500" />
 
-            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-white/95 text-gray-900"
-                }`}>
+            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-white/95 text-gray-900"}`}>
                 {/* Header */}
                 <div className="p-4 flex items-center justify-between relative bg-black/5">
-                    <div className="flex items-center gap-3">
-                        <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
+                        <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform">
                             {selectedGroup.profileImage ? (
-                                <Image
-                                    src={selectedGroup.profileImage}
-                                    width={40}
-                                    height={40}
-                                    className="rounded-full object-cover"
-                                    alt={selectedGroup.name}
-                                />
+                                <Image src={selectedGroup.profileImage} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
                             ) : (
                                 <FaUsers className="text-gray-400" size={20} />
                             )}
                         </div>
                         <div>
-                            <h3 className={`font-black ${darkMode ? "text-white" : "text-gray-800"}`}>{selectedGroup.name}</h3>
+                            <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-800"}`}>{selectedGroup.name}</h3>
                             <p className={`text-[10px] font-bold truncate max-w-[200px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                 {selectedGroup.description || "Group Chat"}
                             </p>
                         </div>
                     </div>
-                    {isAdmin && (
-                        <div className="flex gap-2">
-                            <button 
-                                onClick={onInviteMembers}
-                                className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`}
-                                title="Invite Members"
-                            >
+                    
+                    <div className="flex gap-2">
+                        {isAdmin && (
+                            <button onClick={onInviteMembers} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Invite Members">
                                 <FaUserPlus size={18} />
                             </button>
-                            <button 
-                                onClick={onEditGroup}
-                                className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`}
-                                title="Group Settings"
-                            >
-                                <FaInfoCircle size={18} />
-                            </button>
-                        </div>
-                    )}
+                        )}
+                        <button onClick={onToggleDetails} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Group Info">
+                            <FaInfoCircle size={18} />
+                        </button>
+                    </div>
                 </div>
 
-                {/* Gradient Divider */}
                 <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-chat-pattern">
                     {messages.map((msg, index) => {
                         const isMe = String(msg.sender?._id || msg.sender?.id || msg.sender) === String(currentUser?._id || currentUser?.id);
 
                         return (
                             <div key={msg._id || index} className={`flex items-start gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                                 {!isMe && (
-                                    <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden border border-gray-200 mt-1">
-                                        <Image
-                                            src={msg.sender?.profilePicture || "/default-profile.jpg"}
-                                            width={32}
-                                            height={32}
-                                            className="object-cover"
-                                            alt={msg.sender?.name || "User"}
-                                        />
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 shadow-sm mt-1">
+                                        <Image src={msg.sender?.profilePicture || "/default-profile.jpg"} width={32} height={32} className="object-cover" alt={msg.sender?.name || "User"} />
                                     </div>
                                 )}
                                 <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
                                     {!isMe && (
-                                        <span className="text-[10px] font-black uppercase tracking-wider mb-1 ml-1 opacity-70">
-                                            {msg.sender?.name || "Unknown"} • {msg.sender?.role || "Alumni"}
-                                        </span>
+                                        <div className="flex items-center gap-2 mb-1 ml-1">
+                                            <span className="text-[10px] font-black uppercase tracking-wider opacity-70">{msg.sender?.name || "Unknown"}</span>
+                                            <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${msg.sender?.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-blue-500/20 text-blue-500'}`}>{msg.sender?.role || "Member"}</span>
+                                        </div>
                                     )}
                                     <div className="group relative">
-                                        <div className={`p-3 rounded-2xl shadow-sm relative transition-all hover:shadow-md ${isMe
+                                        <div className={`p-1 rounded-2xl shadow-sm relative transition-all hover:shadow-md ${isMe
                                             ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-tr-none"
                                             : (darkMode ? "bg-gray-800 text-white rounded-tl-none border border-white/10" : "bg-white text-gray-800 rounded-tl-none border border-gray-100 shadow-sm")
                                             }`}>
-                                            <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+                                            
+                                            {msg.type === "image" && (
+                                                <div className="relative rounded-xl overflow-hidden mb-1 min-w-[200px] aspect-auto">
+                                                    <img src={msg.mediaUrl} className="max-w-full max-h-[300px] object-cover rounded-xl" alt="Shared Media" />
+                                                </div>
+                                            )}
+                                            
+                                            {msg.content && (
+                                                <div className="p-2 px-3">
+                                                    <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+                                                </div>
+                                            )}
                                             
                                             {/* Reactions Display */}
                                             {msg.reactions && msg.reactions.length > 0 && (
-                                                <div className="flex flex-wrap gap-1 mt-2">
+                                                <div className="flex flex-wrap gap-1 p-2 pt-0">
                                                     {msg.reactions.map((r, i) => (
-                                                        <div 
-                                                            key={i} 
-                                                            onClick={() => onReact(msg._id, r.emoji)}
-                                                            className={`px-1.5 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1 ${
-                                                                r.users.includes(currentUser?._id) 
-                                                                ? "bg-blue-500/20 border-blue-500/50" 
-                                                                : "bg-black/5 border-transparent"
-                                                            }`}
-                                                        >
+                                                        <div key={i} onClick={() => onReact(msg._id, r.emoji)} className={`px-2 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1.5 transition-all hover:scale-110 ${r.users.includes(currentUser?._id) ? "bg-blue-500/30 border-blue-500" : "bg-black/10 border-transparent dark:bg-white/10"}`}>
                                                             <span>{r.emoji}</span>
-                                                            <span className="font-bold">{r.users.length}</span>
+                                                            <span className="font-black">{r.users.length}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
                                         </div>
                                         
-                                        {/* Quick Reaction Button (Hover) */}
-                                        <div className={`absolute top-0 ${isMe ? "right-full mr-2" : "left-full ml-2"} opacity-0 group-hover:opacity-100 transition-opacity flex gap-1`}>
-                                            {['👍', '❤️', '🔥', '👏'].map(emoji => (
-                                                <button 
-                                                    key={emoji}
-                                                    onClick={() => onReact(msg._id, emoji)}
-                                                    className="p-1 rounded-full bg-white dark:bg-gray-700 shadow-md hover:scale-125 transition-transform text-xs"
-                                                >
-                                                    {emoji}
-                                                </button>
+                                        {/* Quick Reaction Button */}
+                                        <div className={`absolute top-0 ${isMe ? "right-full mr-3" : "left-full ml-3"} opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 scale-90 group-hover:scale-100`}>
+                                            {['👍', '❤️', '🔥', '👏', '😂'].map(emoji => (
+                                                <button key={emoji} onClick={() => onReact(msg._id, emoji)} className="p-1.5 rounded-xl bg-white dark:bg-gray-700 shadow-xl border dark:border-white/10 hover:scale-125 transition-transform text-xs">{emoji}</button>
                                             ))}
                                         </div>
                                     </div>
-                                    <span className="text-[9px] font-bold uppercase tracking-wider mt-1.5 opacity-40 px-1">
+                                    <span className="text-[9px] font-black uppercase tracking-wider mt-1.5 opacity-40 px-1 italic">
                                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                 </div>
@@ -196,52 +223,68 @@ export default function GroupChatWindow({
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* Gradient Divider */}
+                {/* Media Preview before send */}
+                {mediaPreview && (
+                    <div className="p-4 bg-black/10 backdrop-blur-md border-t dark:border-white/5 animate-in slide-in-from-bottom-4 duration-300">
+                        <div className="relative inline-block group">
+                            <img src={mediaPreview} className="w-32 h-32 object-cover rounded-2xl border-4 border-blue-500/30 shadow-2xl" alt="Preview" />
+                            <button 
+                                onClick={() => { setMediaPreview(null); setSelectedFile(null); }}
+                                className="absolute -top-2 -right-2 p-1.5 bg-red-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform"
+                            >
+                                <FaTimes size={12} />
+                            </button>
+                            {uploading && (
+                                <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center">
+                                    <div className="w-8 h-8 border-4 border-blue-500 border-t-white rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
 
                 {/* Input Area */}
-                <div className="p-4 bg-black/5">
+                <div className="p-6 bg-black/5">
                     {canMessage ? (
-                        <form onSubmit={handleSend} className="flex items-center gap-3 relative">
-                            <div className="relative" ref={emojiPickerRef}>
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                    className={`p-2 rounded-full hover:bg-opacity-20 transition-colors ${darkMode ? "text-gray-400 hover:bg-white" : "text-gray-500 hover:bg-gray-200"}`}
-                                >
-                                    <FaSmile size={20} />
+                        <form onSubmit={handleSend} className="flex items-center gap-4 relative">
+                            <div className="flex items-center gap-1">
+                                <div className="relative" ref={emojiPickerRef}>
+                                    <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-gray-100"}`}>
+                                        <FaSmile size={22} />
+                                    </button>
+                                    {showEmojiPicker && (
+                                        <div className="absolute bottom-full left-0 mb-4 z-[100] shadow-2xl border-2 border-blue-500/20 rounded-2xl">
+                                            <EmojiPicker onEmojiClick={onEmojiClick} theme={darkMode ? 'dark' : 'light'} width={300} height={400} />
+                                        </div>
+                                    )}
+                                </div>
+                                <button type="button" onClick={() => fileInputRef.current.click()} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-gray-100"}`}>
+                                    <FaImage size={22} />
                                 </button>
-                                {showEmojiPicker && (
-                                    <div className="absolute bottom-full left-0 mb-2 z-50">
-                                        <EmojiPicker 
-                                            onEmojiClick={onEmojiClick}
-                                            theme={darkMode ? 'dark' : 'light'}
-                                            width={300}
-                                            height={400}
-                                        />
-                                    </div>
-                                )}
+                                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                             </div>
-                            <div className="flex-1 relative p-[1px] rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-inner focus-within:shadow-md transition-all">
+                            
+                            <div className="flex-1 relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl focus-within:scale-[1.01] transition-all">
                                 <input
                                     type="text"
-                                    placeholder="Type a message..."
+                                    placeholder={selectedFile ? "Add a caption..." : "Write something awesome..."}
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    className={`w-full rounded-full px-5 py-2.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-800 text-white placeholder-gray-500" : "bg-white text-gray-900 placeholder-gray-400"
-                                        }`}
+                                    className={`w-full rounded-[14px] px-6 py-3.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-900 text-white placeholder-gray-600" : "bg-white text-gray-900 placeholder-gray-400"}`}
                                 />
                             </div>
                             <button
                                 type="submit"
-                                disabled={!newMessage.trim()}
-                                className="p-3.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:shadow-none"
+                                disabled={(!newMessage.trim() && !selectedFile) || uploading}
+                                className="p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100"
                             >
-                                <FaPaperPlane size={18} />
+                                <FaPaperPlane size={20} />
                             </button>
                         </form>
                     ) : (
-                        <div className="p-3 text-center bg-red-500/10 rounded-xl border border-red-500/20 text-red-500 font-bold text-xs uppercase tracking-widest">
+                        <div className="py-4 px-6 text-center bg-red-500/10 rounded-2xl border-2 border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.2em] shadow-lg animate-pulse">
                              Messaging is disabled for faculty in this group
                         </div>
                     )}
