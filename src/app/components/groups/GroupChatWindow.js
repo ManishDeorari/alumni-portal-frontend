@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers, FaImage, FaTimes, FaExpand } from "react-icons/fa";
+import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers, FaImage, FaTimes, FaExpand, FaEdit } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import EmojiPicker from 'emoji-picker-react';
 import { toast } from "react-hot-toast";
@@ -15,7 +15,9 @@ export default function GroupChatWindow({
     onInviteMembers,
     onToggleDetails,
     isAdmin,
-    onReact
+    onReact,
+    onViewImage,
+    onDeleteMessage
 }) {
     const { darkMode } = useTheme();
     const messagesEndRef = useRef(null);
@@ -117,7 +119,8 @@ export default function GroupChatWindow({
         );
     }
 
-    const canMessage = isAdmin || currentUser?.role !== "faculty" || selectedGroup.allowFacultyMessaging;
+    const isRestrictedRole = currentUser?.role === "faculty" || currentUser?.role === "alumni";
+    const canMessage = isAdmin || !isRestrictedRole || selectedGroup.allowFacultyMessaging;
 
     return (
         <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">
@@ -127,7 +130,13 @@ export default function GroupChatWindow({
                 {/* Header */}
                 <div className="p-4 flex items-center justify-between relative bg-black/5">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
-                        <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform">
+                        <div 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onViewImage(selectedGroup.profileImage || "/default-group.jpg");
+                            }}
+                            className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform cursor-zoom-in"
+                        >
                             <Image src={selectedGroup.profileImage || "/default-group.jpg"} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
                         </div>
                         <div>
@@ -140,9 +149,14 @@ export default function GroupChatWindow({
                     
                     <div className="flex gap-2">
                         {isAdmin && (
-                            <button onClick={onInviteMembers} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Invite Members">
-                                <FaUserPlus size={18} />
-                            </button>
+                            <>
+                                <button onClick={onEditGroup} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Edit Group">
+                                    <FaEdit size={18} />
+                                </button>
+                                <button onClick={onInviteMembers} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Invite Members">
+                                    <FaUserPlus size={18} />
+                                </button>
+                            </>
                         )}
                         <button onClick={onToggleDetails} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Group Info">
                             <FaInfoCircle size={18} />
@@ -178,7 +192,10 @@ export default function GroupChatWindow({
                                             }`}>
                                             
                                             {msg.type === "image" && (
-                                                <div className="relative rounded-xl overflow-hidden mb-1 min-w-[200px] aspect-auto">
+                                                <div 
+                                                    onClick={() => onViewImage(msg.mediaUrl)}
+                                                    className="relative rounded-xl overflow-hidden mb-1 min-w-[200px] aspect-auto cursor-zoom-in hover:opacity-90 transition-opacity"
+                                                >
                                                     <img src={msg.mediaUrl} className="max-w-full max-h-[300px] object-cover rounded-xl" alt="Shared Media" />
                                                 </div>
                                             )}
@@ -203,10 +220,20 @@ export default function GroupChatWindow({
                                         </div>
                                         
                                         {/* Quick Reaction Button */}
-                                        <div className={`absolute top-0 ${isMe ? "right-full mr-3" : "left-full ml-3"} opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 scale-90 group-hover:scale-100`}>
-                                            {['👍', '❤️', '🔥', '👏', '😂'].map(emoji => (
-                                                <button key={emoji} onClick={() => onReact(msg._id, emoji)} className="p-1.5 rounded-xl bg-white dark:bg-gray-700 shadow-xl border dark:border-white/10 hover:scale-125 transition-transform text-xs">{emoji}</button>
-                                            ))}
+                                        <div className={`absolute top-0 ${isMe ? "right-full mr-3" : "left-full ml-3"} opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2 items-center`}>
+                                            <div className="flex gap-1.5 scale-90 group-hover:scale-100">
+                                                {['👍', '❤️', '🔥', '👏', '😂'].map(emoji => (
+                                                    <button key={emoji} onClick={() => onReact(msg._id, emoji)} className="p-1.5 rounded-xl bg-white dark:bg-gray-700 shadow-xl border dark:border-white/10 hover:scale-125 transition-transform text-xs">{emoji}</button>
+                                                ))}
+                                            </div>
+                                            {(isMe || isAdmin) && (
+                                                <button 
+                                                    onClick={() => onDeleteMessage(msg._id)}
+                                                    className="p-1.5 px-3 rounded-lg bg-red-600/10 text-red-600 text-[8px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-lg"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                     <span className="text-[9px] font-black uppercase tracking-wider mt-1.5 opacity-40 px-1 italic">
@@ -281,7 +308,7 @@ export default function GroupChatWindow({
                         </form>
                     ) : (
                         <div className="py-4 px-6 text-center bg-red-500/10 rounded-2xl border-2 border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.2em] shadow-lg animate-pulse">
-                             Messaging is disabled for faculty in this group
+                             Messaging is currently disabled for this group
                         </div>
                     )}
                 </div>

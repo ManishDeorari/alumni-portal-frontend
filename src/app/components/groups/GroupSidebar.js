@@ -6,11 +6,12 @@ import { FaPlus, FaSearch, FaUsers } from "react-icons/fa";
 
 export default function GroupSidebar({ 
     groups, 
-    selectedGroup, 
     onSelectGroup, 
+    selectedGroup, 
     onSearch, 
+    onCreateGroup, 
     isAdmin,
-    onCreateGroup 
+    onViewImage 
 }) {
     const { darkMode } = useTheme();
     const [searchTerm, setSearchTerm] = useState("");
@@ -68,12 +69,18 @@ export default function GroupSidebar({
                             <div
                                 key={group._id}
                                 onClick={() => onSelectGroup(group)}
-                                className={`p-3 flex items-center gap-4 rounded-2xl cursor-pointer transition-all ${selectedGroup?._id === group._id
-                                    ? (darkMode ? "bg-blue-600/30 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-sm")
-                                    : (darkMode ? "hover:bg-white/5" : "hover:bg-gray-50")
+                                className={`p-1 flex items-center gap-3 rounded-2xl cursor-pointer transition-all ${selectedGroup?._id === group._id
+                                    ? "opacity-100"
+                                    : "opacity-80 hover:opacity-100"
                                     }`}
                             >
-                                <div className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm flex-shrink-0 w-12 h-12 flex items-center justify-center overflow-hidden bg-gray-100">
+                                <div 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onViewImage(group.profileImage || "/default-group.jpg");
+                                }}
+                                className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-12 h-12 flex items-center justify-center overflow-hidden bg-white hover:scale-110 transition-transform cursor-zoom-in"
+                            >
                                     <Image
                                         src={group.profileImage || "/default-group.jpg"}
                                         width={48}
@@ -84,16 +91,14 @@ export default function GroupSidebar({
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <div className={`p-[1px] rounded-lg transition-all ${selectedGroup?._id === group._id 
-                                        ? "bg-gradient-to-r from-blue-400 to-pink-500 scale-[1.02] shadow-lg shadow-blue-500/10" 
-                                        : (darkMode ? "bg-white/10" : "bg-gray-200")}`}>
-                                        <div className={`p-2 rounded-[7px] ${selectedGroup?._id === group._id 
-                                            ? (darkMode ? "bg-gray-900" : "bg-white") 
-                                            : (darkMode ? "bg-gray-900/50" : "bg-white/50")}`}>
-                                            <h3 className={`font-black truncate text-xs ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
-                                            <p className="text-[9px] font-bold text-gray-500 truncate uppercase mt-0.5">
-                                                {group.description || "Active Group"}
-                                            </p>
+                                    <div className="p-[1px] rounded-xl bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02]">
+                                        <div className={`p-3 rounded-[11px] flex items-center justify-between ${selectedGroup?._id === group._id 
+                                            ? (darkMode ? "bg-gray-800" : "bg-white") 
+                                            : (darkMode ? "bg-gray-900/90 hover:bg-gray-800/90" : "bg-white/90 hover:bg-gray-50/90")}`}>
+                                            <h3 className={`font-black truncate text-xs tracking-tighter ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
+                                            {selectedGroup?._id === group._id && (
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />
+                                            )}
                                         </div>
                                     </div>
                                 </div>

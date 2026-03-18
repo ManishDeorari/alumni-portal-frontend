@@ -1,17 +1,14 @@
-"use client";
-import React, { useState, useEffect, useRef } from "react";
-import { useTheme } from "@/context/ThemeContext";
-import { FaTimes, FaCamera, FaToggleOn, FaToggleOff, FaUserPlus } from "react-icons/fa";
-import { toast } from "react-hot-toast";
-
-export default function EditGroupModal({ isOpen, onClose, onUpdate, group }) {
+export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRemoveMember, onDeleteGroup, currentUser }) {
     const { darkMode } = useTheme();
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [allowFaculty, setAllowFaculty] = useState(false);
+    const [name, setName] = useState(group?.name || "");
+    const [description, setDescription] = useState(group?.description || "");
+    const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(group?.allowFacultyMessaging ?? true);
     const [profileImage, setProfileImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(group?.profileImage || "/default-group.jpg");
     const [uploading, setUploading] = useState(false);
+    const [memberSearch, setMemberSearch] = useState("");
+
+    const isAdmin = currentUser?.isAdmin || currentUser?.role === "admin" || group?.admin?._id === currentUser?._id;
     
     const fileInputRef = useRef(null);
 
@@ -19,7 +16,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group }) {
         if (group) {
             setName(group.name || "");
             setDescription(group.description || "");
-            setAllowFaculty(!!group.allowFacultyMessaging);
+            setAllowFacultyMessaging(group.allowFacultyMessaging ?? true);
             setImagePreview(group.profileImage || "/default-group.jpg");
         }
     }, [group]);
@@ -65,7 +62,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group }) {
         onUpdate(group._id, { 
             name, 
             description, 
-            allowFacultyMessaging: allowFaculty,
+            allowFacultyMessaging: allowFacultyMessaging,
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId
         });
@@ -124,21 +121,74 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group }) {
                             />
                         </div>
 
-                        <div className={`p-4 rounded-2xl border-2 transition-all group ${allowFaculty ? "bg-blue-500/10 border-blue-500/30 text-blue-500" : "bg-gray-500/5 border-gray-300/20 text-gray-500"}`}>
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <h4 className="text-[10px] font-black uppercase tracking-widest">Allow Faculty Messaging</h4>
-                                    <p className="text-[9px] opacity-60 font-bold mt-1 leading-tight">If OFF, Faculty can only view messages.</p>
-                                </div>
-                                <button 
-                                    type="button"
-                                    onClick={() => setAllowFaculty(!allowFaculty)}
-                                    className="text-3xl hover:scale-110 transition-transform"
-                                >
-                                    {allowFaculty ? <FaToggleOn className="text-blue-500" /> : <FaToggleOff className="text-gray-400" />}
-                                </button>
+                        {/* Faculty Messaging Toggle */}
+                        <div className={`p-6 rounded-3xl border-2 flex items-center justify-between transition-all ${darkMode ? "border-white/5 bg-white/5" : "border-gray-100 bg-gray-50"}`}>
+                            <div>
+                                <h3 className="font-black text-sm uppercase tracking-tight">Faculty Messaging</h3>
+                                <p className="text-[10px] text-gray-500 font-bold">Allow faculty members to send messages in this group</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setAllowFacultyMessaging(!allowFacultyMessaging)}
+                                className={`w-14 h-8 rounded-full relative transition-all duration-300 ${allowFacultyMessaging ? "bg-blue-600" : "bg-gray-400"}`}
+                            >
+                                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all duration-300 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
+                            </button>
+                        </div>
+
+                        {/* Remove Members Section */}
+                        <div className="space-y-4">
+                            <h3 className="font-black text-xs uppercase tracking-[0.2em] text-gray-500 ml-2">Remove Members</h3>
+                            <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all ${darkMode ? "bg-gray-950/50 border-white/5" : "bg-gray-50 border-gray-100"}`}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Search members to remove..." 
+                                    className="bg-transparent border-none outline-none w-full text-xs font-bold"
+                                    value={memberSearch}
+                                    onChange={(e) => setMemberSearch(e.target.value)}
+                                />
+                            </div>
+                            <div className="max-h-[200px] overflow-y-auto pr-2 custom-scrollbar space-y-2">
+                                {group.members?.filter(m => m.name.toLowerCase().includes(memberSearch.toLowerCase())).map(member => {
+                                    const mIsAdmin = member.role === 'admin' || member.isAdmin || String(member._id) === String(group.admin?._id);
+                                    return (
+                                        <div key={member._id} className={`p-3 rounded-2xl border flex items-center justify-between ${darkMode ? "bg-white/5 border-transparent" : "bg-white border-gray-100"}`}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
+                                                    <Image src={member.profilePicture || "/default-profile.jpg"} width={32} height={32} className="object-cover" alt={member.name} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold">{member.name}</span>
+                                                    {mIsAdmin && <span className="text-[8px] font-black uppercase text-yellow-500 tracking-tighter">Admin</span>}
+                                                </div>
+                                            </div>
+                                            {!mIsAdmin && (
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => onRemoveMember(member._id)}
+                                                    className="px-3 py-1.5 rounded-xl bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
+                        
+                        {/* Delete Group Button (Danger Zone) */}
+                        {isAdmin && (
+                            <div className="pt-4 border-t dark:border-white/5">
+                                <button 
+                                    type="button"
+                                    onClick={() => onDeleteGroup(group._id)}
+                                    className="w-full py-4 rounded-2xl bg-red-600/10 border-2 border-red-600/20 text-red-600 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all shadow-lg shadow-red-600/5"
+                                >
+                                    Delete Group Permanently
+                                </button>
+                            </div>
+                        )}
 
                         <button
                             type="submit"

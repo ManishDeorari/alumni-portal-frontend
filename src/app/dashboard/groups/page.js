@@ -10,6 +10,10 @@ import { useTheme } from "@/context/ThemeContext";
 import CreateGroupModal from "../../components/groups/modals/CreateGroupModal";
 import EditGroupModal from "../../components/groups/modals/EditGroupModal";
 import InviteMembersModal from "../../components/groups/modals/InviteMembersModal";
+import GroupDetailsModal from "../../components/groups/modals/GroupDetailsModal";
+import GroupMembersModal from "../../components/groups/modals/GroupMembersModal";
+import GroupMediaModal from "../../components/groups/modals/GroupMediaModal";
+import ImageViewerModal from "../../components/groups/modals/ImageViewerModal";
 import { toast } from "react-hot-toast";
 
 export default function GroupsPage() {
@@ -20,7 +24,11 @@ export default function GroupsPage() {
     const [messages, setMessages] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [showDetailsPanel, setShowDetailsPanel] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showMembersModal, setShowMembersModal] = useState(false);
+    const [showMediaModal, setShowMediaModal] = useState(false);
+    const [viewerImageUrl, setViewerImageUrl] = useState(null);
+    const [showImageViewer, setShowImageViewer] = useState(false);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
     // Modal States
@@ -83,6 +91,11 @@ export default function GroupsPage() {
             if (res.ok) {
                 const data = await res.json();
                 setSelectedGroup(data);
+                
+                // Update local isAdmin based on selected group
+                const user = JSON.parse(localStorage.getItem("user"));
+                const isGroupAdmin = data.admin?._id === user?._id || user?.role === 'admin' || user?.isAdmin;
+                setIsAdmin(isGroupAdmin);
             }
         } catch (err) {
             console.error("Error fetching group details:", err);
@@ -182,6 +195,7 @@ export default function GroupsPage() {
         if (!window.confirm("Are you sure you want to remove this member?")) return;
         try {
             const token = localStorage.getItem("token");
+            // Assuming endpoint for removal is DELETE /api/groups/:groupId/members/:memberId
             const res = await fetch(`${API_URL}/api/groups/${selectedGroup._id}/members/${memberId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
@@ -189,9 +203,35 @@ export default function GroupsPage() {
             if (res.ok) {
                 toast.success("Member removed");
                 fetchGroupDetails(selectedGroup._id); // Refresh details
+            } else {
+                toast.error("Failed to remove member");
             }
         } catch (err) {
             console.error("Error removing member:", err);
+        }
+    };
+
+    const handleConnect = async (userId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${API_URL}/api/connect/request`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ recipientId: userId })
+            });
+            if (res.ok) {
+                toast.success("Connection request sent!");
+                fetchGroupDetails(selectedGroup._id);
+            } else {
+                const data = await res.json();
+                toast.error(data.message || "Failed to send request");
+            }
+        } catch (err) {
+            console.error("Error connecting:", err);
+            toast.error("Connection failed");
         }
     };
 
@@ -206,9 +246,37 @@ export default function GroupsPage() {
             if (res.ok) {
                 toast.success("Media deleted");
                 setMessages(prev => prev.filter(m => m._id !== messageId));
+                socket.emit("deleteMessage", { groupId: selectedGroup._id, messageId });
+            } else {
+                const data = await res.json();
+                toast.error(data.message || "Failed to delete media");
             }
         } catch (err) {
             console.error("Error deleting media:", err);
+        }
+    };
+
+    const handleDeleteGroup = async (groupId) => {
+        if (!window.confirm("CRITICAL: This will permanently delete the group and all its messages. Are you absolutely sure?")) return;
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${API_URL}/api/groups/${groupId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                toast.success("Group deleted successfully");
+                setGroups(prev => prev.filter(g => g._id !== groupId));
+                setFilteredGroups(prev => prev.filter(g => g._id !== groupId));
+                setSelectedGroup(null);
+                setShowEditModal(false);
+            } else {
+                const data = await res.json();
+                toast.error(data.message || "Failed to delete group");
+            }
+        } catch (err) {
+            console.error("Error deleting group:", err);
+            toast.error("Error deleting group");
         }
     };
 
@@ -278,13 +346,14 @@ export default function GroupsPage() {
                             <GroupSidebar
                                 groups={filteredGroups}
                                 selectedGroup={selectedGroup}
-                                onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsPanel(false); }}
+                                onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsModal(false); }}
                                 onSearch={(term) => {
                                     const filtered = groups.filter(g => g.name.toLowerCase().includes(term.toLowerCase()));
                                     setFilteredGroups(filtered);
                                 }}
                                 isAdmin={isAdmin}
                                 onCreateGroup={() => setShowCreateModal(true)}
+                                onViewImage={(url) => { setViewerImageUrl(url); setShowImageViewer(true); }}
                             />
                         </div>
 
@@ -297,7 +366,9 @@ export default function GroupsPage() {
                                 isAdmin={isAdmin}
                                 onEditGroup={() => setShowEditModal(true)}
                                 onInviteMembers={() => setShowInviteModal(true)}
-                                onToggleDetails={() => setShowDetailsPanel(!showDetailsPanel)}
+                                onToggleDetails={() => setShowDetailsModal(true)}
+                                onViewImage={(url) => { setViewerImageUrl(url); setShowImageViewer(true); }}
+                                onDeleteMessage={handleDeleteMedia} // Using same handler for generic deletion
                                 onReact={(msgId, emoji) => {
                                     const token = localStorage.getItem("token");
                                     fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
@@ -309,14 +380,15 @@ export default function GroupsPage() {
                             />
                         </div>
 
-                        <GroupDetailsPanel
-                            isOpen={showDetailsPanel}
-                            onClose={() => setShowDetailsPanel(false)}
+                        <GroupDetailsModal
+                            isOpen={showDetailsModal}
+                            onClose={() => setShowDetailsModal(false)}
                             group={selectedGroup}
-                            messages={messages}
-                            currentUser={currentUser}
-                            onRemoveMember={handleRemoveMember}
-                            onDeleteMedia={handleDeleteMedia}
+                            memberCount={selectedGroup?.members?.length || 0}
+                            mediaCount={messages.filter(m => m.type === "image").length}
+                            onOpenMembers={() => { setShowDetailsModal(false); setShowMembersModal(true); }}
+                            onOpenMedia={() => { setShowDetailsModal(false); setShowMediaModal(true); }}
+                            onViewImage={(url) => { setViewerImageUrl(url); setShowImageViewer(true); }}
                         />
                     </div>
                 </div>
@@ -335,6 +407,9 @@ export default function GroupsPage() {
                     onClose={() => setShowEditModal(false)}
                     onUpdate={handleUpdateGroup}
                     group={selectedGroup}
+                    onRemoveMember={handleRemoveMember}
+                    onDeleteGroup={handleDeleteGroup}
+                    currentUser={currentUser}
                 />
             )}
 
@@ -359,6 +434,29 @@ export default function GroupsPage() {
                     existingMemberIds={selectedGroup?.members?.map(m => m._id || m) || []}
                 />
             )}
+
+            <GroupMembersModal
+                isOpen={showMembersModal}
+                onClose={() => setShowMembersModal(false)}
+                members={selectedGroup?.members || []}
+                currentUser={currentUser}
+                onConnect={handleConnect}
+            />
+
+            <GroupMediaModal
+                isOpen={showMediaModal}
+                onClose={() => setShowMediaModal(false)}
+                mediaList={messages.filter(m => m.type === "image")}
+                isAdmin={isAdmin}
+                onDelete={handleDeleteMedia}
+                onViewImage={(url) => { setViewerImageUrl(url); setShowImageViewer(true); }}
+            />
+
+            <ImageViewerModal 
+                isOpen={showImageViewer}
+                onClose={() => setShowImageViewer(false)}
+                imageUrl={viewerImageUrl}
+            />
         </div>
     );
 }

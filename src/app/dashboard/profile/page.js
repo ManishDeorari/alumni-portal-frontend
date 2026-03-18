@@ -60,7 +60,19 @@ export default function ProfilePage() {
       const resProfile = await fetch(profileEndpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      
+      if (!resProfile.ok) {
+        throw new Error(`Profile fetch failed: ${resProfile.status}`);
+      }
       const profileData = await resProfile.json();
+
+      // 1.5) Record Visit if viewing someone else
+      if (viewingOther) {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/profile/${targetId}/visit`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(err => console.error("Visit recording failed:", err));
+      }
 
       // 2) Posts
       const postsEndpoint = viewingOther
@@ -70,8 +82,12 @@ export default function ProfilePage() {
       const resPosts = await fetch(postsEndpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const postsRaw = await resPosts.json();
-      const postsData = postsRaw.posts || postsRaw;
+      
+      let postsData = [];
+      if (resPosts.ok) {
+        const postsRaw = await resPosts.json();
+        postsData = postsRaw.posts || postsRaw;
+      }
 
       // 3) Activity
       let activityData = [];
@@ -101,10 +117,13 @@ export default function ProfilePage() {
   }, [fetchProfile]);
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-        <p className="font-bold tracking-widest text-xs uppercase">Loading Profile...</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
+      <div className="flex flex-col items-center gap-6 animate-pulse">
+        <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
+        <div className="text-center space-y-2">
+            <h2 className="font-black tracking-[0.3em] uppercase text-sm">Synchronizing Data</h2>
+            <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Optimizing profile experience...</p>
+        </div>
       </div>
     </div>
   );
