@@ -14,7 +14,9 @@ export default function Sidebar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const [unreadGroupMessagesCount, setUnreadGroupMessagesCount] = useState(0);
   const [newPostsCount, setNewPostsCount] = useState(0);
+  const [adminSignupRequestsCount, setAdminSignupRequestsCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [shakeNotification, setShakeNotification] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -34,7 +36,7 @@ export default function Sidebar() {
         // Ensure each notification has an isRead property for consistent filtering
         const normalized = data.map(n => ({
           ...n,
-          isRead: n.isRead === true || n.isRead === "true"
+          isRead: n.isRead === true || n.isRead === "true" || n.isRead === 1 || n.isRead === "1"
         }));
         setNotifications(normalized);
         const unread = normalized.filter(n => !n.isRead).length;
@@ -45,35 +47,40 @@ export default function Sidebar() {
     }
   }, [API_URL]);
 
-  const fetchPendingRequests = useCallback(async (token) => {
+  const fetchCounts = useCallback(async (token) => {
     try {
-      const res = await fetch(`${API_URL}/api/connect/pending`, {
+      const res = await fetch(`${API_URL}/api/counts/unread`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setPendingRequestsCount(data.length);
+      if (res.ok) {
+        const data = await res.json();
+        setNewPostsCount(data.unreadPostsCount);
+        setPendingRequestsCount(data.pendingRequestsCount);
+        setUnreadGroupMessagesCount(data.unreadGroupMessagesCount);
+        setUnreadCount(data.unreadNotificationsCount);
+        setAdminSignupRequestsCount(data.adminSignupRequestsCount);
       }
     } catch (err) {
-      console.error("Failed to fetch pending requests:", err);
+      console.error("Failed to fetch counts:", err);
     }
   }, [API_URL]);
 
-  const fetchNewPosts = useCallback(async (token) => {
+  const markSectionAsSeen = async (section) => {
     try {
-      const lastSeenTimestamp = localStorage.getItem("lastSeenPosts") || new Date(0).toISOString();
-      const res = await fetch(`${API_URL}/api/posts`, {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_URL}/api/counts/mark-seen/${section}`, {
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const newPosts = data.filter(p => new Date(p.createdAt) > new Date(lastSeenTimestamp));
-        setNewPostsCount(newPosts.length > 0 ? 1 : 0);
-      }
+      // Update local state immediately for better UX
+      if (section === "posts" || section === "home") setNewPostsCount(0);
+      if (section === "network") setPendingRequestsCount(0);
+      if (section === "groups") setUnreadGroupMessagesCount(0);
     } catch (err) {
-      console.error("Failed to fetch posts:", err);
+      console.error(`Failed to mark ${section} as seen:`, err);
     }
-  }, [API_URL]);
+  };
+
 
   const fetchUserRole = useCallback(async (token) => {
     try {
@@ -105,8 +112,7 @@ export default function Sidebar() {
     const token = localStorage.getItem("token");
 
     fetchNotifications(token);
-    fetchPendingRequests(token);
-    fetchNewPosts(token);
+    fetchCounts(token);
     fetchUserRole(token);
 
     socket.emit("join", user._id);
@@ -122,21 +128,32 @@ export default function Sidebar() {
       }
     };
 
-    const handleNewPost = () => setNewPostsCount(1);
+    const handleNewPost = () => setNewPostsCount(prev => prev + 1);
+    const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
+    const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);
 
     socket.on("newNotification", handleNewNotification);
     socket.on("newPost", handleNewPost);
+    socket.on("receiveGroupMessage", handleNewGroupMessage);
+    socket.on("newSignupRequest", handleNewSignupRequest);
 
     return () => {
       socket.off("newNotification", handleNewNotification);
       socket.off("newPost", handleNewPost);
+      socket.off("receiveGroupMessage", handleNewGroupMessage);
+      socket.off("newSignupRequest", handleNewSignupRequest);
     };
-  }, [API_URL, fetchNotifications, fetchPendingRequests, fetchNewPosts, fetchUserRole]);
+  }, [API_URL, fetchNotifications, fetchCounts, fetchUserRole]);
 
   // Clear new posts indicator when visiting home
   const handleHomeClick = () => {
-    localStorage.setItem("lastSeenPosts", new Date().toISOString());
-    setNewPostsCount(0);
+    markSectionAsSeen("home");
+  };
+  const handleNetworkClick = () => {
+    markSectionAsSeen("network");
+  };
+  const handleGroupsClick = () => {
+    markSectionAsSeen("groups");
   };
 
   const handleSignout = () => {
@@ -161,10 +178,13 @@ export default function Sidebar() {
             <Link
               href="/dashboard/admin"
               className="hover:text-gray-200 relative group"
+              onClick={() => markSectionAsSeen("admin-requests")}
               title="Admin Panel"
             >
-              <FaUserShield className="text-yellow-300" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+              <FaUserShield className={adminSignupRequestsCount > 0 ? "text-orange-500" : "text-yellow-300"} />
+              {adminSignupRequestsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+              )}
             </Link>
           )}
 
@@ -175,7 +195,7 @@ export default function Sidebar() {
             onClick={handleHomeClick}
             title="Home"
           >
-            <FaHome />
+            <FaHome className={newPostsCount > 0 ? "text-orange-500 transition-colors" : ""} />
             {newPostsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
             )}
@@ -185,9 +205,10 @@ export default function Sidebar() {
           <Link
             href="/dashboard/network"
             className="hover:text-gray-200 relative group"
+            onClick={handleNetworkClick}
             title="Network"
           >
-            <FaUserFriends />
+            <FaUserFriends className={pendingRequestsCount > 0 ? "text-orange-500 transition-colors" : ""} />
             {pendingRequestsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
             )}
@@ -197,9 +218,13 @@ export default function Sidebar() {
           <Link
             href="/dashboard/groups"
             className="hover:text-gray-200 relative group"
+            onClick={handleGroupsClick}
             title="Groups"
           >
-            <FaUsers />
+            <FaUsers className={unreadGroupMessagesCount > 0 ? "text-orange-500 transition-colors" : ""} />
+            {unreadGroupMessagesCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+            )}
           </Link>
 
           {/* Notifications */}
@@ -213,7 +238,7 @@ export default function Sidebar() {
               className="hover:text-gray-200 block"
               title="Notifications"
             >
-              <FaBell className={`${unreadCount > 0 ? "text-yellow-300" : ""} ${shakeNotification ? "animate-shake" : ""}`} />
+              <FaBell className={`${unreadCount > 0 ? "text-orange-500" : ""} ${shakeNotification ? "animate-shake" : ""} transition-colors`} />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
               )}
@@ -266,28 +291,31 @@ export default function Sidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
         {/* Home */}
         <Link href="/dashboard" onClick={handleHomeClick} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaHome />
+          <FaHome className={newPostsCount > 0 ? "text-orange-500" : ""} />
           {newPostsCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
         </Link>
 
         {/* Network */}
-        <Link href="/dashboard/network" className={`${pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaUserFriends />
+        <Link href="/dashboard/network" onClick={handleNetworkClick} className={`${pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
+          <FaUserFriends className={pendingRequestsCount > 0 ? "text-orange-500" : ""} />
           {pendingRequestsCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
         </Link>
 
         {/* Groups */}
-        <Link href="/dashboard/groups" className={pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""}>
-          <FaUsers />
+        <Link href="/dashboard/groups" onClick={handleGroupsClick} className={`${pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
+          <FaUsers className={unreadGroupMessagesCount > 0 ? "text-orange-500" : ""} />
+          {unreadGroupMessagesCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+          )}
         </Link>
 
         {/* Notifications */}
         <Link href="/dashboard/notifications" className={`${pathname === "/dashboard/notifications" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaBell className={unreadCount > 0 ? "text-yellow-500" : ""} />
+          <FaBell className={unreadCount > 0 ? "text-orange-500" : ""} />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
@@ -300,8 +328,9 @@ export default function Sidebar() {
 
         {/* Admin Link if applicable */}
         {isAdmin && (
-          <Link href="/dashboard/admin" className={pathname.startsWith("/dashboard/admin") ? "text-yellow-500" : ""}>
+          <Link href="/dashboard/admin" onClick={() => markSectionAsSeen("admin-requests")} className={`${pathname.startsWith("/dashboard/admin") ? "text-yellow-500" : ""} relative`}>
             <FaUserShield />
+            {adminSignupRequestsCount > 0 && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>}
           </Link>
         )}
       </nav>

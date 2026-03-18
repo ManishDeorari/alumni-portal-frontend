@@ -148,7 +148,7 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-slate-900 text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
+                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
                   />
                   <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 opacity-30`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -166,7 +166,7 @@ const NetworkPage = () => {
                 <select
                   value={filters.course}
                   onChange={(e) => setFilters({ ...filters, course: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
+                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
                 >
                   <option value="">All Courses</option>
                   <option value="B.Tech">B.Tech</option>
@@ -182,7 +182,7 @@ const NetworkPage = () => {
                 <select
                   value={filters.year}
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
+                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
                 >
                   <option value="">Graduation Year</option>
                   {Array.from({ length: 25 }, (_, i) => 2010 + i).map(y => (
@@ -198,7 +198,7 @@ const NetworkPage = () => {
                   placeholder="Industry"
                   value={filters.industry}
                   onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-slate-900 text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
+                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
                 />
               </div>
             </div>
@@ -207,8 +207,11 @@ const NetworkPage = () => {
 
         {/* Search Results */}
         {searched && alumni.length === 0 ? (
-          <div className={`p-10 rounded-[2.5rem] border border-dashed text-center ${darkMode ? 'bg-black border-white/10' : 'bg-white border-gray-200'}`}>
-            <h2 className={`text-xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>No Results Found</h2>
+          <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-xl overflow-hidden">
+            <div className={`p-10 rounded-[calc(1.5rem-1px)] text-center ${darkMode ? 'bg-black border-white/10 text-white' : 'bg-white border-gray-100 text-slate-900'}`}>
+              <h2 className="text-xl font-black">No Results Found</h2>
+              <p className={`mt-2 text-sm ${darkMode ? 'text-white/40' : 'text-slate-500'}`}>Try adjusting your filters or search terms</p>
+            </div>
           </div>
         ) : alumni.length > 0 && (
           <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden">
@@ -220,7 +223,7 @@ const NetworkPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {alumni.map((user) => (
                   <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-2xl group transition-all duration-500">
-                    <div className={`rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm relative overflow-hidden h-full ${darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border'}`}>
+                    <div className={`rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900 border'}`}>
                       <div className="flex items-center gap-4 min-w-0 relative z-10">
                         <div className="relative p-[1px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0">
                           <Image
@@ -272,7 +275,7 @@ const NetworkPage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {section.data.map((user) => (
                       <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-2xl h-full group transition-all duration-500">
-                        <div className={`rounded-2xl flex flex-col items-center text-center p-5 space-y-3 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border'}`}>
+                        <div className={`rounded-2xl flex flex-col items-center text-center p-5 space-y-3 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900 border'}`}>
                           <div className="relative p-[1px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0">
                             <Image
                               src={user.profilePicture || "/default-profile.jpg"}

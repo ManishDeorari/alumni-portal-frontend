@@ -110,7 +110,8 @@ export default function NotificationsPage() {
   };
 
   const handleNotificationClick = async (note) => {
-    if (!note.isRead) markAsRead(note._id);
+    if (note.isRead) return; // Prevent clicking on read notifications
+    markAsRead(note._id);
 
     if (note.type === "connect_request" || note.type === "connect_accept") {
       router.push(`/dashboard/profile?id=${note.sender?._id || note.sender}`);
@@ -276,9 +277,9 @@ export default function NotificationsPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.98 }}
                         onClick={() => handleNotificationClick(note)}
-                        className={`group relative flex items-start gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${!note.isRead
-                          ? "bg-black/40 border-white/30 shadow-xl hover:bg-black/50"
-                          : "bg-black/20 border-white/10 hover:bg-black/30 hover:border-white/20"
+                        className={`group relative flex items-start gap-4 p-5 rounded-2xl transition-all border ${!note.isRead
+                          ? "bg-black/40 border-white/30 shadow-xl hover:bg-black/50 cursor-pointer active:scale-[0.99]"
+                          : "bg-black/10 border-white/5 opacity-50 cursor-default"
                           } backdrop-blur-md`}
                       >
                         <div className="relative">

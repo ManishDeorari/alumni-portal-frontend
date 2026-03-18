@@ -54,7 +54,7 @@ export default function ProfilePage() {
 
       // 1) Profile info
       const profileEndpoint = viewingOther
-        ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/profile/${targetId}`
+        ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/${targetId}`
         : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/me`;
 
       const resProfile = await fetch(profileEndpoint, {
@@ -66,13 +66,7 @@ export default function ProfilePage() {
       }
       const profileData = await resProfile.json();
 
-      // 1.5) Record Visit if viewing someone else
-      if (viewingOther) {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/profile/${targetId}/visit`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` }
-        }).catch(err => console.error("Visit recording failed:", err));
-      }
+      // 1.5) Visit Recording handled by backend on profile fetch
 
       // 2) Posts
       const postsEndpoint = viewingOther

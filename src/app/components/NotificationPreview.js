@@ -39,17 +39,10 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
         return note.isRead === false || note.isRead === "false" || note.isRead === 0;
     };
 
-    // Get the absolute latest 5 notifications (prioritize unread, then sort by newest)
+    // Get the absolute latest 5 unread notifications
     const latestNotifications = [...rawList]
-        .sort((a, b) => {
-            const aUnread = isNoteUnread(a);
-            const bUnread = isNoteUnread(b);
-
-            if (aUnread !== bUnread) {
-                return aUnread ? -1 : 1;
-            }
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        })
+        .filter(isNoteUnread)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 5);
 
     return (
@@ -85,9 +78,14 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                     key={note._id || Math.random()}
                                     href="/dashboard/notifications"
                                     className={`group flex gap-4 p-5 transition-all duration-300 ${unread
-                                            ? (darkMode ? "bg-blue-500/10 hover:bg-blue-500/20" : "bg-blue-50/60 hover:bg-blue-100/60")
-                                            : (darkMode ? "hover:bg-white/5" : "hover:bg-gray-50")
+                                            ? (darkMode ? "bg-blue-500/10 hover:bg-blue-500/20 active:scale-[0.98]" : "bg-blue-50/60 hover:bg-blue-100/60 active:scale-[0.98]")
+                                            : (darkMode ? "opacity-60 cursor-default" : "opacity-60 cursor-default")
                                         }`}
+                                    onClick={(e) => {
+                                        if (!unread) {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                 >
                                     <div className="flex-shrink-0 relative">
                                         <div className={`p-0.5 rounded-xl border-2 transition-all duration-300 ${unread ? "border-blue-500 shadow-lg shadow-blue-500/40" : "border-transparent opacity-80"}`}>
