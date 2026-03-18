@@ -186,37 +186,45 @@ export default function GroupChatWindow({
                                         </div>
                                     )}
                                     <div className="group relative">
-                                        <div className={`p-1 rounded-2xl shadow-sm relative transition-all hover:shadow-md ${isMe
-                                            ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-tr-none"
-                                            : (darkMode ? "bg-gray-800 text-white rounded-tl-none border border-white/10" : "bg-white text-gray-950 rounded-tl-none border border-gray-100 shadow-sm")
+                                        <div className={`p-[1px] rounded-2xl shadow-sm relative transition-all hover:shadow-md ${isMe
+                                            ? "bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-tr-none"
+                                            : "bg-gradient-to-br from-blue-400/30 via-purple-500/30 to-pink-500/30 rounded-tl-none border border-transparent"
                                             }`}>
-                                            
-                                            {msg.type === "image" && (
-                                                <div 
-                                                    onClick={() => onViewImage(msg.mediaUrl)}
-                                                    className="relative rounded-xl overflow-hidden mb-1 min-w-[200px] aspect-auto cursor-zoom-in hover:opacity-90 transition-opacity"
-                                                >
-                                                    <img src={msg.mediaUrl} className="max-w-full max-h-[300px] object-cover rounded-xl" alt="Shared Media" />
-                                                </div>
-                                            )}
-                                            
-                                            {msg.content && (
-                                                <div className="p-2 px-3">
-                                                    <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
-                                                </div>
-                                            )}
-                                            
-                                            {/* Reactions Display */}
-                                            {msg.reactions && msg.reactions.length > 0 && (
-                                                <div className="flex flex-wrap gap-1 p-2 pt-0">
-                                                    {msg.reactions.map((r, i) => (
-                                                        <div key={i} onClick={() => onReact(msg._id, r.emoji)} className={`px-2 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1.5 transition-all hover:scale-110 ${r.users.includes(currentUser?._id) ? "bg-blue-500/30 border-blue-500" : "bg-black/10 border-transparent dark:bg-white/10"}`}>
-                                                            <span>{r.emoji}</span>
-                                                            <span className="font-black">{r.users.length}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
+                                            <div className={`rounded-[calc(1rem-1px)] overflow-hidden ${isMe 
+                                                ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white" 
+                                                : (darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-950")
+                                            }`}>
+                                                {msg.type === "image" && (
+                                                    <div 
+                                                        onClick={() => onViewImage(msg.mediaUrl)}
+                                                        className="relative cursor-zoom-in hover:opacity-90 transition-opacity p-1"
+                                                    >
+                                                        <img src={msg.mediaUrl} className="max-w-full max-h-[300px] object-cover rounded-xl" alt="Shared Media" />
+                                                    </div>
+                                                )}
+                                                
+                                                {msg.type === "image" && msg.content && (
+                                                    <div className={`h-[1px] w-full ${darkMode ? "bg-white/20" : "bg-black/20"}`} />
+                                                )}
+                                                
+                                                {msg.content && (
+                                                    <div className="p-3">
+                                                        <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+                                                    </div>
+                                                )}
+
+                                                {/* Reactions Display */}
+                                                {msg.reactions && msg.reactions.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 p-2 pt-0">
+                                                        {msg.reactions.map((r, i) => (
+                                                            <div key={i} onClick={() => onReact(msg._id, r.emoji)} className={`px-2 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1.5 transition-all hover:scale-110 ${r.users.includes(currentUser?._id) ? "bg-blue-500/30 border-blue-500" : "bg-black/10 border-transparent dark:bg-white/10"}`}>
+                                                                <span>{r.emoji}</span>
+                                                                <span className="font-black">{r.users.length}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                         
                                         {/* Quick Reaction Button */}
