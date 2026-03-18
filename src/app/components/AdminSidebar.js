@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey } from "react-icons/fa";
+import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey, FaUsers } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 import ResetPasswordModal from "./ResetPasswordModal";
 import SettingsDrawer from "./SettingsDrawer";
@@ -78,8 +78,8 @@ export default function AdminSidebar() {
           <Link href="/dashboard/network" className="hover:text-gray-200 relative group" title="Network">
             <FaUserFriends />
           </Link>
-          <Link href="/dashboard/messages" className="hover:text-gray-200 relative group" title="Messages">
-            <FaEnvelope />
+          <Link href="/dashboard/groups" className="hover:text-gray-200 relative group" title="Groups">
+            <FaUsers />
           </Link>
           <div
             className="relative group"
@@ -132,8 +132,8 @@ export default function AdminSidebar() {
         <Link href="/dashboard/network" className={pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""}>
           <FaUserFriends />
         </Link>
-        <Link href="/dashboard/messages" className={pathname === "/dashboard/messages" ? "text-blue-600 dark:text-blue-400" : ""}>
-          <FaEnvelope />
+        <Link href="/dashboard/groups" className={pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""}>
+          <FaUsers />
         </Link>
         <Link href="/dashboard/notifications" className={`${pathname === "/dashboard/notifications" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <FaBell className={unreadCount > 0 ? "text-yellow-500" : ""} />

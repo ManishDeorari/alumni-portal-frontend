@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey } from "react-icons/fa";
+import { FaHome, FaUserFriends, FaBell, FaUserCircle, FaEnvelope, FaUserShield, FaCog, FaSignOutAlt, FaKey, FaUsers } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 import ResetPasswordModal from "./ResetPasswordModal";
 import SettingsDrawer from "./SettingsDrawer";
@@ -191,13 +191,13 @@ export default function Sidebar() {
             )}
           </Link>
 
-          {/* Messages */}
+          {/* Groups */}
           <Link
-            href="/dashboard/messages"
+            href="/dashboard/groups"
             className="hover:text-gray-200 relative group"
-            title="Messages"
+            title="Groups"
           >
-            <FaEnvelope />
+            <FaUsers />
           </Link>
 
           {/* Notifications */}
@@ -278,9 +278,9 @@ export default function Sidebar() {
           )}
         </Link>
 
-        {/* Messages */}
-        <Link href="/dashboard/messages" className={pathname === "/dashboard/messages" ? "text-blue-600 dark:text-blue-400" : ""}>
-          <FaEnvelope />
+        {/* Groups */}
+        <Link href="/dashboard/groups" className={pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""}>
+          <FaUsers />
         </Link>
 
         {/* Notifications */}

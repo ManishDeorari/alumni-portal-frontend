@@ -105,7 +105,7 @@ const NetworkPage = () => {
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8 relative z-10">
         {/* Header Section */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950/80 text-white' : 'bg-white/80 text-slate-900'} backdrop-blur-xl flex flex-col md:flex-row justify-between items-center gap-6`}>
+          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div>
               <h1 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
               <p className={`text-sm ${darkMode ? 'text-blue-200/60' : 'text-slate-600'} font-medium`}>Build your professional circle with alumni</p>
@@ -138,7 +138,7 @@ const NetworkPage = () => {
 
         {/* Search Section */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-          <div className={`px-10 py-10 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950/80' : 'bg-white/80'} backdrop-blur-xl space-y-8`}>
+          <div className={`px-10 py-10 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'} space-y-8`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-3 relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
                 <div className="relative h-full">
