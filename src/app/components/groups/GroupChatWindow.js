@@ -111,7 +111,7 @@ export default function GroupChatWindow({
                 <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-white/95"}`}>
                     <div className="text-center p-8">
                         <div className="text-7xl mb-6 animate-bounce">👥</div>
-                        <h2 className={`text-3xl font-black mb-3 ${darkMode ? "text-white" : "text-gray-800"}`}>Select a Group</h2>
+                        <h2 className={`text-3xl font-black mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>Select a Group</h2>
                         <p className={`max-w-xs mx-auto text-lg font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Select a group to start communicating!</p>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ export default function GroupChatWindow({
                             <Image src={selectedGroup.profileImage || "/default-group.jpg"} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
                         </div>
                         <div>
-                            <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-800"}`}>{selectedGroup.name}</h3>
+                            <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>{selectedGroup.name}</h3>
                             <p className={`text-[10px] font-bold truncate max-w-[200px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                 {selectedGroup.description || "Group Chat"}
                             </p>
@@ -188,7 +188,7 @@ export default function GroupChatWindow({
                                     <div className="group relative">
                                         <div className={`p-1 rounded-2xl shadow-sm relative transition-all hover:shadow-md ${isMe
                                             ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-tr-none"
-                                            : (darkMode ? "bg-gray-800 text-white rounded-tl-none border border-white/10" : "bg-white text-gray-800 rounded-tl-none border border-gray-100 shadow-sm")
+                                            : (darkMode ? "bg-gray-800 text-white rounded-tl-none border border-white/10" : "bg-white text-gray-950 rounded-tl-none border border-gray-100 shadow-sm")
                                             }`}>
                                             
                                             {msg.type === "image" && (
@@ -295,7 +295,7 @@ export default function GroupChatWindow({
                                     placeholder={selectedFile ? "Add a caption..." : "Write something awesome..."}
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    className={`w-full rounded-[14px] px-6 py-3.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-900 text-white placeholder-gray-600" : "bg-white text-gray-900 placeholder-gray-400"}`}
+                                    className={`w-full rounded-[14px] px-6 py-3.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-900 text-white placeholder-gray-600" : "bg-white text-gray-900 placeholder-gray-500"}`}
                                 />
                             </div>
                             <button

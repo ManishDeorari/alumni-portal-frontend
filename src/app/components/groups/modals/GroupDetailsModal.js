@@ -24,7 +24,7 @@ export default function GroupDetailsModal({
                 
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
-                    <h2 className="text-xl font-black tracking-tighter uppercase">Group Overview</h2>
+                    <h2 className={`text-xl font-black tracking-tighter uppercase ${darkMode ? "text-white" : "text-gray-900"}`}>Group Overview</h2>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500">
                         <FaTimes />
                     </button>
@@ -45,45 +45,51 @@ export default function GroupDetailsModal({
                                 />
                             </div>
                         </div>
-                        <h3 className="text-3xl font-black tracking-tighter mb-4">{group.name}</h3>
-                        <div className={`px-6 py-4 rounded-3xl border-2 text-sm font-medium leading-relaxed ${darkMode ? "bg-gray-950/50 border-white/5 text-gray-400" : "bg-gray-50 border-gray-100 text-gray-500"}`}>
-                            {group.description || "In a world of constant communication, this group serves as a dedicated space for collaboration and community."}
+                        <h3 className={`text-3xl font-black tracking-tighter mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
+                        <div className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+                            <div className={`px-6 py-4 rounded-[calc(1.5rem-1px)] text-sm font-medium leading-relaxed ${darkMode ? "bg-gray-950/50 text-gray-400" : "bg-white text-gray-900"}`}>
+                                {group.description || "In a world of constant communication, this group serves as a dedicated space for collaboration and community."}
+                            </div>
                         </div>
                     </div>
 
                     {/* Quick Access Buttons */}
                     <div className="space-y-4">
-                        <button 
-                            onClick={onOpenMembers}
-                            className={`w-full p-6 rounded-[2rem] border-2 flex items-center justify-between transition-all group hover:scale-[1.02] ${darkMode ? "bg-gray-950/30 border-white/5 hover:border-blue-500/30" : "bg-gray-50 border-gray-100 hover:border-blue-500/30"}`}
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner">
-                                    <FaUsers size={20} />
+                        <div className="p-[1px] rounded-[2rem] bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-lg transition-all hover:scale-[1.02]">
+                            <button 
+                                onClick={onOpenMembers}
+                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-white"}`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner">
+                                        <FaUsers size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-black text-xs uppercase tracking-widest text-blue-500 mb-0.5">Community</p>
+                                        <p className={`font-bold text-lg ${darkMode ? "text-white" : "text-gray-900"}`}>{memberCount} Members</p>
+                                    </div>
                                 </div>
-                                <div className="text-left">
-                                    <p className="font-black text-xs uppercase tracking-widest text-blue-500 mb-0.5">Community</p>
-                                    <p className="font-bold text-lg">{memberCount} Members</p>
-                                </div>
-                            </div>
-                            <FaChevronRight className="text-gray-400 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                                <FaChevronRight className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
 
-                        <button 
-                            onClick={onOpenMedia}
-                            className={`w-full p-6 rounded-[2rem] border-2 flex items-center justify-between transition-all group hover:scale-[1.02] ${darkMode ? "bg-gray-950/30 border-white/5 hover:border-purple-500/30" : "bg-gray-50 border-gray-100 hover:border-purple-500/30"}`}
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500 shadow-inner">
-                                    <FaImage size={20} />
+                        <div className="p-[1px] rounded-[2rem] bg-gradient-to-r from-purple-500/30 to-pink-500/30 shadow-lg transition-all hover:scale-[1.02]">
+                            <button 
+                                onClick={onOpenMedia}
+                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-white"}`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500 shadow-inner">
+                                        <FaImage size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-black text-xs uppercase tracking-widest text-purple-500 mb-0.5">Gallery</p>
+                                        <p className={`font-bold text-lg ${darkMode ? "text-white" : "text-gray-900"}`}>{mediaCount} Shared Files</p>
+                                    </div>
                                 </div>
-                                <div className="text-left">
-                                    <p className="font-black text-xs uppercase tracking-widest text-purple-500 mb-0.5">Gallery</p>
-                                    <p className="font-bold text-lg">{mediaCount} Shared Files</p>
-                                </div>
-                            </div>
-                            <FaChevronRight className="text-gray-400 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                                <FaChevronRight className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 

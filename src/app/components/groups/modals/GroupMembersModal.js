@@ -38,7 +38,7 @@ export default function GroupMembersModal({
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
                     <div>
-                        <h2 className="text-xl font-black tracking-tighter uppercase">Group Community</h2>
+                        <h2 className={`text-xl font-black tracking-tighter uppercase ${darkMode ? "text-white" : "text-gray-900"}`}>Group Community</h2>
                         <p className="text-[10px] font-black uppercase text-blue-500 tracking-widest">{members.length} Total Members</p>
                     </div>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500">
@@ -48,15 +48,17 @@ export default function GroupMembersModal({
 
                 {/* Search Bar */}
                 <div className="p-6 pb-0">
-                    <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all ${darkMode ? "bg-gray-950/50 border-white/5 focus-within:border-blue-500" : "bg-gray-50 border-gray-200 focus-within:border-blue-500"}`}>
-                        <FaSearch className="text-gray-400" size={14} />
-                        <input 
-                            type="text" 
-                            placeholder="Search among group members..." 
-                            className="bg-transparent border-none outline-none w-full font-bold text-sm"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
+                        <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] transition-all ${darkMode ? "bg-gray-950/50 focus-within:bg-gray-950" : "bg-white focus-within:bg-gray-50"}`}>
+                            <FaSearch className="text-gray-400" size={14} />
+                            <input 
+                                type="text" 
+                                placeholder="Search among group members..." 
+                                className={`bg-transparent border-none outline-none w-full font-bold text-sm ${darkMode ? "text-white" : "text-black"}`}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -76,19 +78,21 @@ export default function GroupMembersModal({
                             <div key={member._id} className="p-[1px] rounded-[2rem] bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-md transition-all hover:scale-[1.01]">
                                 <div className={`p-4 rounded-[calc(2rem-1px)] flex items-center justify-between ${darkMode ? "bg-gray-900" : "bg-white"}`}>
                                     <div className="flex items-center gap-4">
-                                        <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/10">
-                                            <Image 
-                                                src={member.profilePicture || "/default-profile.jpg"} 
-                                                fill 
-                                                className="object-cover" 
-                                                alt={member.name} 
-                                            />
+                                        <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-500 shadow-lg">
+                                            <div className="relative w-14 h-14 rounded-[calc(1rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
+                                                <Image 
+                                                    src={member.profilePicture || "/default-profile.jpg"} 
+                                                    fill 
+                                                    className="object-cover" 
+                                                    alt={member.name} 
+                                                />
+                                            </div>
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <Link 
                                                     href={`/dashboard/profile?id=${member._id}`} 
-                                                    className="font-black tracking-tight text-sm hover:text-blue-500 hover:underline transition-all cursor-pointer"
+                                                    className={`font-black tracking-tight text-sm hover:text-blue-500 hover:underline transition-all cursor-pointer ${darkMode ? "text-white" : "text-gray-900"}`}
                                                 >
                                                     {member.name}
                                                 </Link>

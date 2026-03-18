@@ -81,7 +81,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
             <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
                 <div className="p-8 overflow-y-auto custom-scrollbar">
                         <div className="flex justify-between items-center mb-8">
-                            <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-800"}`}>Create Group</h2>
+                            <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Create Group</h2>
                             <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
                                 <FaTimes size={20} className="text-gray-400" />
                             </button>
@@ -112,60 +112,68 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                 <span className="text-[10px] uppercase font-black tracking-widest text-gray-400 mt-3 italic opacity-80 underline underline-offset-4 decoration-blue-500/50">Group Identity Picture</span>
                             </div>
 
-                            <div>
-                                <label className={`block text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Group Primary Name</label>
-                                <input
-                                    required
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className={`w-full rounded-2xl px-5 py-4 font-bold text-sm border-2 transition-all outline-none ${darkMode ? "bg-gray-950/50 border-gray-800 text-white focus:border-blue-500" : "bg-gray-50 border-gray-100 text-gray-900 focus:border-blue-500"}`}
-                                    placeholder="Mech Engineering 2024..."
-                                />
-                            </div>
-
-                            <div>
-                                <label className={`block text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Brief Description</label>
-                                <textarea
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className={`w-full rounded-2xl px-5 py-4 font-bold text-sm border-2 transition-all outline-none resize-none h-24 ${darkMode ? "bg-gray-950/50 border-gray-800 text-white focus:border-blue-500" : "bg-gray-50 border-gray-100 text-gray-900 focus:border-blue-500"}`}
-                                    placeholder="Describe the purpose of this alumni circle..."
-                                />
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className={`block text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Group Membership</label>
-                                
-                                <div className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${isAllMember ? "bg-blue-500/10 border-blue-500/30" : (darkMode ? "bg-gray-950/50 border-gray-800" : "bg-gray-50 border-gray-100")}`}>
-                                    <input 
-                                        type="checkbox" 
-                                        id="allMember" 
-                                        checked={isAllMember} 
-                                        onChange={(e) => setIsAllMember(e.target.checked)}
-                                        className="w-6 h-6 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                             <div>
+                                <label className={`block text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Group Primary Name</label>
+                                <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-sm">
+                                    <input
+                                        required
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                        placeholder="Mech Engineering 2024..."
                                     />
-                                    <label htmlFor="allMember" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                        INCLUDE ALL ALUMNI AUTOMATICALLY
-                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className={`block text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Brief Description</label>
+                                <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/30 to-pink-500/30 shadow-sm">
+                                    <textarea
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none resize-none h-24 transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                        placeholder="Describe the purpose of this alumni circle..."
+                                    />
+                                </div>
+                            </div>
+
+                             <div className="space-y-3">
+                                <label className={`block text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Group Membership</label>
+                                
+                                <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+                                    <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllMember ? "bg-blue-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
+                                        <input 
+                                            type="checkbox" 
+                                            id="allMember" 
+                                            checked={isAllMember} 
+                                            onChange={(e) => setIsAllMember(e.target.checked)}
+                                            className="w-6 h-6 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                        />
+                                        <label htmlFor="allMember" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                            INCLUDE ALL ALUMNI AUTOMATICALLY
+                                        </label>
+                                    </div>
                                 </div>
 
-                                {!isAllMember && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowMemberSearch(true)}
-                                        className={`w-full p-4 rounded-2xl border-2 border-dashed flex items-center justify-between transition-all ${darkMode ? "bg-gray-950/50 border-gray-800 hover:border-blue-500/50 text-gray-400" : "bg-gray-50 border-gray-200 hover:border-blue-500/50 text-gray-500"}`}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <FaPlus size={12} className="text-blue-500" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Select Individual Members</span>
-                                        </div>
-                                        {selectedMemberIds.length > 0 && (
-                                            <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full shadow-lg shadow-blue-500/30 animate-in zoom-in">
-                                                {selectedMemberIds.length} Selected
-                                            </span>
-                                        )}
-                                    </button>
+                                 {!isAllMember && (
+                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-dashed border-transparent hover:border-gray-500/30 transition-all">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowMemberSearch(true)}
+                                            className={`w-full p-4 rounded-[calc(1rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950 text-gray-400" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <FaPlus size={12} className="text-blue-500" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Select Individual Members</span>
+                                            </div>
+                                            {selectedMemberIds.length > 0 && (
+                                                <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full shadow-lg shadow-blue-500/30 animate-in zoom-in">
+                                                    {selectedMemberIds.length} Selected
+                                                </span>
+                                            )}
+                                        </button>
+                                    </div>
                                 )}
                             </div>
 

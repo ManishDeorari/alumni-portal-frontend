@@ -31,7 +31,7 @@ export default function GroupSidebar({
                 }`}>
                 <div className="p-4">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className={`text-xl font-black tracking-tight ${darkMode ? "text-white" : "text-gray-800"}`}>Groups</h2>
+                        <h2 className={`text-xl font-black tracking-tight ${darkMode ? "text-white" : "text-gray-900"}`}>Groups</h2>
                         {isAdmin && (
                             <button 
                                 onClick={onCreateGroup}
@@ -42,16 +42,18 @@ export default function GroupSidebar({
                             </button>
                         )}
                     </div>
-                    <div className={`relative px-3 rounded-xl border-2 transition-all ${darkMode ? "bg-gray-800 border-gray-700 focus-within:border-blue-500" : "bg-gray-50 border-gray-100 focus-within:border-blue-500"}`}>
-                        <div className="flex items-center gap-2">
-                             <FaSearch className="text-gray-400" size={14} />
-                            <input
-                                type="text"
-                                placeholder="Search groups..."
-                                value={searchTerm}
-                                onChange={handleSearch}
-                                className="w-full bg-transparent py-2.5 font-bold text-sm placeholder-gray-400 focus:outline-none"
-                            />
+                    <div className="p-[1.5px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
+                        <div className={`relative px-3 rounded-[11px] border transition-all ${darkMode ? "bg-gray-800 border-transparent focus-within:border-blue-500" : "bg-white border-transparent focus-within:border-blue-500"}`}>
+                            <div className="flex items-center gap-2">
+                                <FaSearch className="text-gray-400" size={14} />
+                                <input
+                                    type="text"
+                                    placeholder="Search groups..."
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                    className={`w-full bg-transparent py-2.5 font-bold text-sm placeholder-gray-400 focus:outline-none ${darkMode ? "text-white" : "text-black"}`}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
