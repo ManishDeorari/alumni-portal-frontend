@@ -197,14 +197,6 @@ export default function MemberSearchModal({
                         <span className="text-[10px] uppercase tracking-widest font-black text-gray-500">
                             {users.length} Users Found
                         </span>
-                        {multiSelect && (
-                            <button
-                                onClick={handleSelectAll}
-                                className="text-[10px] uppercase tracking-widest font-black text-blue-500 hover:text-blue-400 transition-colors"
-                            >
-                                {selectedIds.length === users.length && users.length > 0 ? "Deselect All" : "Select All"}
-                            </button>
-                        )}
                     </div>
                 </div>
 
