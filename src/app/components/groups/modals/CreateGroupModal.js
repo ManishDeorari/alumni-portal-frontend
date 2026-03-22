@@ -11,6 +11,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     const { darkMode } = useTheme();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [isAllAlumni, setIsAllAlumni] = useState(false);
+    const [isAllFaculty, setIsAllFaculty] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState({ x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(null);
@@ -82,6 +84,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         onCreate({ 
             name, 
             description, 
+            isAllAlumniGroup: isAllAlumni,
+            isAllFacultyGroup: isAllFaculty,
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId,
             profileImageSettings,
@@ -91,6 +95,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         // Reset
         setName("");
         setDescription("");
+        setIsAllAlumni(false);
+        setIsAllFaculty(false);
         setProfileImage(null);
         setImagePreview(null);
         setSelectedMemberIds([]);
@@ -163,6 +169,34 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                              <div className="space-y-3">
                                 <label className={`block text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Group Membership</label>
                                 
+                                <div className="grid grid-cols-2 gap-3 mb-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAllFaculty(!isAllFaculty)}
+                                        className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${
+                                            isAllFaculty 
+                                            ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/20" 
+                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-purple-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-purple-500/50")
+                                        }`}
+                                    >
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Add All Faculty</span>
+                                        {isAllFaculty && <span className="text-[8px] font-black">ACTIVE</span>}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAllAlumni(!isAllAlumni)}
+                                        className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${
+                                            isAllAlumni 
+                                            ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20" 
+                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-blue-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-blue-500/50")
+                                        }`}
+                                    >
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Add All Alumni</span>
+                                        {isAllAlumni && <span className="text-[8px] font-black">ACTIVE</span>}
+                                    </button>
+                                </div>
+
                                 <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-dashed border-transparent hover:border-gray-500/30 transition-all">
                                     <button
                                         type="button"

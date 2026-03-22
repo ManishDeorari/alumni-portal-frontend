@@ -16,8 +16,6 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState(group?.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(group?.profileImage || "/default-group.jpg");
-    const [showCropper, setShowCropper] = useState(false);
-    const [tempImage, setTempImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [memberSearch, setMemberSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("ALL");
@@ -126,6 +124,34 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
         }
     };
 
+    const handleRemoveBulk = async (role) => {
+        if (!window.confirm(`Are you sure you want to remove ALL ${role} members from this group?`)) return;
+        
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/groups/${group._id}/remove-role`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                },
+                body: JSON.stringify({ role })
+            });
+
+            if (res.ok) {
+                const updatedGroup = await res.json();
+                toast.success(`All ${role} members removed`);
+                if (onUpdate) onUpdate(group._id, updatedGroup);
+            } else {
+                const error = await res.json();
+                toast.error(error.message || "Failed to remove members");
+            }
+        } catch (err) {
+            console.error("Bulk removal error:", err);
+            toast.error("Network error during bulk removal");
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
             <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
@@ -215,10 +241,32 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                             </div>
                         </div>
 
+
+
+
+
                         {/* Remove Members Section */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center px-2">
-                                <h3 className="font-black text-xs uppercase tracking-[0.2em] text-gray-500">Remove Members</h3>
+                                <div>
+                                    <h3 className="font-black text-xs uppercase tracking-[0.2em] text-gray-500">Remove Members</h3>
+                                    <div className="flex gap-2 mt-2">
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleRemoveBulk("faculty")}
+                                            className="text-[8px] font-black uppercase tracking-[0.2em] text-purple-500 hover:text-purple-400 border border-purple-500/20 px-2 py-1 rounded-md transition-all active:scale-95"
+                                        >
+                                            Remove All Faculty
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleRemoveBulk("alumni")}
+                                            className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-500 hover:text-blue-400 border border-blue-500/20 px-2 py-1 rounded-md transition-all active:scale-95"
+                                        >
+                                            Remove All Alumni
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Filter:</span>
                                     <select

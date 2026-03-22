@@ -25,6 +25,8 @@ export default function MemberSearchModal({
     const [roleFilter, setRoleFilter] = useState("ALL");
     const [users, setUsers] = useState([]);
     const [selectedIds, setSelectedIds] = useState(initialSelected || []);
+    const [isAllAlumniFlag, setIsAllAlumniFlag] = useState(false);
+    const [isAllFacultyFlag, setIsAllFacultyFlag] = useState(false);
     const [loading, setLoading] = useState(false);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -91,6 +93,22 @@ export default function MemberSearchModal({
         if (!course) setYear("");
     }, [course]);
 
+    const handleSelectRole = (roleKey) => {
+        const roleUsers = users.filter(u => (u.role || "alumni").toUpperCase() === roleKey);
+        const roleIds = roleUsers.map(u => String(u._id));
+        
+        // Check if all of THESE role users are already selected
+        const allSelected = roleIds.length > 0 && roleIds.every(id => selectedIds.includes(id));
+        
+        if (allSelected) {
+            // Deselect all for this role
+            setSelectedIds(prev => prev.filter(id => !roleIds.includes(id)));
+        } else {
+            // Select all for this role (merge with current)
+            setSelectedIds(prev => [...new Set([...prev, ...roleIds])]);
+        }
+    };
+
     const toggleUser = (userId) => {
         const uId = String(userId);
         if (!multiSelect) {
@@ -98,8 +116,8 @@ export default function MemberSearchModal({
             return;
         }
         setSelectedIds(prev =>
-            prev.map(String).includes(uId)
-                ? prev.filter(id => String(id) !== uId)
+            prev.includes(uId)
+                ? prev.filter(id => id !== uId)
                 : [...prev, uId]
         );
     };
@@ -108,12 +126,20 @@ export default function MemberSearchModal({
         if (selectedIds.length === users.length) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(users.map(u => u._id));
+            setSelectedIds(users.map(u => String(u._id)));
         }
     };
 
     const handleConfirm = () => {
-        onSelect(multiSelect ? selectedIds : selectedIds[0]);
+        if (isAllAlumniFlag || isAllFacultyFlag) {
+            onSelect({
+                userIds: selectedIds,
+                isAllAlumni: isAllAlumniFlag,
+                isAllFaculty: isAllFacultyFlag
+            });
+        } else {
+            onSelect(multiSelect ? selectedIds : (selectedIds[0] || null));
+        }
         onClose();
     };
 
@@ -130,6 +156,38 @@ export default function MemberSearchModal({
                         <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{title}</h2>
                         <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
                             <FaTimes className="text-gray-500" />
+                        </button>
+                    </div>
+
+                    {/* Quick Role Select Buttons */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setIsAllFacultyFlag(!isAllFacultyFlag);
+                                if (!isAllFacultyFlag) setIsAllAlumniFlag(false); // Exclusive for clarity? No, let's allow both
+                            }}
+                            className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
+                                isAllFacultyFlag 
+                                ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/20" 
+                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-purple-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-purple-500/50")
+                            }`}
+                        >
+                            <span>Add All Faculty</span>
+                            {isAllFacultyFlag && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setIsAllAlumniFlag(!isAllAlumniFlag)}
+                            className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
+                                isAllAlumniFlag 
+                                ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20" 
+                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-blue-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-blue-500/50")
+                            }`}
+                        >
+                            <span>Add All Alumni</span>
+                            {isAllAlumniFlag && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
                         </button>
                     </div>
 
@@ -221,7 +279,20 @@ export default function MemberSearchModal({
                                 <div key={roleKey} className="space-y-3 pt-2">
                                     <div className="flex items-center gap-4 px-2">
                                         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{roleKey}</span>
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleSelectRole(roleKey)}
+                                            className="group flex items-center gap-2 hover:opacity-80 transition-all"
+                                        >
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{roleKey}</span>
+                                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full transition-all ${
+                                                groupUsers.every(u => selectedIds.includes(String(u._id)))
+                                                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                                                : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
+                                            }`}>
+                                                {groupUsers.every(u => selectedIds.includes(String(u._id))) ? "Selected" : "Select All"}
+                                            </span>
+                                        </button>
                                         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
                                     </div>
                                     

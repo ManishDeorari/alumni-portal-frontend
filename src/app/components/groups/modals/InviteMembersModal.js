@@ -5,8 +5,12 @@ import MemberSearchModal from "./MemberSearchModal";
 export default function InviteMembersModal({ isOpen, onClose, onInvite, groupId, existingMemberIds = [] }) {
     if (!isOpen) return null;
 
-    const handleSelect = (selectedIds) => {
-        onInvite(groupId, { userIds: selectedIds });
+    const handleSelect = (data) => {
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+            onInvite(groupId, data);
+        } else {
+            onInvite(groupId, { userIds: data });
+        }
     };
 
     return (
