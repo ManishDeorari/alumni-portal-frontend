@@ -24,6 +24,11 @@ const DEGREE_SUGGESTIONS = [
 const COURSE_SUGGESTIONS = [
     "B.Tech", "M.Tech", "MBA", "BCA", "MCA", "B.Sc", "M.Sc", "B.A", "M.A"
 ];
+const BRANCH_SUGGESTIONS = [
+    "Computer Science", "Information Technology", "Mechanical Engineering",
+    "Civil Engineering", "Electronics and Communication", "Electrical Engineering",
+    "Business Administration", "Finance", "Marketing", "HR", "Physics", "Maths"
+];
 
 const STUDY_SUGGESTIONS = [
     "Computer Science", "Information Technology", "Mechanical Engineering",
@@ -77,8 +82,9 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                 return {
                     ...edu,
                     level: levelName,
-                    degree: edu.degree || levelName, // Ensure it gets the prior custom degree or the level name
+                    degree: edu.degree || levelName, 
                     course: edu.course || "",
+                    branch: edu.branch || "",
                     startMonth: sMonth || "",
                     startYear: sYear || "",
                     endMonth: eMonth || "",
@@ -101,6 +107,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     transformed.push({
                         ...edu,
                         course: edu.course || "",
+                        branch: edu.branch || "",
                         startMonth: sMonth || "",
                         startYear: sYear || "",
                         endMonth: eMonth || "",
@@ -134,6 +141,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
             {
                 degree: "",
                 course: "",
+                branch: "",
                 fieldOfStudy: "",
                 institution: "",
                 campus: "",
@@ -191,6 +199,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     level: edu.level,
                     degree: edu.degree,
                     course: edu.course,
+                    branch: edu.branch,
                     fieldOfStudy: edu.fieldOfStudy,
                     institution: edu.institution,
                     campus: edu.institution === "Graphic Era Hill University" ? edu.campus : "",
@@ -347,20 +356,36 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                         </div>
 
                                         {!edu.degree?.includes("High School") && !edu.degree?.includes("Intermediate") && (
-                                            <div className="space-y-1.5">
-                                                <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-course`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
-                                                    Course <span className="text-red-500 font-bold">*</span>
-                                                </label>
-                                                <HybridInput
-                                                    value={edu.course || ""}
-                                                    onChange={(val) => handleChange(index, "course", val)}
-                                                    options={COURSE_SUGGESTIONS}
-                                                    placeholder="Ex: B.Tech, MCA, etc."
-                                                    uppercase={true}
-                                                    className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
-                                                />
-                                                {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-course`]}</p>}
-                                            </div>
+                                            <>
+                                                <div className="space-y-1.5">
+                                                    <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-course`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                                        Course <span className="text-red-500 font-bold">*</span>
+                                                    </label>
+                                                    <HybridInput
+                                                        value={edu.course || ""}
+                                                        onChange={(val) => handleChange(index, "course", val)}
+                                                        options={COURSE_SUGGESTIONS}
+                                                        placeholder="Ex: B.Tech, MCA, etc."
+                                                        uppercase={true}
+                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
+                                                    />
+                                                    {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-course`]}</p>}
+                                                </div>
+
+                                                <div className="space-y-1.5">
+                                                    <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                                        Branch
+                                                    </label>
+                                                    <HybridInput
+                                                        value={edu.branch || ""}
+                                                        onChange={(val) => handleChange(index, "branch", val)}
+                                                        options={BRANCH_SUGGESTIONS}
+                                                        placeholder="Ex: CS, IT, ME, etc."
+                                                        uppercase={true}
+                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'}`}
+                                                    />
+                                                </div>
+                                            </>
                                         )}
                                         <div className="space-y-1.5">
                                             <label className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>Field of study</label>

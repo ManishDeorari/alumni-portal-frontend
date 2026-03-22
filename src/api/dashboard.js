@@ -204,3 +204,68 @@ export const editComment = async (postId, commentId, newText) => {
     throw error;
   }
 };
+// ================== EVENTS & REGISTRATIONS ==================
+
+export const createEvent = async (eventData) => {
+  const res = await fetch(`${BASE}/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(eventData),
+  });
+  return res.json();
+};
+
+export const fetchEvents = async () => {
+  const res = await fetch(`${BASE}/events`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch events");
+  return res.json();
+};
+
+export const registerForEvent = async (registrationData) => {
+  const res = await fetch(`${BASE}/registrations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(registrationData),
+  });
+  return res.json();
+};
+
+export const fetchEventRegistrations = async (eventId) => {
+  const res = await fetch(`${BASE}/registrations/${eventId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  return res.json();
+};
+
+export const downloadEventCSV = async (eventId, eventTitle) => {
+  const res = await fetch(`${BASE}/registrations/${eventId}/download`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  
+  if (res.ok) {
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `registrations_${eventTitle.replace(/\s+/g, "_")}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } else {
+    throw new Error("Failed to download CSV");
+  }
+};

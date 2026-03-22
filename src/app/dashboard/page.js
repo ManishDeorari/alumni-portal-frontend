@@ -63,11 +63,12 @@ export default function DashboardPage() {
       const token = localStorage.getItem("token");
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       let url = `${API_URL}/api/posts?page=${pageNum}&limit=${limit}`;
-      let headers = {};
+      let headers = { Authorization: `Bearer ${token}` };
 
       if (activeTab === "my") {
         url = `${API_URL}/api/posts/me?page=${pageNum}&limit=${limit}`;
-        headers = { Authorization: `Bearer ${token}` };
+      } else if (activeTab === "Event") {
+        url = `${API_URL}/api/events?page=${pageNum}&limit=${limit}`;
       } else {
         const queryType = activeTab === "all" ? "Regular" : activeTab;
         url += `&type=${queryType}`;

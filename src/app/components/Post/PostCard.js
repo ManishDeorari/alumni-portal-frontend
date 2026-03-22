@@ -11,6 +11,8 @@ import dynamic from "next/dynamic";
 const PostModal = dynamic(() => import("./Visual/PostModal"), { ssr: false });
 import CommentInput from "./Visual/CommentInput";
 const CommentCard = dynamic(() => import("./Visual/commentCard"), { ssr: false });
+import EventRegistrationModal from "./EventRegistrationModal";
+import AdminRegistrationsModal from "./AdminRegistrationsModal";
 import ReactionModal from "./Visual/ReactionModal";
 import FullImageViewer from "./utils/FullImageViewer";
 
@@ -42,6 +44,10 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [reactionModalEmoji, setReactionModalEmoji] = useState(null);
   const [reactionModalUsers, setReactionModalUsers] = useState([]);
+
+  // Event specific states
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   const textareaRef = useRef(null);
   const token = localStorage.getItem("token");
@@ -150,6 +156,12 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               toggleEdit(editKey, setEditContent, editing, post.content), handleDelete, darkMode, hideActions
           }} />
 
+          {post.type === "Event" && post.title && (
+            <h2 className={`text-2xl font-black mb-2 ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-tight`}>
+              {post.title}
+            </h2>
+          )}
+
           <PostContent
             {...{
               post,
@@ -166,6 +178,55 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               darkMode
             }}
           />
+
+          {post.type === "Event" && (
+            <div className={`mt-4 p-6 rounded-3xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-4`}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Start</span>
+                  <span className={`text-sm font-bold ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{new Date(post.startDate).toLocaleDateString()} at {post.startTime}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Ends</span>
+                  <span className={`text-sm font-bold ${darkMode ? "text-purple-300" : "text-purple-700"}`}>{new Date(post.endDate).toLocaleDateString()}</span>
+                </div>
+                <div className="col-span-2 flex flex-col pt-2 border-t border-dashed border-gray-200 dark:border-white/10">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Registration Deadline</span>
+                  <span className={`text-sm font-bold ${darkMode ? "text-red-400" : "text-red-600"}`}>{new Date(post.registrationCloseDate).toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4 pt-4 items-center">
+                {(currentUser?.isAdmin || post.user?._id === currentUser?._id) ? (
+                  <>
+                    <button 
+                      onClick={() => setShowAdminModal(true)}
+                      className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg active:scale-95"
+                    >
+                      View Registrations
+                    </button>
+                    {post.showRegistrationInsights && (
+                       <span className={`text-xs font-bold self-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                         Registered: {post.registrationCount || 0}
+                       </span>
+                    )}
+                  </>
+                ) : (
+                  Date.now() < new Date(post.registrationCloseDate) ? (
+                    <button 
+                      onClick={() => setShowRegistrationModal(true)}
+                      className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 cursor-default" : "bg-black text-white hover:bg-gray-800"}`}
+                      disabled={post.isRegistered}
+                    >
+                      {post.isRegistered ? "✓ Registered" : "Register Now"}
+                    </button>
+                  ) : (
+                    <span className="text-sm font-bold text-red-500 italic">Registration Closed</span>
+                  )
+                )}
+              </div>
+            </div>
+          )}
 
           <PostMedia
             post={post}
@@ -325,6 +386,25 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               emoji={reactionModalEmoji}
               users={reactionModalUsers}
               onClose={() => setShowReactionModal(false)}
+            />
+          )}
+
+          {showRegistrationModal && (
+            <EventRegistrationModal
+              event={post}
+              isOpen={showRegistrationModal}
+              onClose={() => setShowRegistrationModal(false)}
+              currentUser={currentUser}
+              darkMode={darkMode}
+            />
+          )}
+
+          {showAdminModal && (
+            <AdminRegistrationsModal
+              event={post}
+              isOpen={showAdminModal}
+              onClose={() => setShowAdminModal(false)}
+              darkMode={darkMode}
             />
           )}
         </div>

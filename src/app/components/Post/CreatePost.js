@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createPost } from "../../../api/dashboard";
 import toast from "react-hot-toast";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
+import CreateEventModal from "./CreateEventModal";
 
 const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [content, setContent] = useState("");
@@ -13,6 +14,8 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
   const [selectedType, setSelectedType] = useState("Regular");
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
 
   const availableTags = [];
   if (currentUser?.role === "alumni") availableTags.push("Session");
@@ -120,23 +123,26 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  {availableTags.length > 0 && (
-                    <div className="flex gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar">
-                      {availableTags.map((tag) => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => setSelectedType(selectedType === tag ? "Regular" : tag)}
-                          className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${selectedType === tag
-                            ? "bg-black text-white border-black shadow-md"
-                            : `${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`
-                            }`}
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar">
+                    {currentUser?.isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => toast.success("Announcement Modal coming soon!")}
+                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`}
+                      >
+                        📢 Create Announcement
+                      </button>
+                    )}
+                    {(currentUser?.role === "faculty" || currentUser?.isAdmin) && (
+                      <button
+                        type="button"
+                        onClick={() => setIsEventModalOpen(true)}
+                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`}
+                      >
+                        📅 Create Event
+                      </button>
+                    )}
+                  </div>
 
                   <div className="flex-shrink-0">
                     <EmojiPickerToggle
@@ -235,6 +241,15 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
           </form>
         </div>
       </div>
+      {isEventModalOpen && (
+        <CreateEventModal
+          isOpen={isEventModalOpen}
+          onClose={() => setIsEventModalOpen(false)}
+          currentUser={currentUser}
+          darkMode={darkMode}
+          setPosts={setPosts}
+        />
+      )}
     </div>
   );
 };
