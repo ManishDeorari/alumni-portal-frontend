@@ -246,7 +246,7 @@ export default function AlumniExport() {
                             <thead>
                                 <tr className="text-blue-100/30 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5 bg-white/5">
                                     <th className="py-4 px-6 text-left">Alumni</th>
-                                    <th className="py-4 px-6 text-left">Course & Year</th>
+                                    <th className="py-4 px-6 text-left">Course &amp; Year</th>
                                     <th className="py-4 px-6 text-left">Location</th>
                                     <th className="py-4 px-6 text-left">Industry</th>
                                 </tr>

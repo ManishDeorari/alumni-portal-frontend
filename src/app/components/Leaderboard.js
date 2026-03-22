@@ -133,7 +133,7 @@ export default function Leaderboard() {
           <h1 className="text-3xl font-black text-white tracking-tight mb-2 flex items-center gap-3">
             🏆 Alumni Leaderboard
           </h1>
-          <p className="text-blue-100/40 text-sm font-bold uppercase tracking-widest">Global Rankings & Points breakdown</p>
+          <p className="text-blue-100/40 text-sm font-bold uppercase tracking-widest">Global Rankings &amp; Points breakdown</p>
         </div>
         <div className="relative w-full md:w-80">
           <input

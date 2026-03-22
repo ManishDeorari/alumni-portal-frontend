@@ -152,7 +152,7 @@ export default function MyPostsPage() {
           </div>
         ) : (
           <div className={`py-24 text-center rounded-[3rem] border border-white/10 backdrop-blur-md ${darkMode ? 'bg-slate-950/50' : 'bg-white/10'}`}>
-            <h2 className="text-2xl font-black text-white/80">You haven't created any posts yet.</h2>
+            <h2 className="text-2xl font-black text-white/80">You haven&apos;t created any posts yet.</h2>
             <p className="text-white/60 mt-3 font-medium">Your future thoughts and shared experiences will appear here.</p>
           </div>
         )}

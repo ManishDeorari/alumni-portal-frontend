@@ -227,7 +227,7 @@ export default function LoginPage() {
               <form onSubmit={handleForgotPassword} className="space-y-6">
                 <div className="space-y-2 text-center">
                   <h2 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-black"}`}>Reset Access</h2>
-                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>We'll send a code to your registered email</p>
+                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>We&apos;ll send a code to your registered email</p>
                 </div>
 
                 <div className="space-y-4">

@@ -50,7 +50,7 @@ const PointsScenario = ({ darkMode = false }) => {
                     <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
                         🎖️ Points System
                     </h3>
-                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-widest mt-1`}>Earn & Rank Up</p>
+                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-widest mt-1`}>Earn &amp; Rank Up</p>
                 </div>
 
                 <div className="space-y-1.5">

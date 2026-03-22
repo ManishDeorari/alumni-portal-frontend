@@ -112,7 +112,7 @@ export default function GroupImageCropperModal({ isOpen, imageSrc, onComplete, o
               {processing ? "Processing..." : (
                 <>
                   <Check size={12} />
-                  <span>Apply & Save</span>
+                  <span>Apply &amp; Save</span>
                 </>
               )}
             </button>

@@ -36,7 +36,7 @@ export default function AdminPointsPanel() {
         <option value="referrals">Referrals</option>
         <option value="contentContribution">Content Contribution</option>
         <option value="campusEngagement">Campus Engagement</option>
-        <option value="innovationSupport">Idea & Innovation</option>
+        <option value="innovationSupport">Idea &amp; Innovation</option>
         <option value="alumniParticipation">Alumni Participation</option>
       </select>
       <input
