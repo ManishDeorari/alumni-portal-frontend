@@ -5,8 +5,13 @@ import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import HybridInput from "../ui/HybridInput";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+const COURSE_OPTIONS = ["B.Tech", "M.Tech", "MBA", "BCA", "MCA"];
+const currentYearForDropdown = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, i) => String(2000 + i));
 
 export default function AlumniExport() {
     const [alumni, setAlumni] = useState([]);
@@ -185,27 +190,26 @@ export default function AlumniExport() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
                         <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Course</label>
-                        <select
+                        <HybridInput
                             value={filters.course}
-                            onChange={(e) => setFilters({ ...filters, course: e.target.value })}
-                            className="w-full px-4 py-3 bg-[#1a1a2e] border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
-                        >
-                            <option value="">All Courses</option>
-                            {["B.Tech", "M.Tech", "MBA", "BCA", "MCA"].map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                            onChange={(val) => setFilters({ ...filters, course: val })}
+                            options={COURSE_OPTIONS}
+                            placeholder="All Courses"
+                            uppercase={true}
+                            className="w-full px-4 py-4 bg-[#1a1a2e] border border-white/10 rounded-xl text-white font-bold text-[10px] uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-400"
+                        />
                     </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Graduation Year</label>
+                    <div className="space-y-1.5 relative">
+                        <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Graduation / Start Year</label>
                         <select
                             value={filters.year}
                             onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                            className="w-full px-4 py-3 bg-[#1a1a2e] border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
+                            className="w-full px-4 py-[15px] bg-[#1a1a2e] border border-white/10 rounded-xl text-white font-bold text-[10px] uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
                         >
                             <option value="">All Years</option>
-                            {Array.from({ length: 25 }, (_, i) => 2010 + i).map(y => (
-                                <option key={y} value={y}>{y}</option>
-                            ))}
+                            {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
+                        <svg className="w-4 h-4 absolute right-4 top-[38px] pointer-events-none opacity-30 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                     </div>
                     <div className="space-y-1.5">
                         <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Industry</label>

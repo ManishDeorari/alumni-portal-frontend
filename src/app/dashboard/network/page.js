@@ -10,6 +10,11 @@ import {
 } from "@/api/connect";
 import RequestsModal from "../../components/network/RequestsModal";
 import { useTheme } from "@/context/ThemeContext";
+import HybridInput from "../../components/ui/HybridInput";
+
+const COURSE_OPTIONS = ["B.Tech", "M.Tech", "MBA", "BCA", "MCA"];
+const currentYearForDropdown = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, i) => String(2000 + i));
 
 const NetworkPage = () => {
   const { darkMode } = useTheme();
@@ -137,7 +142,7 @@ const NetworkPage = () => {
         </div>
 
         {/* Search Section */}
-        <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+        <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl">
           <div className={`px-10 py-10 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'} space-y-8`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-3 relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
@@ -148,9 +153,9 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
+                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
                   />
-                  <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 opacity-30`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white/30' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
               </div>
               <button
@@ -162,34 +167,27 @@ const NetworkPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
-                <select
+              <div className="relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all z-[60]">
+                <HybridInput
                   value={filters.course}
-                  onChange={(e) => setFilters({ ...filters, course: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
-                >
-                  <option value="">All Courses</option>
-                  <option value="B.Tech">B.Tech</option>
-                  <option value="M.Tech">M.Tech</option>
-                  <option value="MBA">MBA</option>
-                  <option value="BCA">BCA</option>
-                  <option value="MCA">MCA</option>
-                </select>
-                <svg className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  onChange={(val) => setFilters({ ...filters, course: val })}
+                  options={COURSE_OPTIONS}
+                  placeholder="Course (e.g. BCA)"
+                  uppercase={true}
+                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
+                />
               </div>
 
               <div className="relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
                 <select
                   value={filters.year}
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
+                  className={`w-full pl-4 pr-10 py-[14px] rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
                 >
-                  <option value="">Graduation Year</option>
-                  {Array.from({ length: 25 }, (_, i) => 2010 + i).map(y => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
+                  <option value="">Graduation / Start Year</option>
+                  {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
-                <svg className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white' : 'text-black'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
               </div>
 
               <div className="relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
@@ -198,7 +196,7 @@ const NetworkPage = () => {
                   placeholder="Industry"
                   value={filters.industry}
                   onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-slate-100 text-slate-900 placeholder-slate-400 border border-slate-200'}`}
+                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
                 />
               </div>
             </div>

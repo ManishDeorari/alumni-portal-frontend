@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
-import { FaPlus, FaSearch, FaUsers } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
+import GroupAvatar from "./GroupAvatar";
 
 export default function GroupSidebar({ 
     groups, 
@@ -81,14 +81,11 @@ export default function GroupSidebar({
                                     e.stopPropagation();
                                     onViewImage(group.profileImage || "/default-group.jpg");
                                 }}
-                                className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-12 h-12 flex items-center justify-center overflow-hidden bg-white hover:scale-110 transition-transform cursor-zoom-in"
+                                className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-12 h-12 flex items-center justify-center bg-white hover:scale-110 transition-transform cursor-zoom-in"
                             >
-                                    <Image
-                                        src={group.profileImage || "/default-group.jpg"}
-                                        width={48}
-                                        height={48}
-                                        className="rounded-full object-cover"
-                                        alt={group.name}
+                                    <GroupAvatar
+                                        group={group}
+                                        size={44}
                                     />
                                 </div>
 

@@ -14,14 +14,20 @@ export default function GroupMembersModal({
 }) {
     const { darkMode } = useTheme();
     const [searchTerm, setSearchTerm] = useState("");
+    const [roleFilter, setRoleFilter] = useState("ALL");
 
     if (!isOpen) return null;
 
     // Filter members
-    const filtered = members.filter(m => 
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (m.enrollmentNumber && m.enrollmentNumber.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const filtered = members.filter(m => {
+        const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (m.enrollmentNumber && m.enrollmentNumber.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const mRole = (m.role || (m.isMainAdmin ? "admin" : "alumni")).toUpperCase();
+        const matchesRole = roleFilter === "ALL" || mRole === roleFilter;
+
+        return matchesSearch && matchesRole;
+    });
 
     // Sort: Admin -> Faculty -> Alumni
     const sortedMembers = [...filtered].sort((a, b) => {
@@ -46,18 +52,34 @@ export default function GroupMembersModal({
                     </button>
                 </div>
 
-                {/* Search Bar */}
-                <div className="p-6 pb-0">
-                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                        <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] transition-all ${darkMode ? "bg-gray-950/50 focus-within:bg-gray-950" : "bg-white focus-within:bg-gray-50"}`}>
+                {/* Filters */}
+                <div className="px-6 pt-6 flex gap-3">
+                    <div className="flex-1 p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
+                        <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950/50 focus-within:bg-gray-950" : "bg-white focus-within:bg-gray-50"}`}>
                             <FaSearch className="text-gray-400" size={14} />
                             <input 
                                 type="text" 
-                                placeholder="Search among group members..." 
+                                placeholder="Search members..." 
                                 className={`bg-transparent border-none outline-none w-full font-bold text-sm ${darkMode ? "text-white" : "text-black"}`}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+                        </div>
+                    </div>
+
+                    <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500">
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                            className={`px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer pr-10 ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
+                        >
+                            <option value="ALL">ALL</option>
+                            <option value="ADMIN">ADMINS</option>
+                            <option value="FACULTY">FACULTY</option>
+                            <option value="ALUMNI">ALUMNI</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                            <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-current"></div>
                         </div>
                     </div>
                 </div>
@@ -104,7 +126,15 @@ export default function GroupMembersModal({
                                                     {role}
                                                 </span>
                                             </div>
-                                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{member.enrollmentNumber || "Alumni"}</p>
+                                            {!member.isMainAdmin ? (
+                                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mt-1">
+                                                    {(role === 'faculty' || role === 'admin') 
+                                                        ? (member.employeeId || "Faculty") 
+                                                        : (member.enrollmentNumber || "Alumni")}
+                                                </p>
+                                            ) : (
+                                                <div className="h-3" />
+                                            )}
                                         </div>
                                     </div>
 

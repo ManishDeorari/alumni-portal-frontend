@@ -3,29 +3,54 @@ import React, { useState, useRef } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaTimes, FaCamera, FaUsers, FaPlus } from "react-icons/fa";
 import MemberSearchModal from "./MemberSearchModal";
+import GroupImageCropperModal from "./GroupImageCropperModal";
+import { resizeImage } from "./groupImageUtils";
 import { toast } from "react-hot-toast";
 
 export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     const { darkMode } = useTheme();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [isAllMember, setIsAllMember] = useState(false);
+    const [isAllAlumni, setIsAllAlumni] = useState(false);
+    const [isAllFaculty, setIsAllFaculty] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
+    const [profileImageSettings, setProfileImageSettings] = useState({ x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedMemberIds, setSelectedMemberIds] = useState([]);
     const [showMemberSearch, setShowMemberSearch] = useState(false);
+    const [showCropper, setShowCropper] = useState(false);
+    const [tempImage, setTempImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     
     const fileInputRef = useRef(null);
 
     if (!isOpen) return null;
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            setProfileImage(file);
-            setImagePreview(URL.createObjectURL(file));
+            setUploading(true);
+            try {
+                // Resize for faster upload (max 1600px is enough for viewer)
+                const resizedFile = await resizeImage(file, 1600);
+                setProfileImage(resizedFile);
+                setTempImage(URL.createObjectURL(resizedFile));
+                setShowCropper(true);
+            } catch (err) {
+                console.error("Image processing error:", err);
+                toast.error("Error processing image");
+            } finally {
+                setUploading(false);
+                e.target.value = null; // Reset for same-file re-selection
+            }
         }
+    };
+
+    const handleCropComplete = (blob, url, settings) => {
+        // We ignore blob/url here because we want the original (resized) file
+        setProfileImageSettings(settings);
+        setImagePreview(tempImage); // Use the original preview
+        setShowCropper(false);
     };
 
     const handleSubmit = async (e) => {
@@ -59,16 +84,19 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         onCreate({ 
             name, 
             description, 
-            isAllMemberGroup: isAllMember, 
+            isAllAlumniGroup: isAllAlumni,
+            isAllFacultyGroup: isAllFaculty,
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId,
+            profileImageSettings,
             members: selectedMemberIds 
         });
 
         // Reset
         setName("");
         setDescription("");
-        setIsAllMember(false);
+        setIsAllAlumni(false);
+        setIsAllFaculty(false);
         setProfileImage(null);
         setImagePreview(null);
         setSelectedMemberIds([]);
@@ -141,22 +169,39 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                              <div className="space-y-3">
                                 <label className={`block text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Group Membership</label>
                                 
-                                <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
-                                    <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllMember ? "bg-blue-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
-                                        <input 
-                                            type="checkbox" 
-                                            id="allMember" 
-                                            checked={isAllMember} 
-                                            onChange={(e) => setIsAllMember(e.target.checked)}
-                                            className="w-6 h-6 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
-                                        />
-                                        <label htmlFor="allMember" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                            INCLUDE ALL ALUMNI AUTOMATICALLY
-                                        </label>
+                                <div className="space-y-2">
+                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
+                                        <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllFaculty ? "bg-purple-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
+                                            <input 
+                                                type="checkbox" 
+                                                id="allFaculty" 
+                                                checked={isAllFaculty} 
+                                                onChange={(e) => setIsAllFaculty(e.target.checked)}
+                                                className="w-6 h-6 rounded-lg border-gray-300 text-purple-600 focus:ring-purple-500 transition-all cursor-pointer"
+                                            />
+                                            <label htmlFor="allFaculty" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                                INCLUDE ALL FACULTY AUTOMATICALLY
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+                                        <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllAlumni ? "bg-blue-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
+                                            <input 
+                                                type="checkbox" 
+                                                id="allAlumni" 
+                                                checked={isAllAlumni} 
+                                                onChange={(e) => setIsAllAlumni(e.target.checked)}
+                                                className="w-6 h-6 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                            />
+                                            <label htmlFor="allAlumni" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                                INCLUDE ALL ALUMNI AUTOMATICALLY
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
 
-                                 {!isAllMember && (
+                                 {(!isAllAlumni && !isAllFaculty) && (
                                     <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-dashed border-transparent hover:border-gray-500/30 transition-all">
                                         <button
                                             type="button"
@@ -189,12 +234,18 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                 </div>
             </div>
 
+            <GroupImageCropperModal 
+                isOpen={showCropper}
+                imageSrc={tempImage}
+                onComplete={handleCropComplete}
+                onClose={() => setShowCropper(false)}
+            />
+
             <MemberSearchModal 
                 isOpen={showMemberSearch}
                 onClose={() => setShowMemberSearch(false)}
                 onSelect={(ids) => setSelectedMemberIds(ids)}
-                initialSelected={selectedMemberIds}
-                title="Add Initial Members"
+                selectedMemberIds={selectedMemberIds}
             />
         </>
     );

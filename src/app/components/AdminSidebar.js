@@ -115,6 +115,10 @@ export default function AdminSidebar() {
       const newNotif = { ...notification, isRead: false };
       setNotifications(prev => [newNotif, ...prev]);
       setUnreadCount(prev => prev + 1);
+      
+      if (notification.type === "connect_request") {
+        setPendingRequestsCount(prev => prev + 1);
+      }
     };
 
     const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);

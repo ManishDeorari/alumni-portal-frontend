@@ -3,6 +3,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { FaSearch, FaCheck, FaTimes, FaUsers, FaChevronDown } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
+import HybridInput from "../../ui/HybridInput";
+
+const COURSE_OPTIONS = ["B.Tech", "M.Tech", "MBA", "BCA", "MCA"];
+const currentYearForDropdown = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, i) => String(2000 + i));
 
 export default function MemberSearchModal({
     isOpen,
@@ -17,6 +22,7 @@ export default function MemberSearchModal({
     const [searchTerm, setSearchTerm] = useState("");
     const [course, setCourse] = useState("");
     const [year, setYear] = useState("");
+    const [roleFilter, setRoleFilter] = useState("ALL");
     const [users, setUsers] = useState([]);
     const [selectedIds, setSelectedIds] = useState(initialSelected || []);
     const [loading, setLoading] = useState(false);
@@ -44,6 +50,11 @@ export default function MemberSearchModal({
                     !u.isMainAdmin
                 );
 
+                // 🔴 Role Filtering (Frontend side to ensure accuracy)
+                if (roleFilter !== "ALL") {
+                    data = data.filter(u => u.role === roleFilter.toLowerCase());
+                }
+
                 // 🛑 Exclude existing members if provided
                 if (excludeIds && excludeIds.length > 0) {
                     const excludeSet = new Set(excludeIds.map(String));
@@ -57,7 +68,7 @@ export default function MemberSearchModal({
         } finally {
             setLoading(false);
         }
-    }, [searchTerm, course, year, API_URL]);
+    }, [searchTerm, course, year, roleFilter, API_URL]);
 
     useEffect(() => {
         if (isOpen) {
@@ -124,41 +135,60 @@ export default function MemberSearchModal({
 
                     {/* Advanced Multi-Filter Search Bar */}
                     <div className="space-y-4">
-                        {/* Name/General Query */}
-                        <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                            <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] transition-all ${darkMode ? "bg-gray-950 focus-within:bg-gray-900" : "bg-white focus-within:bg-gray-50"}`}>
-                                <FaSearch className="text-gray-400" size={14} />
-                                <input
-                                    type="text"
-                                    placeholder="Search by name, roll number, or course..."
-                                    className={`bg-transparent border-none outline-none w-full font-bold text-sm ${darkMode ? "text-white" : "text-black"}`}
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                        <div className="grid grid-cols-3 gap-3">
+                            {/* Name/General Query */}
+                            <div className="col-span-2 p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
+                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950 focus-within:bg-gray-900" : "bg-white focus-within:bg-gray-50"}`}>
+                                    <FaSearch className="text-gray-400" size={14} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name, roll..."
+                                        className={`bg-transparent border-none outline-none w-full font-bold text-sm ${darkMode ? "text-white" : "text-black"}`}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Role Filter */}
+                            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500">
+                                <select
+                                    value={roleFilter}
+                                    onChange={(e) => setRoleFilter(e.target.value)}
+                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
+                                >
+                                    <option value="ALL">ALL ROLES</option>
+                                    <option value="ALUMNI">ALUMNI</option>
+                                    <option value="FACULTY">FACULTY</option>
+                                </select>
+                                <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
                             </div>
                         </div>
 
                         {/* Custom Filters (Course, Year) */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/30 to-purple-500/30">
-                                <input 
-                                    type="text"
-                                    placeholder="Course (e.g. B.Tech)"
+                                <HybridInput
                                     value={course}
-                                    onChange={(e) => setCourse(e.target.value)}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                    onChange={(val) => setCourse(val)}
+                                    options={COURSE_OPTIONS}
+                                    placeholder="Course (e.g. B.Tech)"
+                                    uppercase={true}
+                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
                                 />
                             </div>
 
-                            <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/30 to-pink-500/30">
-                                <input 
-                                    type="text"
-                                    placeholder={course ? "Start Year (e.g. 2024)" : "Select Course First"}
+                            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/30 to-pink-500/30">
+                                <select
                                     value={year}
                                     disabled={!course}
                                     onChange={(e) => setYear(e.target.value)}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
-                                />
+                                    className={`w-full px-4 py-[11px] rounded-[calc(1rem-1px)] appearance-none font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                >
+                                    <option value="">{course ? "Start Year" : "Select Course First"}</option>
+                                    {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
+                                </select>
+                                <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -191,40 +221,64 @@ export default function MemberSearchModal({
                             <span>No members match your filters</span>
                         </div>
                     ) : (
-                        users.map(user => (
-                            <div
-                                key={user._id}
-                                onClick={() => toggleUser(user._id)}
-                                className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 transition-all hover:scale-[1.01]"
-                            >
-                                <div className={`p-4 flex items-center gap-4 rounded-[calc(1.5rem-1px)] cursor-pointer transition-all border group ${selectedIds.includes(String(user._id))
-                                        ? (darkMode ? "bg-blue-600/20 border-blue-500 shadow-xl" : "bg-blue-50 border-blue-200 shadow-xl")
-                                        : (darkMode ? "bg-gray-900 border-transparent hover:bg-gray-850" : "bg-white border-transparent hover:bg-gray-50")
-                                    }`}>
-                                    <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-400">
-                                        <div className="relative w-12 h-12 rounded-[calc(1rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
-                                            <Image 
-                                                src={user.profilePicture || "/default-profile.jpg"} 
-                                                fill 
-                                                className="object-cover" 
-                                                alt={user.name} 
-                                            />
-                                        </div>
+                        ["FACULTY", "ALUMNI"].map(roleKey => {
+                            const groupUsers = users.filter(u => (u.role || "alumni").toUpperCase() === roleKey);
+                            if (groupUsers.length === 0) return null;
+                            
+                            return (
+                                <div key={roleKey} className="space-y-3 pt-2">
+                                    <div className="flex items-center gap-4 px-2">
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{roleKey}</span>
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className={`text-sm font-black truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{user.name}</h4>
-                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">
-                                            {user.course} • {user.year} • {user.enrollmentNumber || "N/A"}
-                                        </p>
-                                    </div>
-                                    {selectedIds.includes(String(user._id)) && (
-                                        <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 animate-in zoom-in duration-300">
-                                            <FaCheck size={12} strokeWidth={4} />
+                                    
+                                    {groupUsers.map(user => (
+                                        <div
+                                            key={user._id}
+                                            onClick={() => toggleUser(user._id)}
+                                            className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 transition-all hover:scale-[1.01]"
+                                        >
+                                            <div className={`p-4 flex items-center gap-4 rounded-[calc(1.5rem-1px)] cursor-pointer transition-all border group ${selectedIds.includes(String(user._id))
+                                                    ? (darkMode ? "bg-blue-600/20 border-blue-500 shadow-xl" : "bg-blue-50 border-blue-200 shadow-xl")
+                                                    : (darkMode ? "bg-gray-900 border-transparent hover:bg-gray-850" : "bg-white border-transparent hover:bg-gray-50")
+                                                }`}>
+                                                <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-400">
+                                                    <div className="relative w-12 h-12 rounded-[calc(1rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
+                                                        <Image 
+                                                            src={user.profilePicture || "/default-profile.jpg"} 
+                                                            fill 
+                                                            className="object-cover" 
+                                                            alt={user.name} 
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 min-w-0 text-left">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className={`text-sm font-black truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{user.name}</h4>
+                                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
+                                                            user.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 
+                                                            user.role === 'faculty' ? 'bg-purple-500/20 text-purple-500' : 
+                                                            'bg-blue-500/20 text-blue-500'
+                                                        }`}>
+                                                            {user.role || 'alumni'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">
+                                                        {user.role === 'faculty' ? user.employeeId : (user.enrollmentNumber || "Alumni")}
+                                                    </p>
+                                                </div>
+                                                {selectedIds.includes(String(user._id)) && (
+                                                    <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 animate-in zoom-in duration-300">
+                                                        <FaCheck size={12} strokeWidth={4} />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 

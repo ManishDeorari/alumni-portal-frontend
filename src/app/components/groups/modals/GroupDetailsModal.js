@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import { FaTimes, FaUsers, FaImage, FaChevronRight } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
+import GroupAvatar from "../GroupAvatar";
 
 export default function GroupDetailsModal({ 
     isOpen, 
@@ -37,12 +37,7 @@ export default function GroupDetailsModal({
                             className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-500 shadow-2xl mb-6 scale-110 cursor-zoom-in hover:scale-[1.15] transition-transform"
                         >
                             <div className="relative w-32 h-32 rounded-[calc(2.5rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
-                                <Image 
-                                    src={group.profileImage || "/default-group.jpg"} 
-                                    fill 
-                                    className="object-cover" 
-                                    alt={group.name} 
-                                />
+                                <GroupAvatar group={group} size={128} />
                             </div>
                         </div>
                         <h3 className={`text-3xl font-black tracking-tighter mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>

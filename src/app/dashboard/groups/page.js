@@ -298,6 +298,9 @@ export default function GroupsPage() {
                 setFilteredGroups(prev => [newGroup, ...prev]);
                 setShowCreateModal(false);
                 toast.success("Group created successfully!");
+            } else {
+                const errorData = await res.json();
+                toast.error(errorData.message || "Failed to create group");
             }
         } catch (err) {
             console.error("Error creating group:", err);
@@ -324,6 +327,9 @@ export default function GroupsPage() {
                 setSelectedGroup(updatedGroup);
                 setShowEditModal(false);
                 toast.success("Group updated!");
+            } else {
+                const errorData = await res.json();
+                toast.error(errorData.message || "Failed to update group");
             }
         } catch (err) {
             console.error("Error updating group:", err);

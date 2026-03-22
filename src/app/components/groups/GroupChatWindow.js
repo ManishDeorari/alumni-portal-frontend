@@ -5,6 +5,7 @@ import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers, FaImage, FaTi
 import { useTheme } from "@/context/ThemeContext";
 import EmojiPicker from 'emoji-picker-react';
 import { toast } from "react-hot-toast";
+import GroupAvatar from "./GroupAvatar";
 
 export default function GroupChatWindow({
     selectedGroup,
@@ -101,7 +102,6 @@ export default function GroupChatWindow({
 
     const onEmojiClick = (emojiData) => {
         setNewMessage(prev => prev + emojiData.emoji);
-        setShowEmojiPicker(false);
     };
 
     if (!selectedGroup) {
@@ -137,7 +137,7 @@ export default function GroupChatWindow({
                             }}
                             className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform cursor-zoom-in"
                         >
-                            <Image src={selectedGroup.profileImage || "/default-group.jpg"} width={40} height={40} className="rounded-full object-cover" alt={selectedGroup.name} />
+                            <GroupAvatar group={selectedGroup} size={36} />
                         </div>
                         <div>
                             <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>{selectedGroup.name}</h3>

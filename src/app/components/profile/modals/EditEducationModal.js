@@ -2,18 +2,27 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Trash2, Plus, Save, GraduationCap, Calendar, BookOpen, School, Award, Users, ChevronDown, ChevronRight, CheckCircle2, Circle } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import HybridInput from "../../ui/HybridInput";
 
 const MONTHS = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-const YEARS = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() + 5 - i);
+const currentYearForDropdown = new Date().getFullYear();
+const YEARS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, i) => currentYearForDropdown + 5 - i);
 
 const DEGREE_SUGGESTIONS = [
-    "Bachelor of Technology (B.Tech)", "Bachelor of Science (B.Sc)", "Bachelor of Arts (B.A)",
-    "Master of Technology (M.Tech)", "Master of Science (M.Sc)", "Master of Business Administration (MBA)",
-    "Master of Computer Applications - MCA", "Doctor of Philosophy (Ph.D)", "High School Diploma"
+    "High School (Secondary - Class 10)", 
+    "Intermediate (Higher Secondary - Class 11-12)", 
+    "Undergraduate (Bachelor's Degree)", 
+    "Postgraduate (Master's Degree)", 
+    "Diploma", 
+    "Doctor of Philosophy (Ph.D)"
+];
+
+const COURSE_SUGGESTIONS = [
+    "B.Tech", "M.Tech", "MBA", "BCA", "MCA", "B.Sc", "M.Sc", "B.A", "M.A"
 ];
 
 const STUDY_SUGGESTIONS = [
@@ -55,18 +64,21 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
     useEffect(() => {
         if (isOpen) {
             const existingMap = (currentEducation || []).reduce((acc, edu) => {
-                acc[edu.degree] = edu;
+                const key = edu.level || edu.degree;
+                acc[key] = edu;
                 return acc;
             }, {});
 
-            const transformed = MANDATORY_DEGREES.map(degree => {
-                const edu = existingMap[degree] || {};
+            const transformed = MANDATORY_DEGREES.map((levelName, idx) => {
+                const edu = existingMap[levelName] || {};
                 const [sMonth, sYear] = (edu.startDate || "").split(" ");
                 const [eMonth, eYear] = (edu.endDate || "").split(" ");
 
                 return {
                     ...edu,
-                    degree, // Ensure it matches exactly
+                    level: levelName,
+                    degree: edu.degree || levelName, // Ensure it gets the prior custom degree or the level name
+                    course: edu.course || "",
                     startMonth: sMonth || "",
                     startYear: sYear || "",
                     endMonth: eMonth || "",
@@ -76,17 +88,19 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     grade: edu.grade || "",
                     activities: edu.activities || "",
                     description: edu.description || "",
-                    isMandatory: true
+                    isMandatory: true,
+                    isFixed: true // All 4 mandatory levels (HS, Int, UG, PG) are fixed
                 };
             });
 
             // Add non-mandatory educations
             (currentEducation || []).forEach(edu => {
-                if (!MANDATORY_DEGREES.includes(edu.degree)) {
+                if (!MANDATORY_DEGREES.includes(edu.level || edu.degree)) {
                     const [sMonth, sYear] = (edu.startDate || "").split(" ");
                     const [eMonth, eYear] = (edu.endDate || "").split(" ");
                     transformed.push({
                         ...edu,
+                        course: edu.course || "",
                         startMonth: sMonth || "",
                         startYear: sYear || "",
                         endMonth: eMonth || "",
@@ -119,6 +133,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
             ...educations,
             {
                 degree: "",
+                course: "",
                 fieldOfStudy: "",
                 institution: "",
                 campus: "",
@@ -141,10 +156,16 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
     const validate = () => {
         const newErrors = {};
         educations.forEach((edu, idx) => {
-            if (!edu.institution) newErrors[`${idx}-institution`] = "School is required";
-            if (!edu.degree) newErrors[`${idx}-degree`] = "Degree is required";
-            if (!edu.startMonth || !edu.startYear) newErrors[`${idx}-startDate`] = "Start date required";
-            if (!edu.endMonth || !edu.endYear) newErrors[`${idx}-endDate`] = "End date required";
+            const hasData = edu.institution || edu.course || edu.startMonth || edu.startYear || edu.endMonth || edu.endYear || edu.grade || edu.activities || edu.description;
+            if (hasData || !edu.isMandatory) {
+                if (!edu.institution) newErrors[`${idx}-institution`] = "School is required";
+                if (!edu.degree) newErrors[`${idx}-degree`] = "Degree is required";
+                if (edu.degree && !edu.degree.includes("High School") && !edu.degree.includes("Intermediate") && !edu.course) {
+                    newErrors[`${idx}-course`] = "Course is required";
+                }
+                if (!edu.startMonth || !edu.startYear) newErrors[`${idx}-startDate`] = "Start date required";
+                if (!edu.endMonth || !edu.endYear) newErrors[`${idx}-endDate`] = "End date required";
+            }
         });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -152,18 +173,24 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
 
     const handleSave = async () => {
         if (!validate()) {
-            toast.error("Please fill in all required fields.");
+            toast.error("Please fill in all required fields for the provided educations.");
             return;
         }
 
         setLoading(true);
         try {
-            const finalData = educations.map(edu => {
+            const validEducations = educations.filter(edu => 
+                edu.institution || edu.course || edu.startMonth || edu.startYear || edu.endMonth || edu.endYear || edu.grade || edu.activities || edu.description || !edu.isMandatory
+            );
+
+            const finalData = validEducations.map(edu => {
                 const startDate = `${edu.startMonth} ${edu.startYear}`;
                 const endDate = `${edu.endMonth} ${edu.endYear}`;
 
                 return {
+                    level: edu.level,
                     degree: edu.degree,
+                    course: edu.course,
                     fieldOfStudy: edu.fieldOfStudy,
                     institution: edu.institution,
                     campus: edu.institution === "Graphic Era Hill University" ? edu.campus : "",
@@ -247,8 +274,11 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                     ) : null}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    {edu.isMandatory && !expandedIndex === index && (
+                                    {edu.isFixed && expandedIndex !== index && (
                                         <span className="text-[10px] text-blue-500 font-bold uppercase mr-2">Mandatory</span>
+                                    )}
+                                    {edu.isMandatory && !edu.isFixed && expandedIndex !== index && (
+                                        <span className="text-[10px] text-purple-500 font-bold uppercase mr-2">Required</span>
                                     )}
                                     {!edu.isMandatory && (
                                         <button
@@ -301,20 +331,37 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-1.5">
                                             <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-degree`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
-                                                Degree <span className="text-red-500 font-bold">*</span>
+                                                Degree/Level <span className="text-red-500 font-bold">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                list="degree-list-final"
-                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isMandatory ? 'bg-slate-900 text-slate-500' : 'bg-slate-800 text-white') + ' border-slate-700 focus:ring-blue-500/50' : (edu.isMandatory ? 'bg-gray-50 text-gray-500' : 'bg-white text-gray-900') + ' border-gray-300 focus:ring-blue-500/30'} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'} ${edu.isMandatory ? 'cursor-not-allowed' : ''}`}
+                                            <select
                                                 value={edu.degree || ""}
-                                                onChange={(e) => !edu.isMandatory && handleChange(index, "degree", e.target.value)}
-                                                placeholder="Ex: Master of Computer Applications - MCA"
-                                                readOnly={edu.isMandatory}
-                                            />
-                                            {edu.isMandatory && <p className="text-[10px] text-blue-500 font-bold uppercase mt-1">Mandatory Level (Fixed)</p>}
+                                                onChange={(e) => !edu.isFixed && handleChange(index, "degree", e.target.value)}
+                                                disabled={edu.isFixed}
+                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-slate-900 text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
+                                            >
+                                                <option value="">Select Level</option>
+                                                {DEGREE_SUGGESTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+                                            </select>
+                                            {edu.isFixed && <p className="text-[10px] text-blue-500 font-bold uppercase mt-1">Mandatory Level (Fixed)</p>}
                                             {errors[`${index}-degree`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-degree`]}</p>}
                                         </div>
+
+                                        {!edu.degree?.includes("High School") && !edu.degree?.includes("Intermediate") && (
+                                            <div className="space-y-1.5">
+                                                <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-course`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                                    Course <span className="text-red-500 font-bold">*</span>
+                                                </label>
+                                                <HybridInput
+                                                    value={edu.course || ""}
+                                                    onChange={(val) => handleChange(index, "course", val)}
+                                                    options={COURSE_SUGGESTIONS}
+                                                    placeholder="Ex: B.Tech, MCA, etc."
+                                                    uppercase={true}
+                                                    className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
+                                                />
+                                                {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-course`]}</p>}
+                                            </div>
+                                        )}
                                         <div className="space-y-1.5">
                                             <label className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>Field of study</label>
                                             <input

@@ -4,8 +4,10 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import AdminSidebar from "../../components/AdminSidebar";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
 import PostCard from "../../components/Post/PostCard";
 import Image from "next/image";
+import socket from "@/utils/socket";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -18,18 +20,21 @@ import {
   Calendar,
   Clock,
   ChevronRight,
-  X
+  X,
+  Users
 } from "lucide-react";
 
 const TABS = [
   { id: "ALL", label: "All", icon: <Layers className="w-4 h-4" /> },
   { id: "POST", label: "Posts", icon: <MessageSquare className="w-4 h-4" /> },
+  { id: "GROUP", label: "Groups", icon: <Users className="w-4 h-4" /> },
   { id: "NETWORK", label: "Network", icon: <UserPlus className="w-4 h-4" /> },
   { id: "VISIT", label: "Visits", icon: <Eye className="w-4 h-4" /> },
   { id: "NOTICE", label: "Notice", icon: <ShieldAlert className="w-4 h-4" /> },
 ];
 
 export default function NotificationsPage() {
+  const { darkMode } = useTheme();
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -79,6 +84,27 @@ export default function NotificationsPage() {
     };
 
     fetchUserAndNotes();
+
+    // 🌐 Real-time updates
+    const token = localStorage.getItem("token");
+    const userStored = JSON.parse(localStorage.getItem("user"));
+    if (userStored?._id) {
+      socket.emit("join", userStored._id);
+    }
+
+    const handleNewNotification = (notification) => {
+      // Add only if not already there (cooldown/duplicate guard)
+      setNotifications(prev => {
+        if (prev.some(n => n._id === notification._id)) return prev;
+        return [notification, ...prev];
+      });
+    };
+
+    socket.on("newNotification", handleNewNotification);
+
+    return () => {
+      socket.off("newNotification", handleNewNotification);
+    };
   }, [API_URL, fetchNotifications]);
 
   const markAsRead = async (id) => {
@@ -117,6 +143,8 @@ export default function NotificationsPage() {
       router.push(`/dashboard/profile?id=${note.sender?._id || note.sender}`);
     } else if (note.type === "profile_visit") {
       router.push(`/dashboard/profile?id=${note.sender?._id || note.sender}`);
+    } else if (note.type === "group_joined" || note.type === "group_added") {
+      router.push("/dashboard/groups");
     } else if (note.postId) {
       try {
         const res = await fetch(`${API_URL}/api/posts/${note.postId._id || note.postId}`);
@@ -146,6 +174,8 @@ export default function NotificationsPage() {
       filtered = notifications.filter(n => n.type === "profile_visit");
     } else if (activeTab === "NOTICE") {
       filtered = notifications.filter(n => n.type === "admin_notice");
+    } else if (activeTab === "GROUP") {
+      filtered = notifications.filter(n => ["group_joined", "group_added", "group_removed", "group_disbanded"].includes(n.type));
     }
 
     // 2. Group by Time
@@ -198,42 +228,46 @@ export default function NotificationsPage() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white pb-20">
+    <div className={`min-h-screen pb-20 bg-gradient-to-br from-blue-600 to-purple-700`}>
       <SidebarComponent />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            <h1 className={`text-4xl font-black tracking-tight flex items-center gap-3 text-white`}>
               Notifications
               {notifications.filter(n => !n.isRead).length > 0 && (
-                <span className="bg-yellow-400 text-blue-900 text-xs px-2.5 py-1 rounded-full items-center font-bold">
+                <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full items-center font-bold shadow-lg shadow-blue-500/20">
                   {notifications.filter(n => !n.isRead).length} New
                 </span>
               )}
             </h1>
-            <p className="text-white/70 mt-2 font-medium">Keep track of your community interactions</p>
+            <p className={`mt-2 font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
           <button
             onClick={markAllRead}
             disabled={!notifications.some(n => !n.isRead)}
-            className="flex items-center gap-2 px-6 py-2.5 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed border border-white/20 rounded-xl transition-all font-semibold backdrop-blur-md text-white"
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-bold backdrop-blur-md border ${
+              darkMode 
+                ? 'bg-black hover:bg-blue-600/20 border-white/20 hover:border-blue-500/50 text-white' 
+                : 'bg-white hover:bg-blue-50 border-gray-200 hover:border-blue-200 text-slate-700 hover:text-blue-600 shadow-sm'
+            } disabled:opacity-30 disabled:cursor-not-allowed active:scale-95`}
           >
-            <CheckCheck className="w-5 h-5 text-yellow-400" />
+            <CheckCheck className="w-5 h-5 text-blue-500" />
             Mark all read
           </button>
         </div>
 
         {/* Subsections (Tabs) */}
-        <div className="flex flex-wrap gap-2 mb-8 p-1.5 bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 w-fit">
+        <div className={`flex flex-wrap gap-2 mb-8 p-1.5 backdrop-blur-xl rounded-2xl border w-fit ${darkMode ? 'bg-black border-white/20' : 'bg-gray-100 border-gray-200'}`}>
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
-                ? "bg-white text-blue-600 shadow-lg shadow-black/20"
-                : "text-white/60 hover:text-white hover:bg-white/10"
+                ? (darkMode ? "bg-white text-blue-600 shadow-lg shadow-black/20" : "bg-blue-600 text-white shadow-md")
+                : (darkMode ? "text-white/60 hover:text-white hover:bg-white/10" : "text-slate-500 hover:text-slate-700 hover:bg-white")
                 }`}
             >
               {tab.icon}
@@ -247,13 +281,15 @@ export default function NotificationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-black/20 backdrop-blur-md rounded-3xl p-16 text-center border border-white/10"
+            className={`rounded-3xl p-16 text-center border relative overflow-hidden p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 shadow-xl`}
           >
-            <div className="bg-white/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Bell className="w-10 h-10 text-white opacity-50" />
+            <div className={`p-16 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'}`}>
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${darkMode ? 'bg-white/5 text-white/50' : 'bg-gray-50 text-slate-300'}`}>
+                <Bell className="w-10 h-10" />
+              </div>
+              <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>No notifications found</h2>
+              <p className={`${darkMode ? 'text-white/40' : 'text-slate-500'} max-w-xs mx-auto text-sm`}>When you get likes, comments, or connection requests, they&apos;ll show up here.</p>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">No notifications found</h2>
-            <p className="text-white/60 max-w-xs mx-auto text-sm">When you get likes, comments, or connection requests, they&apos;ll show up here.</p>
           </motion.div>
         ) : (
           <div className="space-y-12">
@@ -261,13 +297,13 @@ export default function NotificationsPage() {
               <div key={key} className="space-y-4">
                 <div className="flex items-center gap-2 px-4">
                   {group.icon}
-                  <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">
+                  <h3 className={`text-sm font-black uppercase tracking-widest text-white`}>
                     {group.label}
                   </h3>
-                  <div className="h-[1px] flex-1 bg-white/10 ml-4"></div>
+                  <div className={`h-[1px] flex-1 ml-4 ${darkMode ? 'bg-white/20' : 'bg-white/40'}`}></div>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="grid gap-4">
                   <AnimatePresence mode="popLayout">
                     {group.items.map((note) => (
                       <motion.div
@@ -277,48 +313,56 @@ export default function NotificationsPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.98 }}
                         onClick={() => handleNotificationClick(note)}
-                        className={`group relative flex items-start gap-4 p-5 rounded-2xl transition-all border ${!note.isRead
-                          ? "bg-black/40 border-white/30 shadow-xl hover:bg-black/50 cursor-pointer active:scale-[0.99]"
-                          : "bg-black/10 border-white/5 opacity-50 cursor-default"
-                          } backdrop-blur-md`}
+                        className="relative p-[1px] bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 rounded-2xl transition-all duration-300 hover:from-blue-400 hover:via-purple-400 hover:to-pink-400 group"
                       >
-                        <div className="relative">
-                          <Image
-                            src={note.sender?.profilePicture || "/default-profile.jpg"}
-                            alt={note.sender?.name || "User"}
-                            width={56}
-                            height={56}
-                            className="w-14 h-14 rounded-2xl object-cover border-2 border-white/20 group-hover:border-white transition-colors"
-                          />
+                        <div className={`relative flex items-start gap-4 p-5 rounded-[calc(1rem-1px)] transition-all ${
+                          !note.isRead
+                            ? (darkMode ? "bg-black/80 hover:bg-black" : "bg-white hover:bg-gray-50 shadow-md")
+                            : (darkMode ? "bg-black/60 shadow-inner" : "bg-gray-100/80 shadow-inner")
+                        } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
+                          <div className="relative shrink-0">
+                            <div className={`p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 shadow-lg ${!note.isRead ? 'opacity-100' : 'opacity-50 grayscale'}`}>
+                              <Image
+                                src={note.sender?.profilePicture || "/default-profile.jpg"}
+                                alt={note.sender?.name || "User"}
+                                width={56}
+                                height={56}
+                                className="w-14 h-14 rounded-[0.9rem] object-cover bg-white"
+                              />
+                            </div>
+                            {!note.isRead && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+                            )}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <p className={`font-bold text-lg leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                  {note.sender?.name || "System"}{" "}
+                                  <span className={`font-medium ml-1 ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
+                                    {note.message}
+                                  </span>
+                                </p>
+                                <div className="flex items-center gap-3 mt-2">
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                    <Clock className="w-3 h-3" />
+                                    {new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                    <Calendar className="w-3 h-3" />
+                                    {new Date(note.createdAt).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+                              <ChevronRight className={`w-5 h-5 transition-all ${!note.isRead ? (darkMode ? 'text-white/20 group-hover:text-white' : 'text-slate-300 group-hover:text-blue-500') : 'opacity-0'} group-hover:translate-x-1`} />
+                            </div>
+                          </div>
+
                           {!note.isRead && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-blue-600 shadow-lg shadow-yellow-400/50"></div>
+                            <div className="absolute inset-y-4 left-0 w-1 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
                           )}
                         </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-4">
-                            <div>
-                              <p className="text-white font-semibold text-lg leading-tight">
-                                {note.sender?.name || "System"} <span className="font-medium text-white/80 ml-1">{note.message}</span>
-                              </p>
-                              <div className="flex items-center gap-3 mt-2">
-                                <span className="text-xs font-bold text-white/50 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5">
-                                  <Clock className="w-3 h-3" />
-                                  {new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                                <span className="text-xs font-bold text-white/50 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5">
-                                  <Calendar className="w-3 h-3" />
-                                  {new Date(note.createdAt).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
-                            <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                          </div>
-                        </div>
-
-                        {!note.isRead && (
-                          <div className="absolute inset-y-0 left-0 w-1 bg-yellow-400 rounded-l-2xl"></div>
-                        )}
                       </motion.div>
                     ))}
                   </AnimatePresence>
