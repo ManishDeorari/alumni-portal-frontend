@@ -11,8 +11,6 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     const { darkMode } = useTheme();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [isAllAlumni, setIsAllAlumni] = useState(false);
-    const [isAllFaculty, setIsAllFaculty] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState({ x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(null);
@@ -84,8 +82,6 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         onCreate({ 
             name, 
             description, 
-            isAllAlumniGroup: isAllAlumni,
-            isAllFacultyGroup: isAllFaculty,
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId,
             profileImageSettings,
@@ -95,8 +91,6 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         // Reset
         setName("");
         setDescription("");
-        setIsAllAlumni(false);
-        setIsAllFaculty(false);
         setProfileImage(null);
         setImagePreview(null);
         setSelectedMemberIds([]);
@@ -169,57 +163,23 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                              <div className="space-y-3">
                                 <label className={`block text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-900"}`}>Group Membership</label>
                                 
-                                <div className="space-y-2">
-                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
-                                        <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllFaculty ? "bg-purple-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
-                                            <input 
-                                                type="checkbox" 
-                                                id="allFaculty" 
-                                                checked={isAllFaculty} 
-                                                onChange={(e) => setIsAllFaculty(e.target.checked)}
-                                                className="w-6 h-6 rounded-lg border-gray-300 text-purple-600 focus:ring-purple-500 transition-all cursor-pointer"
-                                            />
-                                            <label htmlFor="allFaculty" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                                INCLUDE ALL FACULTY AUTOMATICALLY
-                                            </label>
+                                <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-dashed border-transparent hover:border-gray-500/30 transition-all">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowMemberSearch(true)}
+                                        className={`w-full p-4 rounded-[calc(1rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950 text-gray-400" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <FaPlus size={12} className="text-blue-500" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Select Individual Members</span>
                                         </div>
-                                    </div>
-
-                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
-                                        <div className={`flex items-center gap-3 p-4 rounded-[calc(1rem-1px)] transition-all ${isAllAlumni ? "bg-blue-500/10" : (darkMode ? "bg-gray-950" : "bg-white")}`}>
-                                            <input 
-                                                type="checkbox" 
-                                                id="allAlumni" 
-                                                checked={isAllAlumni} 
-                                                onChange={(e) => setIsAllAlumni(e.target.checked)}
-                                                className="w-6 h-6 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
-                                            />
-                                            <label htmlFor="allAlumni" className={`text-xs font-black cursor-pointer ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                                INCLUDE ALL ALUMNI AUTOMATICALLY
-                                            </label>
-                                        </div>
-                                    </div>
+                                        {selectedMemberIds.length > 0 && (
+                                            <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full shadow-lg shadow-blue-500/30 animate-in zoom-in">
+                                                {selectedMemberIds.length} Selected
+                                            </span>
+                                        )}
+                                    </button>
                                 </div>
-
-                                 {(!isAllAlumni && !isAllFaculty) && (
-                                    <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-dashed border-transparent hover:border-gray-500/30 transition-all">
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowMemberSearch(true)}
-                                            className={`w-full p-4 rounded-[calc(1rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950 text-gray-400" : "bg-white text-gray-500 hover:bg-gray-50"}`}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <FaPlus size={12} className="text-blue-500" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Select Individual Members</span>
-                                            </div>
-                                            {selectedMemberIds.length > 0 && (
-                                                <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full shadow-lg shadow-blue-500/30 animate-in zoom-in">
-                                                    {selectedMemberIds.length} Selected
-                                                </span>
-                                            )}
-                                        </button>
-                                    </div>
-                                )}
                             </div>
 
                             <button
