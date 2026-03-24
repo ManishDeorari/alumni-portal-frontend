@@ -92,22 +92,27 @@ export default function usePostActions({
 
   const handleDelete = async () => {
     if (!checkAuth()) return;
-    const confirmed = confirm("Are you sure you want to delete this post?");
+    const isEvent = post.type === "Event";
+    const confirmed = confirm(isEvent ? "Are you sure you want to delete this event?" : "Are you sure you want to delete this post?");
     if (!confirmed) return;
 
     try {
+      const endpoint = isEvent ? `/api/events/${post._id}` : `/api/posts/${post._id}`;
       const res = await fetch(
-        `${API_URL}/api/posts/${post._id}`,
+        `${API_URL}${endpoint}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      
+      if (!res.ok) throw new Error("Delete failed");
+      
       await res.json();
       setPosts((prev) => prev.filter((p) => p._id !== post._id));
-      toast.success("🗑️ Post deleted", { autoClose: 1500 });
+      toast.success(isEvent ? "🗑️ Event deleted" : "🗑️ Post deleted", { autoClose: 1500 });
     } catch (err) {
-      toast.error("❌ Failed to delete post");
+      toast.error(isEvent ? "❌ Failed to delete event" : "❌ Failed to delete post");
     }
   };
 

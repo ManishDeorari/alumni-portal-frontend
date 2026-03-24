@@ -215,10 +215,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   Date.now() < new Date(post.registrationCloseDate) ? (
                     <button 
                       onClick={() => setShowRegistrationModal(true)}
-                      className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 cursor-default" : "bg-black text-white hover:bg-gray-800"}`}
-                      disabled={post.isRegistered}
+                      className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-black text-white hover:bg-gray-800"}`}
                     >
-                      {post.isRegistered ? "✓ Registered" : "Register Now"}
+                      {post.isRegistered ? "Edit Registration" : "Register Now"}
                     </button>
                   ) : (
                     <span className="text-sm font-bold text-red-500 italic">Registration Closed</span>
@@ -396,6 +395,15 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               onClose={() => setShowRegistrationModal(false)}
               currentUser={currentUser}
               darkMode={darkMode}
+              onRegisterSuccess={(newRegistration) => {
+                if (setPosts) {
+                  setPosts(prev => prev.map(p => 
+                    p._id === post._id 
+                      ? { ...p, isRegistered: true, myRegistration: newRegistration, registrationCount: (p.registrationCount || 0) + (newRegistration.isGroup ? newRegistration.groupMembers.length + 1 : 1) } 
+                      : p
+                  ));
+                }
+              }}
             />
           )}
 

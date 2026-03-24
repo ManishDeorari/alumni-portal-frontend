@@ -29,7 +29,8 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
     profileLink: true,
     enrollmentNumber: true,
     email: true,
-    mobileNumber: true,
+    phoneNumber: true,
+    course: true,
     courseYear: true,
     branchName: true,
     currentCompany: true,
@@ -319,9 +320,12 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {Object.keys(registrationFields).map((field) => (
                 <label key={field} className="flex items-center gap-3 cursor-pointer group">
-                  <div className={`w-10 h-6 rounded-full p-1 transition-all ${registrationFields[field] ? "bg-blue-600" : "bg-gray-400"}`} onClick={() => handleFieldToggle(field)}>
-                    <div className={`w-4 h-4 bg-white rounded-full transition-all ${registrationFields[field] ? "translate-x-4" : "translate-x-0"}`} />
-                  </div>
+                  <input 
+                    type="checkbox"
+                    className="w-5 h-5 accent-blue-600 cursor-pointer"
+                    checked={registrationFields[field]}
+                    onChange={() => handleFieldToggle(field)}
+                  />
                   <span className={`text-sm font-bold capitalize ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
                     {field.replace(/([A-Z])/g, ' $1').trim()}
                   </span>

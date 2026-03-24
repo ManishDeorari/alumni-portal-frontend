@@ -3,11 +3,30 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { registerForEvent } from "../../../api/dashboard";
 
-const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode = false }) => {
+const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode = false, onRegisterSuccess }) => {
   const [loading, setLoading] = useState(false);
-  const [isGroup, setIsGroup] = useState(false);
-  const [groupMembers, setGroupMembers] = useState([{ name: "", email: "", mobile: "", enrollmentNumber: "" }]);
-  const [answers, setAnswers] = useState({});
+  const [isGroup, setIsGroup] = useState(event.myRegistration ? event.myRegistration.isGroup : false);
+  const [groupMembers, setGroupMembers] = useState(
+    event.myRegistration?.isGroup && event.myRegistration.groupMembers?.length > 0
+      ? event.myRegistration.groupMembers
+      : [{ name: "", email: "", mobile: "", enrollmentNumber: "" }]
+  );
+  
+  const [answers, setAnswers] = useState(() => {
+    if (event.myRegistration && event.myRegistration.answers) {
+      return event.myRegistration.answers;
+    }
+    const initial = {};
+    if (event.registrationFields) {
+      Object.keys(event.registrationFields).forEach(field => {
+        if (event.registrationFields[field]) {
+          // Attempt to pre-fill from currentUser, otherwise empty string
+          initial[field] = currentUser?.[field] || "";
+        }
+      });
+    }
+    return initial;
+  });
 
   if (!isOpen) return null;
 
@@ -45,6 +64,9 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
       const result = await registerForEvent(payload);
       if (result.registration) {
         toast.success("🎉 Registration successful!");
+        if (onRegisterSuccess) {
+           onRegisterSuccess(result.registration);
+        }
         onClose();
       } else {
         toast.error(result.message || "❌ Registration failed.");
@@ -80,6 +102,49 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                 <label htmlFor="group-reg" className="text-sm font-bold text-blue-600 dark:text-blue-400 cursor-pointer">Register as a Group (2-4 members)</label>
               </div>
             )}
+
+            {/* Base Registration Fields */}
+            {event.registrationFields && Object.keys(event.registrationFields).map(field => {
+              if (!event.registrationFields[field]) return null;
+              
+              const isPhone = field === "phoneNumber" || field === "mobileNumber";
+              
+              return (
+                <div key={field} className="space-y-1">
+                  <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                    {field.replace(/([A-Z])/g, ' $1').trim()}
+                  </label>
+                  
+                  {isPhone ? (
+                    <div className="flex gap-2">
+                      <div className={`p-3 rounded-xl border flex items-center justify-center font-bold ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-gray-100 border-gray-200 text-gray-700"} `}>
+                        +91
+                      </div>
+                      <input
+                        required
+                        type="tel"
+                        maxLength={10}
+                        pattern="\d{10}"
+                        placeholder="10-digit number"
+                        value={answers[field] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          handleAnswerChange(field, val);
+                        }}
+                        className={`flex-1 p-3 rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-white border-gray-200"}`}
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      required
+                      value={answers[field] || ""}
+                      onChange={(e) => handleAnswerChange(field, e.target.value)}
+                      className={`w-full p-3 rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-white border-gray-200"}`}
+                    />
+                  )}
+                </div>
+              );
+            })}
 
             {/* Custom Questions */}
             {event.customQuestions?.map((q, i) => (

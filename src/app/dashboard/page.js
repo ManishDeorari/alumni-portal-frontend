@@ -28,6 +28,7 @@ export default function DashboardPage() {
   // Feed Tabs & Pending Posts
   const [activeTab, setActiveTab] = useState("all"); // "all" or "my"
   const [pendingPosts, setPendingPosts] = useState([]);
+  const [isFetchingFeed, setIsFetchingFeed] = useState(false);
 
   // ✅ Fetch current user
   useEffect(() => {
@@ -59,8 +60,10 @@ export default function DashboardPage() {
 
   // ✅ Fetch posts
   const fetchPosts = useCallback(async (pageNum = 1, append = false) => {
+    setIsFetchingFeed(true);
     try {
       const token = localStorage.getItem("token");
+
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       let url = `${API_URL}/api/posts?page=${pageNum}&limit=${limit}`;
       let headers = { Authorization: `Bearer ${token}` };
@@ -83,6 +86,8 @@ export default function DashboardPage() {
       setHasMore(data.posts.length === limit);
     } catch (err) {
       console.error("Failed to fetch posts:", err.message);
+    } finally {
+      setIsFetchingFeed(false);
     }
   }, [activeTab]);
 
@@ -195,19 +200,21 @@ export default function DashboardPage() {
             {/* Feed Subsections Tabs */}
             <div className="flex justify-center gap-3 flex-wrap">
               {[
-                { id: "all", label: "All Posts" },
-                { id: "my", label: "My Posts" },
+                { id: "all", label: "ALL" },
+                { id: "Regular", label: "Posts" },
                 { id: "Session", label: "Session" },
                 { id: "Announcement", label: "Announcement" },
-                { id: "Event", label: "Event" }
+                { id: "Event", label: "Event" },
+                { id: "my", label: "My Posts" }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
+                  disabled={isFetchingFeed}
                   className={`px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === tab.id
                     ? "bg-white text-blue-700 shadow-xl scale-105"
                     : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
-                    }`}
+                    } ${isFetchingFeed ? "opacity-50 cursor-wait" : ""}`}
                 >
                   {tab.label}
                 </button>
@@ -224,10 +231,10 @@ export default function DashboardPage() {
                   className="flex justify-center mt-6 mb-2 relative z-[500]"
                 >
                   <button
-                    onClick={loadPendingPosts}
+                    onClick={() => window.location.reload()}
                     className="relative z-[501] bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
                   >
-                    ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""}
+                    ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""} (Click to Refresh)
                   </button>
                 </motion.div>
               )}

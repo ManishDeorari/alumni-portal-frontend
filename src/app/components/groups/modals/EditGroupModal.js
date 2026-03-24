@@ -16,6 +16,8 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState(group?.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(group?.profileImage || "/default-group.jpg");
+    const [showCropper, setShowCropper] = useState(false);
+    const [tempImage, setTempImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [memberSearch, setMemberSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("ALL");
