@@ -6,11 +6,11 @@ import { registerForEvent } from "../../../api/dashboard";
 const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode = false, onRegisterSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState([]);
-  const [isGroup, setIsGroup] = useState(event.myRegistration ? event.myRegistration.isGroup : false);
+  const [isGroup, setIsGroup] = useState(event.allowGroupRegistration);
   const [groupMembers, setGroupMembers] = useState(
     event.myRegistration?.isGroup && event.myRegistration.groupMembers?.length > 0
       ? event.myRegistration.groupMembers
-      : [{ name: "", email: "", mobile: "", enrollmentNumber: "" }]
+      : []
   );
   
   const [answers, setAnswers] = useState(() => {
@@ -38,8 +38,21 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
   };
 
   const addMember = () => {
-    if (groupMembers.length < 4) {
-      setGroupMembers([...groupMembers, { name: "", email: "", mobile: "", enrollmentNumber: "" }]);
+    if (groupMembers.length < 3) { // Total 4 (1 + 3)
+      const newMember = {};
+      if (event.registrationFields) {
+        Object.keys(event.registrationFields).forEach(f => {
+          if (event.registrationFields[f]) {
+            newMember[f === "phoneNumber" || f === "mobileNumber" ? "mobile" : f] = "";
+          }
+        });
+      }
+      if (event.customQuestions) {
+        event.customQuestions.forEach(q => {
+          newMember[q.question] = "";
+        });
+      }
+      setGroupMembers([...groupMembers, newMember]);
     }
   };
 
@@ -68,10 +81,19 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
     }
     if (isGroup) {
       groupMembers.forEach((member, idx) => {
-        if (!member.name) newErrors.push(`group_${idx}_name`);
-        if (!member.email) newErrors.push(`group_${idx}_email`);
-        if (!member.mobile) newErrors.push(`group_${idx}_mobile`);
-        if (!member.enrollmentNumber) newErrors.push(`group_${idx}_enrollmentNumber`);
+        if (event.registrationFields) {
+          Object.keys(event.registrationFields).forEach(f => {
+            if (event.registrationFields[f]) {
+              const key = (f === "phoneNumber" || f === "mobileNumber") ? "mobile" : f;
+              if (!member[key]) newErrors.push(`group_${idx}_${key}`);
+            }
+          });
+        }
+        if (event.customQuestions) {
+          event.customQuestions.forEach(q => {
+            if (!member[q.question]) newErrors.push(`group_${idx}_${q.question}`);
+          });
+        }
       });
     }
 
@@ -140,20 +162,21 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
           <div className="space-y-4">
             <h3 className={`font-bold ${darkMode ? "text-gray-300" : "text-gray-700"}`}>Event: {event.title}</h3>
             
-            {event.allowGroupRegistration && (
-              <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                <input 
-                  type="checkbox" 
-                  checked={isGroup} 
-                  onChange={(e) => setIsGroup(e.target.checked)}
-                  id="group-reg"
-                  className="w-4 h-4"
-                />
-                <label htmlFor="group-reg" className="text-sm font-bold text-blue-600 dark:text-blue-400 cursor-pointer">Register as a Group (2-4 members)</label>
-              </div>
-            )}
+           {/* Group Member Logic: If it's a group event, we don't show the check box, it's mandatory if they want to add more */}
+           {event.allowGroupRegistration && (
+             <div className="flex items-center justify-between p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-white/5">
+                <span className={`text-sm font-bold ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Registration Type: Group Event</span>
+                <button type="button" onClick={addMember} disabled={groupMembers.length >= 3} className={`px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold ${groupMembers.length >= 3 ? "opacity-30" : "hover:bg-blue-700 active:scale-95 transition-all"}`}>+ Add Group Member</button>
+             </div>
+           )}
 
-            {/* Base Registration Fields */}
+           <div className={`p-6 rounded-3xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50/50 border-gray-100"} space-y-6`}>
+              <div className="flex justify-between items-center px-1">
+                <h4 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Member 1 (Registrant)</h4>
+                <span className={`text-[10px] font-bold ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Headcount +1</span>
+              </div>
+
+            {/* Base Registration Fields (Registrant) */}
             {event.registrationFields && Object.keys(event.registrationFields).map(field => {
               if (!event.registrationFields[field]) return null;
               
@@ -201,7 +224,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
               );
             })}
 
-            {/* Custom Questions */}
+            {/* Custom Questions (Registrant) */}
             {event.customQuestions?.map((q, i) => (
               <div key={i} className="space-y-1">
                 <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(q.question) ? "text-red-500" : ""}`}>{q.question}</label>
@@ -209,62 +232,94 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                   <input
                     placeholder="Your answer..."
                     className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                    value={answers[q.question] || ""}
                     onChange={(e) => { handleAnswerChange(q.question, e.target.value); setErrors(prev => prev.filter(err => err !== q.question)); }}
                   />
                 </div>
               </div>
             ))}
+            </div>
 
-            {isGroup && (
+            {isGroup && groupMembers.length > 0 && (
               <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-white/5">
-                <h4 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"}`}>Group Members</h4>
+                <h4 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"}`}>Group Members Details</h4>
                 {groupMembers.map((member, idx) => (
-                  <div key={idx} className={`p-4 rounded-xl border ${darkMode ? "bg-slate-800 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-3`}>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-blue-600">Member {idx + 1}</span>
-                      {idx > 0 && <button type="button" onClick={() => removeMember(idx)} className="text-red-500 text-xs font-bold uppercase tracking-widest">Remove</button>}
+                  <div key={idx} className={`p-6 rounded-[2rem] border ${darkMode ? "bg-slate-800 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-6`}>
+                    <div className="flex justify-between items-center px-2">
+                      <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">Member {idx + 2}</span>
+                      <button type="button" onClick={() => removeMember(idx)} className="text-red-500 text-xs font-bold uppercase tracking-widest hover:underline">Remove Member</button>
                     </div>
-                    <div className={getBaseErrorClass(`group_${idx}_name`, true)}>
-                      <input 
-                        placeholder="Name" 
-                        className={`w-full p-3 text-sm rounded-[6px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
-                        value={member.name}
-                        onChange={(e) => { handleMemberChange(idx, "name", e.target.value); setErrors(prev => prev.filter(err => err !== `group_${idx}_name`)); }}
-                      />
-                    </div>
-                    <div className={getBaseErrorClass(`group_${idx}_email`, true)}>
-                      <input 
-                        placeholder="Email" 
-                        className={`w-full p-3 text-sm rounded-[6px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
-                        value={member.email}
-                        onChange={(e) => { handleMemberChange(idx, "email", e.target.value); setErrors(prev => prev.filter(err => err !== `group_${idx}_email`)); }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                       <div className={getBaseErrorClass(`group_${idx}_mobile`, true)}>
-                         <input 
-                          placeholder="Mobile" 
-                          className={`w-full p-3 text-sm rounded-[6px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
-                          value={member.mobile}
-                          onChange={(e) => { handleMemberChange(idx, "mobile", e.target.value); setErrors(prev => prev.filter(err => err !== `group_${idx}_mobile`)); }}
-                        />
-                       </div>
-                       <div className={getBaseErrorClass(`group_${idx}_enrollmentNumber`, true)}>
-                         <input 
-                          placeholder="Enrollment #" 
-                          className={`w-full p-3 text-sm rounded-[6px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
-                          value={member.enrollmentNumber}
-                          onChange={(e) => { handleMemberChange(idx, "enrollmentNumber", e.target.value); setErrors(prev => prev.filter(err => err !== `group_${idx}_enrollmentNumber`)); }}
-                        />
-                       </div>
-                    </div>
+
+                    {/* All dynamic fields for members */}
+                    {event.registrationFields && Object.keys(event.registrationFields).map(field => {
+                        if (!event.registrationFields[field]) return null;
+                        const isPhone = field === "phoneNumber" || field === "mobileNumber";
+                        const key = isPhone ? "mobile" : field;
+                        const errorKey = `group_${idx}_${key}`;
+
+                        return (
+                            <div key={field} className="space-y-1 px-2">
+                                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>
+                                    {field.replace(/([A-Z])/g, ' $1').trim()}
+                                </label>
+                                {isPhone ? (
+                                    <div className="flex gap-2">
+                                        <div className="p-[2px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-500">
+                                            <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-bold ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>+91</div>
+                                        </div>
+                                        <div className={getErrorClass(errorKey)}>
+                                            <input 
+                                                type="tel"
+                                                maxLength={10}
+                                                pattern="\d{10}"
+                                                placeholder="10-digit number"
+                                                className={`w-full p-3 h-full rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                                                value={member[key] || ""}
+                                                onChange={(e) => {
+                                                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                                    handleMemberChange(idx, key, val);
+                                                    setErrors(prev => prev.filter(err => err !== errorKey));
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className={getBaseErrorClass(errorKey)}>
+                                        <input 
+                                            className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                                            value={member[key] || ""}
+                                            onChange={(e) => {
+                                                handleMemberChange(idx, key, e.target.value);
+                                                setErrors(prev => prev.filter(err => err !== errorKey));
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+
+                    {event.customQuestions?.map((q) => {
+                        const errorKey = `group_${idx}_${q.question}`;
+                        return (
+                            <div key={q.question} className="space-y-1 px-2">
+                                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>{q.question}</label>
+                                <div className={getBaseErrorClass(errorKey)}>
+                                    <input 
+                                        placeholder="Your answer..."
+                                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                                        value={member[q.question] || ""}
+                                        onChange={(e) => {
+                                            handleMemberChange(idx, q.question, e.target.value);
+                                            setErrors(prev => prev.filter(err => err !== errorKey));
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
                   </div>
                 ))}
-                {groupMembers.length < 4 && (
-                  <button type="button" onClick={addMember} className={`w-full py-3 border-2 border-dashed rounded-xl text-sm font-black uppercase tracking-widest ${darkMode ? "border-white/20 text-gray-400" : "border-gray-200 text-black"}`}>
-                    + Add Member
-                  </button>
-                )}
               </div>
             )}
           </div>

@@ -116,29 +116,16 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
 
     setLoading(true);
     try {
-      // 1. Upload Media to Cloudinary (Simplified: we reuse logic in our mind as dashboard.js handles it, 
-      // but here we need to mirror what createPost does if we want to handle uploads in CreateEventModal)
-      // Actually, dashboard.js has createPost which handles uploads. I should make createEvent handle uploads too.
-      // I'll update dashboard.js createEvent to handle media uploads.
-      
       const eventData = {
         ...formData,
         registrationFields,
         customQuestions,
-        images: [], // Placeholder, will be filled by updated createEvent in dashboard.js
-        video: null, // Placeholder
       };
 
-      // I'll call a specialized function that handles media + event creation
-      // For now, let's assume createEvent in dashboard.js needs to be updated to handle media.
-      // WAIT: I already updated dashboard.js with a simple createEvent. Let me fix that first.
-      
-      const result = await createEventWithMedia(eventData, images, video);
+      const result = await createEvent(eventData, images, video);
 
       if (result.event) {
         toast.success("🎉 Event created successfully!");
-        // We do NOT manually call setPosts here. The backend emits 'postCreated' 
-        // to all sockets (including this exact client), perfectly avoiding duplicate React keys.
         onClose();
       } else {
         toast.error("❌ Failed to create event.");
@@ -149,55 +136,6 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
     } finally {
       setLoading(false);
     }
-  };
-
-  // Helper for Media Upload (reusing logic from DashboardPage createPost)
-  const createEventWithMedia = async (eventData, imageFiles, videoFile) => {
-    let imageObjects = [];
-    let videoObject = null;
-
-    if (imageFiles.length > 0) {
-      const uploadPromises = imageFiles.map(async (img) => {
-        const imageData = new FormData();
-        imageData.append("file", img);
-        imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-        imageData.append("folder", "alumni/events/images");
-        const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
-          method: "POST",
-          body: imageData,
-        });
-        const uploadJson = await uploadRes.json();
-        if (uploadRes.ok) return { url: uploadJson.secure_url, public_id: uploadJson.public_id };
-        return null;
-      });
-
-      const results = await Promise.all(uploadPromises);
-      imageObjects = results.filter(res => res !== null);
-    }
-
-    if (videoFile) {
-      const videoData = new FormData();
-      videoData.append("file", videoFile);
-      videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-      videoData.append("folder", "alumni/events/videos");
-      const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
-        method: "POST",
-        body: videoData,
-      });
-      const uploadJson = await uploadRes.json();
-      if (uploadRes.ok) videoObject = { url: uploadJson.secure_url, public_id: uploadJson.public_id };
-    }
-
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const res = await fetch(`${API_URL}/api/events`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ ...eventData, images: imageObjects, video: videoObject }),
-    });
-    return res.json();
   };
 
   const getErrorClass = (field) => {

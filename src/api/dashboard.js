@@ -206,14 +206,52 @@ export const editComment = async (postId, commentId, newText) => {
 };
 // ================== EVENTS & REGISTRATIONS ==================
 
-export const createEvent = async (eventData) => {
+export const createEvent = async (eventData, images = [], video = null) => {
+  let imageObjects = [];
+  let videoObject = null;
+
+  // 1. Upload Images
+  if (images && images.length > 0) {
+    for (let img of images) {
+      const imageData = new FormData();
+      imageData.append("file", img);
+      imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      imageData.append("folder", "alumni/events/images");
+
+      const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
+        method: "POST",
+        body: imageData,
+      });
+      const uploadJson = await uploadRes.json();
+      if (uploadRes.ok) {
+        imageObjects.push({ url: uploadJson.secure_url, public_id: uploadJson.public_id });
+      }
+    }
+  }
+
+  // 2. Upload Video
+  if (video) {
+    const videoData = new FormData();
+    videoData.append("file", video);
+    videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+    videoData.append("folder", "alumni/events/videos");
+    const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
+      method: "POST",
+      body: videoData,
+    });
+    const uploadJson = await uploadRes.json();
+    if (uploadRes.ok) {
+      videoObject = { url: uploadJson.secure_url, public_id: uploadJson.public_id };
+    }
+  }
+
   const res = await fetch(`${BASE}/events`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(eventData),
+    body: JSON.stringify({ ...eventData, images: imageObjects, video: videoObject }),
   });
   return res.json();
 };

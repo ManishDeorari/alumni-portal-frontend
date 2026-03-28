@@ -127,13 +127,21 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
                         className="pl-12 pr-4 space-y-2 overflow-hidden"
                       >
                         {reg.groupMembers?.map((member, idx) => (
-                           <div key={idx} className={`p-3 rounded-xl border ${darkMode ? "bg-slate-800/50 border-white/5" : "bg-white border-blue-50/50 shadow-sm"} flex items-center justify-between`}>
-                              <div>
-                                <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-gray-700"}`}>{member.name}</p>
-                                <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{member.email} • {member.mobile}</p>
+                           <div key={idx} className={`p-4 rounded-xl border ${darkMode ? "bg-slate-800/50 border-white/5" : "bg-white border-blue-50/50 shadow-sm"} space-y-3`}>
+                              <div className="flex justify-between items-center border-b border-dashed border-gray-500/20 pb-2">
+                                <p className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Member {idx + 2}</p>
+                                <p className={`text-[10px] font-bold ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Headcount +1</p>
                               </div>
-                              <div className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-                                #{member.enrollmentNumber}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                                {Object.entries(member).map(([key, value]) => {
+                                  if (!value) return null;
+                                  return (
+                                    <div key={key} className="flex flex-col">
+                                      <span className={`text-[9px] font-black uppercase tracking-tighter ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                      <span className={`text-[11px] font-bold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{String(value)}</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                            </div>
                         ))}
