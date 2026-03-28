@@ -126,15 +126,8 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
 
       if (result.event) {
         toast.success("🎉 Event created successfully!");
-        // Add to posts feed as it's styled like a post
-        if (setPosts) {
-            const newEventPost = {
-                ...result.event,
-                type: "Event",
-                content: result.event.description // for PostCard compatibility
-            };
-            setPosts(prev => [newEventPost, ...prev]);
-        }
+        // We do NOT manually call setPosts here. The backend emits 'postCreated' 
+        // to all sockets (including this exact client), perfectly avoiding duplicate React keys.
         onClose();
       } else {
         toast.error("❌ Failed to create event.");
@@ -147,13 +140,13 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
     }
   };
 
-  // Helper for Media Upload (reusing logic from dashboard.js createPost)
+  // Helper for Media Upload (reusing logic from DashboardPage createPost)
   const createEventWithMedia = async (eventData, imageFiles, videoFile) => {
     let imageObjects = [];
     let videoObject = null;
 
     if (imageFiles.length > 0) {
-      for (let img of imageFiles) {
+      const uploadPromises = imageFiles.map(async (img) => {
         const imageData = new FormData();
         imageData.append("file", img);
         imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
@@ -163,8 +156,12 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           body: imageData,
         });
         const uploadJson = await uploadRes.json();
-        if (uploadRes.ok) imageObjects.push({ url: uploadJson.secure_url, public_id: uploadJson.public_id });
-      }
+        if (uploadRes.ok) return { url: uploadJson.secure_url, public_id: uploadJson.public_id };
+        return null;
+      });
+
+      const results = await Promise.all(uploadPromises);
+      imageObjects = results.filter(res => res !== null);
     }
 
     if (videoFile) {
@@ -180,7 +177,8 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
       if (uploadRes.ok) videoObject = { url: uploadJson.secure_url, public_id: uploadJson.public_id };
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL + "/api"}/events`, {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const res = await fetch(`${API_URL}/api/events`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

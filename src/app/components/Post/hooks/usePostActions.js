@@ -35,7 +35,14 @@ export default function usePostActions({
         }
       );
 
-      if (!res.ok) throw new Error("Reaction failed");
+      if (!res.ok) {
+        if (res.status === 404) {
+          toast.error("❌ Event/Post not found! It may have been deleted.");
+          setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
+          return;
+        }
+        throw new Error("Reaction failed");
+      }
 
       const updatedPost = await res.json();
 

@@ -69,7 +69,14 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
         }
         onClose();
       } else {
-        toast.error(result.message || "❌ Registration failed.");
+        if (result.message && result.message.toLowerCase().includes("not found")) {
+            toast.error("❌ Event not found! It may have been deleted.");
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 1000);
+        } else {
+            toast.error(result.message || "❌ Registration failed.");
+        }
       }
     } catch (err) {
       toast.error("❌ An error occurred during registration.");

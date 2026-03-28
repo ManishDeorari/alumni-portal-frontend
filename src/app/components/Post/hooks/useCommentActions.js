@@ -38,6 +38,15 @@ export default function useCommentActions({
           }
         );
 
+        if (!res.ok) {
+          if (res.status === 404) {
+            toast.error("❌ Event/Post not found! It may have been deleted.");
+            setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
+            return;
+          }
+          throw new Error("Comment failed");
+        }
+
         const updated = await res.json();
         if (setComment) setComment("");
         if (setShowCommentEmoji) setShowCommentEmoji(false);

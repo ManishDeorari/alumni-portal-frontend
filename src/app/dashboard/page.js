@@ -73,7 +73,7 @@ export default function DashboardPage() {
       } else if (activeTab === "Event") {
         url = `${API_URL}/api/events?page=${pageNum}&limit=${limit}`;
       } else {
-        const queryType = activeTab === "all" ? "Regular" : activeTab;
+        const queryType = activeTab === "all" ? "all" : activeTab;
         url += `&type=${queryType}`;
       }
 
@@ -127,16 +127,24 @@ export default function DashboardPage() {
     const removePost = ({ postId }) =>
       setPosts((prev) => prev.filter((p) => p._id !== postId));
 
+    const updateEventRegCount = ({ postId, registrationCount }) => {
+      setPosts((prev) => 
+        prev.map(p => p._id === postId ? { ...p, registrationCount } : p)
+      );
+    };
+
     socket.on("postUpdated", updatePost);
     socket.on("postCreated", addPost);
     socket.on("postReacted", updatePost);
     socket.on("postDeleted", removePost);
+    socket.on("registrationCountUpdated", updateEventRegCount);
 
     return () => {
       socket.off("postUpdated", updatePost);
       socket.off("postCreated", addPost);
       socket.off("postReacted", updatePost);
       socket.off("postDeleted", removePost);
+      socket.off("registrationCountUpdated", updateEventRegCount);
     };
   }, [user]);
 
@@ -231,7 +239,16 @@ export default function DashboardPage() {
                   className="flex justify-center mt-6 mb-2 relative z-[500]"
                 >
                   <button
-                    onClick={() => window.location.reload()}
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      if (activeTab === "all") {
+                        setPage(1);
+                        fetchPosts(1, false);
+                      } else {
+                        setActiveTab("all");
+                      }
+                      setPendingPosts([]);
+                    }}
                     className="relative z-[501] bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
                   >
                     ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""} (Click to Refresh)
