@@ -10,6 +10,7 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [data, setData] = useState({ totalCount: 0, registrations: [] });
+  const [expandedRows, setExpandedRows] = useState({});
 
   useEffect(() => {
     if (isOpen && event?._id) {
@@ -39,6 +40,10 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  const toggleRow = (id) => {
+    setExpandedRows(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   if (!isOpen) return null;
@@ -79,19 +84,62 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
             <div className="text-center py-10 opacity-50">No registrations yet.</div>
           ) : (
             <div className="space-y-4">
-              {data.registrations.map((reg, idx) => (
-                <div key={reg._id} className={`p-4 rounded-2xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-100"} flex items-center gap-4`}>
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden border">
-                    <Image src={reg.userId?.profilePicture || "/default-profile.jpg"} alt={reg.userId?.name} fill className="object-cover" />
+              {data.registrations.map((reg) => (
+                <div key={reg._id} className="space-y-2">
+                  <div 
+                    onClick={() => reg.isGroup && toggleRow(reg._id)}
+                    className={`p-4 rounded-2xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-100"} flex items-center gap-4 ${reg.isGroup ? "cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-all" : ""}`}
+                  >
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden border">
+                      <Image src={reg.userId?.profilePicture || "/default-profile.jpg"} alt={reg.userId?.name || "User"} fill className="object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{reg.userId?.name}</p>
+                      <p className={`text-xs flex items-center flex-wrap gap-2 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
+                        <span className="truncate">{reg.userId?.email}</span>
+                        {reg.isGroup && (
+                          <span className="inline-flex items-center gap-1 text-blue-500 font-bold bg-blue-500/10 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
+                            👥 Group ({reg.groupMembers?.length + 1})
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right flex items-center gap-3">
+                      <div>
+                        <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{new Date(reg.registeredAt).toLocaleDateString()}</p>
+                        <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{new Date(reg.registeredAt).toLocaleTimeString()}</p>
+                      </div>
+                      {reg.isGroup && (
+                        <div className={`text-gray-400 transition-transform ${expandedRows[reg._id] ? "rotate-180" : ""}`}>
+                          ▼
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{reg.userId?.name}</p>
-                    <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"} truncate`}>{reg.userId?.email} {reg.isGroup && <span className="text-blue-500 font-bold ml-1">Group Registration</span>}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{new Date(reg.registeredAt).toLocaleDateString()}</p>
-                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{new Date(reg.registeredAt).toLocaleTimeString()}</p>
-                  </div>
+                  
+                  {/* Nested Group Members */}
+                  <AnimatePresence>
+                    {reg.isGroup && expandedRows[reg._id] && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="pl-12 pr-4 space-y-2 overflow-hidden"
+                      >
+                        {reg.groupMembers?.map((member, idx) => (
+                           <div key={idx} className={`p-3 rounded-xl border ${darkMode ? "bg-slate-800/50 border-white/5" : "bg-white border-blue-50/50 shadow-sm"} flex items-center justify-between`}>
+                              <div>
+                                <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-gray-700"}`}>{member.name}</p>
+                                <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"}`}>{member.email} • {member.mobile}</p>
+                              </div>
+                              <div className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+                                #{member.enrollmentNumber}
+                              </div>
+                           </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>

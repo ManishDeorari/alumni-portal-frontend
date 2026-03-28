@@ -197,7 +197,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               </div>
 
               <div className="flex flex-wrap gap-4 pt-4 items-center">
-                {(currentUser?.isAdmin || post.user?._id === currentUser?._id) ? (
+                {(currentUser?.isAdmin || currentUser?.role === 'faculty' || post.user?._id === currentUser?._id) ? (
                   <>
                     <button 
                       onClick={() => setShowAdminModal(true)}
@@ -212,15 +212,17 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     )}
                   </>
                 ) : (
-                  Date.now() < new Date(post.registrationCloseDate) ? (
-                    <button 
-                      onClick={() => setShowRegistrationModal(true)}
-                      className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-black text-white hover:bg-gray-800"}`}
-                    >
-                      {post.isRegistered ? "Edit Registration" : "Register Now"}
-                    </button>
-                  ) : (
-                    <span className="text-sm font-bold text-red-500 italic">Registration Closed</span>
+                  currentUser?.role === 'alumni' && (
+                    Date.now() < new Date(post.registrationCloseDate) ? (
+                      <button 
+                        onClick={() => setShowRegistrationModal(true)}
+                        className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105"}`}
+                      >
+                        {post.isRegistered ? "Edit Registration" : "Register Now"}
+                      </button>
+                    ) : (
+                      <span className="text-sm font-bold text-red-500 italic">Registration Closed</span>
+                    )
                   )
                 )}
               </div>
