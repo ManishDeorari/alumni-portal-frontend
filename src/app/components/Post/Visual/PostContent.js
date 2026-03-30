@@ -7,28 +7,50 @@ export default function PostContent({
   editing,
   editContent,
   setEditContent,
+  editTitle,
+  setEditTitle,
   handleEditSave,
   handleBlurSave,
   post,
   textareaRef,
   setShowModal,
-  darkMode = false
+  darkMode = false,
+  hideViewFullPost = false
 }) {
   const handleEmojiSelect = (emoji) => {
     setEditContent((prev) => prev + emoji.native);
+  };
+
+  const handleTitleEmojiSelect = (emoji) => {
+    setEditTitle((prev) => prev + emoji.native);
   };
 
   return (
     <AnimatePresence mode="wait">
       {editing ? (
         <motion.div
-          key="editor"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-2"
+           key="editor"
+           initial={{ opacity: 0, y: -10 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: 10 }}
+           transition={{ duration: 0.3 }}
+           className="space-y-4"
         >
+          {post.type === "Event" && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-900"}`}>Event Title</label>
+                <EmojiPickerToggle onEmojiSelect={handleTitleEmojiSelect} icon="😀" darkMode={darkMode} />
+              </div>
+              <input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-white text-gray-900"} rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold`}
+                placeholder="Edit event title..."
+              />
+            </div>
+          )}
+          
           <div className="relative">
             <textarea
               ref={textareaRef}
@@ -68,12 +90,14 @@ export default function PostContent({
           exit={{ opacity: 0 }}
         >
           <p className={`whitespace-pre-wrap leading-relaxed ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{post.content}</p>
-          <div
-            onClick={() => setShowModal(true)}
-            className={`cursor-pointer text-sm font-bold ${darkMode ? "text-blue-400" : "text-blue-600"} hover:underline mt-2 inline-block`}
-          >
-            View full post
-          </div>
+          {!hideViewFullPost && (
+            <div
+              onClick={() => setShowModal(true)}
+              className={`cursor-pointer text-sm font-bold ${darkMode ? "text-blue-400" : "text-blue-600"} hover:underline mt-2 inline-block`}
+            >
+              View full post
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

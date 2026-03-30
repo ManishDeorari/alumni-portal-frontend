@@ -1,33 +1,62 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { registerForEvent } from "../../../api/dashboard";
 
 const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode = false, onRegisterSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [groupMembers, setGroupMembers] = useState([]);
   const [isGroup, setIsGroup] = useState(event.allowGroupRegistration);
-  const [groupMembers, setGroupMembers] = useState(
-    event.myRegistration?.isGroup && event.myRegistration.groupMembers?.length > 0
-      ? event.myRegistration.groupMembers
-      : []
-  );
-  
-  const [answers, setAnswers] = useState(() => {
-    if (event.myRegistration && event.myRegistration.answers) {
-      return event.myRegistration.answers;
+  const [answers, setAnswers] = useState({});
+
+  // Sync state whenever event or isOpen changes
+  useEffect(() => {
+    if (isOpen && event.myRegistration) {
+      // 1. Hydrate Group Members
+      if (event.myRegistration.isGroup && event.myRegistration.groupMembers) {
+        setGroupMembers(event.myRegistration.groupMembers);
+      } else {
+        setGroupMembers([]);
+      }
+
+      // 2. Hydrate Answers
+      const regAnswers = event.myRegistration.answers;
+      let baseAnswers = {};
+      if (regAnswers) {
+        // Since we now use flattenMaps: true on backend, it should usually arrive as an object,
+        // but we handle Map just in case for older data or different serialization.
+        baseAnswers = (regAnswers instanceof Map || typeof regAnswers.get === 'function')
+          ? Object.fromEntries(regAnswers)
+          : regAnswers;
+      }
+
+      // Merge with currentUser defaults if needed
+      const initial = { ...baseAnswers };
+      if (event.registrationFields) {
+        Object.keys(event.registrationFields).forEach(field => {
+          if (event.registrationFields[field] && initial[field] === undefined) {
+             initial[field] = currentUser?.[field] || "";
+          }
+        });
+      }
+      setAnswers(initial);
+      setIsGroup(event.allowGroupRegistration || event.myRegistration.isGroup);
+    } else if (isOpen && !event.myRegistration) {
+      // Reset for fresh registration
+      const initial = {};
+      if (event.registrationFields) {
+        Object.keys(event.registrationFields).forEach(field => {
+           if (event.registrationFields[field]) {
+             initial[field] = currentUser?.[field] || "";
+           }
+        });
+      }
+      setAnswers(initial);
+      setGroupMembers([]);
+      setIsGroup(event.allowGroupRegistration);
     }
-    const initial = {};
-    if (event.registrationFields) {
-      Object.keys(event.registrationFields).forEach(field => {
-        if (event.registrationFields[field]) {
-          // Attempt to pre-fill from currentUser, otherwise empty string
-          initial[field] = currentUser?.[field] || "";
-        }
-      });
-    }
-    return initial;
-  });
+  }, [isOpen, event._id, event.myRegistration, currentUser]);
 
   if (!isOpen) return null;
 
@@ -139,19 +168,19 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
 
   const getErrorClass = (field) => {
     return errors.includes(field)
-      ? "flex-1 p-[2px] rounded-xl bg-red-500 focus-within:ring-2 focus-within:ring-red-400 shadow-lg animate-pulse transition-all leading-none"
-      : "flex-1 p-[2px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 focus-within:ring-2 focus-within:ring-purple-400 transition-all leading-none";
+      ? "flex-1 p-[1.5px] rounded-xl bg-red-500 focus-within:ring-2 focus-within:ring-red-400 shadow-lg animate-pulse transition-all leading-none"
+      : "flex-1 p-[1.5px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 focus-within:ring-2 focus-within:ring-purple-400 transition-all leading-none";
   };
 
   const getBaseErrorClass = (field, isGroup = false) => {
      return errors.includes(field)
-      ? `p-[2px] ${isGroup ? 'rounded-lg' : 'rounded-xl'} bg-red-500 focus-within:ring-2 focus-within:ring-red-400 shadow-lg animate-pulse transition-all`
-      : `p-[2px] ${isGroup ? 'rounded-lg' : 'rounded-xl'} bg-gradient-to-r from-blue-500 to-purple-500 focus-within:ring-2 focus-within:ring-purple-400 transition-all`;
+      ? `p-[1.5px] ${isGroup ? 'rounded-lg' : 'rounded-xl'} bg-red-500 focus-within:ring-2 focus-within:ring-red-400 shadow-lg animate-pulse transition-all`
+      : `p-[1.5px] ${isGroup ? 'rounded-lg' : 'rounded-xl'} bg-gradient-to-r from-blue-500 to-purple-600 focus-within:ring-2 focus-within:ring-purple-400 transition-all`;
   };
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className={`p-[2px] rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all`}>
+      <div className={`p-[1.5px] rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all`}>
         <div className={`relative w-full h-full ${darkMode ? "bg-slate-900" : "bg-white"} rounded-[2rem] overflow-hidden`}>
           <div className={`px-8 py-4 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-black"}`}>Register for Event</h2>
@@ -160,21 +189,24 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
 
           <form onSubmit={handleRegister} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <div className="space-y-4">
-            <h3 className={`font-bold ${darkMode ? "text-gray-300" : "text-gray-700"}`}>Event: {event.title}</h3>
+            <h3 className={`font-bold ${darkMode ? "text-white" : "text-black"}`}>Event: {event.title}</h3>
             
            {/* Group Member Logic: If it's a group event, we don't show the check box, it's mandatory if they want to add more */}
            {event.allowGroupRegistration && (
-             <div className="flex items-center justify-between p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-white/5">
-                <span className={`text-sm font-bold ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Registration Type: Group Event</span>
-                <button type="button" onClick={addMember} disabled={groupMembers.length >= 3} className={`px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold ${groupMembers.length >= 3 ? "opacity-30" : "hover:bg-blue-700 active:scale-95 transition-all"}`}>+ Add Group Member</button>
+             <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-600/20">
+               <div className={`flex items-center justify-between p-4 ${darkMode ? "bg-slate-800" : "bg-blue-50/20"} rounded-[15px]`}>
+                  <span className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Group Event Policy Enabled</span>
+                  <button type="button" onClick={addMember} disabled={groupMembers.length >= 3} className={`px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest ${groupMembers.length >= 3 ? "opacity-30" : "hover:bg-blue-700 active:scale-95 transition-all shadow-lg"}`}>+ Add Member</button>
+               </div>
              </div>
            )}
 
-           <div className={`p-6 rounded-3xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50/50 border-gray-100"} space-y-6`}>
-              <div className="flex justify-between items-center px-1">
-                <h4 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Member 1 (Registrant)</h4>
-                <span className={`text-[10px] font-bold ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Headcount +1</span>
-              </div>
+           <div className="p-[1.2px] rounded-[2rem] bg-gradient-to-r from-blue-500/30 to-purple-600/30">
+             <div className={`p-6 rounded-[calc(2rem-1.2px)] ${darkMode ? "bg-slate-900" : "bg-gray-50/50"} space-y-6 shadow-sm`}>
+                <div className="flex justify-between items-center px-1">
+                  <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Member 1 (Registrant)</h4>
+                  <span className={`text-[9px] font-black uppercase ${darkMode ? "text-white" : "text-black"}`}>Headcount +1</span>
+                </div>
 
             {/* Base Registration Fields (Registrant) */}
             {event.registrationFields && Object.keys(event.registrationFields).map(field => {
@@ -184,7 +216,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
               
               return (
                 <div key={field} className="space-y-1">
-                  <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(field) ? "text-red-500" : ""}`}>
+                  <label className={`text-[9px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-black"} ${errors.includes(field) ? "text-red-500" : ""}`}>
                     {field.replace(/([A-Z])/g, ' $1').trim()}
                   </label>
                   
@@ -215,8 +247,9 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                     <div className={getBaseErrorClass(field)}>
                       <input
                         value={answers[field] || ""}
+                        readOnly={['name', 'email', 'enrollmentnumber'].includes(field.toLowerCase())}
                         onChange={(e) => { handleAnswerChange(field, e.target.value); setErrors(prev => prev.filter(err => err !== field)); }}
-                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none ${['name', 'email', 'enrollmentnumber'].includes(field.toLowerCase()) ? "opacity-60 cursor-not-allowed" : ""}`}
                       />
                     </div>
                   )}
@@ -227,11 +260,11 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
             {/* Custom Questions (Registrant) */}
             {event.customQuestions?.map((q, i) => (
               <div key={i} className="space-y-1">
-                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(q.question) ? "text-red-500" : ""}`}>{q.question}</label>
+                <label className={`text-[9px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-black"} ${errors.includes(q.question) ? "text-red-500" : ""}`}>{q.question}</label>
                 <div className={getBaseErrorClass(q.question)}>
                   <input
                     placeholder="Your answer..."
-                    className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                    className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none placeholder-gray-500`}
                     value={answers[q.question] || ""}
                     onChange={(e) => { handleAnswerChange(q.question, e.target.value); setErrors(prev => prev.filter(err => err !== q.question)); }}
                   />
@@ -239,16 +272,18 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
               </div>
             ))}
             </div>
+           </div>
 
             {isGroup && groupMembers.length > 0 && (
-              <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-white/5">
-                <h4 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"}`}>Group Members Details</h4>
+              <div className="space-y-6 pt-4 border-t border-gray-100 dark:border-white/5">
+                <h4 className={`text-[10px] font-black uppercase tracking-[0.3em] text-center ${darkMode ? "text-white" : "text-black"}`}>Group Members Details</h4>
                 {groupMembers.map((member, idx) => (
-                  <div key={idx} className={`p-6 rounded-[2rem] border ${darkMode ? "bg-slate-800 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-6`}>
-                    <div className="flex justify-between items-center px-2">
-                      <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">Member {idx + 2}</span>
-                      <button type="button" onClick={() => removeMember(idx)} className="text-red-500 text-xs font-bold uppercase tracking-widest hover:underline">Remove Member</button>
-                    </div>
+                  <div key={idx} className="p-[1.2px] rounded-[2rem] bg-gradient-to-r from-blue-500/20 to-purple-600/20 shadow-sm">
+                    <div className={`p-6 rounded-[calc(2rem-1.2px)] ${darkMode ? "bg-slate-900" : "bg-blue-50/10"} space-y-6`}>
+                      <div className="flex justify-between items-center px-2">
+                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Member {idx + 2}</span>
+                        <button type="button" onClick={() => removeMember(idx)} className="text-red-500 text-[9px] font-black uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Remove Member</button>
+                      </div>
 
                     {/* All dynamic fields for members */}
                     {event.registrationFields && Object.keys(event.registrationFields).map(field => {
@@ -259,13 +294,13 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
 
                         return (
                             <div key={field} className="space-y-1 px-2">
-                                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>
+                                <label className={`text-[9px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>
                                     {field.replace(/([A-Z])/g, ' $1').trim()}
                                 </label>
                                 {isPhone ? (
                                     <div className="flex gap-2">
-                                        <div className="p-[2px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-500">
-                                            <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-bold ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>+91</div>
+                                        <div className="p-[1.5px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
+                                            <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-black text-xs ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>+91</div>
                                         </div>
                                         <div className={getErrorClass(errorKey)}>
                                             <input 
@@ -303,11 +338,11 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                         const errorKey = `group_${idx}_${q.question}`;
                         return (
                             <div key={q.question} className="space-y-1 px-2">
-                                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>{q.question}</label>
+                                <label className={`text-[9px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-black"} ${errors.includes(errorKey) ? "text-red-500" : ""}`}>{q.question}</label>
                                 <div className={getBaseErrorClass(errorKey)}>
                                     <input 
                                         placeholder="Your answer..."
-                                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none`}
+                                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"} outline-none border-none placeholder-gray-500`}
                                         value={member[q.question] || ""}
                                         onChange={(e) => {
                                             handleMemberChange(idx, q.question, e.target.value);
@@ -319,7 +354,8 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                         );
                     })}
                   </div>
-                ))}
+                </div>
+              ))}
               </div>
             )}
           </div>

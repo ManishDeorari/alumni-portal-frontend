@@ -11,6 +11,8 @@ import PostContent from "./PostContent";
 import PostReactions from "./PostReactions";
 import getEmojiFromUnified from "../utils/getEmojiFromUnified";
 import { useState } from "react";
+import EventRegistrationModal from "../EventRegistrationModal";
+import AdminRegistrationsModal from "../AdminRegistrationsModal";
 
 export default function PostModal({
   showModal,
@@ -37,6 +39,8 @@ export default function PostModal({
   setEditing,
   editContent,
   setEditContent,
+  editTitle,
+  setEditTitle,
   handleEditSave,
   handleBlurSave,
   toggleEdit,
@@ -51,9 +55,14 @@ export default function PostModal({
   hasLiked,
   isLiking,
   likeIconRef,
-  darkMode = false
+  darkMode = false,
+  setPosts, // Add setPosts to update state after registration
+  handleReactToComment // Add handleReactToComment
 }) {
   const [showCommentsState, setShowCommentsState] = useState(true);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  
   const isSelf = post.user?._id === currentUser?._id;
   const isRestricted = !isSelf && currentUser?.role !== 'admin';
   const editKey = `draft-${post._id}`;
@@ -103,11 +112,18 @@ export default function PostModal({
 
           {/* Content */}
           <div className="mb-6">
+            {post.type === "Event" && post.title && !editing && (
+              <h2 className={`text-2xl font-black mb-4 ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-tight`}>
+                {post.title}
+              </h2>
+            )}
             <PostContent
               post={post}
               editing={editing}
               editContent={editContent}
               setEditContent={setEditContent}
+              editTitle={editTitle}
+              setEditTitle={setEditTitle}
               handleEditSave={handleEditSave}
               handleBlurSave={handleBlurSave}
               showEditEmoji={showEditEmoji}
@@ -116,7 +132,58 @@ export default function PostModal({
               getEmojiFromUnified={getEmojiFromUnified}
               setShowModal={setShowModal}
               darkMode={darkMode}
+              hideViewFullPost={true}
             />
+
+            {post.type === "Event" && (
+              <div className={`mt-6 p-6 rounded-3xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-4`}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Start</span>
+                    <span className={`text-sm font-bold ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{new Date(post.startDate).toLocaleDateString()} at {post.startTime}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Ends</span>
+                    <span className={`text-sm font-bold ${darkMode ? "text-purple-300" : "text-purple-700"}`}>{new Date(post.endDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="col-span-2 flex flex-col pt-2 border-t border-dashed border-gray-200 dark:border-white/10">
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Registration Deadline</span>
+                    <span className={`text-sm font-bold ${darkMode ? "text-red-400" : "text-red-600"}`}>{new Date(post.registrationCloseDate).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-4 items-center">
+                  {(currentUser?.isAdmin || currentUser?.role === 'faculty' || post.user?._id === currentUser?._id) ? (
+                    <>
+                      <button
+                        onClick={() => setShowAdminModal(true)}
+                        className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg active:scale-95"
+                      >
+                        View Registrations
+                      </button>
+                      {post.showRegistrationInsights && (
+                        <span className={`text-xs font-bold self-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                          Registered: {post.registrationCount || 0}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    currentUser?.role === 'alumni' && (
+                      Date.now() < new Date(post.registrationCloseDate) ? (
+                        <button
+                          onClick={() => setShowRegistrationModal(true)}
+                          className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105"}`}
+                        >
+                          {post.isRegistered ? "Edit Registration" : "Register Now"}
+                        </button>
+                      ) : (
+                        <span className="text-sm font-bold text-red-500 italic">Registration Closed</span>
+                      )
+                    )
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Media */}
@@ -188,6 +255,7 @@ export default function PostModal({
                       onEditReply={handleEditReply}
                       onDeleteReply={handleDeleteReply}
                       onReactToReply={handleReactToReply}
+                      onReactToComment={handleReactToComment}
                       darkMode={darkMode}
                     />
                   ))}
@@ -195,6 +263,34 @@ export default function PostModal({
               </motion.div>
             )}
           </AnimatePresence>
+
+          {showRegistrationModal && (
+            <EventRegistrationModal
+              event={post}
+              isOpen={showRegistrationModal}
+              onClose={() => setShowRegistrationModal(false)}
+              currentUser={currentUser}
+              darkMode={darkMode}
+              onRegisterSuccess={(newRegistration) => {
+                if (setPosts) {
+                  setPosts(prev => prev.map(p =>
+                    p._id === post._id
+                      ? { ...p, isRegistered: true, myRegistration: newRegistration, registrationCount: (p.registrationCount || 0) + (newRegistration.isGroup ? newRegistration.groupMembers.length + 1 : 1) }
+                      : p
+                  ));
+                }
+              }}
+            />
+          )}
+
+          {showAdminModal && (
+            <AdminRegistrationsModal
+              event={post}
+              isOpen={showAdminModal}
+              onClose={() => setShowAdminModal(false)}
+              darkMode={darkMode}
+            />
+          )}
         </div>
       </motion.div>
     </motion.div>,

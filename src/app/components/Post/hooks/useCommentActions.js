@@ -26,8 +26,11 @@ export default function useCommentActions({
       if (!checkAuth() || !comment.trim()) return;
 
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent ? `/api/events/${post._id}/comment` : `/api/posts/${post._id}/comment`;
+        
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment`,
+          `${API_URL}${endpoint}`,
           {
             method: "POST",
             headers: {
@@ -40,7 +43,7 @@ export default function useCommentActions({
 
         if (!res.ok) {
           if (res.status === 404) {
-            toast.error("❌ Event/Post not found! It may have been deleted.");
+            toast.error(isEvent ? "❌ Event not found!" : "❌ Post not found! It may have been deleted.");
             setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
             return;
           }
@@ -61,7 +64,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to add comment");
       }
     },
-    [post._id, setPosts, setComment, setShowCommentEmoji, API_URL, token, checkAuth]
+    [post._id, post.type, setPosts, setComment, setShowCommentEmoji, API_URL, token, checkAuth]
   );
 
   const handleReply = useCallback(
@@ -72,8 +75,11 @@ export default function useCommentActions({
       }
 
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent ? `/api/events/${post._id}/comment/${parentCommentId}/reply` : `/api/posts/${post._id}/comment/${parentCommentId}/reply`;
+
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment/${parentCommentId}/reply`,
+          `${API_URL}${endpoint}`,
           {
             method: "POST",
             headers: {
@@ -97,7 +103,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to reply");
       }
     },
-    [post._id, setPosts, API_URL, token, checkAuth]
+    [post._id, post.type, setPosts, API_URL, token, checkAuth]
   );
 
   const handleEditComment = useCallback(
@@ -107,8 +113,11 @@ export default function useCommentActions({
       }
 
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent ? `/api/events/${post._id}/comment/${commentId}` : `/api/posts/${post._id}/comment/${commentId}`;
+        
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment/${commentId}`,
+          `${API_URL}${endpoint}`,
           {
             method: "PUT",
             headers: {
@@ -131,14 +140,17 @@ export default function useCommentActions({
         toast.error("❌ Failed to update comment");
       }
     },
-    [post._id, setPosts, API_URL, token, checkAuth]
+    [post._id, post.type, setPosts, API_URL, token, checkAuth]
   );
 
   const handleDeleteComment = useCallback(
     async (commentId) => {
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent ? `/api/events/${post._id}/comment/${commentId}` : `/api/posts/${post._id}/comment/${commentId}`;
+        
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment/${commentId}`,
+          `${API_URL}${endpoint}`,
           {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
@@ -154,7 +166,7 @@ export default function useCommentActions({
         toast.error("❌ Failed to delete comment");
       }
     },
-    [post._id, setPosts, API_URL, token]
+    [post._id, post.type, setPosts, API_URL, token]
   );
 
   const handleEditReply = useCallback(
@@ -162,8 +174,13 @@ export default function useCommentActions({
       if (!checkAuth() || !newText.trim()) return alert("Reply cannot be empty");
 
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent 
+          ? `/api/events/${post._id}/comment/${commentId}/reply/${replyId}`
+          : `/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`;
+
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
+          `${API_URL}${endpoint}`,
           {
             method: "PUT",
             headers: {
@@ -176,19 +193,24 @@ export default function useCommentActions({
 
         const updated = await res.json();
         setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-        socket.emit("postUpdated", updated);
+        socket.emit("updatePost", updated);
         toast.success("✏️ Reply updated", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to edit reply");
       }
     },
-    [post._id, setPosts, API_URL, token, checkAuth]
+    [post._id, post.type, setPosts, API_URL, token, checkAuth]
   );
 
   const handleDeleteReply = useCallback(async (commentId, replyId) => {
     try {
+      const isEvent = post.type === "Event";
+      const endpoint = isEvent 
+        ? `/api/events/${post._id}/comment/${commentId}/reply/${replyId}`
+        : `/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`;
+
       const res = await fetch(
-        `${API_URL}/api/posts/${post._id}/comment/${commentId}/reply/${replyId}`,
+        `${API_URL}${endpoint}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -205,13 +227,18 @@ export default function useCommentActions({
       console.error("❌ Failed to delete reply:", err);
       toast.error("❌ Failed to delete reply");
     }
-  }, [post._id, setPosts, API_URL, token]);
+  }, [post._id, post.type, setPosts, API_URL, token]);
 
   const handleReactToReply = useCallback(
     async (commentId, replyId, emoji) => {
       try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent 
+          ? `/api/events/${post._id}/comment/${commentId}/reply/${replyId}/react`
+          : `/api/posts/${post._id}/comment/${commentId}/reply/${replyId}/react`;
+
         const res = await fetch(
-          `${API_URL}/api/posts/${post._id}/comment/${commentId}/reply/${replyId}/react`,
+          `${API_URL}${endpoint}`,
           {
             method: "POST",
             headers: {
@@ -224,14 +251,44 @@ export default function useCommentActions({
 
         const updated = await res.json();
         setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
-        socket.emit("postUpdated", updated);
+        socket.emit("updatePost", updated);
         triggerReactionEffect(emoji);
-        //toast.success("👍 Reply reaction updated", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to react to reply");
       }
     },
-    [post._id, setPosts, API_URL, token]
+    [post._id, post.type, setPosts, API_URL, token]
+  );
+
+  const handleReactToComment = useCallback(
+    async (commentId, emoji) => {
+      try {
+        const isEvent = post.type === "Event";
+        const endpoint = isEvent 
+          ? `/api/events/${post._id}/comment/${commentId}/react`
+          : `/api/posts/${post._id}/comments/${commentId}/react`; // Corrected to /comments/ for posts
+
+        const res = await fetch(
+          `${API_URL}${endpoint}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ emoji }),
+          }
+        );
+
+        const updated = await res.json();
+        setPosts((prev) => prev.map((p) => (p._id === post._id ? (isEvent ? updated : updated.post || updated) : p)));
+        socket.emit("updatePost", isEvent ? updated : updated.post || updated);
+        triggerReactionEffect(emoji);
+      } catch (err) {
+        toast.error("❌ Failed to react to comment");
+      }
+    },
+    [post._id, post.type, setPosts, API_URL, token]
   );
 
   return {
@@ -242,6 +299,7 @@ export default function useCommentActions({
     handleEditReply,
     handleDeleteReply,
     handleReactToReply,
+    handleReactToComment,
   };
 
 }

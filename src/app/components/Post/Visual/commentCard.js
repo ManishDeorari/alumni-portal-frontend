@@ -21,6 +21,7 @@ export default function CommentCard({
   onEditReply,
   onDeleteReply,
   onReactToReply,
+  onReactToComment,
   darkMode = false
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -96,7 +97,12 @@ export default function CommentCard({
       return onReactToReply(comment.parentId || comment.parentCommentId, comment._id, emoji);
     }
 
-    // ✅ Local logic for top-level comment
+    if (!isReply && onReactToComment) {
+      // Use parent handler for top-level comments
+      return onReactToComment(comment._id, emoji);
+    }
+
+    // ✅ Local logic for top-level comment (Fallback)
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const url = `${API_URL}/api/posts/${postId}/comments/${comment._id}/react`;
@@ -384,6 +390,7 @@ export default function CommentCard({
                   onEditReply={onEditReply}
                   onDeleteReply={onDeleteReply}
                   onReactToReply={onReactToReply}
+                  onReactToComment={onReactToComment}
                   darkMode={darkMode}
                 />
               ))}

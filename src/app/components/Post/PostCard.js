@@ -27,6 +27,7 @@ import getEmojiFromUnified from "./utils/getEmojiFromUnified";
 export default function PostCard({ post, currentUser, setPosts, initialShowComments = false, darkMode = false, hideActions = false, transparentBackground = false }) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content || "");
+  const [editTitle, setEditTitle] = useState(post.title || "");
   const [showEditEmoji, setShowEditEmoji] = useState(false);
   const [showCommentEmoji, setShowCommentEmoji] = useState(false);
   const [comment, setComment] = useState("");
@@ -102,6 +103,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
     handleEditReply,
     handleDeleteReply,
     handleReactToReply,
+    handleReactToComment,
   } = useCommentActions({
     post,
     comment,
@@ -152,11 +154,15 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
       <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[2.6rem]`}>
         <div className={`relative rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-slate-900" : "bg-white")} ${darkMode ? "text-white" : "text-gray-900"}`}>
           <PostHeader {...{
-            post, currentUser, editing, toggleEdit: () =>
-              toggleEdit(editKey, setEditContent, editing, post.content), handleDelete, darkMode, hideActions
+            post, currentUser, editing, toggleEdit: () => {
+              toggleEdit(editKey, (val) => {
+                setEditContent(val);
+                setEditTitle(post.title || "");
+              }, editing, post.content);
+            }, handleDelete, darkMode, hideActions
           }} />
 
-          {post.type === "Event" && post.title && (
+          {post.type === "Event" && post.title && !editing && (
             <h2 className={`text-2xl font-black mb-2 ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-tight`}>
               {post.title}
             </h2>
@@ -168,7 +174,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               editing,
               editContent,
               setEditContent,
-              handleEditSave,
+              editTitle,
+              setEditTitle,
+              handleEditSave: () => handleEditSave({ content: editContent, title: editTitle }),
               handleBlurSave,
               showEditEmoji,
               setShowEditEmoji,
@@ -199,22 +207,22 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               <div className="flex flex-wrap gap-4 pt-4 items-center">
                 {(currentUser?.isAdmin || currentUser?.role === 'faculty' || post.user?._id === currentUser?._id) ? (
                   <>
-                    <button 
+                    <button
                       onClick={() => setShowAdminModal(true)}
                       className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg active:scale-95"
                     >
                       View Registrations
                     </button>
                     {post.showRegistrationInsights && (
-                       <span className={`text-xs font-bold self-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                         Registered: {post.registrationCount || 0}
-                       </span>
+                      <span className={`text-xs font-bold self-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                        Registered: {post.registrationCount || 0}
+                      </span>
                     )}
                   </>
                 ) : (
                   currentUser?.role === 'alumni' && (
                     Date.now() < new Date(post.registrationCloseDate) ? (
-                      <button 
+                      <button
                         onClick={() => setShowRegistrationModal(true)}
                         className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105"}`}
                       >
@@ -306,6 +314,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     onEditReply={handleEditReply}
                     onDeleteReply={handleDeleteReply}
                     onReactToReply={handleReactToReply}
+                    onReactToComment={handleReactToComment}
                     darkMode={darkMode}
                   />
                 ))}
@@ -357,7 +366,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   setEditing,
                   editContent,
                   setEditContent,
-                  handleEditSave,
+                  editTitle,
+                  setEditTitle,
+                  handleEditSave: () => handleEditSave({ content: editContent, title: editTitle }),
                   handleBlurSave,
                   toggleEdit,
                   handleDelete,
@@ -367,7 +378,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   // ✅ ADD THESE for FullImageViewer support
                   setShowViewer,
                   setStartIndex,
-                  darkMode
+                  darkMode,
+                  setPosts,
+                  handleReactToComment
                 }}
               />
             )}
@@ -399,9 +412,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               darkMode={darkMode}
               onRegisterSuccess={(newRegistration) => {
                 if (setPosts) {
-                  setPosts(prev => prev.map(p => 
-                    p._id === post._id 
-                      ? { ...p, isRegistered: true, myRegistration: newRegistration, registrationCount: (p.registrationCount || 0) + (newRegistration.isGroup ? newRegistration.groupMembers.length + 1 : 1) } 
+                  setPosts(prev => prev.map(p =>
+                    p._id === post._id
+                      ? { ...p, isRegistered: true, myRegistration: newRegistration, registrationCount: (p.registrationCount || 0) + (newRegistration.isGroup ? newRegistration.groupMembers.length + 1 : 1) }
                       : p
                   ));
                 }

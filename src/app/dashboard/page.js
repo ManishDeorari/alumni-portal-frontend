@@ -128,7 +128,7 @@ export default function DashboardPage() {
       setPosts((prev) => prev.filter((p) => p._id !== postId));
 
     const updateEventRegCount = ({ postId, registrationCount }) => {
-      setPosts((prev) => 
+      setPosts((prev) =>
         prev.map(p => p._id === postId ? { ...p, registrationCount } : p)
       );
     };

@@ -23,8 +23,11 @@ export default function usePostActions({
     if (!checkAuth()) return;
 
     try {
+      const isEvent = post.type === "Event";
+      const endpoint = isEvent ? `/api/events/${post._id}/react` : `/api/posts/${post._id}/react`;
+      
       const res = await fetch(
-        `${API_URL}/api/posts/${post._id}/react`,
+        `${API_URL}${endpoint}`,
         {
           method: "PATCH",
           headers: {
@@ -37,7 +40,7 @@ export default function usePostActions({
 
       if (!res.ok) {
         if (res.status === 404) {
-          toast.error("❌ Event/Post not found! It may have been deleted.");
+          toast.error(isEvent ? "❌ Event not found!" : "❌ Post not found! It may have been deleted.");
           setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
           return;
         }
@@ -62,13 +65,11 @@ export default function usePostActions({
     }
   };
 
-  const handleEditSave = async (editContent) => {
+  const handleEditSave = async ({ content, title }) => {
     if (!checkAuth()) return;
 
-    const contentToSave =
-      typeof editContent === "string"
-        ? editContent.trim()
-        : editContent?.text?.trim?.() || "";
+    const contentToSave = typeof content === "string" ? content.trim() : "";
+    const titleToSave = typeof title === "string" ? title.trim() : "";
 
     if (!contentToSave) {
       toast.error("Content cannot be empty");
@@ -76,24 +77,33 @@ export default function usePostActions({
     }
 
     try {
+      const isEvent = post.type === "Event";
+      const endpoint = isEvent ? `/api/events/${post._id}` : `/api/posts/${post._id}`;
+      
       const res = await fetch(
-        `${API_URL}/api/posts/${post._id}`,
+        `${API_URL}${endpoint}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ content: contentToSave }),
+          body: JSON.stringify({ 
+            content: contentToSave,
+            ...(isEvent && { title: titleToSave })
+          }),
         }
       );
+      
+      if (!res.ok) throw new Error("Update failed");
+      
       const updated = await res.json();
       setEditing(false);
       setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
       socket.emit("updatePost", updated);
-      toast.success("✏️ Post updated successfully", { autoClose: 1500 });
+      toast.success(isEvent ? "✏️ Event updated successfully" : "✏️ Post updated successfully", { autoClose: 1500 });
     } catch (error) {
-      toast.error("❌ Failed to update post");
+      toast.error(isEvent ? "❌ Failed to update event" : "❌ Failed to update post");
     }
   };
 

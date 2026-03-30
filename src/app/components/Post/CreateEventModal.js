@@ -97,6 +97,10 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
     setFormData((prev) => ({ ...prev, description: prev.description + emoji.native }));
   };
 
+  const handleTitleEmojiSelect = (emoji) => {
+    setFormData((prev) => ({ ...prev, title: prev.title + emoji.native }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = [];
@@ -198,7 +202,10 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           {/* Event Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2 space-y-2">
-              <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("title") ? "text-red-500" : ""}`}>Event Title</label>
+              <div className="flex items-center justify-between">
+                <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("title") ? "text-red-500" : ""}`}>Event Title</label>
+                <EmojiPickerToggle onEmojiSelect={handleTitleEmojiSelect} icon="😀" darkMode={darkMode} />
+              </div>
               <div className={getErrorClass("title")}>
                 <input
                   name="title"
