@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import HybridInput from "../ui/HybridInput";
+import { useTheme } from "@/context/ThemeContext";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -14,6 +15,7 @@ const currentYearForDropdown = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, i) => String(2000 + i));
 
 export default function AlumniExport() {
+    const { darkMode } = useTheme();
     const [alumni, setAlumni] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -166,130 +168,147 @@ export default function AlumniExport() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Search & Filters */}
-            <section className="bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-8">
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <input
-                            type="text"
-                            placeholder="Search by name, email, enrollment..."
-                            value={searchQuery}
-                            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none transition-all text-white placeholder-white/20"
-                        />
-                        <svg className="absolute left-4 top-4 w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </div>
-                    <button
-                        onClick={handleSearch}
-                        className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black transition-all shadow-lg active:scale-95"
-                    >
-                        Search Alumni
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Course</label>
-                        <HybridInput
-                            value={filters.course}
-                            onChange={(val) => setFilters({ ...filters, course: val })}
-                            options={COURSE_OPTIONS}
-                            placeholder="All Courses"
-                            uppercase={true}
-                            className="w-full px-4 py-4 bg-[#1a1a2e] border border-white/10 rounded-xl text-white font-bold text-[10px] uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-                    <div className="space-y-1.5 relative">
-                        <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Graduation / Start Year</label>
-                        <select
-                            value={filters.year}
-                            onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                            className="w-full px-4 py-[15px] bg-[#1a1a2e] border border-white/10 rounded-xl text-white font-bold text-[10px] uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
-                        >
-                            <option value="">All Years</option>
-                            {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                        <svg className="w-4 h-4 absolute right-4 top-[38px] pointer-events-none opacity-30 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-black">Industry</label>
-                        <input
-                            type="text"
-                            placeholder="e.g. IT, Finance"
-                            value={filters.industry}
-                            onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:ring-2 focus:ring-blue-400 placeholder-white/10"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Results & Export */}
-            {alumni.length > 0 && (
-                <section className="bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-6">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-2 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.4)]"></div>
-                            <h2 className="text-2xl font-black text-white tracking-tight">Export Preview ({alumni.length})</h2>
+            <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl">
+                <section className={`${darkMode ? "bg-black" : "bg-white"} p-8 rounded-[calc(1.5rem-1px)] space-y-8`}>
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="relative flex-1 p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
+                            <div className="relative h-full">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name, email, enrollment..."
+                                    value={searchQuery}
+                                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                                />
+                                <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-blue-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </div>
                         </div>
                         <button
-                            onClick={downloadExcel}
-                            className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-2xl font-black transition-all shadow-xl flex items-center gap-2 active:scale-95"
+                            onClick={handleSearch}
+                            className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black transition-all shadow-lg active:scale-95"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                            Download Excel
+                            Search Alumni
                         </button>
                     </div>
 
-                    <div className="overflow-x-auto custom-scrollbar border border-white/5 rounded-2xl">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="text-blue-100/30 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5 bg-white/5">
-                                    <th className="py-4 px-6 text-left">Alumni</th>
-                                    <th className="py-4 px-6 text-left">Course &amp; Year</th>
-                                    <th className="py-4 px-6 text-left">Location</th>
-                                    <th className="py-4 px-6 text-left">Industry</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                                {alumni.slice(0, 10).map((u) => (
-                                    <tr key={u._id} className="hover:bg-white/5 transition-all">
-                                        <td className="py-4 px-6">
-                                            <div>
-                                                <p className="font-extrabold text-white">{u.name}</p>
-                                                <p className="text-xs text-blue-100/40">{u.email}</p>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-xs font-black text-blue-100/60 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-                                                {u.course} ({u.year})
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-6 text-xs text-blue-100/60">{u.address || "N/A"}</td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-full">
-                                                {u.workProfile?.industry || "N/A"}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {alumni.length > 10 && (
-                            <div className="p-4 text-center bg-white/5">
-                                <p className="text-xs text-blue-100/20 font-bold uppercase tracking-widest italic">
-                                    Showing first 10 results. Click Download to get all {alumni.length} entries.
-                                </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-1.5 z-[60]">
+                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Course</label>
+                            <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl relative">
+                                <HybridInput
+                                    value={filters.course}
+                                    onChange={(val) => setFilters({ ...filters, course: val })}
+                                    options={COURSE_OPTIONS}
+                                    placeholder="All Courses"
+                                    uppercase={true}
+                                    placement="top"
+                                    className={`w-full px-4 py-4 ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold`}
+                                />
                             </div>
-                        )}
+                        </div>
+                        <div className="space-y-1.5 relative">
+                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Graduation / Start Year</label>
+                            <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl relative">
+                                <select
+                                    value={filters.year}
+                                    onChange={(e) => setFilters({ ...filters, year: e.target.value })}
+                                    className={`w-full px-4 py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold appearance-none cursor-pointer`}
+                                >
+                                    <option value="">All Years</option>
+                                    {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
+                                </select>
+                                <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-blue-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                            </div>
+                        </div>
+                        <div className="space-y-1.5 font-bold">
+                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Industry</label>
+                            <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl">
+                                <input
+                                    type="text"
+                                    placeholder="e.g. IT, Finance"
+                                    value={filters.industry}
+                                    onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
+                                    className={`w-full px-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl outline-none text-xs`}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </section>
+            </div>
+
+            {/* Results & Export */}
+            {alumni.length > 0 && (
+                <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+                    <section className={`${darkMode ? "bg-black" : "bg-white"} p-8 rounded-[calc(1.5rem-1px)] space-y-6`}>
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-2 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.4)]"></div>
+                                <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight`}>Export Preview ({alumni.length})</h2>
+                            </div>
+                            <button
+                                onClick={downloadExcel}
+                                className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-2xl font-black transition-all shadow-xl flex items-center gap-2 active:scale-95"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                Download Excel
+                            </button>
+                        </div>
+
+                        <div className="p-[1px] bg-gradient-to-r from-blue-400/50 via-purple-400/50 to-pink-400/50 rounded-2xl overflow-hidden shadow-xl">
+                            <div className={`overflow-x-auto custom-scrollbar ${darkMode ? "bg-black" : "bg-white"}`}>
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className={`${darkMode ? "text-blue-400 border-white/10 bg-white/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
+                                            <th className="py-4 px-6 text-left">Alumni</th>
+                                            <th className="py-4 px-6 text-left">Course &amp; Year</th>
+                                            <th className="py-4 px-6 text-left">Location</th>
+                                            <th className="py-4 px-6 text-left">Industry</th>
+                                        </tr>
+                                    </thead>
+                                    {/* Gradient Separator Line */}
+                                    <tr className="h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-sm"><td colSpan="4"></td></tr>
+                                    <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
+                                        {alumni.slice(0, 10).map((u) => (
+                                            <tr key={u._id} className={`transition-all ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"}`}>
+                                                <td className="py-4 px-6">
+                                                    <div>
+                                                        <p className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"}`}>{u.name}</p>
+                                                        <p className={darkMode ? "text-blue-100 text-xs" : "text-slate-600 text-xs"}>{u.email}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <span className={`text-xs font-black ${darkMode ? "text-blue-300 bg-white/5 border-white/10" : "text-slate-900 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border`}>
+                                                        {u.course} ({u.year})
+                                                    </span>
+                                                </td>
+                                                <td className={`py-4 px-6 text-xs font-medium ${darkMode ? "text-white" : "text-slate-900"}`}>{u.address || "N/A"}</td>
+                                                <td className="py-4 px-6">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-full border border-blue-400/20">
+                                                        {u.workProfile?.industry || "N/A"}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {alumni.length > 10 && (
+                                    <div className={`p-4 text-center border-t ${darkMode ? "bg-white/5 border-white/5" : "bg-gray-50 border-gray-100"}`}>
+                                        <p className={`text-xs ${darkMode ? "text-blue-400" : "text-blue-600"} font-black uppercase tracking-widest italic`}>
+                                            Showing first 10 results. Click Download to get all {alumni.length} entries.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                </div>
             )}
 
             {loading && (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-blue-100/40 font-black uppercase tracking-widest text-xs">Searching database...</p>
+                    <p className={`${darkMode ? "text-blue-100/40" : "text-gray-400"} font-black uppercase tracking-widest text-xs`}>Searching database...</p>
                 </div>
             )}
         </div>

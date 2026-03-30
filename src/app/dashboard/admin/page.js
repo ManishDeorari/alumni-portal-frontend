@@ -13,11 +13,14 @@ import Leaderboard from "../../components/Leaderboard";
 import PointsSystemManagement from "../../components/admin/PointsSystemManagement";
 import AlumniExport from "../../components/admin/AlumniExport";
 import UserManagement from "../../components/admin/UserManagement";
+import { useTheme } from "@/context/ThemeContext";
+
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
 
+  const { darkMode } = useTheme();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("pending"); // pending | admins | leaderboard | points | export | users
   const [loading, setLoading] = useState(true);
@@ -266,20 +269,25 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const TabButton = ({ id, label }) => (
-    <button
-      onClick={() => setActiveTab(id)}
-      className={`px-6 py-2.5 rounded-2xl transition-all duration-300 font-bold text-sm shadow-lg ${activeTab === id
-        ? "bg-white text-blue-700 scale-105 shadow-white/10"
-        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5"
-        }`}
-    >
-      {label}
-    </button>
-  );
+  const TabButton = ({ id, label }) => {
+    const isActive = activeTab === id;
+    return (
+      <div className={`p-[1px] rounded-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-r from-blue-400 to-purple-400 scale-105 shadow-xl shadow-blue-500/20" : "bg-transparent"}`}>
+        <button
+          onClick={() => setActiveTab(id)}
+          className={`px-6 py-2.5 rounded-[calc(1rem-1px)] transition-all duration-300 font-bold text-sm ${isActive
+            ? `${darkMode ? "bg-black text-white" : "bg-white text-blue-700"}`
+            : `${darkMode ? "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white" : "bg-black/5 text-black/60 hover:bg-black/10 hover:text-black"} border border-white/5`
+            }`}
+        >
+          {label}
+        </button>
+      </div>
+    );
+  };
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex flex-col items-center justify-center gap-4 text-white">
+    <div className={`min-h-screen ${darkMode ? "bg-slate-950" : "bg-gradient-to-br from-blue-600 to-purple-700"} flex flex-col items-center justify-center gap-4 text-white`}>
       <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
       <p className="font-black uppercase tracking-widest text-xs opacity-50">Initializing Admin Panel</p>
     </div>
@@ -289,36 +297,39 @@ export default function AdminDashboardPage() {
   const SidebarComponent = user?.isAdmin || user?.role === 'admin' ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800 text-white relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <SidebarComponent />
 
       <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
-        <section className="bg-gray-900/40 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden animate-in fade-in duration-700">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60"></div>
-          <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/20 shadow-inner">
-                <Shield className="w-6 h-6 text-blue-400" />
+        <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+          <section className={`${darkMode ? "bg-black" : "bg-white"} p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
+            <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/20 shadow-inner">
+                  <Shield className="w-6 h-6 text-blue-400" />
+                </div>
+                <div className="text-left">
+                  <h1 className={`text-2xl md:text-3xl font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Admin Panel</h1>
+                  <p className={`${darkMode ? "text-blue-100/40" : "text-slate-500"} text-xs font-bold uppercase tracking-widest mt-1`}>
+                    Master Control Center
+                  </p>
+                </div>
               </div>
-              <div className="text-left">
-                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">Admin Panel</h1>
-                <p className="text-blue-100/40 text-xs font-bold uppercase tracking-widest mt-1">
-                  Master Control Center
-                </p>
+
+              <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[1.6rem] shadow-lg">
+                <nav className={`flex flex-wrap items-center justify-center gap-2 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem]`}>
+                  <TabButton id="pending" label="Pending" />
+                  {user?.isMainAdmin && <TabButton id="users" label="User Mgmt" />}
+                  <TabButton id="admins" label="Admins" />
+                  <TabButton id="leaderboard" label="Leaderboard" />
+                  <TabButton id="export" label="Export" />
+                  {user?.isMainAdmin && <TabButton id="points" label="Points" />}
+                </nav>
               </div>
             </div>
-
-            <nav className="flex flex-wrap items-center justify-center gap-2 bg-white/5 p-1.5 rounded-[1.5rem] border border-white/5">
-              <TabButton id="pending" label="Pending" />
-              {user?.isMainAdmin && <TabButton id="users" label="User Mgmt" />}
-              <TabButton id="admins" label="Admins" />
-              <TabButton id="leaderboard" label="Leaderboard" />
-              <TabButton id="export" label="Export" />
-              {user?.isMainAdmin && <TabButton id="points" label="Points" />}
-            </nav>
-          </div>
-        </section>
+          </section>
+        </div>
 
         <section className="animate-in fade-in slide-in-from-bottom-5 duration-700 delay-150">
           {/* MANAGE ReEQUEST */}

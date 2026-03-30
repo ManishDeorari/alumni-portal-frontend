@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useTheme } from "@/context/ThemeContext";
 
 const getApiUrl = () => {
     const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -10,6 +11,7 @@ const getApiUrl = () => {
 const API = getApiUrl();
 
 export default function PointsSystemManagement() {
+    const { darkMode } = useTheme();
     const [config, setConfig] = useState({
         profileCompletionPoints: 50,
         connectionPoints: 10,
@@ -160,166 +162,184 @@ export default function PointsSystemManagement() {
         }
     };
 
-    if (loading) return <div>Loading config...</div>;
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            <p className={`${darkMode ? "text-blue-300" : "text-slate-900"} font-black uppercase tracking-widest text-xs`}>Loading config...</p>
+        </div>
+    );
 
     return (
         <div className="space-y-10 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Settings Section */}
-            <section className="bg-gray-900/40 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-blue-400/30 transition-all duration-500">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
-                <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
-                    <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
-                    Global System Config
-                </h2>
-                <form onSubmit={handleUpdateConfig} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[
-                        { label: "Profile Completion", key: "profileCompletionPoints" },
-                        { label: "Networking (Connect)", key: "connectionPoints" },
-                        { label: "Post Creation", key: "postPoints" },
-                        { label: "Post Likes", key: "likePoints" },
-                        { label: "Post Comments", key: "commentPoints" },
-                        { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
-                        { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
-                    ].map((item) => (
-                        <div key={item.key} className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100/40 ml-1">
-                                {item.label}
-                            </label>
-                            <div className="relative group/input">
-                                <input
-                                    type="number"
-                                    value={config[item.key]}
-                                    onChange={(e) => setConfig({ ...config, [item.key]: parseInt(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 focus:bg-white/10 outline-none transition-all text-white font-bold shadow-inner"
-                                />
-                                {item.sub && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-blue-100/20 uppercase">{item.sub}</span>}
+            <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
+                <section className={`${darkMode ? "bg-black" : "bg-white"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
+                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                        <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
+                        <span className={darkMode ? "text-white" : "text-slate-900"}>Global System Config</span>
+                    </h2>
+                    <form onSubmit={handleUpdateConfig} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[
+                            { label: "Profile Completion", key: "profileCompletionPoints" },
+                            { label: "Networking (Connect)", key: "connectionPoints" },
+                            { label: "Post Creation", key: "postPoints" },
+                            { label: "Post Likes", key: "likePoints" },
+                            { label: "Post Comments", key: "commentPoints" },
+                            { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
+                            { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
+                        ].map((item) => (
+                            <div key={item.key} className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
+                                    {item.label}
+                                </label>
+                                <div className="relative group/input p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl">
+                                    <input
+                                        type="number"
+                                        value={config[item.key]}
+                                        onChange={(e) => setConfig({ ...config, [item.key]: parseInt(e.target.value) })}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
+                                    />
+                                    {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-slate-500"} uppercase`}>{item.sub}</span>}
+                                </div>
+                            </div>
+                        ))}
+                        <div className="flex items-end">
+                            <button
+                                type="submit"
+                                disabled={saving}
+                                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2 group/btn"
+                            >
+                                {saving ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                ) : (
+                                    <>
+                                        <svg className="w-5 h-5 group-hover/btn:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                        Save System Config
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            {/* Manual Award Section */}
+            <div className="relative p-[2px] bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
+                <section className={`${darkMode ? "bg-black" : "bg-white"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-green-500/10 transition-colors"></div>
+                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                        <span className="p-3 bg-green-600/20 rounded-2xl text-green-400">🏆</span>
+                        <span className={darkMode ? "text-white" : "text-slate-900"}>Custom Points Grant</span>
+                    </h2>
+                    <form onSubmit={handleManualAward} className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
+                                <div className="relative group/input p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl">
+                                    <input
+                                        type="text"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
+                                        placeholder="Name or ID..."
+                                    />
+                                    <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-green-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Grant Amount</label>
+                                <div className="p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl">
+                                    <input
+                                        type="number"
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                        placeholder="0"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Activity Category</label>
+                                <div className="p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl relative">
+                                    <select
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
+                                    >
+                                        {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
+                                            <option key={val} value={val}>{label}</option>
+                                        ))}
+                                    </select>
+                                    <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-green-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                                </div>
                             </div>
                         </div>
-                    ))}
-                    <div className="flex items-end">
+                        <div className="space-y-3">
+                            <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Custom Note (Appears in User Notification)</label>
+                            <div className="p-[1px] bg-gradient-to-r from-green-400/30 via-blue-400/30 to-purple-400/30 rounded-2xl">
+                                <input
+                                    type="text"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-2xl px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                    placeholder="e.g. Exceptional contribution to the annual tech summit..."
+                                />
+                            </div>
+                        </div>
                         <button
                             type="submit"
-                            disabled={saving}
-                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2 group/btn"
+                            disabled={awarding}
+                            className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
                         >
-                            {saving ? (
+                            {awarding ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
-                                    <svg className="w-5 h-5 group-hover/btn:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                                    Save System Config
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                    Grant Points & Notify User
                                 </>
                             )}
                         </button>
-                    </div>
-                </form>
-            </section>
-
-            {/* Manual Award Section */}
-            <section className="bg-gray-900/40 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-green-400/30 transition-all duration-500">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-green-500/10 transition-colors"></div>
-                <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
-                    <span className="p-3 bg-green-600/20 rounded-2xl text-green-400">🏆</span>
-                    Custom Points Grant
-                </h2>
-                <form onSubmit={handleManualAward} className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100/40 ml-1">Search Recipient</label>
-                            <div className="relative group/input">
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 focus:bg-white/10 outline-none transition-all text-white font-bold shadow-inner placeholder-white/10"
-                                    placeholder="Name or ID..."
-                                />
-                                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            </div>
-                        </div>
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100/40 ml-1">Grant Amount</label>
-                            <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 focus:bg-white/10 outline-none transition-all text-white font-bold shadow-inner"
-                                placeholder="0"
-                            />
-                        </div>
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100/40 ml-1">Activity Category</label>
-                            <select
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="w-full bg-[#1a1a2e] border border-white/10 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 focus:bg-[#252545] outline-none transition-all text-white font-bold shadow-inner appearance-none cursor-pointer"
-                            >
-                                {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
-                                    <option key={val} value={val}>{label}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100/40 ml-1">Custom Note (Appears in User Notification)</label>
-                        <input
-                            type="text"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 focus:ring-2 focus:ring-green-400 focus:bg-white/10 outline-none transition-all text-white font-bold shadow-inner placeholder-white/10"
-                            placeholder="e.g. Exceptional contribution to the annual tech summit..."
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={awarding}
-                        className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
-                    >
-                        {awarding ? (
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        ) : (
-                            <>
-                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                Grant Points & Notify User
-                            </>
-                        )}
-                    </button>
-                </form>
-            </section>
+                    </form>
+                </section>
+            </div>
 
             {/* Danger Zone / Rollover / Sync */}
-            <section className="bg-red-500/10 backdrop-blur-3xl p-10 rounded-[2.5rem] border border-red-500/20 shadow-2xl relative overflow-hidden group">
-                <h2 className="text-2xl font-black text-red-400 mb-8 flex items-center gap-3">
-                    <span className="p-3 bg-red-600/20 rounded-2xl text-red-400">⚠️</span>
-                    Advanced Data Management
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-4 bg-white/5 p-8 rounded-[2rem] border border-white/5 hover:border-red-500/30 transition-all">
-                        <h3 className="text-lg font-black text-white/90">Season Rollover</h3>
-                        <p className="text-sm text-blue-100/40 leading-relaxed">
-                            Resets all current season points and moves balances to <span className="text-red-300 font-bold">Historical Rankings</span>. This action is irreversible.
-                        </p>
-                        <button
-                            onClick={triggerRollover}
-                            className="w-full bg-red-600 hover:bg-red-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
-                        >
-                            Trigger Annual Rollover
-                        </button>
+            <div className="relative p-[2px] bg-gradient-to-r from-red-600 via-purple-600 to-pink-600 rounded-[2.5rem] shadow-2xl overflow-hidden">
+                <section className={`${darkMode ? "bg-black/80" : "bg-red-50/50"} backdrop-blur-3xl p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <h2 className="text-2xl font-black text-red-500 mb-8 flex items-center gap-3">
+                        <span className="p-3 bg-red-600/20 rounded-2xl text-red-500">⚠️</span>
+                        Advanced Data Management
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className={`space-y-4 ${darkMode ? "bg-white/5 border-white/5" : "bg-white border-red-100"} p-8 rounded-[2rem] border hover:border-red-500/30 transition-all`}>
+                            <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Season Rollover</h3>
+                            <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
+                                Resets all current season points and moves balances to <span className="text-red-300 font-bold underline decoration-red-500/50 underline-offset-4">Historical Rankings</span>. This action is irreversible.
+                            </p>
+                            <button
+                                onClick={triggerRollover}
+                                className="w-full bg-red-600 hover:bg-red-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
+                            >
+                                Trigger Annual Rollover
+                            </button>
+                        </div>
+                        <div className={`space-y-4 ${darkMode ? "bg-white/5 border-white/5" : "bg-white border-purple-100"} p-8 rounded-[2rem] border hover:border-purple-500/30 transition-all`}>
+                            <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Consistency Sync</h3>
+                            <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
+                                Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-600 font-bold">Safe to run.</span>
+                            </p>
+                            <button
+                                onClick={triggerSync}
+                                className="w-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
+                            >
+                                Execute Global Sync
+                            </button>
+                        </div>
                     </div>
-                    <div className="space-y-4 bg-white/5 p-8 rounded-[2rem] border border-white/5 hover:border-purple-500/30 transition-all">
-                        <h3 className="text-lg font-black text-white/90">Consistency Sync</h3>
-                        <p className="text-sm text-blue-100/40 leading-relaxed">
-                            Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-300 font-bold">Safe to run.</span>
-                        </p>
-                        <button
-                            onClick={triggerSync}
-                            className="w-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
-                        >
-                            Execute Global Sync
-                        </button>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function PendingUsers({
   pendingUsers,
@@ -12,6 +13,7 @@ export default function PendingUsers({
   bulkApproveUsers,
   bulkDeleteUsers,
 }) {
+  const { darkMode } = useTheme();
   const [search, setSearch] = useState("");
   const [confirm, setConfirm] = useState(null);
   const [selected, setSelected] = useState([]);
@@ -64,26 +66,28 @@ export default function PendingUsers({
   };
 
   const Card = ({ title, users, badgeColor, actions, children }) => (
-    <div className="bg-gray-900/40 backdrop-blur-xl rounded-[2.5rem] border border-white/10 shadow-2xl mb-10 overflow-hidden group transition-all hover:border-white/20">
-      <div className="flex flex-col sm:flex-row items-center justify-between px-8 py-6 border-b border-white/10 bg-white/5">
-        <h3 className="font-extrabold text-white text-xl flex items-center gap-3">
-          {title}
-          <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badgeColor}`}>
-            {users.length}
-          </span>
-        </h3>
-        <div className="mt-4 sm:mt-0">
-          {actions}
-        </div>
-      </div>
-      <div className="p-2 sm:p-4">
-        {users.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-blue-100/30 font-bold italic">No pending requests in this category.</p>
+    <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all hover:shadow-blue-500/10">
+      <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
+        <div className={`flex flex-col sm:flex-row items-center justify-between px-8 py-6 border-b ${darkMode ? "border-white/10 bg-white/5" : "border-gray-200 bg-gray-50/50"}`}>
+          <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-xl flex items-center gap-3`}>
+            {title}
+            <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badgeColor}`}>
+              {users.length}
+            </span>
+          </h3>
+          <div className="mt-4 sm:mt-0">
+            {actions}
           </div>
-        ) : (
-          children
-        )}
+        </div>
+        <div className="p-2 sm:p-4">
+          {users.length === 0 ? (
+            <div className="py-20 text-center">
+              <p className={`${darkMode ? "text-blue-100/30" : "text-gray-400"} font-bold italic`}>No pending requests in this category.</p>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
       </div>
     </div>
   );
@@ -96,20 +100,24 @@ export default function PendingUsers({
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-900/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl">
-          <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search by name, email, ID…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all text-white placeholder-white/20 font-medium"
-            />
-            <svg className="absolute left-4 top-4 w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2rem] shadow-2xl overflow-hidden">
+          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-white"} p-8 rounded-[calc(2rem-2px)] relative overflow-hidden backdrop-blur-xl`}>
+            <div className="relative flex-1 max-w-md p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
+              <div className="relative h-full">
+                <input
+                  type="text"
+                  placeholder="Search by name, email, ID…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                />
+                <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white/30" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+            </div>
+            <p className={`${darkMode ? "text-blue-300" : "text-blue-600"} text-sm font-black uppercase tracking-widest`}>
+              Filtering {pendingUsers.length} total users
+            </p>
           </div>
-          <p className="text-blue-100/40 text-sm font-bold uppercase tracking-widest">
-            Filtering {pendingUsers.length} total users
-          </p>
         </div>
 
         {pendingLoading ? (
@@ -122,7 +130,7 @@ export default function PendingUsers({
             <Card
               title="🎓 Alumni Requests"
               users={alumni}
-              badgeColor="bg-green-500/20 text-green-300 border border-green-500/30"
+              badgeColor={darkMode ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-green-100 text-green-700 border border-green-200"}
               actions={
                 alumni.length > 0 && (
                   <div className="flex gap-3">
@@ -136,7 +144,7 @@ export default function PendingUsers({
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-delete", role: "alumni" })}
-                      className="px-6 py-2.5 bg-white/5 hover:bg-red-500/20 text-red-300 rounded-2xl text-sm font-black border border-white/10 transition-all disabled:opacity-30"
+                      className="px-6 py-2.5 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-sm font-black border border-red-500/30 transition-all disabled:opacity-30"
                     >
                       Reject
                     </button>
@@ -157,7 +165,7 @@ export default function PendingUsers({
             <Card
               title="🏫 Faculty Requests"
               users={faculty}
-              badgeColor="bg-purple-500/20 text-purple-300 border border-purple-500/30"
+              badgeColor={darkMode ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" : "bg-purple-100 text-purple-700 border border-purple-200"}
               actions={
                 faculty.length > 0 && (
                   <div className="flex gap-3">
@@ -204,7 +212,7 @@ export default function PendingUsers({
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="bg-gray-900 border border-white/20 rounded-[2rem] p-8 w-full max-w-md shadow-2xl"
+              className={`${darkMode ? "bg-gray-900 border-white/20" : "bg-white border-gray-200"} border rounded-[2rem] p-8 w-full max-w-md shadow-2xl`}
             >
               <h3 className="text-2xl font-black text-white mb-4">
                 {confirm.type.includes("bulk")
@@ -217,16 +225,16 @@ export default function PendingUsers({
               </h3>
 
               {confirm.user && (
-                <div className="bg-white/5 p-4 rounded-xl border border-white/10 mb-6">
-                  <p className="font-bold text-white text-lg">{confirm.user.name}</p>
-                  <p className="text-blue-100/60 text-sm truncate">{confirm.user.email}</p>
+                <div className={`${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"} p-4 rounded-xl border mb-6`}>
+                  <p className={`font-bold ${darkMode ? "text-white" : "text-slate-900"} text-lg`}>{confirm.user.name}</p>
+                  <p className={`${darkMode ? "text-blue-100/60" : "text-slate-500"} text-sm truncate`}>{confirm.user.email}</p>
                 </div>
               )}
 
               <div className="flex justify-end gap-3 font-black">
                 <button
                   onClick={() => setConfirm(null)}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition-all"
+                  className={`px-6 py-3 ${darkMode ? "bg-white/5 hover:bg-white/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all`}
                 >
                   Cancel
                 </button>
@@ -254,13 +262,14 @@ export default function PendingUsers({
 
 /* ---------------- TABLE ---------------- */
 function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDelete, onPromote }) {
+  const { darkMode } = useTheme();
   if (users.length === 0) return null;
 
   return (
     <div className="overflow-x-auto custom-scrollbar">
       <table className="w-full">
         <thead>
-          <tr className="text-blue-100/30 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5">
+          <tr className={`${darkMode ? "text-white border-white/10 bg-white/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
             <th className="py-4 px-6 text-left">
               <input
                 type="checkbox"
@@ -269,14 +278,14 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
                 onChange={() => toggleSelectAll(users)}
               />
             </th>
-            <th className="py-4 px-6 text-left">User Profile</th>
-            <th className="py-4 px-6 text-left md:table-cell hidden">Identification</th>
-            <th className="py-4 px-6 text-right">Actions</th>
+            <th className="py-4 px-6 text-left font-black">User Profile</th>
+            <th className="py-4 px-6 text-left md:table-cell hidden font-black">Identification</th>
+            <th className="py-4 px-6 text-right font-black">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
           {users.map((u) => (
-            <tr key={u._id} className="group hover:bg-white/5 transition-all">
+            <tr key={u._id} className={`group ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"} transition-all`}>
               <td className="py-5 px-6">
                 <input
                   type="checkbox"
@@ -291,13 +300,13 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
                     {u.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-extrabold text-white truncate">{u.name}</p>
-                    <p className="text-xs text-blue-100/40 truncate">{u.email}</p>
+                    <p className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                    <p className={`text-xs ${darkMode ? "text-blue-100/40" : "text-slate-500"} truncate`}>{u.email}</p>
                   </div>
                 </div>
               </td>
               <td className="py-5 px-6 md:table-cell hidden">
-                <span className="text-xs font-black text-blue-100/60 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 whitespace-nowrap">
+                <span className={`text-xs font-black ${darkMode ? "text-blue-100/60 bg-white/5 border-white/5" : "text-slate-600 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
                   {u.enrollmentNumber || u.employeeId || "N/A"}
                 </span>
               </td>
