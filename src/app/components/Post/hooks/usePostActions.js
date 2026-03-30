@@ -51,7 +51,7 @@ export default function usePostActions({
 
       // ✅ Update this user's view optimistically
       setPosts((prev) =>
-        prev.map((p) => (p._id === post._id ? updatedPost : p))
+        prev.map((p) => (p._id === post._id ? { ...p, ...updatedPost } : p))
       );
 
       // ✅ Emit real-time event to others
@@ -99,7 +99,7 @@ export default function usePostActions({
       
       const updated = await res.json();
       setEditing(false);
-      setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+      setPosts((prev) => prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p)));
       socket.emit("updatePost", updated);
       toast.success(isEvent ? "✏️ Event updated successfully" : "✏️ Post updated successfully", { autoClose: 1500 });
     } catch (error) {

@@ -54,8 +54,9 @@ export default function useCommentActions({
         if (setComment) setComment("");
         if (setShowCommentEmoji) setShowCommentEmoji(false);
 
+        // Merge logic to preserve registration state
         setPosts((prev) =>
-          prev.map((p) => (p._id === post._id ? updated : p))
+          prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p))
         );
 
         socket.emit("updatePost", updated);
@@ -93,7 +94,7 @@ export default function useCommentActions({
         const updated = await res.json();
 
         setPosts((prev) =>
-          prev.map((p) => (p._id === post._id ? updated : p))
+          prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p))
         );
 
         socket.emit("updatePost", updated);
@@ -131,7 +132,7 @@ export default function useCommentActions({
         const updated = await res.json();
 
         setPosts((prev) =>
-          prev.map((p) => (p._id === post._id ? updated : p))
+          prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p))
         );
 
         socket.emit("updatePost", updated);
@@ -158,7 +159,7 @@ export default function useCommentActions({
         );
         const updated = await res.json();
         setPosts((prev) =>
-          prev.map((p) => (p._id === post._id ? updated : p))
+          prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p))
         );
         socket.emit("updatePost", updated);
         toast.success("🗑️ Comment deleted!", { autoClose: 1500 });
@@ -192,7 +193,7 @@ export default function useCommentActions({
         );
 
         const updated = await res.json();
-        setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+        setPosts((prev) => prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p)));
         socket.emit("updatePost", updated);
         toast.success("✏️ Reply updated", { autoClose: 1500 });
       } catch (err) {
@@ -219,7 +220,7 @@ export default function useCommentActions({
 
       const updated = await res.json();
       setPosts((prev) =>
-        prev.map((p) => (p._id === post._id ? updated : p))
+        prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p))
       );
       socket.emit("updatePost", updated);
       toast.success("🗑️ Reply deleted!", { autoClose: 1500 });
@@ -250,7 +251,7 @@ export default function useCommentActions({
         );
 
         const updated = await res.json();
-        setPosts((prev) => prev.map((p) => (p._id === post._id ? updated : p)));
+        setPosts((prev) => prev.map((p) => (p._id === post._id ? { ...p, ...updated } : p)));
         socket.emit("updatePost", updated);
         triggerReactionEffect(emoji);
       } catch (err) {
@@ -266,7 +267,7 @@ export default function useCommentActions({
         const isEvent = post.type === "Event";
         const endpoint = isEvent 
           ? `/api/events/${post._id}/comment/${commentId}/react`
-          : `/api/posts/${post._id}/comments/${commentId}/react`; // Corrected to /comments/ for posts
+          : `/api/posts/${post._id}/comments/${commentId}/react`;
 
         const res = await fetch(
           `${API_URL}${endpoint}`,
@@ -281,8 +282,9 @@ export default function useCommentActions({
         );
 
         const updated = await res.json();
-        setPosts((prev) => prev.map((p) => (p._id === post._id ? (isEvent ? updated : updated.post || updated) : p)));
-        socket.emit("updatePost", isEvent ? updated : updated.post || updated);
+        const finalUpdated = isEvent ? updated : (updated.post || updated);
+        setPosts((prev) => prev.map((p) => (p._id === post._id ? { ...p, ...finalUpdated } : p)));
+        socket.emit("updatePost", finalUpdated);
         triggerReactionEffect(emoji);
       } catch (err) {
         toast.error("❌ Failed to react to comment");

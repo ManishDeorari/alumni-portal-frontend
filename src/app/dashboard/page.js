@@ -111,7 +111,7 @@ export default function DashboardPage() {
 
     const updatePost = (updatedPost) =>
       setPosts((prev) =>
-        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+        prev.map((p) => (p._id === updatedPost._id ? { ...p, ...updatedPost } : p))
       );
 
     const addPost = (newPost) => {
