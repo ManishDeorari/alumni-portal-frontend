@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useEffect, useState, Suspense, useCallback } from "react";
-import Sidebar from "../../components/Sidebar";
-import AdminSidebar from "../../components/AdminSidebar";
-import ProfileAbout from "../../components/profile/ProfileAbout";
-import ProfileExperience from "../../components/profile/ProfileExperience";
-import ProfileEducation from "../../components/profile/ProfileEducation";
-import ProfileActivity from "../../components/profile/ProfileActivity";
-import ProfileWorkProfile from "../../components/profile/ProfileWorkProfile";
-import ProfileJobPreference from "../../components/profile/ProfileJobPreference";
-import ProfileBasicInfo from "../../components/profile/ProfileBasicInfo";
+import Sidebar from "../components/Sidebar";
+import AdminSidebar from "../components/AdminSidebar";
+import ProfileAbout from "../components/profile/ProfileAbout";
+import ProfileExperience from "../components/profile/ProfileExperience";
+import ProfileEducation from "../components/profile/ProfileEducation";
+import ProfileActivity from "../components/profile/ProfileActivity";
+import ProfileWorkProfile from "../components/profile/ProfileWorkProfile";
+import ProfileJobPreference from "../components/profile/ProfileJobPreference";
+import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
 
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
