@@ -48,59 +48,64 @@ export default function ProfileExperience({ profile, setProfile, isPublicView })
                         const duration = calculateDuration(exp.startDate, exp.endDate);
 
                         return (
-                            <div key={idx} className="flex gap-4 group">
-                                {/* Logo Placeholder */}
-                                <div className="flex-shrink-0">
-                                    <div className={`w-12 h-12 rounded-md flex items-center justify-center border transition-colors ${darkMode ? 'bg-slate-800 border-white/10' : 'bg-gray-100 border-gray-200'}`}>
-                                        <Building2 className={`w-6 h-6 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="flex-grow space-y-2">
-                                    <div className="flex flex-col">
-                                        <h3 className={`text-base font-bold leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                            {exp.title}
-                                        </h3>
-                                        <p className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                            {exp.company}
-                                            {exp.employmentType && ` · ${exp.employmentType}`}
-                                        </p>
+                            <div key={idx} className="p-[1px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl group w-full mb-4">
+                                <div className={`p-5 rounded-[calc(1rem-1px)] flex gap-4 transition duration-300 ${darkMode ? 'bg-slate-800/80 hover:bg-[#121213]' : 'bg-[#FAFAFA]/80 hover:bg-white'}`}>
+                                    {/* Logo Placeholder */}
+                                    <div className="flex-shrink-0">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${darkMode ? 'bg-blue-900/30 shadow-none' : 'bg-blue-50 shadow-sm'}`}>
+                                            <Building2 className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                                        </div>
                                     </div>
 
-                                    <div className={`text-xs font-medium space-y-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                        <p className="flex items-center gap-1">
+                                    {/* Content */}
+                                    <div className="flex-grow space-y-2.5">
+                                        <div className="flex flex-col">
+                                            <h3 className={`text-base font-bold leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                {exp.title}
+                                            </h3>
+                                            <p className={`text-sm font-semibold mt-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                {exp.company}
+                                                {exp.employmentType && ` · ${exp.employmentType}`}
+                                            </p>
+                                        </div>
+
+                                        <div className={`text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                            <Calendar className="w-3.5 h-3.5" />
                                             {exp.startDate} - {exp.endDate}
                                             {duration && ` · ${duration}`}
-                                        </p>
+                                        </div>
+
                                         {(exp.location || exp.locationType) && (
-                                            <p className="flex items-center gap-1">
+                                            <div className={`text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                <MapPin className="w-3.5 h-3.5" />
                                                 {exp.location}
                                                 {exp.location && exp.locationType && " · "}
                                                 {exp.locationType}
-                                            </p>
+                                            </div>
+                                        )}
+
+                                        {exp.description && (
+                                            <div className="pt-1">
+                                                <p className={`text-sm whitespace-pre-wrap leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                    {exp.description}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {exp.skills && exp.skills.length > 0 && (
+                                            <div className="flex flex-wrap items-center gap-2 mt-3 pt-2">
+                                                <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>Skills:</span>
+                                                {exp.skills.map((skill, sIdx) => (
+                                                    <span
+                                                        key={sIdx}
+                                                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${darkMode ? 'bg-slate-800 text-gray-300 border-white/10' : 'bg-gray-100 text-gray-600 border-gray-200'}`}
+                                                    >
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         )}
                                     </div>
-
-                                    {exp.description && (
-                                        <p className={`text-sm mt-2 whitespace-pre-wrap leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                            {exp.description}
-                                        </p>
-                                    )}
-
-                                    {exp.skills && exp.skills.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-3 pt-2">
-                                            <span className={`text-xs font-bold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Skills:</span>
-                                            {exp.skills.map((skill, sIdx) => (
-                                                <span
-                                                    key={sIdx}
-                                                    className={`text-xs px-2 py-0.5 rounded-full border ${darkMode ? 'bg-slate-800 text-gray-400 border-white/10' : 'bg-gray-100 text-gray-600 border-gray-200'}`}
-                                                >
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         );

@@ -26,105 +26,72 @@ export default function ProfileJobPreference({ profile, setProfile, isPublicView
                 isPublicView={isPublicView}
             >
                 {hasData ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-3">
-                                <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-red-900/40' : 'bg-red-50'}`}>
-                                    <Heart className={`w-4 h-4 ${darkMode ? 'text-red-400' : 'text-red-500'}`} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-[1px] bg-gradient-to-r from-red-500/30 to-pink-500/30 rounded-2xl">
+                            <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                <div className={`mb-3 p-2 rounded-full ${darkMode ? 'bg-[#121213]' : 'bg-white'} shadow-sm`}>
+                                    <Heart className={`w-5 h-5 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
                                 </div>
-                                <div>
-                                    <p className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Preferred Area</p>
-                                    <p className={`font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{profile.jobPreferences?.functionalArea || "Not specified"}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-blue-900/40' : 'bg-blue-50'}`}>
-                                    <MapPin className={`w-4 h-4 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} />
-                                </div>
-                                <div>
-                                    <p className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Preferred Locations</p>
-                                    <p className={`font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                                        {profile.jobPreferences?.preferredLocations?.length > 0
-                                            ? profile.jobPreferences.preferredLocations.join(", ")
-                                            : "Not specified"}
-                                    </p>
-                                </div>
+                                <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Preferred Area</label>
+                                <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.jobPreferences?.functionalArea || "Not specified"}</span>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-3">
-                                <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-orange-900/40' : 'bg-orange-50'}`}>
-                                    <Clock className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                        <div className="p-[1px] bg-gradient-to-r from-blue-500/30 to-indigo-500/30 rounded-2xl">
+                            <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                <div className={`mb-3 p-2 rounded-full ${darkMode ? 'bg-[#121213]' : 'bg-white'} shadow-sm`}>
+                                    <MapPin className={`w-5 h-5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                                 </div>
-                                <div>
-                                    <p className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Notice Period</p>
-                                    <p className={`font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{profile.jobPreferences?.noticePeriod || "Not specified"}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-green-900/40' : 'bg-green-50'}`}>
-                                    <DollarSign className={`w-4 h-4 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                                </div>
-                                <div>
-                                    <p className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Expected Salary</p>
-                                    <p className={`font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{profile.jobPreferences?.salary || "Not specified"}</p>
-                                </div>
+                                <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Preferred Locations</label>
+                                <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                    {profile.jobPreferences?.preferredLocations?.length > 0 
+                                      ? profile.jobPreferences.preferredLocations.join(", ") 
+                                      : "Not specified"}
+                                </span>
                             </div>
                         </div>
 
-                        <div className="col-span-full pt-2">
-                            <div className="flex flex-wrap gap-4">
-                                {profile.jobPreferences?.resumeLink && (
-                                    <div className="flex items-start gap-3">
-                                        <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-purple-900/40' : 'bg-purple-50'}`}>
-                                            <FileText className={`w-4 h-4 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                                        </div>
-                                        <div className="flex-grow">
-                                            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Resume / CV</p>
-                                            <a
-                                                href={profile.jobPreferences.resumeLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition shadow-sm ${darkMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-purple-600 text-white hover:bg-purple-700'}`}
-                                            >
-                                                View Professional Resume <ExternalLink className="w-3 h-3" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {profile.jobPreferences?.portfolioLink && (
-                                    <div className="flex items-start gap-3">
-                                        <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-blue-900/40' : 'bg-blue-50'}`}>
-                                            <Globe className={`w-4 h-4 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                                        </div>
-                                        <div className="flex-grow">
-                                            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Portfolio Website</p>
-                                            <a
-                                                href={profile.jobPreferences.portfolioLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition shadow-sm ${darkMode ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-                                            >
-                                                Visit Portfolio <ExternalLink className="w-3 h-3" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {!profile.jobPreferences?.resumeLink && !profile.jobPreferences?.portfolioLink && (
-                                <div className="flex items-start gap-3">
-                                    <div className={`mt-1 p-2 rounded-lg ${darkMode ? 'bg-purple-900/40' : 'bg-purple-50'}`}>
-                                        <FileText className={`w-4 h-4 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                                    </div>
-                                    <p className={`text-sm italic font-medium py-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>No resume or portfolio link provided</p>
+                        <div className="p-[1px] bg-gradient-to-r from-orange-500/30 to-yellow-500/30 rounded-2xl">
+                            <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                <div className={`mb-3 p-2 rounded-full ${darkMode ? 'bg-[#121213]' : 'bg-white'} shadow-sm`}>
+                                    <Clock className={`w-5 h-5 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                                 </div>
-                            )}
+                                <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Notice Period</label>
+                                <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.jobPreferences?.noticePeriod || "Not specified"}</span>
+                            </div>
                         </div>
+
+                        <div className="p-[1px] bg-gradient-to-r from-green-500/30 to-emerald-500/30 rounded-2xl">
+                            <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                <div className={`mb-3 p-2 rounded-full ${darkMode ? 'bg-[#121213]' : 'bg-white'} shadow-sm`}>
+                                    <DollarSign className={`w-5 h-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
+                                </div>
+                                <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Expected Salary</label>
+                                <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.jobPreferences?.salary || "Not specified"}</span>
+                            </div>
+                        </div>
+
+                        {profile.jobPreferences?.resumeLink && (
+                            <div className="p-[1px] bg-gradient-to-r from-purple-500/30 to-fuchsia-500/30 rounded-2xl md:col-span-1">
+                                <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center justify-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-3 ${darkMode ? 'text-white' : 'text-black'}`}>Resume / CV</label>
+                                    <a href={profile.jobPreferences.resumeLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold rounded-lg transition shadow-sm ${darkMode ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/40 border border-purple-500/30' : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'}`}>
+                                        <FileText className="w-4 h-4" /> View Professional Resume <ExternalLink className="w-3 h-3 ml-1" />
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
+                        {profile.jobPreferences?.portfolioLink && (
+                            <div className="p-[1px] bg-gradient-to-r from-cyan-500/30 to-blue-500/30 rounded-2xl md:col-span-1">
+                                <div className={`p-4 rounded-[calc(1rem-1px)] h-full flex flex-col items-center text-center justify-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
+                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-3 ${darkMode ? 'text-white' : 'text-black'}`}>Portfolio Website</label>
+                                    <a href={profile.jobPreferences.portfolioLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold rounded-lg transition shadow-sm ${darkMode ? 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/40 border border-cyan-500/30' : 'bg-cyan-50 text-cyan-700 hover:bg-cyan-100 border border-cyan-200'}`}>
+                                        <Globe className="w-4 h-4" /> Visit Portfolio <ExternalLink className="w-3 h-3 ml-1" />
+                                    </a>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className={`py-6 text-center rounded-lg border-2 border-dashed ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50 border-gray-200'}`}>

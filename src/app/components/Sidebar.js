@@ -82,40 +82,47 @@ export default function Sidebar() {
   };
 
 
-  const fetchUserRole = useCallback(async (token) => {
+  const fetchUser = useCallback(async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/user/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (!res.ok) return;
+      if (!res.ok) return null;
 
       const userData = await res.json();
       if (userData) {
         localStorage.setItem("user", JSON.stringify(userData));
-        if (userData.role === "admin" || userData.isAdmin) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
+        setIsAdmin(userData.role === "admin" || userData.isAdmin);
+        return userData;
       }
     } catch (err) {
       console.error("Failed to fetch user role:", err);
     }
+    return null;
   }, [API_URL]);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return;
+    const initialize = async () => {
+      let user = JSON.parse(localStorage.getItem("user"));
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-    setIsAdmin(user.role === "admin" || user.isAdmin);
-    const token = localStorage.getItem("token");
+      if (!user) {
+        user = await fetchUser(token);
+      } else {
+        // Still verify role if user exists
+        setIsAdmin(user.role === "admin" || user.isAdmin);
+      }
 
-    fetchNotifications(token);
-    fetchCounts(token);
-    fetchUserRole(token);
+      if (user) {
+        fetchNotifications(token);
+        fetchCounts(token);
+        socket.emit("join", user._id);
+      }
+    };
 
-    socket.emit("join", user._id);
+    initialize();
 
     const handleNewNotification = (notification) => {
       const newNotif = { ...notification, isRead: false };
@@ -143,7 +150,7 @@ export default function Sidebar() {
       socket.off("receiveGroupMessage", handleNewGroupMessage);
       socket.off("newSignupRequest", handleNewSignupRequest);
     };
-  }, [API_URL, fetchNotifications, fetchCounts, fetchUserRole]);
+  }, [API_URL, fetchNotifications, fetchCounts, fetchUser]);
 
   // Clear new posts indicator when visiting home
   const handleHomeClick = () => {
@@ -181,7 +188,7 @@ export default function Sidebar() {
               onClick={() => markSectionAsSeen("admin-requests")}
               title="Admin Panel"
             >
-              <FaUserShield className={adminSignupRequestsCount > 0 ? "text-orange-500" : "text-yellow-300"} />
+              <FaUserShield className="" />
               {adminSignupRequestsCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
               )}
@@ -195,7 +202,7 @@ export default function Sidebar() {
             onClick={handleHomeClick}
             title="Home"
           >
-            <FaHome className={newPostsCount > 0 ? "text-orange-500 transition-colors" : ""} />
+            <FaHome className="transition-colors" />
             {newPostsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
             )}
@@ -208,7 +215,9 @@ export default function Sidebar() {
             onClick={handleNetworkClick}
             title="Network"
           >
-            <FaUserFriends className={pendingRequestsCount > 0 ? "text-orange-500 transition-colors" : ""} />
+            <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-colors">
+              <path d="M6.5 8.75V12.25L10 14.5L13.5 12.25V8.75L10 6.5L6.5 8.75ZM6.5 8.75L3.813 6.18M17.696 18.815L11.728 13.389M18.5 10.5H13.5M7.952 13.184L3.682 17.739M16.318 4.261L12.632 8.192M4.5 5.75L2.5 7L0.5 5.75V3.75L2.5 2.5L4.5 3.75V5.75ZM19.5 3.75L17.5 5L15.5 3.75V1.75L17.5 0.5L19.5 1.75V3.75ZM4.5 20.25L2.5 21.5L0.5 20.25V18.25L2.5 17L4.5 18.25V20.25ZM21 21.25L19 22.5L17 21.25V19.25L19 18L21 19.25V21.25ZM22.5 11.5L20.5 12.75L18.5 11.5V9.5L20.5 8.25L22.5 9.5V11.5Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             {pendingRequestsCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
             )}
@@ -221,7 +230,7 @@ export default function Sidebar() {
             onClick={handleGroupsClick}
             title="Groups"
           >
-            <FaUsers className={unreadGroupMessagesCount > 0 ? "text-orange-500 transition-colors" : ""} />
+            <FaUsers className="transition-colors" />
             {unreadGroupMessagesCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
             )}
@@ -238,7 +247,7 @@ export default function Sidebar() {
               className="hover:text-gray-200 block"
               title="Notifications"
             >
-              <FaBell className={`${unreadCount > 0 ? "text-orange-500" : ""} ${shakeNotification ? "animate-shake" : ""} transition-colors`} />
+              <FaBell className={`${shakeNotification ? "animate-shake" : ""} transition-colors`} />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
               )}
@@ -291,7 +300,7 @@ export default function Sidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#FAFAFA] dark:bg-[#121213] border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
         {/* Home */}
         <Link href="/dashboard" onClick={handleHomeClick} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaHome className={newPostsCount > 0 ? "text-orange-500" : ""} />
+          <FaHome className="" />
           {newPostsCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
@@ -299,7 +308,9 @@ export default function Sidebar() {
 
         {/* Network */}
         <Link href="/dashboard/network" onClick={handleNetworkClick} className={`${pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaUserFriends className={pendingRequestsCount > 0 ? "text-orange-500" : ""} />
+          <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="">
+            <path d="M6.5 8.75V12.25L10 14.5L13.5 12.25V8.75L10 6.5L6.5 8.75ZM6.5 8.75L3.813 6.18M17.696 18.815L11.728 13.389M18.5 10.5H13.5M7.952 13.184L3.682 17.739M16.318 4.261L12.632 8.192M4.5 5.75L2.5 7L0.5 5.75V3.75L2.5 2.5L4.5 3.75V5.75ZM19.5 3.75L17.5 5L15.5 3.75V1.75L17.5 0.5L19.5 1.75V3.75ZM4.5 20.25L2.5 21.5L0.5 20.25V18.25L2.5 17L4.5 18.25V20.25ZM21 21.25L19 22.5L17 21.25V19.25L19 18L21 19.25V21.25ZM22.5 11.5L20.5 12.75L18.5 11.5V9.5L20.5 8.25L22.5 9.5V11.5Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
           {pendingRequestsCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
@@ -307,7 +318,7 @@ export default function Sidebar() {
 
         {/* Groups */}
         <Link href="/dashboard/groups" onClick={handleGroupsClick} className={`${pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaUsers className={unreadGroupMessagesCount > 0 ? "text-orange-500" : ""} />
+          <FaUsers className="" />
           {unreadGroupMessagesCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}
@@ -315,7 +326,7 @@ export default function Sidebar() {
 
         {/* Notifications */}
         <Link href="/dashboard/notifications" className={`${pathname === "/dashboard/notifications" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
-          <FaBell className={unreadCount > 0 ? "text-orange-500" : ""} />
+          <FaBell className="" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
           )}

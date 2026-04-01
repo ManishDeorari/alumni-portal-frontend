@@ -183,11 +183,18 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             </span>
                         </p>
                         {profile.publicId && (
-                            <p className={`mt-1 text-sm font-semibold tracking-wide flex items-center justify-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <div className={`mt-1 text-sm font-semibold tracking-wide flex items-center justify-center gap-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                 <span className={`select-all px-2 py-0.5 rounded-md transition-all cursor-text ${darkMode ? 'bg-[#121213]/50 text-white/70 border border-white/5' : 'bg-[#FAFAFA]/70 text-gray-700 border border-black/5'}`}>
                                     @{profile.publicId}
                                 </span>
-                            </p>
+                                <button 
+                                    onClick={() => copyToClipboard(`${window.location.origin}/profile/${profile.publicId}`, "publicId")} 
+                                    className={`p-1 rounded-md transition-colors ${darkMode ? 'hover:bg-white/10 text-blue-400' : 'hover:bg-black/5 text-blue-600'}`}
+                                    title="Copy Profile Link"
+                                >
+                                    {copied === "publicId" ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                </button>
+                            </div>
                         )}
                     </div>
 
