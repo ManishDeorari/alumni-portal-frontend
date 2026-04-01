@@ -54,9 +54,9 @@ const UserConnectionsPage = () => {
             <Sidebar />
             <main className="max-w-4xl mx-auto px-4 py-10 space-y-8">
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-                    <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row items-center justify-between gap-6`}>
+                    <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} flex flex-col md:flex-row items-center justify-between gap-6`}>
                         <div className="flex items-center gap-4">
-                            <button onClick={() => window.history.back()} className={`p-2.5 rounded-xl transition-all border ${darkMode ? "bg-white/5 border-white/10 hover:bg-white/10 text-white" : "bg-gray-100 border-gray-200 hover:bg-gray-200 text-slate-900 shadow-gray-200/50"}`}>
+                            <button onClick={() => window.history.back()} className={`p-2.5 rounded-xl transition-all border ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 hover:bg-[#FAFAFA]/10 text-white" : "bg-gray-100 border-gray-200 hover:bg-gray-200 text-slate-900 shadow-gray-200/50"}`}>
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                             </button>
                             <div>
@@ -64,7 +64,7 @@ const UserConnectionsPage = () => {
                                 <p className={`text-sm font-medium ${darkMode ? 'text-blue-100/60' : 'text-slate-500'}`}>Networking Circle</p>
                             </div>
                         </div>
-                        <div className={`px-5 py-2 border rounded-2xl text-[10px] font-black uppercase tracking-widest ${darkMode ? 'bg-white/5 border-white/10 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+                        <div className={`px-5 py-2 border rounded-2xl text-[10px] font-black uppercase tracking-widest ${darkMode ? 'bg-[#FAFAFA]/5 border-white/10 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
                             {connections.length} Members
                         </div>
                     </div>
@@ -78,14 +78,14 @@ const UserConnectionsPage = () => {
                         <p className="text-white/80 font-black uppercase tracking-[0.2em] text-[11px] animate-pulse">Syncing Circle</p>
                     </div>
                 ) : connections.length === 0 ? (
-                    <div className={`text-center py-24 rounded-[3.5rem] border border-dashed backdrop-blur-md transition-all ${darkMode ? 'bg-slate-950/40 border-white/10' : 'bg-white/40 border-gray-200'}`}>
+                    <div className={`text-center py-24 rounded-[3.5rem] border border-dashed backdrop-blur-md transition-all ${darkMode ? 'bg-slate-950/40 border-white/10' : 'bg-[#FAFAFA]/40 border-gray-200'}`}>
                         <p className={`font-black uppercase tracking-widest text-[11px] ${darkMode ? 'text-white/30' : 'text-gray-400'}`}>No connections found for this user.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pb-20">
                         {connections.map((user) => (
                             <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-[3rem] group hover:from-blue-400 hover:to-purple-400 transition-all duration-500 shadow-xl hover:shadow-2xl">
-                                <div className={`p-6 rounded-[3rem] border flex items-center justify-between gap-6 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#121213] border-white/5' : 'bg-white border-gray-100'}`}>
+                                <div className={`p-6 rounded-[3rem] border flex items-center justify-between gap-6 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#121213] border-white/5' : 'bg-[#FAFAFA] border-gray-100'}`}>
                                     <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-colors ${darkMode ? 'bg-blue-500/5 group-hover:bg-blue-500/10' : 'bg-blue-50/5 group-hover:bg-blue-100/50'}`}></div>
                                     <div className="flex items-center gap-5 min-w-0 relative z-10 flex-1">
                                         <div className="relative p-[2px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-lg">
@@ -122,7 +122,7 @@ const UserConnectionsPage = () => {
                                                 onClick={() => handleConnect(user._id)}
                                                 disabled={requested[user._id]}
                                                 className={`px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-95 ${requested[user._id]
-                                                    ? "bg-white/5 text-white/30 cursor-not-allowed border border-white/5"
+                                                    ? "bg-[#FAFAFA]/5 text-white/30 cursor-not-allowed border border-white/5"
                                                     : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/20 shadow-lg"
                                                     }`}
                                             >

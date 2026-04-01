@@ -106,11 +106,11 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     return (
         <>
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
+            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-[#FAFAFA] border-gray-100"}`}>
                 <div className="p-8 overflow-y-auto custom-scrollbar">
                         <div className="flex justify-between items-center mb-8">
                             <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Create Group</h2>
-                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
                                 <FaTimes size={20} className="text-gray-400" />
                             </button>
                         </div>
@@ -148,7 +148,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                         placeholder="Mech Engineering 2024..."
                                     />
                                 </div>
@@ -160,7 +160,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                     <textarea
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none resize-none h-24 transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                        className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none resize-none h-24 transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                         placeholder="Describe the purpose of this alumni circle..."
                                     />
                                 </div>
@@ -176,7 +176,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                         className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${
                                             isAllFaculty 
                                             ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/20" 
-                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-purple-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-purple-500/50")
+                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-purple-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-purple-500/50")
                                         }`}
                                     >
                                         <span className="text-[10px] font-black uppercase tracking-widest">Add All Faculty</span>
@@ -189,7 +189,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                         className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${
                                             isAllAlumni 
                                             ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20" 
-                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-blue-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-blue-500/50")
+                                            : (darkMode ? "bg-gray-950 border-gray-800 text-gray-400 hover:border-blue-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-blue-500/50")
                                         }`}
                                     >
                                         <span className="text-[10px] font-black uppercase tracking-widest">Add All Alumni</span>
@@ -201,7 +201,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                     <button
                                         type="button"
                                         onClick={() => setShowMemberSearch(true)}
-                                        className={`w-full p-4 rounded-[calc(1rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950 text-gray-400" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+                                        className={`w-full p-4 rounded-[calc(1rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950 text-gray-400" : "bg-[#FAFAFA] text-gray-500 hover:bg-gray-50"}`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <FaPlus size={12} className="text-blue-500" />

@@ -199,13 +199,13 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 text-gray-900">
-            <div className={`rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+            <div className={`rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <Briefcase className="w-5 h-5" /> Edit Experience
                     </h2>
-                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition">
+                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -220,7 +220,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                     </datalist>
 
                     {experiences.map((exp, index) => (
-                        <div key={index} className={`p-6 border rounded-2xl relative shadow-sm hover:shadow-md transition-all ${darkMode ? 'bg-slate-800 border-white/10' : 'bg-white border-gray-200'}`}>
+                        <div key={index} className={`p-6 border rounded-2xl relative shadow-sm hover:shadow-md transition-all ${darkMode ? 'bg-slate-800 border-white/10' : 'bg-[#FAFAFA] border-gray-200'}`}>
                             <button
                                 onClick={() => removeExperience(index)}
                                 className={`absolute top-4 right-4 p-2 rounded-full transition ${darkMode ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' : 'text-red-400 hover:text-red-600 hover:bg-red-50'}`}
@@ -239,7 +239,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                         <input
                                             type="text"
                                             list="job-titles"
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-title`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-title`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
                                             value={exp.title || ""}
                                             onChange={(e) => handleChange(index, "title", e.target.value)}
                                             placeholder="Ex: Retail Sales Manager"
@@ -249,7 +249,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                     <div className="space-y-1.5">
                                         <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Employment type</label>
                                         <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={exp.employmentType || ""}
                                             onChange={(e) => handleChange(index, "employmentType", e.target.value)}
                                         >
@@ -267,7 +267,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                     <input
                                         type="text"
                                         list="companies"
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-company`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
+                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-company`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
                                         value={exp.company || ""}
                                         onChange={(e) => handleChange(index, "company", e.target.value)}
                                         placeholder="Ex: Microsoft"
@@ -296,7 +296,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                     </label>
                                     <div className="grid grid-cols-2 gap-4">
                                         <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={exp.startMonth || ""}
                                             onChange={(e) => handleChange(index, "startMonth", e.target.value)}
                                         >
@@ -304,7 +304,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                             {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                                         </select>
                                         <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={exp.startYear || ""}
                                             onChange={(e) => handleChange(index, "startYear", e.target.value)}
                                         >
@@ -323,7 +323,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                         </label>
                                         <div className="grid grid-cols-2 gap-4">
                                             <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                                 value={exp.endMonth || ""}
                                                 onChange={(e) => handleChange(index, "endMonth", e.target.value)}
                                             >
@@ -331,7 +331,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                                 {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                                             </select>
                                             <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                                 value={exp.endYear || ""}
                                                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
                                             >
@@ -356,7 +356,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                                 handleChange(index, "selectedState", "");
                                                 handleChange(index, "selectedCity", "");
                                             }}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         >
                                             <option value="">Select Country</option>
                                             {Country.getAllCountries().map((c) => (
@@ -371,7 +371,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                                 handleChange(index, "selectedState", e.target.value);
                                                 handleChange(index, "selectedCity", "");
                                             }}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         >
                                             <option value="">Select State</option>
                                             {exp.selectedCountry && State.getStatesOfCountry(exp.selectedCountry).map((s) => (
@@ -383,7 +383,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                             value={exp.selectedCity}
                                             disabled={!exp.selectedState}
                                             onChange={(e) => handleChange(index, "selectedCity", e.target.value)}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         >
                                             <option value="">Select City</option>
                                             {exp.selectedState && City.getCitiesOfState(exp.selectedCountry, exp.selectedState).map((city) => (
@@ -397,7 +397,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                 <div className="space-y-1.5 md:w-1/2">
                                     <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Location type</label>
                                     <select
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         value={exp.locationType || ""}
                                         onChange={(e) => handleChange(index, "locationType", e.target.value)}
                                     >
@@ -410,7 +410,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                 <div className="space-y-1.5">
                                     <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Description</label>
                                     <textarea
-                                        className={`w-full p-3 border rounded-lg text-sm focus:ring-2 outline-none transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
+                                        className={`w-full p-3 border rounded-lg text-sm focus:ring-2 outline-none transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
                                         value={exp.description || ""}
                                         onChange={(e) => handleChange(index, "description", e.target.value)}
                                         placeholder="Describe your achievements..."
@@ -422,7 +422,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                     <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Skills (Optional)</label>
                                     <input
                                         type="text"
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
+                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
                                         value={exp.skills || ""}
                                         onChange={(e) => handleChange(index, "skills", e.target.value)}
                                         placeholder="Agile, React, Management (comma separated)"

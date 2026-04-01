@@ -28,7 +28,7 @@ export default function ReplyBox({ parentId, onSubmit, darkMode = false }) {
         value={replyText}
         onChange={(e) => setReplyText(e.target.value)}
         placeholder="Write a reply..."
-        className={`flex-grow border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-black bg-white text-black"} rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-blue-500`}
+        className={`flex-grow border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-black bg-[#FAFAFA] text-black"} rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-blue-500`}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();

@@ -103,7 +103,7 @@ export default function MyPostsPage() {
       {/* 🔷 Left-most Back Button */}
       <button
         onClick={() => router.back()}
-        className={`fixed top-24 left-8 z-50 flex items-center justify-center p-3 border rounded-xl transition-all backdrop-blur-md group shadow-xl ${darkMode ? 'bg-white/10 border-white/20 text-white hover:bg-white/20' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
+        className={`fixed top-24 left-8 z-50 flex items-center justify-center p-3 border rounded-xl transition-all backdrop-blur-md group shadow-xl ${darkMode ? 'bg-[#FAFAFA]/10 border-white/20 text-white hover:bg-[#FAFAFA]/20' : 'bg-[#FAFAFA]/20 border-white/30 text-white hover:bg-[#FAFAFA]/30'}`}
         title="Go Back"
       >
         <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
@@ -111,7 +111,7 @@ export default function MyPostsPage() {
 
       <div className="max-w-4xl mx-auto py-12 px-4">
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl mb-10 overflow-hidden">
-          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950' : 'bg-white'}`}>
+          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950' : 'bg-[#FAFAFA]'}`}>
             <div className="flex items-center gap-4">
               <div className="h-10 w-2 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
               <h1 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>MY POSTS</h1>
@@ -132,7 +132,7 @@ export default function MyPostsPage() {
                   darkMode={darkMode}
                 />
               ) : (
-                <div key={post._id} className={`p-8 rounded-[3rem] animate-pulse ${darkMode ? 'bg-[#121213]/50' : 'bg-white/50'}`}>Loading content…</div>
+                <div key={post._id} className={`p-8 rounded-[3rem] animate-pulse ${darkMode ? 'bg-[#121213]/50' : 'bg-[#FAFAFA]/50'}`}>Loading content…</div>
               )
             ))}
 
@@ -140,7 +140,7 @@ export default function MyPostsPage() {
               <div className="text-center mt-10">
                 <button
                   onClick={handleLoadMore}
-                  className="px-10 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-lg active:scale-95"
+                  className="px-10 py-4 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-lg active:scale-95"
                 >
                   Load More Posts
                 </button>
@@ -151,7 +151,7 @@ export default function MyPostsPage() {
             )}
           </div>
         ) : (
-          <div className={`py-24 text-center rounded-[3rem] border border-white/10 backdrop-blur-md ${darkMode ? 'bg-slate-950/50' : 'bg-white/10'}`}>
+          <div className={`py-24 text-center rounded-[3rem] border border-white/10 backdrop-blur-md ${darkMode ? 'bg-slate-950/50' : 'bg-[#FAFAFA]/10'}`}>
             <h2 className="text-2xl font-black text-white/80">You haven&apos;t created any posts yet.</h2>
             <p className="text-white/60 mt-3 font-medium">Your future thoughts and shared experiences will appear here.</p>
           </div>

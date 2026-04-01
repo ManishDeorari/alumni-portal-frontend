@@ -210,7 +210,7 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#121213] border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#FAFAFA] dark:bg-[#121213] border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
         <Link href="/dashboard" onClick={() => markSectionAsSeen("home")} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <FaHome className={newPostsCount > 0 ? "text-orange-500" : ""} />
           {newPostsCount > 0 && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>}

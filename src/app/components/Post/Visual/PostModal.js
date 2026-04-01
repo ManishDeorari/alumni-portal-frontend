@@ -82,13 +82,13 @@ export default function PostModal({
         exit={{ scale: 0.9, opacity: 0 }}
         className={`relative p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[2.6rem] max-w-4xl w-full max-h-[90vh] shadow-[0_20px_60px_rgba(37,99,235,0.4)] flex flex-col`}
       >
-        <div className={`${darkMode ? "bg-[#0f172a]" : "bg-white"} rounded-[2.5rem] p-8 overflow-y-auto overflow-x-visible custom-scrollbar flex-1 relative`}>
+        <div className={`${darkMode ? "bg-[#0f172a]" : "bg-[#FAFAFA]"} rounded-[2.5rem] p-8 overflow-y-auto overflow-x-visible custom-scrollbar flex-1 relative`}>
           <button
             onClick={() => {
               if (editing) setEditing(false);
               setShowModal(false);
             }}
-            className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-all p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full z-[110]"
+            className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-all p-2 hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 rounded-full z-[110]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
@@ -136,7 +136,7 @@ export default function PostModal({
             />
 
             {post.type === "Event" && (
-              <div className={`mt-6 p-6 rounded-3xl border ${darkMode ? "bg-white/5 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-4`}>
+              <div className={`mt-6 p-6 rounded-3xl border ${darkMode ? "bg-[#FAFAFA]/5 border-white/10" : "bg-blue-50/50 border-blue-100"} space-y-4`}>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Start</span>

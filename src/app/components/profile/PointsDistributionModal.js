@@ -73,13 +73,13 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
+                        className="bg-[#FAFAFA] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
                     >
                         {/* Header */}
                         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white relative">
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+                                className="absolute top-4 right-4 p-1 hover:bg-[#FAFAFA]/20 rounded-full transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
@@ -107,7 +107,7 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                                     <div key={group.id} className="group/item">
                                         <div
                                             onClick={() => group.children && toggleExpand(group.id)}
-                                            className={`flex items-center justify-between p-3 rounded-xl transition-all border ${group.children ? 'cursor-pointer hover:bg-gray-50' : 'bg-white'
+                                            className={`flex items-center justify-between p-3 rounded-xl transition-all border ${group.children ? 'cursor-pointer hover:bg-gray-50' : 'bg-[#FAFAFA]'
                                                 } ${expanded[group.id] ? 'bg-gray-50 border-gray-200' : 'border-transparent'}`}
                                         >
                                             <div className="flex items-center gap-3">

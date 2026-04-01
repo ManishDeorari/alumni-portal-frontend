@@ -41,12 +41,12 @@ export default function GroupImageCropperModal({ isOpen, imageSrc, onComplete, o
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-      <div className={`relative w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
+      <div className={`relative w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar ${darkMode ? "bg-gray-900 border-white/10" : "bg-[#FAFAFA] border-gray-100"}`}>
         
         {/* Header */}
         <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
           <h2 className={`text-xl font-black uppercase tracking-widest ${darkMode ? "text-white" : "text-gray-900"}`}>Adjust Group Photo</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
             <X className="text-gray-500" />
           </button>
         </div>
@@ -90,14 +90,14 @@ export default function GroupImageCropperModal({ isOpen, imageSrc, onComplete, o
             <div className="flex gap-4">
                <button
                   onClick={() => setRotation((r) => r - 90)}
-                  className={`p-3 rounded-2xl transition-all ${darkMode ? "bg-white/5 hover:bg-white/10 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"}`}
+                  className={`p-3 rounded-2xl transition-all ${darkMode ? "bg-[#FAFAFA]/5 hover:bg-[#FAFAFA]/10 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"}`}
                   title="Rotate Left"
                 >
                   <RotateCcw size={16} />
                 </button>
                 <button
                   onClick={() => setRotation((r) => r + 90)}
-                  className={`p-3 rounded-2xl transition-all ${darkMode ? "bg-white/5 hover:bg-white/10 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"}`}
+                  className={`p-3 rounded-2xl transition-all ${darkMode ? "bg-[#FAFAFA]/5 hover:bg-[#FAFAFA]/10 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"}`}
                   title="Rotate Right"
                 >
                   <RotateCw size={16} />

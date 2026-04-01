@@ -40,7 +40,7 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
       {!isPublicView && (
         <button
           onClick={() => setShowEditor(true)}
-          className={`absolute bottom-2 right-2 p-2 rounded-full shadow cursor-pointer z-10 transition-colors ${darkMode ? 'bg-slate-700 text-white hover:bg-slate-600' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+          className={`absolute bottom-2 right-2 p-2 rounded-full shadow cursor-pointer z-10 transition-colors ${darkMode ? 'bg-slate-700 text-white hover:bg-slate-600' : 'bg-[#FAFAFA] text-gray-700 hover:bg-gray-50'}`}
           title="Edit banner"
         >
           <Camera size={20} />

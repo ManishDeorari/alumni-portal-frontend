@@ -169,7 +169,7 @@ export default function AlumniExport() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Search & Filters */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl">
-                <section className={`${darkMode ? "bg-black" : "bg-white"} p-8 rounded-[calc(1.5rem-1px)] space-y-8`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-8 rounded-[calc(1.5rem-1px)] space-y-8`}>
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1 p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
                             <div className="relative h-full">
@@ -179,7 +179,7 @@ export default function AlumniExport() {
                                     value={searchQuery}
                                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                                    className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black"} rounded-2xl outline-none transition-all font-medium`}
                                 />
                                 <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-blue-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
@@ -203,7 +203,7 @@ export default function AlumniExport() {
                                     placeholder="All Courses"
                                     uppercase={true}
                                     placement="top"
-                                    className={`w-full px-4 py-4 ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold`}
+                                    className={`w-full px-4 py-4 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold`}
                                 />
                             </div>
                         </div>
@@ -213,7 +213,7 @@ export default function AlumniExport() {
                                 <select
                                     value={filters.year}
                                     onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                                    className={`w-full px-4 py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold appearance-none cursor-pointer`}
+                                    className={`w-full px-4 py-[15px] ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold appearance-none cursor-pointer`}
                                 >
                                     <option value="">All Years</option>
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
@@ -229,7 +229,7 @@ export default function AlumniExport() {
                                     placeholder="e.g. IT, Finance"
                                     value={filters.industry}
                                     onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                                    className={`w-full px-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-200"} rounded-xl outline-none text-xs`}
+                                    className={`w-full px-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-200"} rounded-xl outline-none text-xs`}
                                 />
                             </div>
                         </div>
@@ -240,7 +240,7 @@ export default function AlumniExport() {
             {/* Results & Export */}
             {alumni.length > 0 && (
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-                    <section className={`${darkMode ? "bg-black" : "bg-white"} p-8 rounded-[calc(1.5rem-1px)] space-y-6`}>
+                    <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-8 rounded-[calc(1.5rem-1px)] space-y-6`}>
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="h-10 w-2 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.4)]"></div>
@@ -256,10 +256,10 @@ export default function AlumniExport() {
                         </div>
 
                         <div className="p-[1px] bg-gradient-to-r from-blue-400/50 via-purple-400/50 to-pink-400/50 rounded-2xl overflow-hidden shadow-xl">
-                            <div className={`overflow-x-auto custom-scrollbar ${darkMode ? "bg-black" : "bg-white"}`}>
+                            <div className={`overflow-x-auto custom-scrollbar ${darkMode ? "bg-black" : "bg-[#FAFAFA]"}`}>
                                 <table className="w-full">
                                     <thead>
-                                        <tr className={`${darkMode ? "text-blue-400 border-white/10 bg-white/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
+                                        <tr className={`${darkMode ? "text-blue-400 border-white/10 bg-[#FAFAFA]/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
                                             <th className="py-4 px-6 text-left">Alumni</th>
                                             <th className="py-4 px-6 text-left">Course &amp; Year</th>
                                             <th className="py-4 px-6 text-left">Location</th>
@@ -270,7 +270,7 @@ export default function AlumniExport() {
                                         {/* Gradient Separator Line */}
                                         <tr className="h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-sm border-0"><td colSpan="4" className="p-0"></td></tr>
                                         {alumni.slice(0, 10).map((u) => (
-                                            <tr key={u._id} className={`transition-all ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"}`}>
+                                            <tr key={u._id} className={`transition-all ${darkMode ? "hover:bg-[#FAFAFA]/5" : "hover:bg-gray-50"}`}>
                                                 <td className="py-4 px-6">
                                                     <div>
                                                         <p className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"}`}>{u.name}</p>
@@ -278,7 +278,7 @@ export default function AlumniExport() {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <span className={`text-xs font-black ${darkMode ? "text-blue-300 bg-white/5 border-white/10" : "text-slate-900 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border`}>
+                                                    <span className={`text-xs font-black ${darkMode ? "text-blue-300 bg-[#FAFAFA]/5 border-white/10" : "text-slate-900 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border`}>
                                                         {u.course} ({u.year})
                                                     </span>
                                                 </td>
@@ -293,7 +293,7 @@ export default function AlumniExport() {
                                     </tbody>
                                 </table>
                                 {alumni.length > 10 && (
-                                    <div className={`p-4 text-center border-t ${darkMode ? "bg-white/5 border-white/5" : "bg-gray-50 border-gray-100"}`}>
+                                    <div className={`p-4 text-center border-t ${darkMode ? "bg-[#FAFAFA]/5 border-white/5" : "bg-gray-50 border-gray-100"}`}>
                                         <p className={`text-xs ${darkMode ? "text-blue-400" : "text-blue-600"} font-black uppercase tracking-widest italic`}>
                                             Showing first 10 results. Click Download to get all {alumni.length} entries.
                                         </p>

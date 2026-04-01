@@ -110,14 +110,14 @@ const NetworkPage = () => {
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8 relative z-10">
         {/* Header Section */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row justify-between items-center gap-6`}>
+          <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div>
               <h1 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
               <p className={`text-sm ${darkMode ? 'text-blue-200/60' : 'text-slate-600'} font-medium`}>Build your professional circle with alumni</p>
             </div>
             <div className="flex gap-4">
               <div className="relative p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold transition-all backdrop-blur-md ${darkMode ? 'bg-[#121213]/90 text-white hover:bg-slate-800' : 'bg-white/90 text-slate-900 hover:bg-gray-50'}`}>
+                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold transition-all backdrop-blur-md ${darkMode ? 'bg-[#121213]/90 text-white hover:bg-slate-800' : 'bg-[#FAFAFA]/90 text-slate-900 hover:bg-gray-50'}`}>
                   My Network
                   {currentUser?.connections?.length > 0 && (
                     <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]">
@@ -143,7 +143,7 @@ const NetworkPage = () => {
 
         {/* Search Section */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl">
-          <div className={`px-10 py-10 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'} space-y-8`}>
+          <div className={`px-10 py-10 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-8`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-3 relative p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all">
                 <div className="relative h-full">
@@ -153,7 +153,7 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
+                    className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all font-medium ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-[#FAFAFA] text-black placeholder-black border border-gray-300'}`}
                   />
                   <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white/30' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -174,7 +174,7 @@ const NetworkPage = () => {
                   options={COURSE_OPTIONS}
                   placeholder="Course (e.g. BCA)"
                   uppercase={true}
-                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
+                  className={`w-full pl-4 pr-10 py-3.5 rounded-2xl font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-[#FAFAFA] text-black placeholder-black border border-gray-300'}`}
                 />
               </div>
 
@@ -196,7 +196,7 @@ const NetworkPage = () => {
                   placeholder="Industry"
                   value={filters.industry}
                   onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-300'}`}
+                  className={`w-full px-4 py-3.5 rounded-2xl outline-none font-bold text-[10px] uppercase tracking-widest ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-[#FAFAFA] text-black placeholder-black border border-gray-300'}`}
                 />
               </div>
             </div>
@@ -206,14 +206,14 @@ const NetworkPage = () => {
         {/* Search Results */}
         {searched && alumni.length === 0 ? (
           <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-xl overflow-hidden">
-            <div className={`p-10 rounded-[calc(1.5rem-1px)] text-center ${darkMode ? 'bg-black border-white/10 text-white' : 'bg-white border-gray-100 text-slate-900'}`}>
+            <div className={`p-10 rounded-[calc(1.5rem-1px)] text-center ${darkMode ? 'bg-black border-white/10 text-white' : 'bg-[#FAFAFA] border-gray-100 text-slate-900'}`}>
               <h2 className="text-xl font-black">No Results Found</h2>
               <p className={`mt-2 text-sm ${darkMode ? 'text-white/40' : 'text-slate-500'}`}>Try adjusting your filters or search terms</p>
             </div>
           </div>
         ) : alumni.length > 0 && (
           <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden">
-            <div className={`px-8 py-8 rounded-[calc(2.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'} space-y-6`}>
+            <div className={`px-8 py-8 rounded-[calc(2.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-6`}>
               <div className="flex items-center gap-3">
                 <div className="h-8 w-1.5 bg-blue-500 rounded-full"></div>
                 <h2 className={`text-xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Search Results</h2>
@@ -221,7 +221,7 @@ const NetworkPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {alumni.map((user) => (
                   <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-2xl group transition-all duration-500">
-                    <div className={`rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900 border'}`}>
+                    <div className={`rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900 border'}`}>
                       <div className="flex items-center gap-4 min-w-0 relative z-10">
                         <div className="relative p-[1px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0">
                           <Image
@@ -265,7 +265,7 @@ const NetworkPage = () => {
           ].map((section) => (
             section.data?.length > 0 && (
               <div key={section.id} className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden">
-                <div className={`px-8 py-8 rounded-[calc(2.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'} space-y-6`}>
+                <div className={`px-8 py-8 rounded-[calc(2.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-6`}>
                   <div className="flex items-center gap-3">
                     <div className={`h-8 w-1.5 rounded-full ${section.color === 'blue' ? 'bg-blue-600' : section.color === 'amber' ? 'bg-amber-500' : 'bg-purple-600'}`}></div>
                     <h2 className={`text-xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{section.icon} {section.title}</h2>
@@ -273,7 +273,7 @@ const NetworkPage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {section.data.map((user) => (
                       <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-2xl h-full group transition-all duration-500">
-                        <div className={`rounded-2xl flex flex-col items-center text-center p-5 space-y-3 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900 border'}`}>
+                        <div className={`rounded-2xl flex flex-col items-center text-center p-5 space-y-3 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900 border'}`}>
                           <div className="relative p-[1px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0">
                             <Image
                               src={user.profilePicture || "/default-profile.jpg"}

@@ -76,24 +76,24 @@ export default function ImageViewerModal({ isOpen, onClose, imageUrl }) {
                 )}
                 <button 
                     onClick={handleZoomIn}
-                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
                     title="Zoom In"
                 >
                     <FaSearchPlus size={18} />
                 </button>
                 <button 
                     onClick={handleZoomOut}
-                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
                     title="Zoom Out"
                 >
                     <FaSearchMinus size={18} />
                 </button>
-                <div className="w-[1px] h-8 bg-white/20 mx-1" />
+                <div className="w-[1px] h-8 bg-[#FAFAFA]/20 mx-1" />
                 <a 
                     href={imageUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
                     title="Download Full Image"
                 >
                     <FaDownload size={18} />

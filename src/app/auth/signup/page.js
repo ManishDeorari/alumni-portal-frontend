@@ -77,7 +77,7 @@ export default function SignupPage() {
           transition={{ duration: 0.6 }}
           className="w-full lg:w-1/2 max-w-[500px] lg:pl-16"
         >
-          <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-white text-gray-900"} backdrop-blur-3xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.2rem] py-3.5 px-8 md:py-4 md:px-10 shadow-2xl space-y-1.5 relative overflow-hidden transition-all duration-500`}>
+          <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-3xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.2rem] py-3.5 px-8 md:py-4 md:px-10 shadow-2xl space-y-1.5 relative overflow-hidden transition-all duration-500`}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
 
             <div className="space-y-1 text-center">
@@ -197,7 +197,7 @@ export default function SignupPage() {
               <Link
                 href="/"
                 className={`group inline-flex items-center gap-2.5 px-6 py-2 rounded-full transition-all duration-300 ${darkMode
-                    ? "text-gray-400 hover:text-white hover:bg-white/5"
+                    ? "text-gray-400 hover:text-white hover:bg-[#FAFAFA]/5"
                     : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
                   }`}
               >
@@ -232,9 +232,9 @@ export default function SignupPage() {
             Build lifelong connections, share opportunities, and keep the university spirit alive.
           </p>
           <div className="mt-8 flex justify-end gap-4">
-            <div className="w-12 h-1.5 bg-white rounded-full opacity-20"></div>
+            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
             <div className="w-12 h-1.5 bg-blue-400 rounded-full"></div>
-            <div className="w-12 h-1.5 bg-white rounded-full opacity-20"></div>
+            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
           </div>
         </motion.div>
 
@@ -251,7 +251,7 @@ export default function SignupPage() {
       <div className="fixed bottom-6 right-6 z-[100]">
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-white/10 border-white/20 text-yellow-400 hover:bg-white/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
+          className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-[#FAFAFA]/10 border-white/20 text-yellow-400 hover:bg-[#FAFAFA]/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
           title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {darkMode ? (

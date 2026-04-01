@@ -148,13 +148,13 @@ export default function MemberSearchModal({
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
             {/* Height reduced by 20% -> h-[75vh] instead of full or larger h */}
-            <div className={`w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-200"}`}>
+            <div className={`w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-[#FAFAFA] border-gray-200"}`}>
 
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{title}</h2>
-                        <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                        <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
                             <FaTimes className="text-gray-500" />
                         </button>
                     </div>
@@ -170,11 +170,11 @@ export default function MemberSearchModal({
                             className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
                                 isAllFacultyFlag 
                                 ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/20" 
-                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-purple-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-purple-500/50")
+                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-purple-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-purple-500/50")
                             }`}
                         >
                             <span>Add All Faculty</span>
-                            {isAllFacultyFlag && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                            {isAllFacultyFlag && <div className="w-1.5 h-1.5 rounded-full bg-[#FAFAFA] animate-pulse" />}
                         </button>
 
                         <button
@@ -183,11 +183,11 @@ export default function MemberSearchModal({
                             className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
                                 isAllAlumniFlag 
                                 ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20" 
-                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-blue-500/50" : "bg-white border-gray-200 text-gray-500 hover:border-blue-500/50")
+                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-blue-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-blue-500/50")
                             }`}
                         >
                             <span>Add All Alumni</span>
-                            {isAllAlumniFlag && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                            {isAllAlumniFlag && <div className="w-1.5 h-1.5 rounded-full bg-[#FAFAFA] animate-pulse" />}
                         </button>
                     </div>
 
@@ -196,7 +196,7 @@ export default function MemberSearchModal({
                         <div className="grid grid-cols-3 gap-3">
                             {/* Name/General Query */}
                             <div className="col-span-2 p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950 focus-within:bg-gray-900" : "bg-white focus-within:bg-gray-50"}`}>
+                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950 focus-within:bg-gray-900" : "bg-[#FAFAFA] focus-within:bg-gray-50"}`}>
                                     <FaSearch className="text-gray-400" size={14} />
                                     <input
                                         type="text"
@@ -213,7 +213,7 @@ export default function MemberSearchModal({
                                 <select
                                     value={roleFilter}
                                     onChange={(e) => setRoleFilter(e.target.value)}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
+                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-gray-950 text-white" : "bg-[#FAFAFA] text-gray-900"}`}
                                 >
                                     <option value="ALL">ALL ROLES</option>
                                     <option value="ALUMNI">ALUMNI</option>
@@ -232,7 +232,7 @@ export default function MemberSearchModal({
                                     options={COURSE_OPTIONS}
                                     placeholder="Course (e.g. B.Tech)"
                                     uppercase={true}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
+                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all ${darkMode ? "bg-gray-950 text-white" : "bg-[#FAFAFA] text-gray-900"}`}
                                 />
                             </div>
 
@@ -241,7 +241,7 @@ export default function MemberSearchModal({
                                     value={year}
                                     disabled={!course}
                                     onChange={(e) => setYear(e.target.value)}
-                                    className={`w-full px-4 py-[11px] rounded-[calc(1rem-1px)] appearance-none font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                    className={`w-full px-4 py-[11px] rounded-[calc(1rem-1px)] appearance-none font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                 >
                                     <option value="">{course ? "Start Year" : "Select Course First"}</option>
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
@@ -304,10 +304,10 @@ export default function MemberSearchModal({
                                         >
                                             <div className={`p-4 flex items-center gap-4 rounded-[calc(1.5rem-1px)] cursor-pointer transition-all border group ${selectedIds.includes(String(user._id))
                                                     ? (darkMode ? "bg-blue-600/20 border-blue-500 shadow-xl" : "bg-blue-50 border-blue-200 shadow-xl")
-                                                    : (darkMode ? "bg-gray-900 border-transparent hover:bg-gray-850" : "bg-white border-transparent hover:bg-gray-50")
+                                                    : (darkMode ? "bg-gray-900 border-transparent hover:bg-gray-850" : "bg-[#FAFAFA] border-transparent hover:bg-gray-50")
                                                 }`}>
                                                 <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-400">
-                                                    <div className="relative w-12 h-12 rounded-[calc(1rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
+                                                    <div className="relative w-12 h-12 rounded-[calc(1rem-2px)] overflow-hidden bg-[#FAFAFA] dark:bg-gray-800">
                                                         <Image 
                                                             src={user.profilePicture || "/default-profile.jpg"} 
                                                             fill 

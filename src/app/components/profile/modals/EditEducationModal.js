@@ -238,13 +238,13 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <GraduationCap className="w-5 h-5" /> Edit Education
                     </h2>
-                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition">
+                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -263,7 +263,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     </datalist>
 
                     {educations.map((edu, index) => (
-                        <div key={index} className={`border rounded-2xl relative shadow-sm transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-gray-200'} ${expandedIndex === index ? 'ring-2 ring-blue-500/20 shadow-md' : 'hover:shadow-md'}`}>
+                        <div key={index} className={`border rounded-2xl relative shadow-sm transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-[#FAFAFA] border-gray-200'} ${expandedIndex === index ? 'ring-2 ring-blue-500/20 shadow-md' : 'hover:shadow-md'}`}>
                             {/* Header Section */}
                             <div
                                 onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
@@ -314,7 +314,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                         <input
                                             type="text"
                                             list="school-list-final"
-                                            className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500/30'} ${errors[`${index}-institution`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500/30'} ${errors[`${index}-institution`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
                                             value={edu.institution || ""}
                                             onChange={(e) => handleChange(index, "institution", e.target.value)}
                                             placeholder="Ex: Graphic Era Hill University"
@@ -327,7 +327,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                         <div className="space-y-1.5 animate-fadeIn">
                                             <label className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>Campus</label>
                                             <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                                 value={edu.campus || ""}
                                                 onChange={(e) => handleChange(index, "campus", e.target.value)}
                                             >
@@ -346,7 +346,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                 value={edu.degree || ""}
                                                 onChange={(e) => !edu.isFixed && handleChange(index, "degree", e.target.value)}
                                                 disabled={edu.isFixed}
-                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-[#121213] text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-[#121213] text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-[#FAFAFA] text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
                                             >
                                                 <option value="">Select Level</option>
                                                 {DEGREE_SUGGESTIONS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -367,7 +367,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                         options={COURSE_SUGGESTIONS}
                                                         placeholder="Ex: B.Tech, MCA, etc."
                                                         uppercase={true}
-                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
+                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
                                                     />
                                                     {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-course`]}</p>}
                                                 </div>
@@ -382,7 +382,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                         options={BRANCH_SUGGESTIONS}
                                                         placeholder="Ex: CS, IT, ME, etc."
                                                         uppercase={true}
-                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-gray-900 border-gray-300'}`}
+                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-300'}`}
                                                     />
                                                 </div>
                                             </>
@@ -392,7 +392,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                             <input
                                                 type="text"
                                                 list="study-list"
-                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                                 value={edu.fieldOfStudy || ""}
                                                 onChange={(e) => handleChange(index, "fieldOfStudy", e.target.value)}
                                                 placeholder="Ex: Computer Science"
@@ -408,7 +408,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                             </label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
                                                     value={edu.startMonth || ""}
                                                     onChange={(e) => handleChange(index, "startMonth", e.target.value)}
                                                 >
@@ -416,7 +416,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                     {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                                                 </select>
                                                 <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
                                                     value={edu.startYear || ""}
                                                     onChange={(e) => handleChange(index, "startYear", e.target.value)}
                                                 >
@@ -431,7 +431,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                             </label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
                                                     value={edu.endMonth || ""}
                                                     onChange={(e) => handleChange(index, "endMonth", e.target.value)}
                                                 >
@@ -439,7 +439,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                     {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                                                 </select>
                                                 <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
                                                     value={edu.endYear || ""}
                                                     onChange={(e) => handleChange(index, "endYear", e.target.value)}
                                                 >
@@ -458,7 +458,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                         </label>
                                         <input
                                             type="text"
-                                            className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={edu.grade || ""}
                                             onChange={(e) => handleChange(index, "grade", e.target.value)}
                                             placeholder={edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Ex: 95%" : "Ex: 9.0 CGPA"}
@@ -476,7 +476,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                             </span>
                                         </div>
                                         <textarea
-                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-20 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-20 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={edu.activities || ""}
                                             onChange={(e) => handleChange(index, "activities", e.target.value.slice(0, 500))}
                                             placeholder="Ex: Alpha Phi Omega, Marching Band, Volleyball"
@@ -494,7 +494,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                             </span>
                                         </div>
                                         <textarea
-                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                             value={edu.description || ""}
                                             onChange={(e) => handleChange(index, "description", e.target.value.slice(0, 1000))}
                                             placeholder="Describe your studies, awards, or projects..."

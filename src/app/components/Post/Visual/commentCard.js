@@ -142,7 +142,7 @@ export default function CommentCard({
             : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-gray-50 text-black border-gray-200"} pl-6 ml-3 border-l-[3px] border-blue-300`
           : isOwn
             ? `${darkMode ? "bg-blue-600/10 border-blue-600/30" : "bg-blue-50 border-blue-200"}`
-            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-white border-gray-200"}`
+            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-[#FAFAFA] border-gray-200"}`
         }
         ${justPosted ? "ring-2 ring-blue-400" : ""}
       `}
@@ -181,7 +181,7 @@ export default function CommentCard({
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   placeholder="Edit your comment..."
-                  className={`w-full border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-gray-200 bg-white text-gray-900"} rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none`}
+                  className={`w-full border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-gray-200 bg-[#FAFAFA] text-gray-900"} rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none`}
                 />
                 <EmojiPickerToggle
                   onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
@@ -276,7 +276,7 @@ export default function CommentCard({
                 className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 transition-all border 
                   ${reacted
                     ? (darkMode ? "bg-blue-500/10 border-blue-500/30 text-blue-400" : "bg-blue-50 border-blue-400 text-blue-700")
-                    : (darkMode ? "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200")}`}
+                    : (darkMode ? "bg-[#FAFAFA]/5 border-white/5 text-gray-400 hover:bg-[#FAFAFA]/10" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200")}`}
               >
                 <span>{emoji}</span>
                 <span className="font-semibold">{users.length}</span>
@@ -306,7 +306,7 @@ export default function CommentCard({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-200"} border shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5`}
+                  className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-[#FAFAFA] border-gray-200"} border shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5`}
                 >
                   {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
                     <button

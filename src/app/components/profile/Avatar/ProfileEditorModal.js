@@ -198,7 +198,7 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
       {/* Scrollable white modal box */}
-      <div className="bg-white rounded-lg w-[90%] max-w-3xl p-4 relative text-black 
+      <div className="bg-[#FAFAFA] rounded-lg w-[90%] max-w-3xl p-4 relative text-black 
                     max-h-[90vh] overflow-y-auto">
         {/* ❌ Close Button */}
         <button

@@ -151,7 +151,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[2px] rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-2xl my-auto shadow-2xl transition-all`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-white"} rounded-[2.5rem] overflow-hidden`}>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
         {/* Header */}
         <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
           <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
@@ -166,7 +166,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           {/* Media Section */}
           <div className="space-y-4">
             <div className="p-[2px] rounded-3xl bg-gradient-to-r from-blue-500 to-purple-500">
-              <div className={`p-6 border-2 border-dashed border-transparent ${darkMode ? "bg-[#121213]" : "bg-white"} rounded-[1.7rem] text-center`}>
+              <div className={`p-6 border-2 border-dashed border-transparent ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[1.7rem] text-center`}>
                 <div className="flex justify-center gap-6 mb-4">
                   <label className="cursor-pointer group">
                     <span className="text-3xl block filter grayscale group-hover:grayscale-0 transition-all">📷</span>
@@ -212,7 +212,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.title}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "title")); }}
                   placeholder="Enter event title..."
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -225,7 +225,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   name="startDate"
                   value={formData.startDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "startDate")); }}
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   name="startTime"
                   value={formData.startTime}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "startTime")); }}
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -251,7 +251,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   name="registrationCloseDate"
                   value={formData.registrationCloseDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "registrationCloseDate")); }}
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -264,7 +264,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   name="endDate"
                   value={formData.endDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "endDate")); }}
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -283,14 +283,14 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                 onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "description")); }}
                 rows="4"
                 placeholder="Describe your event..."
-                className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none resize-none`}
+                className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none resize-none`}
               />
             </div>
           </div>
 
           {/* Registration Form Builder */}
           <div className="p-[2px] rounded-[2rem] bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm transition-all text-left">
-            <div className={`p-6 rounded-[1.8rem] ${darkMode ? "bg-[#121213]" : "bg-white"} space-y-6`}>
+            <div className={`p-6 rounded-[1.8rem] ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} space-y-6`}>
               <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Registration Form <span className="text-xs font-normal opacity-60 ml-2">[Questions to be asked]</span></h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -320,14 +320,14 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   placeholder="Custom question..."
-                  className={`flex-1 p-3 text-sm rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-white border-gray-200"}`}
+                  className={`flex-1 p-3 text-sm rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-200"}`}
                 />
                 <button type="button" onClick={addCustomQuestion} className="px-4 py-2 bg-black text-white rounded-xl font-bold text-sm">+ Add</button>
               </div>
 
               <div className="space-y-2">
                 {customQuestions.map((q, i) => (
-                  <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${darkMode ? "bg-white/5" : "bg-white shadow-sm"}`}>
+                  <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${darkMode ? "bg-[#FAFAFA]/5" : "bg-[#FAFAFA] shadow-sm"}`}>
                     <span className={`text-sm ${darkMode ? "text-white" : "text-gray-800"}`}>{q.question}</span>
                     <button type="button" onClick={() => removeCustomQuestion(i)} className="text-red-500 text-sm font-bold">Remove</button>
                   </div>

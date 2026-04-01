@@ -146,7 +146,7 @@ export default function LoginPage() {
           transition={{ duration: 0.6 }}
           className="w-full lg:w-1/2 max-w-[500px] lg:pl-16"
         >
-          <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-white text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-6 px-8 md:py-8 md:px-10 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-500`}>
+          <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-6 px-8 md:py-8 md:px-10 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-500`}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
 
             {view === "LOGIN" && (
@@ -248,7 +248,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full ${darkMode ? "bg-white/10 hover:bg-white/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"} py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all`}
+                    className={`w-full ${darkMode ? "bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"} py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all`}
                   >
                     {loading ? "Sending..." : "Send Verification Code"}
                   </button>
@@ -334,7 +334,7 @@ export default function LoginPage() {
               <Link
                 href="/"
                 className={`group inline-flex items-center gap-2.5 px-6 py-2 rounded-full transition-all duration-300 ${darkMode
-                  ? "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? "text-gray-400 hover:text-white hover:bg-[#FAFAFA]/5"
                   : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
                   }`}
               >
@@ -369,9 +369,9 @@ export default function LoginPage() {
             Reconnect with your roots. Network with professionals. Grow your future together.
           </p>
           <div className="mt-8 flex justify-end gap-4">
-            <div className="w-12 h-1.5 bg-white rounded-full opacity-20"></div>
+            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
             <div className="w-12 h-1.5 bg-blue-400 rounded-full"></div>
-            <div className="w-12 h-1.5 bg-white rounded-full opacity-20"></div>
+            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
           </div>
         </motion.div>
 
@@ -388,7 +388,7 @@ export default function LoginPage() {
       <div className="fixed bottom-6 right-6 z-[100]">
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-white/10 border-white/20 text-yellow-400 hover:bg-white/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
+          className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-[#FAFAFA]/10 border-white/20 text-yellow-400 hover:bg-[#FAFAFA]/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
           title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {darkMode ? (

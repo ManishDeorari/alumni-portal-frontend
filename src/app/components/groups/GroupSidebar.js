@@ -27,7 +27,7 @@ export default function GroupSidebar({
             {/* Gradient Border Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500" />
 
-            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-white/95 text-gray-900"
+            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-[#FAFAFA]/95 text-gray-900"
                 }`}>
                 <div className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -43,7 +43,7 @@ export default function GroupSidebar({
                         )}
                     </div>
                     <div className="p-[1.5px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                        <div className={`relative px-3 rounded-[11px] border transition-all ${darkMode ? "bg-gray-800 border-transparent focus-within:border-blue-500" : "bg-white border-transparent focus-within:border-blue-500"}`}>
+                        <div className={`relative px-3 rounded-[11px] border transition-all ${darkMode ? "bg-gray-800 border-transparent focus-within:border-blue-500" : "bg-[#FAFAFA] border-transparent focus-within:border-blue-500"}`}>
                             <div className="flex items-center gap-2">
                                 <FaSearch className="text-gray-400" size={14} />
                                 <input
@@ -81,7 +81,7 @@ export default function GroupSidebar({
                                     e.stopPropagation();
                                     onViewImage(group.profileImage || "/default-group.jpg");
                                 }}
-                                className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-12 h-12 flex items-center justify-center bg-white hover:scale-110 transition-transform cursor-zoom-in"
+                                className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-12 h-12 flex items-center justify-center bg-[#FAFAFA] hover:scale-110 transition-transform cursor-zoom-in"
                             >
                                     <GroupAvatar
                                         group={group}
@@ -92,8 +92,8 @@ export default function GroupSidebar({
                                 <div className="flex-1 min-w-0">
                                     <div className="p-[1px] rounded-xl bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02]">
                                         <div className={`p-3 rounded-[11px] flex items-center justify-between ${selectedGroup?._id === group._id 
-                                            ? (darkMode ? "bg-gray-800" : "bg-white") 
-                                            : (darkMode ? "bg-gray-900/90 hover:bg-gray-800/90" : "bg-white/90 hover:bg-gray-50/90")}`}>
+                                            ? (darkMode ? "bg-gray-800" : "bg-[#FAFAFA]") 
+                                            : (darkMode ? "bg-gray-900/90 hover:bg-gray-800/90" : "bg-[#FAFAFA]/90 hover:bg-gray-50/90")}`}>
                                             <h3 className={`font-black truncate text-xs tracking-tighter ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
                                             {selectedGroup?._id === group._id && (
                                                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />

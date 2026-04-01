@@ -153,7 +153,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -161,13 +161,13 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                     </h2>
                     <button
                         onClick={onClose}
-                        className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition"
+                        className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                     {/* Name */}
                     <div>
                         <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
@@ -179,7 +179,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Your Name"
-                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.name ? 'border-red-500' : ''}`}
+                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.name ? 'border-red-500' : ''}`}
                         />
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                     </div>
@@ -282,7 +282,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                             value={formData.whatsapp}
                             onChange={handleChange}
                             placeholder="Ex: 919876543210"
-                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.whatsapp ? 'border-red-500' : ''}`}
+                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.whatsapp ? 'border-red-500' : ''}`}
                         />
                         {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
                         <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>* Enter digits only, including country code (e.g. 91...)</p>
@@ -301,7 +301,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                 value={formData.linkedin}
                                 onChange={handleChange}
                                 placeholder="https://linkedin.com/in/username"
-                                className={`w-full pl-9 p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.linkedin ? 'border-red-500' : ''}`}
+                                className={`w-full pl-9 p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.linkedin ? 'border-red-500' : ''}`}
                             />
                         </div>
                         {errors.linkedin && <p className="text-red-500 text-xs mt-1">{errors.linkedin}</p>}

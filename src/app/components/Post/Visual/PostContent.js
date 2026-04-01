@@ -45,7 +45,7 @@ export default function PostContent({
               <input
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
-                className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-white text-gray-900"} rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold`}
+                className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-[#FAFAFA] text-gray-900"} rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold`}
                 placeholder="Edit event title..."
               />
             </div>
@@ -58,7 +58,7 @@ export default function PostContent({
               onChange={(e) => setEditContent(e.target.value)}
               onBlur={() => handleBlurSave(editContent, `edit-${post._id}`)}
               rows={3}
-              className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-white text-gray-900"} rounded-xl p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
+              className={`w-full border-2 ${darkMode ? "border-white/10 bg-slate-800 text-white" : "border-gray-200 bg-[#FAFAFA] text-gray-900"} rounded-xl p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
               placeholder="Edit your post..."
             />
             <EmojiPickerToggle
@@ -70,7 +70,7 @@ export default function PostContent({
             />
           </div>
 
-          <div className={`p-3 border ${darkMode ? "border-white/10 bg-white/5" : "border-gray-300 bg-gray-50"} rounded-xl`}>
+          <div className={`p-3 border ${darkMode ? "border-white/10 bg-[#FAFAFA]/5" : "border-gray-300 bg-gray-50"} rounded-xl`}>
             <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"} font-semibold mb-1`}>Preview:</p>
             <p className={`whitespace-pre-wrap ${darkMode ? "text-gray-300" : "text-gray-800"}`}>{editContent}</p>
           </div>

@@ -135,7 +135,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
     return (
         <div className="max-w-4xl mx-auto mt-3 p-[2px] bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 rounded-2xl shadow-2xl">
-            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-[calc(1rem-1px)] overflow-hidden`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(1rem-1px)] overflow-hidden`}>
                 {/* 🔷 Banner */}
                 <div className={`relative w-full h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <ProfileBanner
@@ -165,7 +165,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             {!isPublicView && (
                                 <button
                                     onClick={() => setShowEditModal(true)}
-                                    className={`p-1.5 shadow-sm border rounded-full transition-all ${darkMode ? 'bg-slate-800 text-white border-white/10 hover:bg-slate-700' : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-50'}`}
+                                    className={`p-1.5 shadow-sm border rounded-full transition-all ${darkMode ? 'bg-slate-800 text-white border-white/10 hover:bg-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-200 hover:bg-gray-50'}`}
                                     title="Edit Profile"
                                 >
                                     <Edit className="w-5 h-5" />
@@ -214,7 +214,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         {/* Level 1: Basics (Email & Address) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="p-[1px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl">
-                                <div className={`p-4 rounded-[calc(1rem-1px)] flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-white/80'}`}>
+                                <div className={`p-4 rounded-[calc(1rem-1px)] flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Primary Email</label>
                                     <div className="flex items-center gap-2">
                                         <span className={`text-sm font-bold truncate lowercase ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.email}</span>
@@ -225,7 +225,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 </div>
                             </div>
                             <div className="p-[1px] bg-gradient-to-r from-orange-500/30 to-red-500/30 rounded-2xl">
-                                <div className={`p-4 rounded-[calc(1rem-1px)] flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-white/80'}`}>
+                                <div className={`p-4 rounded-[calc(1rem-1px)] flex flex-col items-center text-center ${darkMode ? 'bg-slate-800/80' : 'bg-[#FAFAFA]/80'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Resident Address</label>
                                     <span className={`text-sm font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.address || "Not set"}</span>
                                 </div>
@@ -236,7 +236,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {/* Phone */}
                             <div className="p-[1px] bg-gradient-to-r from-green-500/30 to-teal-500/30 rounded-2xl">
-                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800/80 hover:bg-green-900/10' : 'bg-white/80 hover:bg-green-50/10'}`}>
+                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800/80 hover:bg-green-900/10' : 'bg-[#FAFAFA]/80 hover:bg-green-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
                                     <div className="flex items-center gap-2">
                                         <span className={`text-base font-black ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{profile.phone || "N/A"}</span>
@@ -251,7 +251,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
                             {/* WhatsApp */}
                             <div className="p-[1px] bg-gradient-to-r from-emerald-500/30 to-green-500/30 rounded-2xl">
-                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800/80 hover:bg-emerald-900/10' : 'bg-white/80 hover:bg-emerald-50/10'}`}>
+                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800/80 hover:bg-emerald-900/10' : 'bg-[#FAFAFA]/80 hover:bg-emerald-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>WhatsApp Direct</label>
                                     {profile.whatsapp ? (
                                         <a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`}>{profile.whatsapp}</a>
@@ -261,7 +261,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
                             {/* LinkedIn */}
                             <div className="p-[1px] bg-gradient-to-r from-indigo-500/30 to-blue-500/30 rounded-2xl">
-                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800/80 hover:bg-indigo-900/10' : 'bg-white/80 hover:bg-indigo-50/10'}`}>
+                                <div className={`p-5 rounded-[calc(1rem-1px)] flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800/80 hover:bg-indigo-900/10' : 'bg-[#FAFAFA]/80 hover:bg-indigo-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Professional LinkedIn</label>
                                     {profile.linkedin ? (
                                         <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline italic ${darkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>Connect Now →</a>

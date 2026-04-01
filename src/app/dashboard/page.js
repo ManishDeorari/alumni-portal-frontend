@@ -182,7 +182,7 @@ export default function DashboardPage() {
           {/* Right Column - Feed & Welcome */}
           <div className="flex-1 space-y-8 order-1 lg:order-2">
             {/* User info */}
-            <section className={`${darkMode ? "bg-[#121213] border-white/10" : "bg-white border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
+            <section className={`${darkMode ? "bg-[#121213] border-white/10" : "bg-[#FAFAFA] border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                     Welcome back, {user?.name || "Alumni"}!
                   </h2>
                   <div className="flex flex-wrap justify-center sm:justify-start gap-2 md:gap-4 mt-2">
-                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-white/5 border-white/10 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-500"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.enrollmentNumber || "N/A"}</span>
+                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-500"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.enrollmentNumber || "N/A"}</span>
                     <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.role || "Member"}</span>
                   </div>
                 </div>
@@ -220,8 +220,8 @@ export default function DashboardPage() {
                   onClick={() => setActiveTab(tab.id)}
                   disabled={isFetchingFeed}
                   className={`px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === tab.id
-                    ? "bg-white text-blue-700 shadow-xl scale-105"
-                    : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                    ? "bg-[#FAFAFA] text-blue-700 shadow-xl scale-105"
+                    : "bg-[#FAFAFA]/10 text-white hover:bg-[#FAFAFA]/20 border border-white/10"
                     } ${isFetchingFeed ? "opacity-50 cursor-wait" : ""}`}
                 >
                   {tab.label}
@@ -260,7 +260,7 @@ export default function DashboardPage() {
             {/* Posts */}
             <section className="space-y-8">
               {filteredPosts.length === 0 ? (
-                <div className="bg-white rounded-[2.5rem] p-12 text-center border border-gray-200">
+                <div className="bg-[#FAFAFA] rounded-[2.5rem] p-12 text-center border border-gray-200">
                   <p className="text-gray-400 font-black uppercase tracking-widest text-sm">
                     {activeTab === "my" ? "You haven't posted anything yet." : "No posts found in this category."}
                   </p>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                       <button
                         onClick={handleLoadMore}
                         disabled={fetchingMore}
-                        className="px-12 py-4 bg-white text-blue-700 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-50 hover:shadow-2xl transition-all disabled:opacity-50 shadow-xl active:scale-95"
+                        className="px-12 py-4 bg-[#FAFAFA] text-blue-700 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-50 hover:shadow-2xl transition-all disabled:opacity-50 shadow-xl active:scale-95"
                       >
                         {fetchingMore ? "Loading..." : "Load More Posts"}
                       </button>

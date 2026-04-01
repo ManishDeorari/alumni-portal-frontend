@@ -39,7 +39,7 @@ export default function GroupMembersModal({
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col h-[80vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-white border-gray-100 text-gray-900"}`}>
+            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col h-[80vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-100 text-gray-900"}`}>
                 
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
@@ -47,7 +47,7 @@ export default function GroupMembersModal({
                         <h2 className={`text-xl font-black tracking-tighter uppercase ${darkMode ? "text-white" : "text-gray-900"}`}>Group Community</h2>
                         <p className="text-[10px] font-black uppercase text-blue-500 tracking-widest">{members.length} Total Members</p>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors text-gray-500">
                         <FaTimes />
                     </button>
                 </div>
@@ -55,7 +55,7 @@ export default function GroupMembersModal({
                 {/* Filters */}
                 <div className="px-6 pt-6 flex gap-3">
                     <div className="flex-1 p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                        <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950/50 focus-within:bg-gray-950" : "bg-white focus-within:bg-gray-50"}`}>
+                        <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950/50 focus-within:bg-gray-950" : "bg-[#FAFAFA] focus-within:bg-gray-50"}`}>
                             <FaSearch className="text-gray-400" size={14} />
                             <input 
                                 type="text" 
@@ -71,7 +71,7 @@ export default function GroupMembersModal({
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className={`px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer pr-10 ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"}`}
+                            className={`px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer pr-10 ${darkMode ? "bg-gray-950 text-white" : "bg-[#FAFAFA] text-gray-900"}`}
                         >
                             <option value="ALL">ALL</option>
                             <option value="ADMIN">ADMINS</option>
@@ -98,10 +98,10 @@ export default function GroupMembersModal({
 
                         return (
                             <div key={member._id} className="p-[1px] rounded-[2rem] bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-md transition-all hover:scale-[1.01]">
-                                <div className={`p-4 rounded-[calc(2rem-1px)] flex items-center justify-between ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+                                <div className={`p-4 rounded-[calc(2rem-1px)] flex items-center justify-between ${darkMode ? "bg-gray-900" : "bg-[#FAFAFA]"}`}>
                                     <div className="flex items-center gap-4">
                                         <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-500 shadow-lg">
-                                            <div className="relative w-14 h-14 rounded-[calc(1rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
+                                            <div className="relative w-14 h-14 rounded-[calc(1rem-2px)] overflow-hidden bg-[#FAFAFA] dark:bg-gray-800">
                                                 <Image 
                                                     src={member.profilePicture || "/default-profile.jpg"} 
                                                     fill 

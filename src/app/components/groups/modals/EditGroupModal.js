@@ -156,11 +156,11 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-white border-gray-100"}`}>
+            <div className={`relative w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-[#FAFAFA] border-gray-100"}`}>
                 <div className="p-8 overflow-y-auto custom-scrollbar">
                     <div className="flex justify-between items-center mb-8">
                         <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Group Settings</h2>
-                        <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                        <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
                             <FaTimes size={20} className="text-gray-400" />
                         </button>
                     </div>
@@ -210,7 +210,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                    className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                 />
                             </div>
                         </div>
@@ -221,14 +221,14 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none resize-none h-24 transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-white text-gray-900 focus:bg-gray-50"}`}
+                                    className={`w-full rounded-[calc(1rem-1px)] px-5 py-4 font-bold text-sm outline-none resize-none h-24 transition-all ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                 />
                             </div>
                         </div>
 
                         {/* Faculty Messaging Toggle */}
                         <div className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20">
-                            <div className={`p-6 rounded-[calc(1.5rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950" : "bg-white"}`}>
+                            <div className={`p-6 rounded-[calc(1.5rem-1px)] flex items-center justify-between transition-all ${darkMode ? "bg-gray-950" : "bg-[#FAFAFA]"}`}>
                                 <div>
                                     <h3 className={`font-black text-sm uppercase tracking-tight ${darkMode ? "text-white" : "text-gray-900"}`}>Faculty Messaging</h3>
                                     <p className="text-[10px] text-gray-500 font-bold">Allow faculty members to send messages in this group</p>
@@ -238,7 +238,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                     onClick={() => setAllowFacultyMessaging(!allowFacultyMessaging)}
                                     className={`w-14 h-8 rounded-full relative transition-all duration-300 ${allowFacultyMessaging ? "bg-blue-600" : "bg-gray-400"}`}
                                 >
-                                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all duration-300 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
+                                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-[#FAFAFA] transition-all duration-300 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
                                 </button>
                             </div>
                         </div>
@@ -284,7 +284,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                 </div>
                             </div>
                             <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10">
-                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] transition-all ${darkMode ? "bg-gray-950/50" : "bg-white"}`}>
+                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] transition-all ${darkMode ? "bg-gray-950/50" : "bg-[#FAFAFA]"}`}>
                                     <input 
                                         type="text" 
                                         placeholder="Search members to remove..." 
@@ -303,10 +303,10 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                     return !mIsAdmin && matchesSearch && matchesRole;
                                 }).map(member => (
                                     <div key={member._id} className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10">
-                                        <div className={`p-3 rounded-[calc(1rem-1px)] flex items-center justify-between ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+                                        <div className={`p-3 rounded-[calc(1rem-1px)] flex items-center justify-between ${darkMode ? "bg-gray-900" : "bg-[#FAFAFA]"}`}>
                                             <div className="flex items-center gap-3">
                                                 <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-400 to-pink-400">
-                                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-[#FAFAFA] dark:bg-gray-800">
                                                         <Image src={member.profilePicture || "/default-profile.jpg"} width={32} height={32} className="object-cover" alt={member.name} />
                                                     </div>
                                                 </div>
@@ -345,7 +345,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                     <button 
                                         type="button"
                                         onClick={() => onDeleteGroup(group._id)}
-                                        className={`w-full py-4 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-[0.2em] transition-all ${darkMode ? "bg-gray-950 text-red-500 hover:bg-red-500 hover:text-white" : "bg-white text-red-600 hover:bg-red-600 hover:text-white"}`}
+                                        className={`w-full py-4 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-[0.2em] transition-all ${darkMode ? "bg-gray-950 text-red-500 hover:bg-red-500 hover:text-white" : "bg-[#FAFAFA] text-red-600 hover:bg-red-600 hover:text-white"}`}
                                     >
                                         Delete Group Permanently
                                     </button>

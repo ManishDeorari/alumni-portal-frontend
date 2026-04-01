@@ -103,7 +103,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                             value={formData.oldPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
+                            className="w-full bg-[#FAFAFA]/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-[#FAFAFA]/10 transition-all duration-300"
                             required
                         />
                     </div>
@@ -115,7 +115,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                             value={formData.newPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
+                            className="w-full bg-[#FAFAFA]/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-[#FAFAFA]/10 transition-all duration-300"
                             required
                         />
                     </div>
@@ -127,7 +127,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-white/10 transition-all duration-300"
+                            className="w-full bg-[#FAFAFA]/5 border border-white/10 rounded-2xl px-5 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:bg-[#FAFAFA]/10 transition-all duration-300"
                             required
                         />
                     </div>

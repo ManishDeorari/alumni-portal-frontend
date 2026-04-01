@@ -39,7 +39,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -47,7 +47,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
                     </h2>
                     <button
                         onClick={onClose}
-                        className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition"
+                        className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -57,7 +57,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
                     <div>
                         <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Your Bio</label>
                         <textarea
-                            className={`w-full p-3 rounded-lg h-40 outline-none transition custom-scrollbar focus:ring-2 focus:ring-blue-500 ${darkMode ? 'bg-slate-800 border-white/10 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'}`}
+                            className={`w-full p-3 rounded-lg h-40 outline-none transition custom-scrollbar focus:ring-2 focus:ring-blue-500 ${darkMode ? 'bg-slate-800 border-white/10 text-white placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-800 placeholder-gray-400'}`}
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             placeholder="Write something about yourself..."

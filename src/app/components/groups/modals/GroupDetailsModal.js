@@ -20,12 +20,12 @@ export default function GroupDetailsModal({
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className={`relative w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[90vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-white border-gray-100 text-gray-900"}`}>
+            <div className={`relative w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[90vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-100 text-gray-900"}`}>
                 
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
                     <h2 className={`text-xl font-black tracking-tighter uppercase ${darkMode ? "text-white" : "text-gray-900"}`}>Group Overview</h2>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors text-gray-500">
                         <FaTimes />
                     </button>
                 </div>
@@ -36,13 +36,13 @@ export default function GroupDetailsModal({
                             onClick={() => onViewImage(group.profileImage || "/default-group.jpg")}
                             className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-500 shadow-2xl mb-6 scale-110 cursor-zoom-in hover:scale-[1.15] transition-transform"
                         >
-                            <div className="relative w-32 h-32 rounded-[calc(2.5rem-2px)] overflow-hidden bg-white dark:bg-gray-800">
+                            <div className="relative w-32 h-32 rounded-[calc(2.5rem-2px)] overflow-hidden bg-[#FAFAFA] dark:bg-gray-800">
                                 <GroupAvatar group={group} size={128} />
                             </div>
                         </div>
                         <h3 className={`text-3xl font-black tracking-tighter mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>{group.name}</h3>
                         <div className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 to-purple-500/20">
-                            <div className={`px-6 py-4 rounded-[calc(1.5rem-1px)] text-sm font-medium leading-relaxed ${darkMode ? "bg-gray-950/50 text-gray-400" : "bg-white text-gray-900"}`}>
+                            <div className={`px-6 py-4 rounded-[calc(1.5rem-1px)] text-sm font-medium leading-relaxed ${darkMode ? "bg-gray-950/50 text-gray-400" : "bg-[#FAFAFA] text-gray-900"}`}>
                                 {group.description || "In a world of constant communication, this group serves as a dedicated space for collaboration and community."}
                             </div>
                         </div>
@@ -53,7 +53,7 @@ export default function GroupDetailsModal({
                         <div className="p-[1px] rounded-[2rem] bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-lg transition-all hover:scale-[1.02]">
                             <button 
                                 onClick={onOpenMembers}
-                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-white"}`}
+                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-[#FAFAFA]"}`}
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner">
@@ -71,7 +71,7 @@ export default function GroupDetailsModal({
                         <div className="p-[1px] rounded-[2rem] bg-gradient-to-r from-purple-500/30 to-pink-500/30 shadow-lg transition-all hover:scale-[1.02]">
                             <button 
                                 onClick={onOpenMedia}
-                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-white"}`}
+                                className={`w-full p-6 rounded-[calc(2rem-1px)] flex items-center justify-between transition-all group ${darkMode ? "bg-gray-900" : "bg-[#FAFAFA]"}`}
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500 shadow-inner">

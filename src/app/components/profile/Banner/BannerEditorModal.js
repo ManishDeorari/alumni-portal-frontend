@@ -147,7 +147,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg w-[90%] max-w-5xl p-4 relative text-black max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#FAFAFA] rounded-lg w-[90%] max-w-5xl p-4 relative text-black max-h-[90vh] overflow-y-auto">
         <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 hover:text-black">
           <X />
         </button>

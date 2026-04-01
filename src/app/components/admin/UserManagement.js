@@ -26,7 +26,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
             >
                 {/* Search Header */}
                 <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2rem] shadow-2xl overflow-hidden">
-                    <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-white"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
+                    <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
                         <div className="relative flex-1 max-w-md p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
                             <div className="relative h-full">
                                 <input
@@ -34,7 +34,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                                     placeholder="Search users..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                                    className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black"} rounded-2xl outline-none transition-all font-medium`}
                                 />
                                 <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-blue-400" : "text-gray-400"}`} />
                             </div>
@@ -52,11 +52,11 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                     </div>
                 ) : (
                     <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all">
-                        <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
+                        <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
                             <div className="overflow-x-auto custom-scrollbar">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className={`${darkMode ? "text-white border-white/10 bg-white/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
+                                        <tr className={`${darkMode ? "text-white border-white/10 bg-[#FAFAFA]/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
                                             <th className="py-4 px-8 text-left font-black">User Profile</th>
                                             <th className="py-4 px-8 text-left font-black">Role</th>
                                             <th className="py-4 px-8 text-left md:table-cell hidden font-black">Identity</th>
@@ -65,7 +65,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                                     </thead>
                                     <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
                                         {filteredUsers.map((u) => (
-                                            <tr key={u._id} className={`group ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"} transition-all`}>
+                                            <tr key={u._id} className={`group ${darkMode ? "hover:bg-[#FAFAFA]/5" : "hover:bg-gray-50"} transition-all`}>
                                                 <td className="py-5 px-8">
                                                     <div className="flex items-center gap-4">
                                                         <div className={`w-10 h-10 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border ${darkMode ? "border-blue-400/20" : "border-blue-200"} flex items-center justify-center font-black shrink-0`}>
@@ -86,7 +86,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                                                     </span>
                                                 </td>
                                                 <td className="py-5 px-8 md:table-cell hidden">
-                                                    <span className={`text-xs font-black ${darkMode ? "text-white bg-white/10 border-white/10" : "text-slate-900 bg-gray-100 border-gray-300"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
+                                                    <span className={`text-xs font-black ${darkMode ? "text-white bg-[#FAFAFA]/10 border-white/10" : "text-slate-900 bg-gray-100 border-gray-300"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
                                                         {u.enrollmentNumber || u.employeeId || u.studentId || "Member"}
                                                     </span>
                                                 </td>
@@ -123,7 +123,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                         <motion.div
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className={`${darkMode ? "bg-gray-900 border-white/20" : "bg-white border-gray-200"} border rounded-[2rem] p-8 w-full max-w-md shadow-2xl`}
+                            className={`${darkMode ? "bg-gray-900 border-white/20" : "bg-[#FAFAFA] border-gray-200"} border rounded-[2rem] p-8 w-full max-w-md shadow-2xl`}
                         >
                             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <UserX className="w-8 h-8 text-red-500" />
@@ -136,7 +136,7 @@ export default function UserManagement({ users, loading, onDelete, onRefresh }) 
                             <div className="flex justify-center gap-3 font-black">
                                 <button
                                     onClick={() => setConfirmDelete(null)}
-                                    className={`px-6 py-3 ${darkMode ? "bg-white/5 hover:bg-white/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all flex-1`}
+                                    className={`px-6 py-3 ${darkMode ? "bg-[#FAFAFA]/5 hover:bg-[#FAFAFA]/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all flex-1`}
                                 >
                                     Cancel
                                 </button>

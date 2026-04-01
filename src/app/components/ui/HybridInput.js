@@ -82,7 +82,7 @@ export default function HybridInput({
             </div>
 
             {isOpen && filteredOptions.length > 0 && (
-                <ul className={`absolute z-50 w-full ${placement === "top" ? "bottom-full mb-2" : "mt-2"} max-h-60 overflow-y-auto rounded-xl shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-[#121213]/95 border-slate-700/50' : 'bg-white/95 border-gray-200'} custom-scrollbar`}>
+                <ul className={`absolute z-50 w-full ${placement === "top" ? "bottom-full mb-2" : "mt-2"} max-h-60 overflow-y-auto rounded-xl shadow-2xl border backdrop-blur-xl ${darkMode ? 'bg-[#121213]/95 border-slate-700/50' : 'bg-[#FAFAFA]/95 border-gray-200'} custom-scrollbar`}>
                     {filteredOptions.map((opt, idx) => (
                         <li
                             key={idx}

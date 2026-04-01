@@ -103,18 +103,18 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <Heart className="w-5 h-5" /> Job Preferences
                     </h2>
-                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition">
+                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                     <datalist id="pref-area-suggestions">
                         {FUNCTIONAL_AREAS.map(a => <option key={a} value={a} />)}
                     </datalist>
@@ -133,7 +133,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                             <input
                                 type="text"
                                 list="pref-area-suggestions"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                 value={preferences.functionalArea}
                                 onChange={(e) => handleChange("functionalArea", e.target.value)}
                                 placeholder="Ex: Full Stack Development"
@@ -146,7 +146,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                             </label>
                             <input
                                 type="text"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                 value={locationsInput}
                                 onChange={(e) => handleLocationsChange(e.target.value)}
                                 placeholder="Ex: Dehradun, Delhi, Bangalore"
@@ -162,7 +162,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                                 <input
                                     type="text"
                                     list="notice-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={preferences.noticePeriod}
                                     onChange={(e) => handleChange("noticePeriod", e.target.value)}
                                     placeholder="Ex: 30 Days"
@@ -175,7 +175,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                                 <input
                                     type="text"
                                     list="salary-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={preferences.salary}
                                     onChange={(e) => handleChange("salary", e.target.value)}
                                     placeholder="Ex: 6-10 LPA"
@@ -190,7 +190,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                                 </label>
                                 <input
                                     type="url"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={preferences.resumeLink}
                                     onChange={(e) => handleChange("resumeLink", e.target.value)}
                                     placeholder="https://drive.google.com/..."
@@ -202,7 +202,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                                 </label>
                                 <input
                                     type="url"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={preferences.portfolioLink}
                                     onChange={(e) => handleChange("portfolioLink", e.target.value)}
                                     placeholder="https://myportfolio.com"

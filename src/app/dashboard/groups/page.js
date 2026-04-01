@@ -347,7 +347,7 @@ export default function GroupsPage() {
                 <div className="relative p-[2px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
 
-                    <div className={`relative flex gap-10 px-10 py-8 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full justify-center ${darkMode ? "bg-gray-950/90" : "bg-white/90"}`}>
+                    <div className={`relative flex gap-10 px-10 py-8 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full justify-center ${darkMode ? "bg-gray-950/90" : "bg-[#FAFAFA]/90"}`}>
                         <div className="w-[32%] flex-shrink-0">
                             <GroupSidebar
                                 groups={filteredGroups}

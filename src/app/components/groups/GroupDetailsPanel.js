@@ -35,12 +35,12 @@ export default function GroupDetailsPanel({
     );
 
     return (
-        <div className={`fixed inset-y-0 right-0 z-[80] w-[380px] shadow-2xl transition-transform duration-500 transform ${isOpen ? "translate-x-0" : "translate-x-full"} border-l ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-white border-gray-200 text-gray-900"}`}>
+        <div className={`fixed inset-y-0 right-0 z-[80] w-[380px] shadow-2xl transition-transform duration-500 transform ${isOpen ? "translate-x-0" : "translate-x-full"} border-l ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-200 text-gray-900"}`}>
             <div className="h-full flex flex-col">
                 {/* Header */}
                 <div className="p-6 flex items-center justify-between border-b dark:border-white/5">
                     <h2 className="text-xl font-black tracking-tighter">Group Details</h2>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
                         <FaTimes className="text-gray-500" />
                     </button>
                 </div>
@@ -174,7 +174,7 @@ export default function GroupDetailsPanel({
                                                                 <FaTrash size={10} />
                                                             </button>
                                                         )}
-                                                        <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="p-1.5 bg-white text-black rounded-lg hover:scale-110 transition-transform">
+                                                        <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="p-1.5 bg-[#FAFAFA] text-black rounded-lg hover:scale-110 transition-transform">
                                                             <FaDownload size={10} />
                                                         </a>
                                                     </div>

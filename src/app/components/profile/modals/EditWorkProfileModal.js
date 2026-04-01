@@ -81,18 +81,18 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <Briefcase className="w-5 h-5" /> Work Profile & Skills
                     </h2>
-                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition">
+                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                     <datalist id="area-suggestions">
                         {FUNCTIONAL_AREAS.map(a => <option key={a} value={a} />)}
                     </datalist>
@@ -111,7 +111,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                             <input
                                 type="text"
                                 list="area-suggestions"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={workProfile.functionalArea}
                                 onChange={(e) => handleChange("functionalArea", e.target.value)}
                                 placeholder="Ex: Software Engineering"
@@ -124,7 +124,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                             </label>
                             <input
                                 type="text"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={workProfile.subFunctionalArea}
                                 onChange={(e) => handleChange("subFunctionalArea", e.target.value)}
                                 placeholder="Ex: Backend Development"
@@ -139,7 +139,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                                 <input
                                     type="text"
                                     list="exp-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                     value={workProfile.experience}
                                     onChange={(e) => handleChange("experience", e.target.value)}
                                     placeholder="Ex: 1-3 Years"
@@ -152,7 +152,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                                 <input
                                     type="text"
                                     list="industry-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                     value={workProfile.industry}
                                     onChange={(e) => handleChange("industry", e.target.value)}
                                     placeholder="Ex: Fintech"
@@ -166,7 +166,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                                 <Code className="w-3.5 h-3.5 text-blue-500" /> Key Skills (comma separated)
                             </label>
                             <textarea
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none h-24 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none h-24 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                                 placeholder="Ex: React, Node.js, Python, Leadership"

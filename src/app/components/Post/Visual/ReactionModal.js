@@ -17,7 +17,7 @@ export default function ReactionModal({ emoji, users, onClose }) {
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.9 }}
-          className="bg-white rounded-xl shadow-lg p-5 max-w-sm w-full"
+          className="bg-[#FAFAFA] rounded-xl shadow-lg p-5 max-w-sm w-full"
           onClick={(e) => e.stopPropagation()}
         >
           <h2 className="text-xl font-semibold mb-3 text-center">{emoji} Reactions</h2>

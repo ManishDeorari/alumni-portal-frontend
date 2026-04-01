@@ -27,7 +27,7 @@ export default function AdminPointsPanel() {
   };
 
   return (
-    <div className="bg-white text-black p-6 shadow rounded-xl">
+    <div className="bg-[#FAFAFA] text-black p-6 shadow rounded-xl">
       <h2 className="text-xl font-bold mb-4">Admin Points Panel</h2>
       <label>Category:</label>
       <select className="ml-2 border p-1" onChange={(e) => setCategory(e.target.value)}>

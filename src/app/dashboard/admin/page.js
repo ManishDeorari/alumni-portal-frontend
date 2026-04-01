@@ -276,8 +276,8 @@ export default function AdminDashboardPage() {
         <button
           onClick={() => setActiveTab(id)}
           className={`px-6 py-2.5 rounded-[calc(1rem-1px)] transition-all duration-300 font-bold text-sm ${isActive
-            ? `${darkMode ? "bg-black text-white" : "bg-white text-blue-700"}`
-            : `${darkMode ? "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white" : "bg-black/5 text-black/60 hover:bg-black/10 hover:text-black"} border border-white/5`
+            ? `${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-blue-700"}`
+            : `${darkMode ? "bg-[#FAFAFA]/5 text-white/60 hover:bg-[#FAFAFA]/10 hover:text-white" : "bg-black/5 text-black/60 hover:bg-black/10 hover:text-black"} border border-white/5`
             }`}
         >
           {label}
@@ -303,7 +303,7 @@ export default function AdminDashboardPage() {
       <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-          <section className={`${darkMode ? "bg-black" : "bg-white"} p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
+          <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
             <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/20 shadow-inner">
@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[1.6rem] shadow-lg">
-                <nav className={`flex flex-wrap items-center justify-center gap-2 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem]`}>
+                <nav className={`flex flex-wrap items-center justify-center gap-2 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-1 rounded-[1.5rem]`}>
                   <TabButton id="pending" label="Pending" />
                   {user?.isMainAdmin && <TabButton id="users" label="User Mgmt" />}
                   <TabButton id="admins" label="Admins" />

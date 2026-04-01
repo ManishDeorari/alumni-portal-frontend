@@ -68,8 +68,8 @@ export default function AdminsManager({
 
   const Card = ({ title, users, badge, children, actions }) => (
     <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all hover:shadow-blue-500/10">
-      <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
-        <div className={`flex flex-col sm:flex-row items-center justify-between px-8 py-6 border-b ${darkMode ? "border-white/10 bg-white/5" : "border-gray-200 bg-gray-50/50"}`}>
+      <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
+        <div className={`flex flex-col sm:flex-row items-center justify-between px-8 py-6 border-b ${darkMode ? "border-white/10 bg-[#FAFAFA]/5" : "border-gray-200 bg-gray-50/50"}`}>
           <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-xl flex items-center gap-3`}>
             {title}
             <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badge}`}>
@@ -102,7 +102,7 @@ export default function AdminsManager({
         className="space-y-8"
       >
         <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2rem] shadow-2xl overflow-hidden">
-          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-white"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
+          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
             <div className="relative flex-1 max-w-md p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
               <div className="relative h-full">
                 <input
@@ -110,7 +110,7 @@ export default function AdminsManager({
                   placeholder="Search by name, email, ID…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                  className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black"} rounded-2xl outline-none transition-all font-medium`}
                 />
                 <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white/30" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </div>
@@ -217,14 +217,14 @@ export default function AdminsManager({
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className={`${darkMode ? "bg-gray-900 border-white/20" : "bg-white border-gray-200"} border rounded-[2rem] p-8 w-full max-w-md shadow-2xl`}
+              className={`${darkMode ? "bg-gray-900 border-white/20" : "bg-[#FAFAFA] border-gray-200"} border rounded-[2rem] p-8 w-full max-w-md shadow-2xl`}
             >
               <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} mb-4`}>
                 {confirm.action.replace("bulk-", "").toUpperCase()}?
               </h3>
 
               {confirm.user && (
-                <div className={`${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"} p-4 rounded-xl border mb-6`}>
+                <div className={`${darkMode ? "bg-[#FAFAFA]/5 border-white/10" : "bg-gray-50 border-gray-200"} p-4 rounded-xl border mb-6`}>
                   <p className={`font-bold ${darkMode ? "text-white" : "text-slate-900"} text-lg`}>{confirm.user.name}</p>
                   <p className={`${darkMode ? "text-blue-100/60" : "text-slate-500"} text-sm truncate`}>{confirm.user.email}</p>
                 </div>
@@ -233,7 +233,7 @@ export default function AdminsManager({
               <div className="flex justify-end gap-3 font-black">
                 <button
                   onClick={() => setConfirm(null)}
-                  className={`px-6 py-3 ${darkMode ? "bg-white/5 hover:bg-white/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all`}
+                  className={`px-6 py-3 ${darkMode ? "bg-[#FAFAFA]/5 hover:bg-[#FAFAFA]/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all`}
                 >
                   Cancel
                 </button>
@@ -281,11 +281,11 @@ function Table({
     <div className="overflow-x-auto custom-scrollbar">
       <table className="w-full">
         <thead>
-          <tr className={`${darkMode ? "text-white border-white/10 bg-white/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
+          <tr className={`${darkMode ? "text-white border-white/10 bg-[#FAFAFA]/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
             <th className="py-4 px-6 text-left">
               <input
                 type="checkbox"
-                className="w-5 h-5 bg-white/5 border-white/10 rounded cursor-pointer accent-blue-500"
+                className="w-5 h-5 bg-[#FAFAFA]/5 border-white/10 rounded cursor-pointer accent-blue-500"
                 checked={users.every((u) => selected.includes(u._id))}
                 onChange={() => toggleSelectAll(users)}
               />
@@ -297,11 +297,11 @@ function Table({
         </thead>
         <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
           {users.map((u) => (
-            <tr key={u._id} className={`group ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"} transition-all`}>
+            <tr key={u._id} className={`group ${darkMode ? "hover:bg-[#FAFAFA]/5" : "hover:bg-gray-50"} transition-all`}>
               <td className="py-5 px-6">
                 <input
                   type="checkbox"
-                  className="w-5 h-5 bg-white/5 border-white/10 rounded cursor-pointer accent-blue-500"
+                  className="w-5 h-5 bg-[#FAFAFA]/5 border-white/10 rounded cursor-pointer accent-blue-500"
                   checked={selected.includes(u._id)}
                   onChange={() => toggleUser(u._id)}
                   disabled={u.isMainAdmin}
@@ -321,7 +321,7 @@ function Table({
               </td>
 
               <td className="py-5 px-6 md:table-cell hidden">
-                <span className={`text-xs font-black ${darkMode ? "text-blue-100/60 bg-white/5 border-white/5" : "text-slate-600 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
+                <span className={`text-xs font-black ${darkMode ? "text-blue-100/60 bg-[#FAFAFA]/5 border-white/5" : "text-slate-600 bg-gray-100 border-gray-200"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
                   {u.employeeId || u.enrollmentNumber || "—"}
                 </span>
               </td>

@@ -99,14 +99,14 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   };
 
   return (
-    <div className={`w-full ${darkMode ? "bg-[#121213]" : "bg-white"} p-8 rounded-[2.5rem] shadow-sm transition-colors duration-500`}>
+    <div className={`w-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-8 rounded-[2.5rem] shadow-sm transition-colors duration-500`}>
       <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-6 flex items-center gap-2`}>
         <span className={`${darkMode ? "bg-blue-900/40" : "bg-blue-50"} p-2 rounded-xl`}>📢</span>
         Create a Post
       </h2>
 
       <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900 shadow-none border border-white/10" : "bg-gradient-to-tr from-blue-600 to-purple-700 shadow-[0_20px_60px_rgba(37,99,235,0.2)]"} rounded-[2.6rem] transition-all duration-500`}>
-        <div className={`relative rounded-[2.5rem] p-6 space-y-4 transition-all duration-500 ${darkMode ? "bg-[#121213] text-white" : "bg-white text-gray-900"}`}>
+        <div className={`relative rounded-[2.5rem] p-6 space-y-4 transition-all duration-500 ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-3">
               <div className="flex-1 space-y-2">
@@ -116,7 +116,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       placeholder="What's on your mind?"
-                      className={`w-full border-2 ${darkMode ? "border-white/20 bg-[#0f172a] text-white" : "border-black bg-white text-black"} rounded-[15px] p-3 resize-none placeholder-gray-500 focus:ring-0 transition-all duration-500`}
+                      className={`w-full border-2 ${darkMode ? "border-white/20 bg-[#0f172a] text-white" : "border-black bg-[#FAFAFA] text-black"} rounded-[15px] p-3 resize-none placeholder-gray-500 focus:ring-0 transition-all duration-500`}
                       rows="3"
                     />
                   </div>
@@ -128,7 +128,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
                       <button
                         type="button"
                         onClick={() => toast.success("Announcement Modal coming soon!")}
-                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`}
+                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-[#FAFAFA] text-black border-black hover:bg-gray-100"}`}
                       >
                         📢 Create Announcement
                       </button>
@@ -137,7 +137,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
                       <button
                         type="button"
                         onClick={() => setIsEventModalOpen(true)}
-                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-white text-black border-black hover:bg-gray-100"}`}
+                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-[#FAFAFA] text-black border-black hover:bg-gray-100"}`}
                       >
                         📅 Create Event
                       </button>

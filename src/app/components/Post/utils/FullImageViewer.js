@@ -27,7 +27,7 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
         {/* Exit button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 z-[10001]"
+          className="absolute top-4 right-4 bg-[#FAFAFA]/20 hover:bg-[#FAFAFA]/30 rounded-full p-2 z-[10001]"
         >
           <X className="text-white" size={28} />
         </button>

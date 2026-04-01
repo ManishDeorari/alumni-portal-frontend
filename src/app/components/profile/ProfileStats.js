@@ -16,7 +16,7 @@ export default function ProfileStats({ profile, isPublicView }) {
 
     return (
         <div className="p-[2px] bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 rounded-2xl shadow-xl overflow-hidden mt-4">
-            <div className={`flex flex-wrap justify-between items-center w-full px-6 py-6 gap-6 rounded-[calc(1rem-1px)] transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+            <div className={`flex flex-wrap justify-between items-center w-full px-6 py-6 gap-6 rounded-[calc(1rem-1px)] transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                 {/* Connections */}
                 <div className="flex flex-col items-center text-center flex-1 min-w-[120px]">
                     <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${darkMode ? 'text-gray-400' : 'text-black'}`}>Connections</p>

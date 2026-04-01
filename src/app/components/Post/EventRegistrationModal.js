@@ -181,7 +181,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[1.5px] rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-white"} rounded-[2rem] overflow-hidden`}>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2rem] overflow-hidden`}>
           <div className={`px-8 py-4 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-black"}`}>Register for Event</h2>
             <button onClick={onClose} className="text-2xl text-gray-400 hover:text-red-500">&times;</button>
@@ -223,7 +223,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                   {isPhone ? (
                     <div className="flex gap-2">
                        <div className="p-[2px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-500">
-                          <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-bold ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} `}>
+                          <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-bold ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} `}>
                             +91
                           </div>
                        </div>
@@ -239,7 +239,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                             handleAnswerChange(field, val);
                             setErrors(prev => prev.filter(err => err !== field));
                           }}
-                          className={`w-full p-3 h-full rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                          className={`w-full p-3 h-full rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                         />
                       </div>
                     </div>
@@ -249,7 +249,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                         value={answers[field] || ""}
                         readOnly={['name', 'email', 'enrollmentnumber'].includes(field.toLowerCase())}
                         onChange={(e) => { handleAnswerChange(field, e.target.value); setErrors(prev => prev.filter(err => err !== field)); }}
-                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none ${['name', 'email', 'enrollmentnumber'].includes(field.toLowerCase()) ? "opacity-60 cursor-not-allowed" : ""}`}
+                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none ${['name', 'email', 'enrollmentnumber'].includes(field.toLowerCase()) ? "opacity-60 cursor-not-allowed" : ""}`}
                       />
                     </div>
                   )}
@@ -264,7 +264,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                 <div className={getBaseErrorClass(q.question)}>
                   <input
                     placeholder="Your answer..."
-                    className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none placeholder-gray-500`}
+                    className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none placeholder-gray-500`}
                     value={answers[q.question] || ""}
                     onChange={(e) => { handleAnswerChange(q.question, e.target.value); setErrors(prev => prev.filter(err => err !== q.question)); }}
                   />
@@ -300,7 +300,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                                 {isPhone ? (
                                     <div className="flex gap-2">
                                         <div className="p-[1.5px] rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
-                                            <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-black text-xs ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"}`}>+91</div>
+                                            <div className={`p-3 rounded-[10px] h-full flex items-center justify-center font-black text-xs ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"}`}>+91</div>
                                         </div>
                                         <div className={getErrorClass(errorKey)}>
                                             <input 
@@ -308,7 +308,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                                                 maxLength={10}
                                                 pattern="\d{10}"
                                                 placeholder="10-digit number"
-                                                className={`w-full p-3 h-full rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                                                className={`w-full p-3 h-full rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                                                 value={member[key] || ""}
                                                 onChange={(e) => {
                                                     const val = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -321,7 +321,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                                 ) : (
                                     <div className={getBaseErrorClass(errorKey)}>
                                         <input 
-                                            className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none`}
+                                            className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                                             value={member[key] || ""}
                                             onChange={(e) => {
                                                 handleMemberChange(idx, key, e.target.value);
@@ -342,7 +342,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
                                 <div className={getBaseErrorClass(errorKey)}>
                                     <input 
                                         placeholder="Your answer..."
-                                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black"} outline-none border-none placeholder-gray-500`}
+                                        className={`w-full p-3 rounded-[10px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none placeholder-gray-500`}
                                         value={member[q.question] || ""}
                                         onChange={(e) => {
                                             handleMemberChange(idx, q.question, e.target.value);

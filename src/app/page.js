@@ -21,7 +21,7 @@ const sections = [
         <div className="flex space-x-4 justify-center">
           <Link href="/auth/signup">
             <motion.button 
-              className="bg-white text-blue-700 font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-transform"
+              className="bg-[#FAFAFA] text-blue-700 font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-transform"
               whileHover={{ scale: 1.1 }}
             >
               Sign Up
@@ -29,7 +29,7 @@ const sections = [
           </Link>
           <Link href="/auth/login">
             <motion.button 
-              className="bg-transparent border border-white text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-white hover:text-blue-700 transition-all"
+              className="bg-transparent border border-white text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#FAFAFA] hover:text-blue-700 transition-all"
               whileHover={{ scale: 1.1 }}
             >
               Login
@@ -84,7 +84,7 @@ const sections = [
           <input
             type="email"
             placeholder="Enter your email"
-            className="px-4 py-3 border border-gray-400 rounded-md w-80 text-gray-800 bg-white shadow-md focus:outline-none"
+            className="px-4 py-3 border border-gray-400 rounded-md w-80 text-gray-800 bg-[#FAFAFA] shadow-md focus:outline-none"
           />
           <button className="bg-blue-600 text-white px-6 py-3 rounded-md ml-4 hover:bg-blue-700 shadow-md">
             Send
@@ -120,7 +120,7 @@ export default function HomePage() {
     <div className="relative bg-gradient-to-b from-blue-600 to-purple-700 min-h-screen">
       <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600 z-50">
         <div
-          className="h-full bg-white transition-all duration-300 ease-in-out"
+          className="h-full bg-[#FAFAFA] transition-all duration-300 ease-in-out"
           style={{ width: "100%" }}
         ></div>
       </div>

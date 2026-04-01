@@ -76,7 +76,7 @@ export default function PostReactions({
             return (
               <div
                 key={emoji}
-                className={`text-lg px-2 py-1 ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-100"} border rounded-full flex items-center gap-1 ${userReacted(emoji)
+                className={`text-lg px-2 py-1 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10" : "bg-gray-100 border-gray-100"} border rounded-full flex items-center gap-1 ${userReacted(emoji)
                   ? (darkMode ? "border-blue-500 bg-blue-500/10" : "border-blue-500 bg-blue-50")
                   : ""
                   }`}
@@ -119,7 +119,7 @@ export default function PostReactions({
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-300"} border shadow-2xl rounded-full px-4 py-2 flex gap-3 ring-1 ring-black ring-opacity-5`}
+                className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-[#FAFAFA] border-gray-300"} border shadow-2xl rounded-full px-4 py-2 flex gap-3 ring-1 ring-black ring-opacity-5`}
               >
                 {Object.keys(emojiLabels).map((emoji) => (
                   <motion.button

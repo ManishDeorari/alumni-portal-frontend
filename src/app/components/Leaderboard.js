@@ -63,8 +63,8 @@ export default function Leaderboard() {
 
   const Card = ({ title, users, pointsKey }) => (
     <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-12 transition-all hover:shadow-blue-500/10">
-      <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
-        <div className={`px-10 py-6 ${darkMode ? "bg-white/5" : "bg-gray-50/50"} flex items-center justify-between`}>
+      <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
+        <div className={`px-10 py-6 ${darkMode ? "bg-[#FAFAFA]/5" : "bg-gray-50/50"} flex items-center justify-between`}>
           <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight`}>{title}</h2>
           <div className={`px-4 py-1.5 ${darkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"} rounded-xl shadow-lg`}>
             <span className="font-black text-[10px] uppercase tracking-widest">{users.length} Ranked</span>
@@ -75,7 +75,7 @@ export default function Leaderboard() {
         <div className="p-6 md:p-10">
           {users.length === 0 ? (
             <div className="py-20 text-center">
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
+              <div className="w-20 h-20 bg-[#FAFAFA]/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
                 <svg className="w-10 h-10 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
               <p className={`${darkMode ? "text-blue-300" : "text-slate-500"} font-bold italic text-lg`}>No eligible users found for this rank.</p>
@@ -85,13 +85,13 @@ export default function Leaderboard() {
               {users.map((user, index) => (
                 <div key={user._id} className="p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl shadow-xl transition-all hover:scale-[1.01]">
                   <li
-                    className={`flex items-center justify-between ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1rem-1px)] p-5 group transition-all duration-300`}
+                    className={`flex items-center justify-between ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1rem-1px)] p-5 group transition-all duration-300`}
                   >
                     <div className="flex items-center space-x-5">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${index === 0 ? "bg-yellow-500/30 text-yellow-500 border-2 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)]" :
                         index === 1 ? "bg-slate-300/30 text-slate-300 border-2 border-slate-300" :
                           index === 2 ? "bg-amber-600/30 text-amber-500 border-2 border-amber-600" :
-                            darkMode ? "bg-white/10 text-white border border-white/10" : "bg-gray-100 text-slate-900 border-gray-200"
+                            darkMode ? "bg-[#FAFAFA]/10 text-white border border-white/10" : "bg-gray-100 text-slate-900 border-gray-200"
                         }`}>
                         {index + 1}
                       </div>
@@ -136,7 +136,7 @@ export default function Leaderboard() {
       className="max-w-4xl mx-auto space-y-10"
     >
       <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2rem] shadow-2xl overflow-hidden">
-        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-white"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
+        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
           <div>
             <h1 className={`text-3xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight mb-2 flex items-center gap-3`}>
               🏆 Alumni Leaderboard
@@ -150,7 +150,7 @@ export default function Leaderboard() {
                 placeholder="Search by name or enrollment…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-white text-black"} rounded-2xl outline-none transition-all font-medium`}
+                className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black"} rounded-2xl outline-none transition-all font-medium`}
               />
               <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white/20" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>

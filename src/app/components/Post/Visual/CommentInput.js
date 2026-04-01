@@ -39,7 +39,7 @@ export default function CommentInput({
             }
           }}
           placeholder="Write a comment..."
-          className={`flex-1 border ${darkMode ? "border-white/20 bg-slate-800 text-white" : "border-black bg-white text-gray-900"} rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
+          className={`flex-1 border ${darkMode ? "border-white/20 bg-slate-800 text-white" : "border-black bg-[#FAFAFA] text-gray-900"} rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
           ref={inputRef}
         />
 

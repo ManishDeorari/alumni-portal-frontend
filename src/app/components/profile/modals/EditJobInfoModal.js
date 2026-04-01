@@ -70,7 +70,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-white'} rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -78,13 +78,13 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                     </h2>
                     <button
                         onClick={onClose}
-                        className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition"
+                        className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                     {/* Work Profile Section */}
                     <div className={`p-5 rounded-2xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/60' : 'bg-gray-50/50 border-gray-200 hover:bg-gray-50'}`}>
                         <h3 className={`font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-blue-400' : 'text-blue-700'}`}>
@@ -103,7 +103,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                     </label>
                                     <input
                                         type="text"
-                                        className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                        className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         value={workProfile[item.field] || ""}
                                         onChange={(e) => handleWorkChange(item.field, e.target.value)}
                                         placeholder={`Enter ${item.label.toLowerCase()}`}
@@ -125,7 +125,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                             <input
                                 type="text"
                                 placeholder="Java, Python, Leadership, etc."
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                             />
@@ -144,7 +144,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                 </label>
                                 <input
                                     type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.functionalArea || ""}
                                     onChange={(e) => handleJobChange("functionalArea", e.target.value)}
                                 />
@@ -155,7 +155,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                 </label>
                                 <input
                                     type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.preferredLocations ? jobPreferences.preferredLocations.join(", ") : ""}
                                     onChange={(e) => handleLocationsChange(e.target.value)}
                                     placeholder="City names separated by commas"
@@ -167,7 +167,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                 </label>
                                 <input
                                     type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.noticePeriod || ""}
                                     onChange={(e) => handleJobChange("noticePeriod", e.target.value)}
                                 />
@@ -178,7 +178,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                 </label>
                                 <input
                                     type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                     value={jobPreferences.salary || ""}
                                     onChange={(e) => handleJobChange("salary", e.target.value)}
                                 />
@@ -191,7 +191,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                     <FileText className={`absolute left-3 top-2.5 w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />
                                     <input
                                         type="text"
-                                        className={`w-full pl-9 p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-white border-gray-300 text-gray-900 focus:ring-blue-500'}`}
+                                        className={`w-full pl-9 p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
                                         value={jobPreferences.resumeLink || ""}
                                         onChange={(e) => handleJobChange("resumeLink", e.target.value)}
                                         placeholder="https://drive.google.com/..."

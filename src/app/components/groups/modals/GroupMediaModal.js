@@ -18,7 +18,7 @@ export default function GroupMediaModal({
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className={`relative w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col h-[85vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-white border-gray-100 text-gray-900"}`}>
+            <div className={`relative w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col h-[85vh] ${darkMode ? "bg-gray-900 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-100 text-gray-900"}`}>
                 
                 {/* Header */}
                 <div className="p-6 border-b dark:border-white/5 flex justify-between items-center">
@@ -26,7 +26,7 @@ export default function GroupMediaModal({
                         <h2 className="text-xl font-black tracking-tighter uppercase">Shared Memories</h2>
                         <p className="text-[10px] font-black uppercase text-purple-500 tracking-widest">{mediaList.length} Images Shared</p>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors text-gray-500">
                         <FaTimes />
                     </button>
                 </div>
@@ -59,7 +59,7 @@ export default function GroupMediaModal({
                                                 target="_blank" 
                                                 rel="noopener noreferrer" 
                                                 onClick={e => e.stopPropagation()} 
-                                                className="p-3 bg-white text-black rounded-2xl hover:scale-110 transition-transform shadow-2xl"
+                                                className="p-3 bg-[#FAFAFA] text-black rounded-2xl hover:scale-110 transition-transform shadow-2xl"
                                                 title="View Full Size"
                                             >
                                                 <FaDownload size={14} />

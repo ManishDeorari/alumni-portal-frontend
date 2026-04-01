@@ -78,24 +78,24 @@ export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
         )}
         <button
           onClick={handleZoomIn}
-          className="bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all"
+          className="bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full p-3 transition-all"
           title="Zoom In"
         >
           <ZoomIn size={20} />
         </button>
         <button
           onClick={handleZoomOut}
-          className="bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all"
+          className="bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full p-3 transition-all"
           title="Zoom Out"
         >
           <ZoomOut size={20} />
         </button>
-        <div className="w-[1px] h-8 bg-white/20 mx-1" />
+        <div className="w-[1px] h-8 bg-[#FAFAFA]/20 mx-1" />
         <a
           href={imageUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all"
+          className="bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full p-3 transition-all"
           title="Download"
         >
           <Download size={20} />

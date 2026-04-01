@@ -90,7 +90,7 @@ const LoginPopup = () => {
                     <p className="text-white/70 mt-2 font-medium text-sm">Reconnect. Network. Grow.</p>
                 </div>
 
-                <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-white text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-4 px-6 md:py-6 md:px-8 shadow-2xl space-y-4 relative overflow-hidden transition-all duration-500`}>
+                <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-4 px-6 md:py-6 md:px-8 shadow-2xl space-y-4 relative overflow-hidden transition-all duration-500`}>
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
 
                     {/* Popup Status Header */}
@@ -103,7 +103,7 @@ const LoginPopup = () => {
                         </div>
                         <button
                             onClick={handleClose}
-                            className={`${darkMode ? "text-white/40 hover:text-white hover:bg-white/10" : "text-gray-400 hover:text-gray-900 hover:bg-gray-100"} p-2 rounded-full transition-all`}
+                            className={`${darkMode ? "text-white/40 hover:text-white hover:bg-[#FAFAFA]/10" : "text-gray-400 hover:text-gray-900 hover:bg-gray-100"} p-2 rounded-full transition-all`}
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -130,7 +130,7 @@ const LoginPopup = () => {
                                 placeholder="example@univ.edu"
                                 value={form.identifier}
                                 onChange={handleChange}
-                                className={`w-full px-5 py-3 ${darkMode ? "bg-white/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
+                                className={`w-full px-5 py-3 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
                                 required
                             />
                         </div>
@@ -145,7 +145,7 @@ const LoginPopup = () => {
                                 placeholder="••••••••"
                                 value={form.password}
                                 onChange={handleChange}
-                                className={`w-full px-5 py-3 ${darkMode ? "bg-white/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
+                                className={`w-full px-5 py-3 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
                                 required
                             />
                         </div>
@@ -174,7 +174,7 @@ const LoginPopup = () => {
                     <div className="flex flex-col space-y-3 pt-2">
                         <button
                             onClick={handleSignupRedirect}
-                            className={`w-full ${darkMode ? "bg-white/10 hover:bg-white/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-black"} font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest`}
+                            className={`w-full ${darkMode ? "bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-black"} font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest`}
                         >
                             <UserPlus className="w-4 h-4 text-blue-400" /> Create New Account
                         </button>
@@ -195,7 +195,7 @@ const LoginPopup = () => {
                 <div className="fixed bottom-6 right-6 z-[100]">
                     <button
                         onClick={() => setDarkMode(!darkMode)}
-                        className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-white/10 border-white/20 text-yellow-400 hover:bg-white/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
+                        className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-[#FAFAFA]/10 border-white/20 text-yellow-400 hover:bg-[#FAFAFA]/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
                         title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                     >
                         {darkMode ? (

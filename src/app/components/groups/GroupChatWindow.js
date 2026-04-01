@@ -108,7 +108,7 @@ export default function GroupChatWindow({
         return (
             <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-40" />
-                <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-white/95"}`}>
+                <div className={`relative h-full flex flex-col items-center justify-center rounded-[14px] ${darkMode ? "bg-gray-900/95" : "bg-[#FAFAFA]/95"}`}>
                     <div className="text-center p-8">
                         <div className="text-7xl mb-6 animate-bounce">👥</div>
                         <h2 className={`text-3xl font-black mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>Select a Group</h2>
@@ -126,7 +126,7 @@ export default function GroupChatWindow({
         <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500" />
 
-            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-white/95 text-gray-900"}`}>
+            <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-[#FAFAFA]/95 text-gray-900"}`}>
                 {/* Header */}
                 <div className="p-4 flex items-center justify-between relative bg-black/5">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
@@ -135,7 +135,7 @@ export default function GroupChatWindow({
                                 e.stopPropagation();
                                 onViewImage(selectedGroup.profileImage || "/default-group.jpg");
                             }}
-                            className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-white group-hover:scale-105 transition-transform cursor-zoom-in"
+                            className="relative border-2 rounded-full p-[1px] bg-gradient-to-tr from-blue-400 to-pink-400 shadow-sm w-10 h-10 flex items-center justify-center overflow-hidden bg-[#FAFAFA] group-hover:scale-105 transition-transform cursor-zoom-in"
                         >
                             <GroupAvatar group={selectedGroup} size={36} />
                         </div>
@@ -150,15 +150,15 @@ export default function GroupChatWindow({
                     <div className="flex gap-2">
                         {isAdmin && (
                             <>
-                                <button onClick={onEditGroup} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Edit Group">
+                                <button onClick={onEditGroup} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-[#FAFAFA]/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Edit Group">
                                     <FaEdit size={18} />
                                 </button>
-                                <button onClick={onInviteMembers} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Invite Members">
+                                <button onClick={onInviteMembers} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-[#FAFAFA]/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Invite Members">
                                     <FaUserPlus size={18} />
                                 </button>
                             </>
                         )}
-                        <button onClick={onToggleDetails} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Group Info">
+                        <button onClick={onToggleDetails} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-[#FAFAFA]/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`} title="Group Info">
                             <FaInfoCircle size={18} />
                         </button>
                     </div>
@@ -192,7 +192,7 @@ export default function GroupChatWindow({
                                             }`}>
                                             <div className={`rounded-[calc(1rem-1px)] overflow-hidden ${isMe 
                                                 ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white" 
-                                                : (darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-950")
+                                                : (darkMode ? "bg-gray-900 text-white" : "bg-[#FAFAFA] text-gray-950")
                                             }`}>
                                                 {msg.type === "image" && (
                                                     <div 
@@ -204,7 +204,7 @@ export default function GroupChatWindow({
                                                 )}
                                                 
                                                 {msg.type === "image" && msg.content && (
-                                                    <div className={`h-[1px] w-full ${darkMode ? "bg-white/20" : "bg-black/20"}`} />
+                                                    <div className={`h-[1px] w-full ${darkMode ? "bg-[#FAFAFA]/20" : "bg-black/20"}`} />
                                                 )}
                                                 
                                                 {msg.content && (
@@ -217,7 +217,7 @@ export default function GroupChatWindow({
                                                 {msg.reactions && msg.reactions.length > 0 && (
                                                     <div className="flex flex-wrap gap-1 p-2 pt-0">
                                                         {msg.reactions.map((r, i) => (
-                                                            <div key={i} onClick={() => onReact(msg._id, r.emoji)} className={`px-2 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1.5 transition-all hover:scale-110 ${r.users.includes(currentUser?._id) ? "bg-blue-500/30 border-blue-500" : "bg-black/10 border-transparent dark:bg-white/10"}`}>
+                                                            <div key={i} onClick={() => onReact(msg._id, r.emoji)} className={`px-2 py-0.5 rounded-full text-[10px] border cursor-pointer flex items-center gap-1.5 transition-all hover:scale-110 ${r.users.includes(currentUser?._id) ? "bg-blue-500/30 border-blue-500" : "bg-black/10 border-transparent dark:bg-[#FAFAFA]/10"}`}>
                                                                 <span>{r.emoji}</span>
                                                                 <span className="font-black">{r.users.length}</span>
                                                             </div>
@@ -231,7 +231,7 @@ export default function GroupChatWindow({
                                         <div className={`absolute top-0 ${isMe ? "right-full mr-3" : "left-full ml-3"} opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2 items-center`}>
                                             <div className="flex gap-1.5 scale-90 group-hover:scale-100">
                                                 {['👍', '❤️', '🔥', '👏', '😂'].map(emoji => (
-                                                    <button key={emoji} onClick={() => onReact(msg._id, emoji)} className="p-1.5 rounded-xl bg-white dark:bg-gray-700 shadow-xl border dark:border-white/10 hover:scale-125 transition-transform text-xs">{emoji}</button>
+                                                    <button key={emoji} onClick={() => onReact(msg._id, emoji)} className="p-1.5 rounded-xl bg-[#FAFAFA] dark:bg-gray-700 shadow-xl border dark:border-white/10 hover:scale-125 transition-transform text-xs">{emoji}</button>
                                                 ))}
                                             </div>
                                             {(isMe || isAdmin) && (
@@ -282,7 +282,7 @@ export default function GroupChatWindow({
                         <form onSubmit={handleSend} className="flex items-center gap-4 relative">
                             <div className="flex items-center gap-1">
                                 <div className="relative" ref={emojiPickerRef}>
-                                    <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-gray-100"}`}>
+                                    <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-[#FAFAFA]/10" : "text-gray-500 hover:bg-gray-100"}`}>
                                         <FaSmile size={22} />
                                     </button>
                                     {showEmojiPicker && (
@@ -291,7 +291,7 @@ export default function GroupChatWindow({
                                         </div>
                                     )}
                                 </div>
-                                <button type="button" onClick={() => fileInputRef.current.click()} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-gray-100"}`}>
+                                <button type="button" onClick={() => fileInputRef.current.click()} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-[#FAFAFA]/10" : "text-gray-500 hover:bg-gray-100"}`}>
                                     <FaImage size={22} />
                                 </button>
                                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
@@ -303,7 +303,7 @@ export default function GroupChatWindow({
                                     placeholder={selectedFile ? "Add a caption..." : "Write something awesome..."}
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    className={`w-full rounded-[14px] px-6 py-3.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-900 text-white placeholder-gray-600" : "bg-white text-gray-900 placeholder-gray-500"}`}
+                                    className={`w-full rounded-[14px] px-6 py-3.5 font-bold text-sm focus:outline-none transition-colors ${darkMode ? "bg-gray-900 text-white placeholder-gray-600" : "bg-[#FAFAFA] text-gray-900 placeholder-gray-500"}`}
                                 />
                             </div>
                             <button

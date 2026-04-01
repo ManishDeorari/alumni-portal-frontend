@@ -251,7 +251,7 @@ export default function NotificationsPage() {
             className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-bold backdrop-blur-md border ${
               darkMode 
                 ? 'bg-black hover:bg-blue-600/20 border-white/20 hover:border-blue-500/50 text-white' 
-                : 'bg-white hover:bg-blue-50 border-gray-200 hover:border-blue-200 text-slate-700 hover:text-blue-600 shadow-sm'
+                : 'bg-[#FAFAFA] hover:bg-blue-50 border-gray-200 hover:border-blue-200 text-slate-700 hover:text-blue-600 shadow-sm'
             } disabled:opacity-30 disabled:cursor-not-allowed active:scale-95`}
           >
             <CheckCheck className="w-5 h-5 text-blue-500" />
@@ -266,8 +266,8 @@ export default function NotificationsPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
-                ? (darkMode ? "bg-white text-blue-600 shadow-lg shadow-black/20" : "bg-blue-600 text-white shadow-md")
-                : (darkMode ? "text-white/60 hover:text-white hover:bg-white/10" : "text-slate-500 hover:text-slate-700 hover:bg-white")
+                ? (darkMode ? "bg-[#FAFAFA] text-blue-600 shadow-lg shadow-black/20" : "bg-blue-600 text-white shadow-md")
+                : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/10" : "text-slate-500 hover:text-slate-700 hover:bg-[#FAFAFA]")
                 }`}
             >
               {tab.icon}
@@ -283,8 +283,8 @@ export default function NotificationsPage() {
             animate={{ opacity: 1, y: 0 }}
             className={`rounded-3xl p-16 text-center border relative overflow-hidden p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 shadow-xl`}
           >
-            <div className={`p-16 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-white'}`}>
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${darkMode ? 'bg-white/5 text-white/50' : 'bg-gray-50 text-slate-300'}`}>
+            <div className={`p-16 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'}`}>
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${darkMode ? 'bg-[#FAFAFA]/5 text-white/50' : 'bg-gray-50 text-slate-300'}`}>
                 <Bell className="w-10 h-10" />
               </div>
               <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>No notifications found</h2>
@@ -300,7 +300,7 @@ export default function NotificationsPage() {
                   <h3 className={`text-sm font-black uppercase tracking-widest text-white`}>
                     {group.label}
                   </h3>
-                  <div className={`h-[1px] flex-1 ml-4 ${darkMode ? 'bg-white/20' : 'bg-white/40'}`}></div>
+                  <div className={`h-[1px] flex-1 ml-4 ${darkMode ? 'bg-[#FAFAFA]/20' : 'bg-[#FAFAFA]/40'}`}></div>
                 </div>
 
                 <div className="grid gap-4">
@@ -317,7 +317,7 @@ export default function NotificationsPage() {
                       >
                         <div className={`relative flex items-start gap-4 p-5 rounded-[calc(1rem-1px)] transition-all ${
                           !note.isRead
-                            ? (darkMode ? "bg-black/80 hover:bg-black" : "bg-white hover:bg-gray-50 shadow-md")
+                            ? (darkMode ? "bg-black/80 hover:bg-black" : "bg-[#FAFAFA] hover:bg-gray-50 shadow-md")
                             : (darkMode ? "bg-black/60 shadow-inner" : "bg-gray-100/80 shadow-inner")
                         } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
                           <div className="relative shrink-0">
@@ -327,7 +327,7 @@ export default function NotificationsPage() {
                                 alt={note.sender?.name || "User"}
                                 width={56}
                                 height={56}
-                                className="w-14 h-14 rounded-[0.9rem] object-cover bg-white"
+                                className="w-14 h-14 rounded-[0.9rem] object-cover bg-[#FAFAFA]"
                               />
                             </div>
                             {!note.isRead && (
@@ -345,11 +345,11 @@ export default function NotificationsPage() {
                                   </span>
                                 </p>
                                 <div className="flex items-center gap-3 mt-2">
-                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
                                     <Clock className="w-3 h-3" />
                                     {new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </span>
-                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
                                     <Calendar className="w-3 h-3" />
                                     {new Date(note.createdAt).toLocaleDateString()}
                                   </span>
@@ -381,7 +381,7 @@ export default function NotificationsPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 text-slate-900"
+              className="relative bg-[#FAFAFA] rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 text-slate-900"
             >
               <button
                 onClick={() => setShowPostModal(false)}

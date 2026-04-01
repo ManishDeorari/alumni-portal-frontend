@@ -173,7 +173,7 @@ export default function PointsSystemManagement() {
         <div className="space-y-10 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Settings Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-white"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
                     <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
                         <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
@@ -198,7 +198,7 @@ export default function PointsSystemManagement() {
                                         type="number"
                                         value={config[item.key]}
                                         onChange={(e) => setConfig({ ...config, [item.key]: parseInt(e.target.value) })}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
                                     />
                                     {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-slate-500"} uppercase`}>{item.sub}</span>}
                                 </div>
@@ -226,7 +226,7 @@ export default function PointsSystemManagement() {
 
             {/* Manual Award Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-white"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-green-500/10 transition-colors"></div>
                     <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
                         <span className="p-3 bg-green-600/20 rounded-2xl text-green-400">🏆</span>
@@ -241,7 +241,7 @@ export default function PointsSystemManagement() {
                                         type="text"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
+                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
                                         placeholder="Name or ID..."
                                     />
                                     <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-green-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -254,7 +254,7 @@ export default function PointsSystemManagement() {
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                         placeholder="0"
                                     />
                                 </div>
@@ -265,7 +265,7 @@ export default function PointsSystemManagement() {
                                     <select
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-white text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
+                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
                                     >
                                         {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
                                             <option key={val} value={val}>{label}</option>
@@ -282,7 +282,7 @@ export default function PointsSystemManagement() {
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-2xl px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                     placeholder="e.g. Exceptional contribution to the annual tech summit..."
                                 />
                             </div>
@@ -313,7 +313,7 @@ export default function PointsSystemManagement() {
                         Advanced Data Management
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className={`space-y-4 ${darkMode ? "bg-white/5 border-white/5" : "bg-white border-red-100"} p-8 rounded-[2rem] border hover:border-red-500/30 transition-all`}>
+                        <div className={`space-y-4 ${darkMode ? "bg-[#FAFAFA]/5 border-white/5" : "bg-[#FAFAFA] border-red-100"} p-8 rounded-[2rem] border hover:border-red-500/30 transition-all`}>
                             <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Season Rollover</h3>
                             <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
                                 Resets all current season points and moves balances to <span className="text-red-300 font-bold underline decoration-red-500/50 underline-offset-4">Historical Rankings</span>. This action is irreversible.
@@ -325,7 +325,7 @@ export default function PointsSystemManagement() {
                                 Trigger Annual Rollover
                             </button>
                         </div>
-                        <div className={`space-y-4 ${darkMode ? "bg-white/5 border-white/5" : "bg-white border-purple-100"} p-8 rounded-[2rem] border hover:border-purple-500/30 transition-all`}>
+                        <div className={`space-y-4 ${darkMode ? "bg-[#FAFAFA]/5 border-white/5" : "bg-[#FAFAFA] border-purple-100"} p-8 rounded-[2rem] border hover:border-purple-500/30 transition-all`}>
                             <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Consistency Sync</h3>
                             <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
                                 Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-600 font-bold">Safe to run.</span>

@@ -32,7 +32,7 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
       {!isPublicView && (
         <button
           onClick={() => setShowEditor(true)}
-          className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer"
+          className="absolute bottom-1 right-1 bg-[#FAFAFA] p-1 rounded-full shadow cursor-pointer"
           title="Edit photo"
         >
           <Camera size={18} className="text-gray-700" />
