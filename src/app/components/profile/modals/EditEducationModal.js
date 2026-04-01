@@ -238,7 +238,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-slate-900' : 'bg-white'} rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -249,7 +249,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     </button>
                 </div>
 
-                <div className={`p-4 md:p-6 space-y-8 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-slate-900' : 'bg-gray-50/30'}`}>
+                <div className={`p-4 md:p-6 space-y-8 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-gray-50/30'}`}>
                     <p className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>* Indicates required</p>
 
                     <datalist id="degree-list-final">
@@ -346,7 +346,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                 value={edu.degree || ""}
                                                 onChange={(e) => !edu.isFixed && handleChange(index, "degree", e.target.value)}
                                                 disabled={edu.isFixed}
-                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-slate-900 text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
+                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-[#121213] text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
                                             >
                                                 <option value="">Select Level</option>
                                                 {DEGREE_SUGGESTIONS.map(d => <option key={d} value={d}>{d}</option>)}

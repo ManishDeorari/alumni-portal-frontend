@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Copy, Edit, UserPlus, Check } from "lucide-react";
+import { Copy, Edit, UserPlus, Check, Award } from "lucide-react";
 import toast from "react-hot-toast";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileBanner from "./ProfileBanner";
@@ -15,6 +15,38 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
     const [showEditModal, setShowEditModal] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState(null); // null, 'connected', 'pending', 'none'
     const [loading, setLoading] = useState(false);
+
+    const getMissingFields = () => {
+        if (!profile || profile.role !== "alumni" || isPublicView || profile.profileCompletionAwarded) return null;
+        
+        const missing = [];
+        if (!profile.profilePicture || profile.profilePicture.includes("default-profile.jpg")) missing.push("Profile Picture");
+        if (!profile.bannerImage || profile.bannerImage.includes("default_banner.jpg")) missing.push("Banner Image");
+        if (!profile.phone || profile.phone === "Not provided" || profile.phone === "") missing.push("Phone Number");
+        if (!profile.address || profile.address === "Not set" || profile.address === "") missing.push("Address");
+        if (!profile.whatsapp || profile.whatsapp === "Not linked" || profile.whatsapp === "") missing.push("WhatsApp");
+        if (!profile.linkedin || profile.linkedin === "Not linked" || profile.linkedin === "") missing.push("LinkedIn");
+        if (!profile.bio || profile.bio.trim().length === 0) missing.push("Bio (About Section)");
+        
+        const MANDATORY_DEGREES = [
+            "High School (Secondary - Class 10)",
+            "Intermediate (Higher Secondary - Class 11-12)",
+            "Undergraduate (Bachelor's Degree)",
+            "Postgraduate (Master's Degree)"
+        ];
+        const userEducations = profile.education || [];
+        const completedMandatoryCount = MANDATORY_DEGREES.filter(degree => {
+            const found = userEducations.find(e => e.level === degree || e.degree === degree);
+            return found && found.institution && found.startDate && found.endDate;
+        }).length;
+
+        if (completedMandatoryCount < 3) {
+            missing.push("Education (At least 3/4 of 10th, 12th, UG, PG)");
+        }
+
+        return missing.length > 0 ? missing : null;
+    };
+    const missingFields = getMissingFields();
 
     const copyToClipboard = (text, field) => {
         if (!text) return;
@@ -103,7 +135,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
     return (
         <div className="max-w-4xl mx-auto mt-3 p-[2px] bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 rounded-2xl shadow-2xl">
-            <div className={`${darkMode ? 'bg-slate-900' : 'bg-white'} rounded-[calc(1rem-1px)] overflow-hidden`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-[calc(1rem-1px)] overflow-hidden`}>
                 {/* 🔷 Banner */}
                 <div className={`relative w-full h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <ProfileBanner
@@ -151,6 +183,31 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             </span>
                         </p>
                     </div>
+
+                    {/* Missing Fields Alert for Points */}
+                    {missingFields && (
+                        <div className="w-full mt-6 p-[2px] bg-gradient-to-r from-yellow-500 to-amber-500 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                            <div className={`p-4 rounded-[calc(1rem-1px)] ${darkMode ? 'bg-[#121213]/90 text-yellow-100' : 'bg-yellow-50 text-yellow-900'} backdrop-blur-md`}>
+                                <h3 className="text-sm font-black uppercase tracking-wider mb-3 flex items-center justify-between">
+                                    <span className="flex items-center gap-2">
+                                        <Award className="w-5 h-5 text-yellow-500" />
+                                        Complete Profile for Points
+                                    </span>
+                                    <span className="text-[10px] bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-3 py-1 rounded-full font-black tracking-widest">
+                                        {missingFields.length} Tasks Left
+                                    </span>
+                                </h3>
+                                <ul className="text-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 font-medium">
+                                    {missingFields.map((field, idx) => (
+                                        <li key={idx} className="flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"></span>
+                                            <span className="opacity-90 leading-tight">{field}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Contact row - 2 Rows with Gradient Borders */}
                     <div className="w-full mt-8 space-y-4">

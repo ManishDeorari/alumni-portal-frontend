@@ -85,7 +85,7 @@ const UserConnectionsPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pb-20">
                         {connections.map((user) => (
                             <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-[3rem] group hover:from-blue-400 hover:to-purple-400 transition-all duration-500 shadow-xl hover:shadow-2xl">
-                                <div className={`p-6 rounded-[3rem] border flex items-center justify-between gap-6 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-100'}`}>
+                                <div className={`p-6 rounded-[3rem] border flex items-center justify-between gap-6 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#121213] border-white/5' : 'bg-white border-gray-100'}`}>
                                     <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-colors ${darkMode ? 'bg-blue-500/5 group-hover:bg-blue-500/10' : 'bg-blue-50/5 group-hover:bg-blue-100/50'}`}></div>
                                     <div className="flex items-center gap-5 min-w-0 relative z-10 flex-1">
                                         <div className="relative p-[2px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-lg">

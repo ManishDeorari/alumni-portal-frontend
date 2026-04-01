@@ -117,7 +117,7 @@ const NetworkPage = () => {
             </div>
             <div className="flex gap-4">
               <div className="relative p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold transition-all backdrop-blur-md ${darkMode ? 'bg-slate-900/90 text-white hover:bg-slate-800' : 'bg-white/90 text-slate-900 hover:bg-gray-50'}`}>
+                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold transition-all backdrop-blur-md ${darkMode ? 'bg-[#121213]/90 text-white hover:bg-slate-800' : 'bg-white/90 text-slate-900 hover:bg-gray-50'}`}>
                   My Network
                   {currentUser?.connections?.length > 0 && (
                     <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]">

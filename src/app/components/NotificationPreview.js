@@ -51,7 +51,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.96 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className={`absolute top-full right-0 mt-3.5 w-80 rounded-[2rem] shadow-2xl overflow-hidden border ${darkMode ? "bg-slate-900/98 border-white/20 backdrop-blur-2xl" : "bg-white border-gray-200"
+            className={`absolute top-full right-0 mt-3.5 w-80 rounded-[2rem] shadow-2xl overflow-hidden border ${darkMode ? "bg-[#121213]/98 border-white/20 backdrop-blur-2xl" : "bg-white border-gray-200"
                 } z-[200]`}
         >
             {/* Hover Bridge: prevents popup from closing when moving mouse from icon downwards */}

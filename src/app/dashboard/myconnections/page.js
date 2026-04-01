@@ -51,7 +51,7 @@ const MyConnectionsPage = () => {
                                 placeholder="Filter connections..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className={`w-full pl-12 pr-4 py-2.5 rounded-2xl outline-none transition-all font-bold text-xs uppercase tracking-widest ${darkMode ? 'bg-slate-900 text-white placeholder-white/20' : 'bg-white/90 text-slate-900 placeholder-gray-400'}`}
+                                className={`w-full pl-12 pr-4 py-2.5 rounded-2xl outline-none transition-all font-bold text-xs uppercase tracking-widest ${darkMode ? 'bg-[#121213] text-white placeholder-white/20' : 'bg-white/90 text-slate-900 placeholder-gray-400'}`}
                             />
                             <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 transition-opacity ${darkMode ? 'text-white/20' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
@@ -79,7 +79,7 @@ const MyConnectionsPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-20">
                         {filteredConnections.map((user) => (
                             <div key={user._id} className="relative p-[1px] bg-gradient-to-br from-blue-400/50 to-purple-400/50 rounded-[2.5rem] group hover:from-blue-400 hover:to-purple-400 transition-all duration-500 shadow-xl">
-                                <div className={`p-5 rounded-[2.5rem] flex items-center justify-between gap-5 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-slate-900 border-white/5 hover:border-blue-500/30' : 'bg-white border-gray-100 hover:border-blue-400/30'}`}>
+                                <div className={`p-5 rounded-[2.5rem] flex items-center justify-between gap-5 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#121213] border-white/5 hover:border-blue-500/30' : 'bg-white border-gray-100 hover:border-blue-400/30'}`}>
                                     <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-colors ${darkMode ? 'bg-blue-500/5 group-hover:bg-blue-500/10' : 'bg-blue-50/50 group-hover:bg-blue-100/50'}`}></div>
                                     <div className="flex items-center gap-4 min-w-0 relative z-10 flex-1">
                                         <div className="relative p-[1px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-lg">

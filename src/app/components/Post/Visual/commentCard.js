@@ -139,10 +139,10 @@ export default function CommentCard({
         ${isReply
           ? isOwn
             ? `${darkMode ? "bg-blue-600/10 border-blue-500/30" : "bg-blue-50 border-blue-200"} pl-6 ml-3 border-l-[3px] border-blue-500`
-            : `${darkMode ? "bg-slate-900 border-white/10 text-gray-200" : "bg-gray-50 text-black border-gray-200"} pl-6 ml-3 border-l-[3px] border-blue-300`
+            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-gray-50 text-black border-gray-200"} pl-6 ml-3 border-l-[3px] border-blue-300`
           : isOwn
             ? `${darkMode ? "bg-blue-600/10 border-blue-600/30" : "bg-blue-50 border-blue-200"}`
-            : `${darkMode ? "bg-slate-900 border-white/10 text-gray-200" : "bg-white border-gray-200"}`
+            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-white border-gray-200"}`
         }
         ${justPosted ? "ring-2 ring-blue-400" : ""}
       `}

@@ -132,7 +132,7 @@ export default function MyPostsPage() {
                   darkMode={darkMode}
                 />
               ) : (
-                <div key={post._id} className={`p-8 rounded-[3rem] animate-pulse ${darkMode ? 'bg-slate-900/50' : 'bg-white/50'}`}>Loading content…</div>
+                <div key={post._id} className={`p-8 rounded-[3rem] animate-pulse ${darkMode ? 'bg-[#121213]/50' : 'bg-white/50'}`}>Loading content…</div>
               )
             ))}
 

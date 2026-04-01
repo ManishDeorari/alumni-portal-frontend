@@ -266,9 +266,9 @@ export default function AlumniExport() {
                                             <th className="py-4 px-6 text-left">Industry</th>
                                         </tr>
                                     </thead>
-                                    {/* Gradient Separator Line */}
-                                    <tr className="h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-sm"><td colSpan="4"></td></tr>
                                     <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
+                                        {/* Gradient Separator Line */}
+                                        <tr className="h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-sm border-0"><td colSpan="4" className="p-0"></td></tr>
                                         {alumni.slice(0, 10).map((u) => (
                                             <tr key={u._id} className={`transition-all ${darkMode ? "hover:bg-white/5" : "hover:bg-gray-50"}`}>
                                                 <td className="py-4 px-6">

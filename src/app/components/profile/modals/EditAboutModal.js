@@ -39,7 +39,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
+            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white">
                     <h2 className="text-lg font-bold flex items-center gap-2">

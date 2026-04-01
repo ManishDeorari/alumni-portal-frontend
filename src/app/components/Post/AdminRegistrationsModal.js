@@ -56,7 +56,7 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`relative w-full max-w-3xl ${darkMode ? "bg-slate-900 border-white/10" : "bg-white border-gray-200"} border rounded-[2rem] shadow-2xl overflow-hidden my-auto`}
+          className={`relative w-full max-w-3xl ${darkMode ? "bg-[#121213] border-white/10" : "bg-white border-gray-200"} border rounded-[2rem] shadow-2xl overflow-hidden my-auto`}
         >
           <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <div>
@@ -88,7 +88,7 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
                 <div key={reg._id} className="p-[1.2px] rounded-2xl bg-gradient-to-r from-blue-500/30 to-purple-600/30 hover:from-blue-500 hover:to-purple-600 transition-all duration-300">
                   <div 
                     onClick={() => toggleRow(reg._id)}
-                    className={`p-4 rounded-[15px] flex items-center gap-4 cursor-pointer transition-all ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black hover:bg-gray-50"}`}
+                    className={`p-4 rounded-[15px] flex items-center gap-4 cursor-pointer transition-all ${darkMode ? "bg-[#121213] text-white" : "bg-white text-black hover:bg-gray-50"}`}
                   >
                     <div className="relative w-10 h-10 rounded-full overflow-hidden border">
                       <Image src={reg.userId?.profilePicture || "/default-profile.jpg"} alt={reg.userId?.name || "User"} fill className="object-cover" />
@@ -125,7 +125,7 @@ const AdminRegistrationsModal = ({ event, isOpen, onClose, darkMode = false }) =
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className={`overflow-hidden ${darkMode ? "bg-slate-900" : "bg-white"} rounded-b-[15px]`}
+                        className={`overflow-hidden ${darkMode ? "bg-[#121213]" : "bg-white"} rounded-b-[15px]`}
                       >
                         <div className="p-4 pt-0 space-y-3">
                            {/* Member 1 / Personal Answers */}

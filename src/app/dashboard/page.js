@@ -182,7 +182,7 @@ export default function DashboardPage() {
           {/* Right Column - Feed & Welcome */}
           <div className="flex-1 space-y-8 order-1 lg:order-2">
             {/* User info */}
-            <section className={`${darkMode ? "bg-slate-900 border-white/10" : "bg-white border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
+            <section className={`${darkMode ? "bg-[#121213] border-white/10" : "bg-white border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">

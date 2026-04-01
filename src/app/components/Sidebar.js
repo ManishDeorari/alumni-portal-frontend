@@ -288,7 +288,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#121213] border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
         {/* Home */}
         <Link href="/dashboard" onClick={handleHomeClick} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <FaHome className={newPostsCount > 0 ? "text-orange-500" : ""} />

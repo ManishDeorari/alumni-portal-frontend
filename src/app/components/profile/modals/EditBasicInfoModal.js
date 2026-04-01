@@ -153,7 +153,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-slate-900' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-white'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -167,7 +167,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                     </button>
                 </div>
 
-                <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
+                <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
                     {/* Name */}
                     <div>
                         <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>

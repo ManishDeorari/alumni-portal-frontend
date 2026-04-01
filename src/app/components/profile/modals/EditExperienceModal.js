@@ -199,7 +199,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 text-gray-900">
-            <div className={`rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
+            <div className={`rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -210,7 +210,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                     </button>
                 </div>
 
-                <div className={`p-4 md:p-6 space-y-8 overflow-y-auto custom-scrollbar flex-grow transition-colors ${darkMode ? 'bg-slate-900' : 'bg-gray-50/30'}`}>
+                <div className={`p-4 md:p-6 space-y-8 overflow-y-auto custom-scrollbar flex-grow transition-colors ${darkMode ? 'bg-[#121213]' : 'bg-gray-50/30'}`}>
                     {/* Datalists for Suggestions */}
                     <datalist id="job-titles">
                         {JOB_TITLE_SUGGESTIONS.map(t => <option key={t} value={t} />)}
