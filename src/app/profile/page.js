@@ -15,7 +15,7 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ProfilePage() {
+function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
@@ -164,5 +164,22 @@ export default function ProfilePage() {
         <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+          <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
+          <div className="text-center space-y-2">
+              <h2 className="font-black tracking-[0.3em] uppercase text-sm">Authenticating Route...</h2>
+          </div>
+        </div>
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }
