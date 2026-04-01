@@ -113,7 +113,7 @@ export default function GroupMembersModal({
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <Link 
-                                                    href={`/dashboard/profile?id=${member._id}`} 
+                                                    href={`/profile/${member.publicId || member._id}`} 
                                                     className={`font-black tracking-tight text-sm hover:text-blue-500 hover:underline transition-all cursor-pointer ${darkMode ? "text-white" : "text-gray-900"}`}
                                                 >
                                                     {member.name}

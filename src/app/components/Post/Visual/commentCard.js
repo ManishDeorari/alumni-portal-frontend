@@ -162,7 +162,7 @@ export default function CommentCard({
                 <span>{comment.user?.name || "Unknown"}</span>
               ) : (
                 <Link
-                  href={`/dashboard/profile?id=${comment.user?._id}`}
+                  href={`/profile/${comment.user?.publicId || comment.user?._id}`}
                   className={`hover:underline ${darkMode ? "text-blue-400 font-bold" : "text-blue-700 font-bold"} cursor-pointer`}
                 >
                   {comment.user?.name || "Unknown"}

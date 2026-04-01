@@ -104,7 +104,7 @@ export default function Leaderboard() {
                       />
                       <div className="min-w-0">
                         <Link
-                          href={`/dashboard/profile?id=${user._id}`}
+                          href={`/profile/${user.publicId || user._id}`}
                           className={`font-black text-xl ${darkMode ? "text-white" : "text-slate-900"} hover:text-blue-500 transition-colors block truncate`}
                         >
                           {user.name}

@@ -111,7 +111,7 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                                             className={`w-12 h-12 rounded-full object-cover border ${darkMode ? 'border-white/20 bg-gray-800' : 'border-white bg-[#FAFAFA] shadow-sm'}`}
                                         />
                                         <div className="min-w-0">
-                                            <Link href={`/dashboard/profile?id=${user._id}`} onClick={onClose}>
+                                            <Link href={`/profile/${user.publicId || user._id}`} onClick={onClose}>
                                                 <h3 className={`font-bold transition-colors truncate ${darkMode ? 'text-white hover:text-blue-300' : 'text-slate-900 hover:text-blue-600'}`}>{user.name}</h3>
                                             </Link>
                                             <p className={`text-xs truncate ${darkMode ? 'text-white/40' : 'text-slate-500'}`}>{user.course || "Alumni"}</p>

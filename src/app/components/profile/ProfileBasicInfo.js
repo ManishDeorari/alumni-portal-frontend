@@ -182,6 +182,13 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 {profile.role === 'admin' || profile.role === 'faculty' ? (profile.employeeId || "N/A") : (profile.enrollmentNumber || "N/A")}
                             </span>
                         </p>
+                        {profile.publicId && (
+                            <p className={`mt-1 text-sm font-semibold tracking-wide flex items-center justify-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <span className={`select-all px-2 py-0.5 rounded-md transition-all cursor-text ${darkMode ? 'bg-[#121213]/50 text-white/70 border border-white/5' : 'bg-[#FAFAFA]/70 text-gray-700 border border-black/5'}`}>
+                                    @{profile.publicId}
+                                </span>
+                            </p>
+                        )}
                     </div>
 
                     {/* Missing Fields Alert for Points */}

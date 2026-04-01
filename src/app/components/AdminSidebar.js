@@ -186,7 +186,7 @@ export default function AdminSidebar() {
               )}
             </AnimatePresence>
           </div>
-          <Link href="/dashboard/profile" className="hover:text-gray-200 relative group" title="Profile">
+          <Link href="/profile" className="hover:text-gray-200 relative group" title="Profile">
             <FaUserCircle />
           </Link>
           <div className="relative">
@@ -231,7 +231,7 @@ export default function AdminSidebar() {
           <FaUserShield />
           {adminSignupRequestsCount > 0 && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>}
         </Link>
-        <Link href="/dashboard/profile" className={pathname === "/dashboard/profile" ? "text-blue-600 dark:text-blue-400" : ""}>
+        <Link href="/profile" className={pathname === "/profile" ? "text-blue-600 dark:text-blue-400" : ""}>
           <FaUserCircle />
         </Link>
       </nav>

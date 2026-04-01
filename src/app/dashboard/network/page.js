@@ -233,7 +233,7 @@ const NetworkPage = () => {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <Link href={`/dashboard/profile?id=${user._id}`}>
+                          <Link href={`/profile/${user.publicId || user._id}`}>
                             <h3 className="font-black text-base truncate hover:text-blue-500 transition-colors">{user.name}</h3>
                           </Link>
                           <p className={`text-[9px] font-bold ${darkMode ? 'text-blue-100/40' : 'text-slate-500'}`}>{user.course} • {user.year}</p>
@@ -284,7 +284,7 @@ const NetworkPage = () => {
                             />
                           </div>
                           <div className="w-full min-w-0">
-                            <Link href={`/dashboard/profile?id=${user._id}`}>
+                            <Link href={`/profile/${user.publicId || user._id}`}>
                               <h3 className="font-black text-sm truncate hover:text-blue-500 transition-colors px-1">{user.name}</h3>
                             </Link>
                             <p className={`text-[9px] font-bold ${darkMode ? 'text-blue-100/40' : 'text-slate-500'}`}>{user.course} • {user.year}</p>

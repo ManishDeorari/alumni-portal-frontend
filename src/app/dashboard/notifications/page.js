@@ -140,9 +140,9 @@ export default function NotificationsPage() {
     markAsRead(note._id);
 
     if (note.type === "connect_request" || note.type === "connect_accept") {
-      router.push(`/dashboard/profile?id=${note.sender?._id || note.sender}`);
+      router.push(`/profile/${note.sender?._id || note.sender}`);
     } else if (note.type === "profile_visit") {
-      router.push(`/dashboard/profile?id=${note.sender?._id || note.sender}`);
+      router.push(`/profile/${note.sender?._id || note.sender}`);
     } else if (note.type === "group_joined" || note.type === "group_added") {
       router.push("/dashboard/groups");
     } else if (note.postId) {

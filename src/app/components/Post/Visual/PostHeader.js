@@ -44,7 +44,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
             <span className="truncate max-w-[150px]">{post.user?.name || "Unknown"}</span>
           ) : (
             <Link
-              href={`/dashboard/profile?id=${post.user?._id}`}
+              href={`/profile/${post.user?.publicId || post.user?._id}`}
               className={`hover:underline truncate max-w-[150px] ${darkMode ? "text-blue-400 decoration-blue-500" : "text-blue-700 decoration-blue-400"} decoration-2 transition-colors cursor-pointer`}
             >
               {post.user?.name || "Unknown"}

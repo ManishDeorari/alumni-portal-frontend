@@ -98,7 +98,7 @@ const UserConnectionsPage = () => {
                                             />
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <Link href={`/dashboard/profile?id=${user._id}`}>
+                                            <Link href={`/profile/${user.publicId || user._id}`}>
                                                 <h3 className={`font-black tracking-tight truncate transition-colors text-lg ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>{user.name}</h3>
                                             </Link>
                                             <p className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{user.course} • {user.year}</p>

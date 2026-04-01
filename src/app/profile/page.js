@@ -11,14 +11,17 @@ import ProfileWorkProfile from "../../components/profile/ProfileWorkProfile";
 import ProfileJobPreference from "../../components/profile/ProfileJobPreference";
 import ProfileBasicInfo from "../../components/profile/ProfileBasicInfo";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const profileId = searchParams.get("id"); // From URL: /dashboard/profile?id=[id]
+  const params = useParams();
+  
+  // Transition logic: Prioritize SEO slug in path, fallback to old DB ID if passed via query
+  const profileId = params?.publicId || searchParams.get("id"); 
   const { darkMode } = useTheme();
 
   const [profile, setProfile] = useState({});

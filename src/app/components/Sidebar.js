@@ -256,7 +256,7 @@ export default function Sidebar() {
 
           {/* Profile */}
           <Link
-            href="/dashboard/profile"
+            href="/profile"
             className="hover:text-gray-200 relative group"
             title="Profile"
           >
@@ -322,7 +322,7 @@ export default function Sidebar() {
         </Link>
 
         {/* Profile */}
-        <Link href="/dashboard/profile" className={pathname === "/dashboard/profile" ? "text-blue-600 dark:text-blue-400" : ""}>
+        <Link href="/profile" className={pathname === "/profile" ? "text-blue-600 dark:text-blue-400" : ""}>
           <FaUserCircle />
         </Link>
 
