@@ -27,6 +27,7 @@ export const metadata = {
 };
 
 import ClientRouteProtection from "./components/ClientRouteProtection";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 export default function RootLayout({ children }) {
   return (
@@ -53,9 +54,11 @@ export default function RootLayout({ children }) {
           }}
         />
         <ThemeProvider>
-          <ClientRouteProtection>
-            {children}
-          </ClientRouteProtection>
+          <NotificationProvider>
+            <ClientRouteProtection>
+              {children}
+            </ClientRouteProtection>
+          </NotificationProvider>
         </ThemeProvider>
       </body>
     </html>

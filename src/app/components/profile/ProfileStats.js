@@ -11,7 +11,7 @@ export default function ProfileStats({ profile, isPublicView }) {
     if (!profile) return null;
 
     const connectionsLink = isPublicView
-        ? `/dashboard/connections?userId=${profile._id}`
+        ? `/dashboard/myconnections?id=${profile._id}`
         : "/dashboard/myconnections";
 
     return (
