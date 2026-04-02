@@ -7,80 +7,29 @@ import { useRouter, usePathname } from "next/navigation";
 import ResetPasswordModal from "./ResetPasswordModal";
 import SettingsDrawer from "./SettingsDrawer";
 import NotificationPreview from "./NotificationPreview";
-import socket from "@/utils/socket";
+import { useNotifications } from "@/context/NotificationContext";
 import { AnimatePresence } from "framer-motion";
 
 export default function Sidebar() {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState([]);
-  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
-  const [unreadGroupMessagesCount, setUnreadGroupMessagesCount] = useState(0);
-  const [newPostsCount, setNewPostsCount] = useState(0);
-  const [adminSignupRequestsCount, setAdminSignupRequestsCount] = useState(0);
+  const { 
+    unreadCount, 
+    notifications, 
+    pendingRequestsCount, 
+    unreadGroupMessagesCount, 
+    newPostsCount, 
+    adminSignupRequestsCount,
+    shakeNotification,
+    markSectionAsSeen
+  } = useNotifications();
+
   const [isAdmin, setIsAdmin] = useState(false);
-  const [shakeNotification, setShakeNotification] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [showNotifPreview, setShowNotifPreview] = useState(false);
+  
   const router = useRouter();
   const pathname = usePathname();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-  const fetchNotifications = useCallback(async (token) => {
-    try {
-      const res = await fetch(`${API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        // Ensure each notification has an isRead property for consistent filtering
-        const normalized = data.map(n => ({
-          ...n,
-          isRead: n.isRead === true || n.isRead === "true" || n.isRead === 1 || n.isRead === "1"
-        }));
-        setNotifications(normalized);
-        const unread = normalized.filter(n => !n.isRead).length;
-        setUnreadCount(unread);
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    }
-  }, [API_URL]);
-
-  const fetchCounts = useCallback(async (token) => {
-    try {
-      const res = await fetch(`${API_URL}/api/counts/unread`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setNewPostsCount(data.unreadPostsCount);
-        setPendingRequestsCount(data.pendingRequestsCount);
-        setUnreadGroupMessagesCount(data.unreadGroupMessagesCount);
-        setUnreadCount(data.unreadNotificationsCount);
-        setAdminSignupRequestsCount(data.adminSignupRequestsCount);
-      }
-    } catch (err) {
-      console.error("Failed to fetch counts:", err);
-    }
-  }, [API_URL]);
-
-  const markSectionAsSeen = async (section) => {
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/counts/mark-seen/${section}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // Update local state immediately for better UX
-      if (section === "posts" || section === "home") setNewPostsCount(0);
-      if (section === "network") setPendingRequestsCount(0);
-      if (section === "groups") setUnreadGroupMessagesCount(0);
-    } catch (err) {
-      console.error(`Failed to mark ${section} as seen:`, err);
-    }
-  };
-
 
   const fetchUser = useCallback(async (token) => {
     try {
@@ -111,57 +60,12 @@ export default function Sidebar() {
       if (!user) {
         user = await fetchUser(token);
       } else {
-        // Still verify role if user exists
         setIsAdmin(user.role === "admin" || user.isAdmin);
-      }
-
-      if (user) {
-        fetchNotifications(token);
-        fetchCounts(token);
-        socket.emit("join", user._id);
       }
     };
 
     initialize();
-
-    const handleNewNotification = (notification) => {
-      const newNotif = { ...notification, isRead: false };
-      setNotifications(prev => [newNotif, ...prev]);
-      setUnreadCount(prev => prev + 1);
-      setShakeNotification(true);
-      setTimeout(() => setShakeNotification(false), 1000);
-      if (notification.type === "connect_request") {
-        setPendingRequestsCount(prev => prev + 1);
-      }
-    };
-
-    const handleNewPost = () => setNewPostsCount(prev => prev + 1);
-    const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
-    const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);
-
-    socket.on("newNotification", handleNewNotification);
-    socket.on("newPost", handleNewPost);
-    socket.on("receiveGroupMessage", handleNewGroupMessage);
-    socket.on("newSignupRequest", handleNewSignupRequest);
-
-    return () => {
-      socket.off("newNotification", handleNewNotification);
-      socket.off("newPost", handleNewPost);
-      socket.off("receiveGroupMessage", handleNewGroupMessage);
-      socket.off("newSignupRequest", handleNewSignupRequest);
-    };
-  }, [API_URL, fetchNotifications, fetchCounts, fetchUser]);
-
-  // Clear new posts indicator when visiting home
-  const handleHomeClick = () => {
-    markSectionAsSeen("home");
-  };
-  const handleNetworkClick = () => {
-    markSectionAsSeen("network");
-  };
-  const handleGroupsClick = () => {
-    markSectionAsSeen("groups");
-  };
+  }, [fetchUser]);
 
   const handleSignout = () => {
     localStorage.removeItem("token");
@@ -199,7 +103,7 @@ export default function Sidebar() {
           <Link
             href="/dashboard"
             className="hover:text-gray-200 relative group"
-            onClick={handleHomeClick}
+            onClick={() => markSectionAsSeen("home")}
             title="Home"
           >
             <FaHome className="transition-colors" />
@@ -212,7 +116,7 @@ export default function Sidebar() {
           <Link
             href="/dashboard/network"
             className="hover:text-gray-200 relative group"
-            onClick={handleNetworkClick}
+            onClick={() => markSectionAsSeen("network")}
             title="Network"
           >
             <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-colors">
@@ -227,7 +131,7 @@ export default function Sidebar() {
           <Link
             href="/dashboard/groups"
             className="hover:text-gray-200 relative group"
-            onClick={handleGroupsClick}
+            onClick={() => markSectionAsSeen("groups")}
             title="Groups"
           >
             <FaUsers className="transition-colors" />
@@ -299,7 +203,7 @@ export default function Sidebar() {
       {/* Mobile Bottom Navigation Bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#FAFAFA] dark:bg-[#121213] border-t border-gray-200 dark:border-white/10 px-6 py-3 z-50 flex justify-between items-center text-2xl text-gray-500 dark:text-gray-400">
         {/* Home */}
-        <Link href="/dashboard" onClick={handleHomeClick} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
+        <Link href="/dashboard" onClick={() => markSectionAsSeen("home")} className={`${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <FaHome className="" />
           {newPostsCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
@@ -307,7 +211,7 @@ export default function Sidebar() {
         </Link>
 
         {/* Network */}
-        <Link href="/dashboard/network" onClick={handleNetworkClick} className={`${pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
+        <Link href="/dashboard/network" onClick={() => markSectionAsSeen("network")} className={`${pathname === "/dashboard/network" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="">
             <path d="M6.5 8.75V12.25L10 14.5L13.5 12.25V8.75L10 6.5L6.5 8.75ZM6.5 8.75L3.813 6.18M17.696 18.815L11.728 13.389M18.5 10.5H13.5M7.952 13.184L3.682 17.739M16.318 4.261L12.632 8.192M4.5 5.75L2.5 7L0.5 5.75V3.75L2.5 2.5L4.5 3.75V5.75ZM19.5 3.75L17.5 5L15.5 3.75V1.75L17.5 0.5L19.5 1.75V3.75ZM4.5 20.25L2.5 21.5L0.5 20.25V18.25L2.5 17L4.5 18.25V20.25ZM21 21.25L19 22.5L17 21.25V19.25L19 18L21 19.25V21.25ZM22.5 11.5L20.5 12.75L18.5 11.5V9.5L20.5 8.25L22.5 9.5V11.5Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -317,7 +221,7 @@ export default function Sidebar() {
         </Link>
 
         {/* Groups */}
-        <Link href="/dashboard/groups" onClick={handleGroupsClick} className={`${pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
+        <Link href="/dashboard/groups" onClick={() => markSectionAsSeen("groups")} className={`${pathname === "/dashboard/groups" ? "text-blue-600 dark:text-blue-400" : ""} relative`}>
           <FaUsers className="" />
           {unreadGroupMessagesCount > 0 && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>

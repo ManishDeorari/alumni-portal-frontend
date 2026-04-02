@@ -7,75 +7,28 @@ import { useRouter, usePathname } from "next/navigation";
 import ResetPasswordModal from "./ResetPasswordModal";
 import SettingsDrawer from "./SettingsDrawer";
 import NotificationPreview from "./NotificationPreview";
-import socket from "@/utils/socket";
+import { useNotifications } from "@/context/NotificationContext";
 import { AnimatePresence } from "framer-motion";
 
 export default function AdminSidebar() {
+  const { 
+    unreadCount, 
+    notifications, 
+    pendingRequestsCount, 
+    unreadGroupMessagesCount, 
+    newPostsCount, 
+    adminSignupRequestsCount,
+    markSectionAsSeen
+  } = useNotifications();
+
   const [showSettings, setShowSettings] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState([]);
-  const [adminSignupRequestsCount, setAdminSignupRequestsCount] = useState(0);
-  const [newPostsCount, setNewPostsCount] = useState(0);
-  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
-  const [unreadGroupMessagesCount, setUnreadGroupMessagesCount] = useState(0);
   const [showNotifPreview, setShowNotifPreview] = useState(false);
+
   const router = useRouter();
   const pathname = usePathname();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
   
-  const fetchNotifications = React.useCallback(async (token) => {
-    try {
-      const res = await fetch(`${API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const normalized = data.map(n => ({
-          ...n,
-          isRead: n.isRead === true || n.isRead === "true" || n.isRead === 1 || n.isRead === "1"
-        }));
-        setNotifications(normalized);
-        setUnreadCount(normalized.filter(n => !n.isRead).length);
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    }
-  }, [API_URL]);
-
-  const fetchCounts = React.useCallback(async (token) => {
-    try {
-      const res = await fetch(`${API_URL}/api/counts/unread`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setNewPostsCount(data.unreadPostsCount || 0);
-        setPendingRequestsCount(data.pendingRequestsCount || 0);
-        setUnreadGroupMessagesCount(data.unreadGroupMessagesCount || 0);
-        setUnreadCount(data.unreadNotificationsCount || 0);
-        setAdminSignupRequestsCount(data.adminSignupRequestsCount || 0);
-      }
-    } catch (err) {
-      console.error("Failed to fetch counts:", err);
-    }
-  }, [API_URL]);
-
-  const markSectionAsSeen = async (section) => {
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/counts/mark-seen/${section}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (section === "home") setNewPostsCount(0);
-      if (section === "network") setPendingRequestsCount(0);
-      if (section === "groups") setUnreadGroupMessagesCount(0);
-    } catch (err) {
-      console.error(`Failed to mark ${section} as seen:`, err);
-    }
-  };
-
   const fetchUser = React.useCallback(async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/user/me`, {
@@ -101,42 +54,10 @@ export default function AdminSidebar() {
       if (!user) {
         user = await fetchUser(token);
       }
-      
-      if (user) {
-        fetchNotifications(token);
-        fetchCounts(token);
-        socket.emit("join", user._id);
-      }
     };
 
     initialize();
-
-    const handleNewNotification = (notification) => {
-      const newNotif = { ...notification, isRead: false };
-      setNotifications(prev => [newNotif, ...prev]);
-      setUnreadCount(prev => prev + 1);
-      
-      if (notification.type === "connect_request") {
-        setPendingRequestsCount(prev => prev + 1);
-      }
-    };
-
-    const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);
-    const handleNewPost = () => setNewPostsCount(prev => prev + 1);
-    const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
-
-    socket.on("newNotification", handleNewNotification);
-    socket.on("newSignupRequest", handleNewSignupRequest);
-    socket.on("newPost", handleNewPost);
-    socket.on("receiveGroupMessage", handleNewGroupMessage);
-
-    return () => {
-      socket.off("newNotification", handleNewNotification);
-      socket.off("newSignupRequest", handleNewSignupRequest);
-      socket.off("newPost", handleNewPost);
-      socket.off("receiveGroupMessage", handleNewGroupMessage);
-    };
-  }, [fetchNotifications, fetchCounts, fetchUser]);
+  }, [fetchUser]);
 
   const handleSignout = () => {
     localStorage.removeItem("token");

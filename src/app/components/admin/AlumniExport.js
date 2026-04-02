@@ -208,7 +208,7 @@ export default function AlumniExport() {
                             </div>
                         </div>
                         <div className="space-y-1.5 relative">
-                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Graduation / Start Year</label>
+                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Graduation / Passing Year</label>
                             <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl relative">
                                 <select
                                     value={filters.year}

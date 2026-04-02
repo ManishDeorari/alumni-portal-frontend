@@ -243,7 +243,7 @@ export default function MemberSearchModal({
                                     onChange={(e) => setYear(e.target.value)}
                                     className={`w-full px-4 py-[11px] rounded-[calc(1rem-1px)] appearance-none font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
                                 >
-                                    <option value="">{course ? "Start Year" : "Select Course First"}</option>
+                                    <option value="">{course ? "Passing Year" : "Select Course First"}</option>
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                 </select>
                                 <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />

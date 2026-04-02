@@ -184,7 +184,7 @@ const NetworkPage = () => {
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
                   className={`w-full pl-4 pr-10 py-[14px] rounded-2xl appearance-none outline-none font-bold text-[10px] uppercase tracking-widest cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-slate-100 text-slate-900 border border-slate-200'}`}
                 >
-                  <option value="">Graduation / Start Year</option>
+                  <option value="">Graduation / Passing Year</option>
                   {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
                 <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white' : 'text-black'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>

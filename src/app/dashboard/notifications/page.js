@@ -21,7 +21,8 @@ import {
   Clock,
   ChevronRight,
   X,
-  Users
+  Users,
+  Award
 } from "lucide-react";
 
 const TABS = [
@@ -30,12 +31,21 @@ const TABS = [
   { id: "GROUP", label: "Groups", icon: <Users className="w-4 h-4" /> },
   { id: "NETWORK", label: "Network", icon: <UserPlus className="w-4 h-4" /> },
   { id: "VISIT", label: "Visits", icon: <Eye className="w-4 h-4" /> },
+  { id: "POINTS", label: "Points", icon: <Award className="w-4 h-4" /> },
   { id: "NOTICE", label: "Notice", icon: <ShieldAlert className="w-4 h-4" /> },
 ];
 
+import { useNotifications } from "@/context/NotificationContext";
+
 export default function NotificationsPage() {
   const { darkMode } = useTheme();
-  const [notifications, setNotifications] = useState([]);
+  const { 
+    notifications, 
+    markAsRead, 
+    markAllAsRead,
+    refreshNotifications 
+  } = useNotifications();
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ALL");
@@ -43,23 +53,6 @@ export default function NotificationsPage() {
   const [showPostModal, setShowPostModal] = useState(false);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setNotifications(data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [API_URL]);
 
   useEffect(() => {
     const fetchUserAndNotes = async () => {
@@ -75,65 +68,19 @@ export default function NotificationsPage() {
           const userData = await userRes.json();
           setUser(userData);
         }
-
-        // Fetch notifications
-        fetchNotifications();
+        
+        // Context handles initial notification fetch on mount, 
+        // but we ensure it's fresh if needed.
+        refreshNotifications();
       } catch (err) {
         console.error("Error initializing Notifications page:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUserAndNotes();
-
-    // 🌐 Real-time updates
-    const token = localStorage.getItem("token");
-    const userStored = JSON.parse(localStorage.getItem("user"));
-    if (userStored?._id) {
-      socket.emit("join", userStored._id);
-    }
-
-    const handleNewNotification = (notification) => {
-      // Add only if not already there (cooldown/duplicate guard)
-      setNotifications(prev => {
-        if (prev.some(n => n._id === notification._id)) return prev;
-        return [notification, ...prev];
-      });
-    };
-
-    socket.on("newNotification", handleNewNotification);
-
-    return () => {
-      socket.off("newNotification", handleNewNotification);
-    };
-  }, [API_URL, fetchNotifications]);
-
-  const markAsRead = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/notifications/${id}/read`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setNotifications(prev =>
-        prev.map(n => n._id === id ? { ...n, isRead: true } : n)
-      );
-    } catch (err) {
-      console.error("Failed to mark as read:", err);
-    }
-  };
-
-  const markAllRead = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/notifications/read-all`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    } catch (err) {
-      console.error("Failed to mark all as read:", err);
-    }
-  };
+  }, [API_URL, refreshNotifications]);
 
   const handleNotificationClick = async (note) => {
     if (note.isRead) return; // Prevent clicking on read notifications
@@ -145,6 +92,9 @@ export default function NotificationsPage() {
       router.push(`/profile/${note.sender?._id || note.sender}`);
     } else if (note.type === "group_joined" || note.type === "group_added") {
       router.push("/dashboard/groups");
+    } else if (note.type === "points_earned") {
+      // Just mark as read, no navigation
+      return;
     } else if (note.postId) {
       try {
         const res = await fetch(`${API_URL}/api/posts/${note.postId._id || note.postId}`);
@@ -174,6 +124,8 @@ export default function NotificationsPage() {
       filtered = notifications.filter(n => n.type === "profile_visit");
     } else if (activeTab === "NOTICE") {
       filtered = notifications.filter(n => n.type === "admin_notice");
+    } else if (activeTab === "POINTS") {
+      filtered = notifications.filter(n => n.type === "points_earned");
     } else if (activeTab === "GROUP") {
       filtered = notifications.filter(n => ["group_joined", "group_added", "group_removed", "group_disbanded"].includes(n.type));
     }
@@ -246,7 +198,7 @@ export default function NotificationsPage() {
             <p className={`mt-2 font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
           <button
-            onClick={markAllRead}
+            onClick={markAllAsRead}
             disabled={!notifications.some(n => !n.isRead)}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-bold backdrop-blur-md border ${
               darkMode 
@@ -261,7 +213,13 @@ export default function NotificationsPage() {
 
         {/* Subsections (Tabs) */}
         <div className={`flex flex-wrap gap-2 mb-8 p-1.5 backdrop-blur-xl rounded-2xl border w-fit ${darkMode ? 'bg-black border-white/20' : 'bg-gray-100 border-gray-200'}`}>
-          {TABS.map((tab) => (
+          {TABS.filter(tab => {
+            if (tab.id === "POINTS") {
+              const userRole = user?.role || JSON.parse(localStorage.getItem("user") || "{}")?.role;
+              return userRole === "alumni";
+            }
+            return true;
+          }).map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -322,13 +280,19 @@ export default function NotificationsPage() {
                         } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
                           <div className="relative shrink-0">
                             <div className={`p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 shadow-lg ${!note.isRead ? 'opacity-100' : 'opacity-50 grayscale'}`}>
-                              <Image
-                                src={note.sender?.profilePicture || "/default-profile.jpg"}
-                                alt={note.sender?.name || "User"}
-                                width={56}
-                                height={56}
-                                className="w-14 h-14 rounded-[0.9rem] object-cover bg-[#FAFAFA]"
-                              />
+                              {note.type === "points_earned" ? (
+                                <div className="w-14 h-14 rounded-[0.9rem] flex items-center justify-center bg-yellow-500/10">
+                                  <Award className="w-8 h-8 text-yellow-500" />
+                                </div>
+                              ) : (
+                                <Image
+                                  src={note.sender?.profilePicture || "/default-profile.jpg"}
+                                  alt={note.sender?.name || "User"}
+                                  width={56}
+                                  height={56}
+                                  className="w-14 h-14 rounded-[0.9rem] object-cover bg-[#FAFAFA]"
+                                />
+                              )}
                             </div>
                             {!note.isRead && (
                               <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
@@ -338,12 +302,42 @@ export default function NotificationsPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <p className={`font-bold text-lg leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                  {note.sender?.name || "System"}{" "}
-                                  <span className={`font-medium ml-1 ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
-                                    {note.message}
-                                  </span>
-                                </p>
+                                <div className="flex flex-col gap-1">
+                                  {note.type === "points_earned" ? (
+                                    <>
+                                      <span className="text-yellow-500 font-bold text-lg">System</span>
+                                      {note.message?.startsWith("MANUAL_AWARD::") ? (() => {
+                                        const [_, msg, cat, pts] = note.message.split("::");
+                                        return (
+                                          <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-blue-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
+                                            <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                              {msg}
+                                            </div>
+                                            <div className="flex justify-center">
+                                              <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] whitespace-nowrap">
+                                                {cat?.replace(/([A-Z])/g, ' $1').trim()}
+                                              </span>
+                                            </div>
+                                            <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
+                                              +{pts} PTS
+                                            </div>
+                                          </div>
+                                        );
+                                      })() : (
+                                        <span className={`font-medium ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
+                                          {note.message}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <p className={`font-bold text-lg leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      {note.sender?.name || "System"}{" "}
+                                      <span className={`font-medium ml-1 ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
+                                        {note.message}
+                                      </span>
+                                    </p>
+                                  )}
+                                </div>
                                 <div className="flex items-center gap-3 mt-2">
                                   <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
                                     <Clock className="w-3 h-3" />
