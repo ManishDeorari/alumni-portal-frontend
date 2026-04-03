@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
+import PointsRequestsList from "./PointsRequestsList";
 
 const getApiUrl = () => {
     const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -10,7 +11,7 @@ const getApiUrl = () => {
 };
 const API = getApiUrl();
 
-export default function PointsSystemManagement() {
+export default function PointsSystemManagement({ user }) {
     const { darkMode } = useTheme();
     const [config, setConfig] = useState({
         profileCompletionPoints: 50,
@@ -170,7 +171,16 @@ export default function PointsSystemManagement() {
     );
 
     return (
-        <div className="space-y-10 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
+        <div className="space-y-12 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
+            {/* Section 1: Points Requests */}
+            <div className="relative p-[2px] bg-gradient-to-tr from-orange-400 to-red-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <PointsRequestsList darkMode={darkMode} user={user} />
+                </section>
+            </div>
+
+            {/* Separator */}
+            <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-white/10" : "via-slate-200"} to-transparent`} />
             {/* Settings Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
                 <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
@@ -186,6 +196,7 @@ export default function PointsSystemManagement() {
                             { label: "Post Creation", key: "postPoints" },
                             { label: "Post Likes", key: "likePoints" },
                             { label: "Post Comments", key: "commentPoints" },
+                            { label: "Alumni Session Points", key: "sessionPoints" },
                             { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
                             { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
                         ].map((item) => (

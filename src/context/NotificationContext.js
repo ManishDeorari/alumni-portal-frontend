@@ -130,7 +130,14 @@ export const NotificationProvider = ({ children }) => {
       fetchNotifications(token);
       fetchCounts(token);
       
-      socket.emit("join", user._id);
+      if (socket.connected) {
+        socket.emit("join", user._id);
+      }
+      
+      const handleSocketConnect = () => {
+        socket.emit("join", user._id);
+      };
+      socket.on("connect", handleSocketConnect);
       
       const handleNewNotification = (notification) => {
         setNotifications(prev => {
@@ -151,16 +158,50 @@ export const NotificationProvider = ({ children }) => {
       const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
       const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);
 
+      const handlePointsUpdated = (data) => {
+        const { awardedPoints, reason } = data;
+        toast.success(
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🏆</span>
+              <span className="font-black text-yellow-400">Points Awarded!</span>
+            </div>
+            <div className="text-xs font-bold text-gray-300">
+              You earned <span className="text-blue-400">+{awardedPoints}</span> points
+            </div>
+            <div className="text-[10px] uppercase tracking-widest opacity-50 font-black">
+              {reason || "Activity Reward"}
+            </div>
+          </div>,
+          {
+            duration: 5000,
+            icon: null,
+            style: {
+              background: "#1e293b",
+              border: "1px solid #334155",
+              padding: "16px",
+              color: "#fff",
+              borderRadius: "20px"
+            }
+          }
+        );
+        // Refresh counts to update the unread count if points_earned was also sent
+        fetchCounts(token);
+      };
+
       socket.on("newNotification", handleNewNotification);
       socket.on("newPost", handleNewPost);
       socket.on("receiveGroupMessage", handleNewGroupMessage);
       socket.on("newSignupRequest", handleNewSignupRequest);
+      socket.on("pointsUpdated", handlePointsUpdated);
 
       return () => {
+        socket.off("connect", handleSocketConnect);
         socket.off("newNotification", handleNewNotification);
         socket.off("newPost", handleNewPost);
         socket.off("receiveGroupMessage", handleNewGroupMessage);
         socket.off("newSignupRequest", handleNewSignupRequest);
+        socket.off("pointsUpdated", handlePointsUpdated);
       };
     }
   }, [fetchNotifications, fetchCounts]);

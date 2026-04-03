@@ -7,11 +7,15 @@ export const fetchPosts = async (page = 1, limit = 10, type = "Regular") => {
   return res.json();
 };
 
-export const createPost = async (content, image, video, type = "Regular") => {
+export const createPost = async (contentOrData, image, video, type = "Regular") => {
   let imageObjects = [];
   let videoObject = null;
 
-  if (!content.trim()) {
+  const isStructured = typeof contentOrData === "object" && contentOrData !== null;
+  const content = isStructured ? contentOrData.content : contentOrData;
+  const finalType = isStructured ? (contentOrData.type || type) : type;
+
+  if (!content?.trim()) {
     return { message: "Failed to create post - No text or emoji." };
   }
 
@@ -36,9 +40,6 @@ export const createPost = async (content, image, video, type = "Regular") => {
           public_id: uploadJson.public_id,
         });
         console.log("✅ Image uploaded:", uploadJson.secure_url);
-        console.log("🆔 Cloudinary Asset ID:", uploadJson.asset_id);
-        console.log("📦 Public ID:", uploadJson.public_id);
-        console.log("📅 Created At:", uploadJson.created_at);
       } else {
         console.error("❌ Image upload failed:", uploadJson);
       }
@@ -66,12 +67,6 @@ export const createPost = async (content, image, video, type = "Regular") => {
         public_id: uploadJson.public_id,
       };
       console.log("✅ Video uploaded:", uploadJson.secure_url);
-      console.log("🎬 Resource Type:", uploadJson.resource_type);
-      console.log("🆔 Asset ID:", uploadJson.asset_id);
-      console.log("📦 Public ID:", uploadJson.public_id);
-      console.log("📅 Created At:", uploadJson.created_at);
-      console.log("📍 Version:", uploadJson.version_id);
-      console.log("🎥 Video Upload Details:", uploadJson);
     } else {
       console.error("❌ Video upload failed:", uploadJson);
     }
@@ -86,15 +81,110 @@ export const createPost = async (content, image, video, type = "Regular") => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify({
-      content,
+      ...(isStructured ? contentOrData : { content, type: finalType }),
       images: imageObjects,
       video: videoObject,
-      type,
     }),
   });
 
   const data = await res.json();
   return data;
+};
+
+// ================== ANNOUNCEMENTS ==================
+export const createAnnouncement = async (announcementData, images = [], video = null) => {
+  let imageObjects = [];
+  let videoObject = null;
+
+  // 1. Upload Images
+  if (images && images.length > 0) {
+    for (let img of images) {
+      const imageData = new FormData();
+      imageData.append("file", img);
+      imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      imageData.append("folder", "alumni/announcements/images");
+
+      const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
+        method: "POST",
+        body: imageData,
+      });
+      const uploadJson = await uploadRes.json();
+      if (uploadRes.ok) {
+        imageObjects.push({ url: uploadJson.secure_url, public_id: uploadJson.public_id });
+      }
+    }
+  }
+
+  // 2. Upload Video
+  if (video) {
+    const videoData = new FormData();
+    videoData.append("file", video);
+    videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+    videoData.append("folder", "alumni/announcements/videos");
+    const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
+      method: "POST",
+      body: videoData,
+    });
+    const uploadJson = await uploadRes.json();
+    if (uploadRes.ok) {
+      videoObject = { url: uploadJson.secure_url, public_id: uploadJson.public_id };
+    }
+  }
+
+  const res = await fetch(`${BASE}/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ 
+      ...announcementData, 
+      images: imageObjects, 
+      video: videoObject,
+      type: "Announcement" 
+    }),
+  });
+  return res.json();
+};
+
+export const fetchPendingPointsRequests = async () => {
+  const res = await fetch(`${BASE}/points-requests/pending`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch points requests");
+  return res.json();
+};
+
+export const approvePointsRequest = async (postId, action, awardedPoints = undefined) => {
+  const payload = { action };
+  if (awardedPoints !== undefined) payload.awardedPoints = awardedPoints;
+
+  const res = await fetch(`${BASE}/points-requests/${postId}/action`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+};
+
+export const searchUsers = async (query) => {
+  try {
+    const res = await fetch(`${BASE}/user/search?q=${encodeURIComponent(query)}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    if (!res.ok) throw new Error("Search failed");
+    return await res.json();
+  } catch (error) {
+    console.error("searchUsers() error:", error.message);
+    throw error;
+  }
 };
 
 // ================== COMMENT ON POST ==================

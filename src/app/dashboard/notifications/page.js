@@ -93,8 +93,7 @@ export default function NotificationsPage() {
     } else if (note.type === "group_joined" || note.type === "group_added") {
       router.push("/dashboard/groups");
     } else if (note.type === "points_earned") {
-      // Just mark as read, no navigation
-      return;
+      // Allow it to fall through to note.postId logic
     } else if (note.postId) {
       try {
         const res = await fetch(`${API_URL}/api/posts/${note.postId._id || note.postId}`);
@@ -306,28 +305,45 @@ export default function NotificationsPage() {
                                   {note.type === "points_earned" ? (
                                     <>
                                       <span className="text-yellow-500 font-bold text-lg">System</span>
-                                      {note.message?.startsWith("MANUAL_AWARD::") ? (() => {
-                                        const [_, msg, cat, pts] = note.message.split("::");
-                                        return (
-                                          <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-blue-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
-                                            <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                              {msg}
-                                            </div>
-                                            <div className="flex justify-center">
-                                              <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] whitespace-nowrap">
-                                                {cat?.replace(/([A-Z])/g, ' $1').trim()}
-                                              </span>
-                                            </div>
-                                            <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
-                                              +{pts} PTS
-                                            </div>
-                                          </div>
-                                        );
-                                      })() : (
-                                        <span className={`font-medium ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
-                                          {note.message}
-                                        </span>
-                                      )}
+                                            {note.message?.startsWith("MANUAL_AWARD::") ? (() => {
+                                                const [_, msg, cat, pts] = note.message.split("::");
+                                                return (
+                                                  <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-blue-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
+                                                    <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                                      {msg}
+                                                    </div>
+                                                    <div className="flex justify-center">
+                                                      <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] whitespace-nowrap">
+                                                        {cat?.replace(/([A-Z])/g, ' $1').trim()}
+                                                      </span>
+                                                    </div>
+                                                    <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
+                                                      +{pts} PTS
+                                                    </div>
+                                                  </div>
+                                                );
+                                            })() : note.message?.startsWith("SESSION_AWARD::") ? (() => {
+                                                const pts = note.message.split("::")[1] || "0";
+                                                return (
+                                                  <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-orange-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
+                                                    <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                                       Congratulations! Your session has been approved.
+                                                    </div>
+                                                    <div className="flex justify-center">
+                                                      <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-400/30 shadow-[0_0_15px_rgba(249,115,22,0.2)] whitespace-nowrap">
+                                                        Campus Engagement
+                                                      </span>
+                                                    </div>
+                                                    <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
+                                                      +{pts} PTS
+                                                    </div>
+                                                  </div>
+                                                );
+                                            })() : (
+                                                <span className={`font-medium ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
+                                                  {note.message}
+                                                </span>
+                                            )}
                                     </>
                                   ) : (
                                     <p className={`font-bold text-lg leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>

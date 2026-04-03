@@ -110,8 +110,6 @@ export default function usePostActions({
   const handleDelete = async () => {
     if (!checkAuth()) return;
     const isEvent = post.type === "Event";
-    const confirmed = confirm(isEvent ? "Are you sure you want to delete this event?" : "Are you sure you want to delete this post?");
-    if (!confirmed) return;
 
     try {
       const endpoint = isEvent ? `/api/events/${post._id}` : `/api/posts/${post._id}`;
@@ -149,14 +147,7 @@ export default function usePostActions({
 
     const draft = localStorage.getItem(editKey);
     if (draft) {
-      const confirmed = confirm(
-        "You have an unsaved draft. Load it and continue editing?"
-      );
-      if (confirmed) {
-        setEditContent(draft);
-      } else {
-        localStorage.removeItem(editKey);
-      }
+      setEditContent(draft);
     }
     setEditing(true);
   };

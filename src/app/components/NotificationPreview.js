@@ -114,6 +114,9 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                             const pts = parts[3] || "0";
                                                             const cat = (parts[2] || "Other").replace(/([A-Z])/g, ' $1').trim();
                                                             return `${msg} +${pts} PTS (${cat})`;
+                                                        })() : note.message?.startsWith("SESSION_AWARD::") ? (() => {
+                                                            const pts = note.message.split("::")[1] || "0";
+                                                            return `Congratulations! Your session has been approved for +${pts} PTS (Campus Engagement)`;
                                                         })() : note.message}
                                                     </span>
                                                 </p>

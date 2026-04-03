@@ -26,9 +26,23 @@ export default function DashboardPage() {
   const [fetchingMore, setFetchingMore] = useState(false);
 
   // Feed Tabs & Pending Posts
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeTab, setActiveTab] = useState("all"); // "all" or "my"
   const [pendingPosts, setPendingPosts] = useState([]);
   const [isFetchingFeed, setIsFetchingFeed] = useState(false);
+  const [announcementSubtype, setAnnouncementSubtype] = useState("all"); // all | winner
+  const [announcementSearch, setAnnouncementSearch] = useState("");
+
+  // ✅ Scroll listener for Back to Top
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 600);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // ✅ Fetch current user
   useEffect(() => {
@@ -63,7 +77,6 @@ export default function DashboardPage() {
     setIsFetchingFeed(true);
     try {
       const token = localStorage.getItem("token");
-
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       let url = `${API_URL}/api/posts?page=${pageNum}&limit=${limit}`;
       let headers = { Authorization: `Bearer ${token}` };
@@ -75,29 +88,36 @@ export default function DashboardPage() {
       } else {
         const queryType = activeTab === "all" ? "all" : activeTab;
         url += `&type=${queryType}`;
+        if (activeTab === "Announcement") {
+          if (announcementSubtype === "winner") url += `&subtype=winner`;
+          if (announcementSearch) url += `&search=${encodeURIComponent(announcementSearch)}`;
+        }
       }
 
       const res = await fetch(url, { headers });
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.posts)) return;
 
-      setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
-      // Use data.posts directly for calculation to avoid stale closure issues
+      setPosts((prev) => {
+        if (!append) return data.posts;
+        const newPosts = data.posts.filter(newP => !prev.some(p => p._id === newP._id));
+        return [...prev, ...newPosts];
+      });
       setHasMore(data.posts.length === limit);
     } catch (err) {
       console.error("Failed to fetch posts:", err.message);
     } finally {
       setIsFetchingFeed(false);
     }
-  }, [activeTab]);
+  }, [activeTab, announcementSubtype, announcementSearch]);
 
   useEffect(() => {
     setPage(1);
     fetchPosts(1, false);
-  }, [activeTab, fetchPosts]);
+  }, [activeTab, announcementSubtype, announcementSearch, fetchPosts]);
 
-  // Load more
   const handleLoadMore = async () => {
+    if (fetchingMore || !hasMore) return;
     setFetchingMore(true);
     const nextPage = page + 1;
     await fetchPosts(nextPage, true);
@@ -115,13 +135,20 @@ export default function DashboardPage() {
       );
 
     const addPost = (newPost) => {
-      // If it's the current user's post, add it immediately
-      if (newPost.user?._id === user._id) {
-        setPosts((prev) => [newPost, ...prev]);
-      } else {
-        // Otherwise, add it to pending posts
-        setPendingPosts((prev) => [newPost, ...prev]);
-      }
+      setPosts((prev) => {
+        const exists = prev.some((p) => p._id === newPost._id);
+        if (exists) return prev;
+        if (newPost.user?._id === user._id) {
+          return [newPost, ...prev];
+        } else {
+          setPendingPosts((pending) => {
+            const pendingExists = pending.some((p) => p._id === newPost._id);
+            if (pendingExists) return pending;
+            return [newPost, ...pending];
+          });
+          return prev;
+        }
+      });
     };
 
     const removePost = ({ postId }) =>
@@ -153,16 +180,13 @@ export default function DashboardPage() {
     setPendingPosts([]);
   };
 
-  // Filtering posts based on active tab
   const filteredPosts = activeTab === "my"
     ? posts.filter(p => p.user?._id === user?._id)
     : posts;
 
   if (loading) return "Loading...";
-
   if (!user) return "User not found or unauthorized.";
 
-  // ✅ Choose sidebar based on role
   const SidebarComponent = user.isAdmin ? AdminSidebar : Sidebar;
 
   return (
@@ -171,17 +195,13 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 pb-32 md:pb-8">
         <div className="flex flex-col lg:flex-row gap-8">
-
-          {/* Left Column - Points Scenario Widget - Hidden on mobile or pushed down */}
           <aside className="lg:w-80 order-2 lg:order-1 relative">
             <div className="lg:fixed lg:top-24 lg:w-80 z-40">
               <PointsScenario darkMode={darkMode} />
             </div>
           </aside>
 
-          {/* Right Column - Feed & Welcome */}
           <div className="flex-1 space-y-8 order-1 lg:order-2">
-            {/* User info */}
             <section className={`${darkMode ? "bg-[#121213] border-white/10" : "bg-[#FAFAFA] border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
@@ -200,12 +220,8 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            {/* Create Post */}
-            <section className="transition-all duration-500">
-              <CreatePost setPosts={setPosts} currentUser={user} darkMode={darkMode} />
-            </section>
+            <CreatePost setPosts={setPosts} currentUser={user} darkMode={darkMode} />
 
-            {/* Feed Subsections Tabs */}
             <div className="flex justify-center gap-3 flex-wrap">
               {[
                 { id: "all", label: "ALL" },
@@ -229,68 +245,64 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* New Posts Notification */}
+            {activeTab === "Announcement" && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }} 
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex flex-col md:flex-row items-center justify-center gap-4 p-4 rounded-3xl ${darkMode ? "bg-[#121213] border-white/10" : "bg-white/50 border-white/20"} border backdrop-blur-sm`}
+              >
+                <div className="flex gap-2">
+                  <button onClick={() => setAnnouncementSubtype("all")} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${announcementSubtype === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600 dark:bg-white/10 dark:text-gray-400"}`}>All Announcements</button>
+                  <button onClick={() => setAnnouncementSubtype("winner")} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${announcementSubtype === "winner" ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-600 dark:bg-white/10 dark:text-gray-400"}`}>Winner Announcements</button>
+                </div>
+                <div className="relative flex-1 max-w-md w-full">
+                  <input type="text" placeholder="Search winners by name..." value={announcementSearch} onChange={(e) => setAnnouncementSearch(e.target.value)} className={`w-full pl-10 pr-4 py-2 rounded-2xl text-xs font-bold border-none outline-none ${darkMode ? "bg-black/40 text-white" : "bg-white text-gray-900"}`} />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
+                </div>
+              </motion.div>
+            )}
+
             <AnimatePresence>
               {pendingPosts.length > 0 && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="flex justify-center mt-6 mb-2 relative z-[500]"
-                >
-                  <button
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      if (activeTab === "all") {
-                        setPage(1);
-                        fetchPosts(1, false);
-                      } else {
-                        setActiveTab("all");
-                      }
-                      setPendingPosts([]);
-                    }}
-                    className="relative z-[501] bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce"
-                  >
-                    ✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""} (Click to Refresh)
-                  </button>
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="flex justify-center mt-6 mb-2 relative z-[500]">
+                  <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); if (activeTab === "all") { fetchPosts(1, false); setPage(1); } else { setActiveTab("all"); } setPendingPosts([]); }} className="relative z-[501] bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-transform flex items-center gap-3 animate-bounce">✨ {pendingPosts.length} New Post{pendingPosts.length > 1 ? "s" : ""} (Click to Refresh)</button>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Posts */}
             <section className="space-y-8">
               {filteredPosts.length === 0 ? (
-                <div className="bg-[#FAFAFA] rounded-[2.5rem] p-12 text-center border border-gray-200">
-                  <p className="text-gray-400 font-black uppercase tracking-widest text-sm">
-                    {activeTab === "my" ? "You haven't posted anything yet." : "No posts found in this category."}
-                  </p>
+                <div className="p-12 text-center bg-[#FAFAFA] rounded-[2.5rem] border border-gray-200">
+                  <p className="text-gray-400 font-black uppercase tracking-widest text-sm">{activeTab === "my" ? "You haven't posted anything yet." : "No posts found in this category."}</p>
                 </div>
               ) : (
                 <>
                   <div className="space-y-6">
                     {filteredPosts.map((post) => (
-                      <div key={post._id}>
-                        <PostCard post={post} currentUser={user} setPosts={setPosts} darkMode={darkMode} />
-                      </div>
+                      <PostCard key={post._id} post={post} currentUser={user} setPosts={setPosts} darkMode={darkMode} />
                     ))}
                   </div>
 
-                  {hasMore && activeTab === "all" ? (
-                    <div className="text-center mt-12 pb-8">
-                      <button
-                        onClick={handleLoadMore}
-                        disabled={fetchingMore}
-                        className="px-12 py-4 bg-[#FAFAFA] text-blue-700 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-50 hover:shadow-2xl transition-all disabled:opacity-50 shadow-xl active:scale-95"
-                      >
-                        {fetchingMore ? "Loading..." : "Load More Posts"}
+                  {hasMore ? (
+                    <div className="text-center mt-12 pb-12">
+                      <button onClick={handleLoadMore} disabled={fetchingMore} className="group relative px-12 py-5 bg-[#FAFAFA] text-blue-700 font-black text-xs uppercase tracking-widest rounded-[2rem] hover:bg-blue-50 border-b-4 border-blue-100 hover:border-blue-200 transition-all shadow-xl active:scale-95 flex items-center gap-3 mx-auto">
+                        {fetchingMore ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span>Loading...</span>
+                          </>
+                        ) : (
+                          <>✨ <span>Load More Posts</span></>
+                        )}
                       </button>
                     </div>
-                  ) : (
-                    activeTab === "all" && (
-                      <div className="text-center py-12 opacity-40">
-                        <p className="text-xs font-black uppercase tracking-[0.3em]">✨ End of the Feed ✨</p>
-                      </div>
-                    )
+                  ) : filteredPosts.length > 0 && (
+                    <div className="text-center py-16 relative overflow-hidden">
+                       <div className={`absolute top-1/2 left-0 w-full h-[1.5px] ${darkMode ? "bg-gradient-to-r from-transparent via-white/20 to-transparent" : "bg-gradient-to-r from-transparent via-blue-200 to-transparent"}`}></div>
+                       <p className={`relative z-10 text-[11px] font-black uppercase tracking-[0.5em] bg-transparent inline-block px-8 py-2 ${darkMode ? "text-blue-300" : "text-blue-800"}`}>
+                         ✨ You have reached the end of the feed ✨
+                       </p>
+                    </div>
                   )}
                 </>
               )}
@@ -298,7 +310,22 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-24 md:bottom-12 right-6 md:right-12 z-[999] p-[2px] rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-2xl group active:scale-90 transition-transform"
+          >
+            <div className={`w-12 h-12 md:w-14 md:h-14 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-900" : "bg-white"} flex items-center justify-center transition-colors group-hover:bg-transparent`}>
+               <span className={`text-2xl md:text-3xl transition-transform group-hover:-translate-y-1 ${darkMode ? "text-white" : "text-blue-600"} group-hover:text-white`}>↑</span>
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
-

@@ -377,13 +377,15 @@ export default function AdminDashboardPage() {
 
           {/* POINTS SYSTEM */}
           {activeTab === "points" && user?.isMainAdmin && (
-            <PointsSystemManagement />
+            <PointsSystemManagement user={user} />
           )}
 
           {/* ALUMNI EXPORT */}
           {activeTab === "export" && (
             <AlumniExport />
           )}
+
+
         </section>
       </main>
     </div>

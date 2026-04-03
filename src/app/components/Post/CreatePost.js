@@ -5,6 +5,8 @@ import { createPost } from "../../../api/dashboard";
 import toast from "react-hot-toast";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 import CreateEventModal from "./CreateEventModal";
+import CreateAnnouncementModal from "./CreateAnnouncementModal";
+import CreateSessionModal from "./CreateSessionModal";
 
 const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [content, setContent] = useState("");
@@ -16,11 +18,14 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [selectedType, setSelectedType] = useState("Regular");
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
+  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
 
   const availableTags = [];
   if (currentUser?.role === "alumni") availableTags.push("Session");
-  if (currentUser?.role === "faculty" || currentUser?.isAdmin) availableTags.push("Event");
-  if (currentUser?.isAdmin) availableTags.push("Announcement");
+  if (currentUser?.role === "faculty" || currentUser?.isAdmin) {
+    availableTags.push("Event");
+    availableTags.push("Announcement");
+  }
 
   const hasContent = content.trim().length > 0;
 
@@ -124,10 +129,19 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
 
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar">
-                    {currentUser?.isAdmin && (
+                    {(currentUser?.role === "alumni") && (
                       <button
                         type="button"
-                        onClick={() => toast.success("Announcement Modal coming soon!")}
+                        onClick={() => setIsSessionModalOpen(true)}
+                        className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-[#FAFAFA] text-black border-black hover:bg-gray-100"}`}
+                      >
+                        🤝 Create Session
+                      </button>
+                    )}
+                    {(currentUser?.isAdmin || currentUser?.role === "faculty") && (
+                      <button
+                        type="button"
+                        onClick={() => setIsAnnouncementModalOpen(true)}
                         className={`px-4 py-1.5 rounded-full text-xs whitespace-nowrap font-bold border transition-all ${darkMode ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600" : "bg-[#FAFAFA] text-black border-black hover:bg-gray-100"}`}
                       >
                         📢 Create Announcement
@@ -245,6 +259,24 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
         <CreateEventModal
           isOpen={isEventModalOpen}
           onClose={() => setIsEventModalOpen(false)}
+          currentUser={currentUser}
+          darkMode={darkMode}
+          setPosts={setPosts}
+        />
+      )}
+      {isAnnouncementModalOpen && (
+        <CreateAnnouncementModal
+          isOpen={isAnnouncementModalOpen}
+          onClose={() => setIsAnnouncementModalOpen(false)}
+          currentUser={currentUser}
+          darkMode={darkMode}
+          setPosts={setPosts}
+        />
+      )}
+      {isSessionModalOpen && (
+        <CreateSessionModal
+          isOpen={isSessionModalOpen}
+          onClose={() => setIsSessionModalOpen(false)}
           currentUser={currentUser}
           darkMode={darkMode}
           setPosts={setPosts}

@@ -76,13 +76,13 @@ export default function PostReactions({
             return (
               <div
                 key={emoji}
-                className={`text-lg px-2 py-1 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10" : "bg-gray-100 border-gray-100"} border rounded-full flex items-center gap-1 ${userReacted(emoji)
+                className={`text-lg px-2.5 py-1 ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-100 shadow-sm"} border rounded-xl flex items-center gap-1.5 ${userReacted(emoji)
                   ? (darkMode ? "border-blue-500 bg-blue-500/10" : "border-blue-500 bg-blue-50")
                   : ""
                   }`}
               >
-                {emoji}
-                <span className="text-sm text-gray-600">x{users.length}</span>
+                <span className="transform group-hover:scale-110 transition-transform">{emoji}</span>
+                <span className={`text-[11px] font-black tracking-tighter ${darkMode ? "text-white" : "text-slate-900"}`}>x{users.length}</span>
               </div>
             );
           })}
@@ -91,22 +91,22 @@ export default function PostReactions({
 
       {/* React + Comment Buttons */}
       <div className="relative mt-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-white/5 pt-3">
           {/* React Button (left) */}
           <button
             onClick={handleEmojiButtonClick}
-            className={`font-semibold text-base ${darkMode ? "text-gray-400" : "text-gray-600"} hover:underline transition flex items-center gap-1`}
+            className={`font-black text-sm uppercase tracking-widest ${darkMode ? "text-white hover:text-blue-400" : "text-slate-900 hover:text-blue-600"} transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5`}
             ref={buttonRef}
           >
-            👍 React
+            <span className="text-lg">👍</span> React
           </button>
 
           {/* Comment Button (right, slightly left-pushed) */}
           <button
             onClick={() => setShowComments((prev) => !prev)}
-            className={`font-semibold text-base ${darkMode ? "text-gray-400" : "text-gray-600"} hover:underline cursor-pointer transition mr-2`}
+            className={`font-black text-sm uppercase tracking-widest ${darkMode ? "text-white hover:text-blue-400" : "text-slate-900 hover:text-blue-600"} cursor-pointer transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5 mr-2`}
           >
-            💬 Comment ({(post.comments || []).length})
+            <span className="text-lg">💬</span> Comment ({(post.comments || []).length})
           </button>
         </div>
 

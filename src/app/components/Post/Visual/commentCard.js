@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default function CommentCard({
   comment,
@@ -34,6 +35,7 @@ export default function CommentCard({
   const [deleting, setDeleting] = useState(false);
   const [showAbove, setShowAbove] = useState(true);
   const [pickerStyle, setPickerStyle] = useState({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const commentRef = useRef(null);
   const reactButtonRef = useRef(null);
@@ -133,245 +135,248 @@ export default function CommentCard({
   };
 
   return (
-    <div
-      ref={commentRef}
-      className={`mt-2 rounded-xl space-y-2 py-3 px-3 relative transition-all duration-500 border
-        ${isReply
-          ? isOwn
-            ? `${darkMode ? "bg-blue-600/10 border-blue-500/30" : "bg-blue-50 border-blue-200"} pl-6 ml-3 border-l-[3px] border-blue-500`
-            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-gray-50 text-black border-gray-200"} pl-6 ml-3 border-l-[3px] border-blue-300`
-          : isOwn
-            ? `${darkMode ? "bg-blue-600/10 border-blue-600/30" : "bg-blue-50 border-blue-200"}`
-            : `${darkMode ? "bg-[#121213] border-white/10 text-gray-200" : "bg-[#FAFAFA] border-gray-200"}`
-        }
-        ${justPosted ? "ring-2 ring-blue-400" : ""}
-      `}
-    >
-      <div className="flex justify-between items-start">
-        <div className="flex gap-2 w-full">
-          <Image
-            src={comment.user?.profilePicture || "/default-profile.jpg"}
-            alt="User"
-            width={32}
-            height={32}
-            className={`w-8 h-8 rounded-full border ${darkMode ? "border-white/20" : "border-gray-200"} object-cover mt-0.5`}
-          />
-          <div className="w-full">
-            <div className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
-              {isOwn ? (
-                <span>{comment.user?.name || "Unknown"}</span>
-              ) : (
-                <Link
-                  href={`/profile/${comment.user?.publicId || comment.user?._id}`}
-                  className={`hover:underline ${darkMode ? "text-blue-400 font-bold" : "text-blue-700 font-bold"} cursor-pointer`}
-                >
-                  {comment.user?.name || "Unknown"}
-                </Link>
-              )}
-              {isOwn && (
-                <span className={`text-[10px] px-2 rounded-full font-bold ${darkMode ? "text-blue-300 bg-blue-600/30 border border-blue-500/30" : "text-blue-700 bg-blue-100 border border-blue-200"}`}>
-                  You
-                </span>
-              )}
+    <div className={`p-[1.5px] rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg ${isReply ? "ml-4 scale-[0.98] origin-top-left opacity-95 transition-opacity" : "mt-2"}`}>
+      <div
+        ref={commentRef}
+        className={`relative p-3 rounded-[calc(1rem-1.5px)] transition-all duration-300 ${isOwn ? (darkMode ? "bg-slate-800/90" : "bg-blue-50/50") : (darkMode ? "bg-slate-900" : "bg-white")} ${justPosted ? "ring-2 ring-blue-400" : ""}`}
+      >
+        <div className="flex justify-between items-start">
+          <div className="flex gap-3 w-full">
+            <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex-shrink-0 w-8 h-8 shadow-sm">
+              <Image
+                src={comment.user?.profilePicture || "/default-profile.jpg"}
+                alt="User"
+                width={32}
+                height={32}
+                className="w-full h-full rounded-full border border-white/5 object-cover"
+              />
             </div>
-
-            {editing ? (
-              <div className="flex gap-1 items-start relative">
-                <input
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  placeholder="Edit your comment..."
-                  className={`w-full border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-gray-200 bg-[#FAFAFA] text-gray-900"} rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none`}
-                />
-                <EmojiPickerToggle
-                  onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
-                  isCentered={true}
-                  darkMode={darkMode}
-                />
+            <div className="w-full">
+              <div className={`text-sm font-black flex items-center gap-2 ${darkMode ? "text-white" : "text-slate-900"}`}>
+                {isOwn ? (
+                  <span>{comment.user?.name || "Unknown"}</span>
+                ) : (
+                  <Link
+                    href={`/profile/${comment.user?.publicId || comment.user?._id}`}
+                    className={`hover:text-blue-500 transition-colors ${darkMode ? "text-blue-400" : "text-blue-700"}`}
+                  >
+                    {comment.user?.name || "Unknown"}
+                  </Link>
+                )}
+                {isOwn && (
+                  <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest ${darkMode ? "text-blue-300 bg-blue-600/30 border border-blue-500/30" : "text-blue-700 bg-blue-100 border border-blue-200"}`}>
+                    You
+                  </span>
+                )}
               </div>
-            ) : (
-              <p className={`${darkMode ? "text-gray-200" : "text-gray-800"}`}>{comment.text}</p>
-            )}
 
-            <p className="text-xs text-gray-400">
-              {new Date(comment.createdAt).toLocaleString()}
-              {comment.editedAt && (
-                <span className="ml-2 italic text-yellow-500">(edited)</span>
-              )}
-            </p>
-          </div>
-
-          {isOwn && (
-            <div className="text-xs text-right space-y-1 ml-2">
               {editing ? (
-                <>
-                  <button
-                    className="text-blue-600 font-semibold block"
-                    onClick={() => {
-                      if (isReply) {
-                        onEditReply(comment.parentId, comment._id, editText); // ✅ Corrected
-                      } else {
-                        onEdit(comment._id, editText);
-                      }
-                      setEditing(false);
-                      setShowEmoji(false);
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="text-black-400 block"
-                    onClick={() => {
-                      setEditing(false);
-                      setEditText(comment.text);
-                      setShowEmoji(false);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </>
+                <div className="flex gap-2 mt-1.5 items-start relative bg-black/5 p-1.5 rounded-lg">
+                  <input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    placeholder="Edit your comment..."
+                    className={`w-full border-none bg-transparent text-sm focus:ring-0 outline-none ${darkMode ? "text-white" : "text-gray-900"}`}
+                  />
+                  <EmojiPickerToggle
+                    onEmojiSelect={(emoji) => setEditText((prev) => prev + emoji.native)}
+                    isCentered={true}
+                    darkMode={darkMode}
+                  />
+                </div>
               ) : (
-                <>
-                  <button
-                    className="text-green-600 block"
-                    onClick={() => {
-                      setEditText(comment.text);
-                      setEditing(true);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={async () => {
-                      setDeleting(true);
-                      if (isReply) {
-                        await onDeleteReply(comment.parentId, comment._id); // ✅ parentId is commentId
-                      } else {
-                        await onDelete(comment._id);
-                      }
-                      setDeleting(false);
-                    }}
-                    disabled={deleting}
-                    className="text-red-500 block disabled:opacity-50"
-                  >
-                    {deleting ? "Deleting..." : "Delete"}
-                  </button>
-                </>
+                <p className={`mt-1 text-sm font-semibold leading-snug ${darkMode ? "text-gray-100" : "text-slate-800"}`}>{comment.text}</p>
               )}
+
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-40">
+                  {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {comment.editedAt && (
+                   <span className="text-[9px] font-black uppercase tracking-widest text-yellow-500/80 italic">Edited</span>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* 👍 Reactions Summary */}
-      {reactions && Object.keys(reactions).some(emoji => reactions[emoji]?.length > 0) && (
-        <div className="flex gap-2 mt-1 flex-wrap">
-          {Object.entries(reactions).map(([emoji, users]) => {
-            if (!Array.isArray(users) || users.length === 0) return null;
-            const reacted = users.includes(currentUser._id);
-            return (
-              <button
-                key={emoji}
-                onClick={() => toggleReaction(emoji)}
-                className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 transition-all border 
-                  ${reacted
-                    ? (darkMode ? "bg-blue-500/10 border-blue-500/30 text-blue-400" : "bg-blue-50 border-blue-400 text-blue-700")
-                    : (darkMode ? "bg-[#FAFAFA]/5 border-white/5 text-gray-400 hover:bg-[#FAFAFA]/10" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200")}`}
-              >
-                <span>{emoji}</span>
-                <span className="font-semibold">{users.length}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* 💬 Actions */}
-      <div className="flex items-center gap-4 text-xs mt-2 font-medium">
-        {/* React Button */}
-        <div className="relative">
-          <button
-            ref={reactButtonRef}
-            onClick={toggleEmojiPicker}
-            className={`${darkMode ? "text-gray-400 hover:text-blue-400" : "text-gray-500 hover:text-blue-600"} font-bold transition flex items-center gap-1`}
-          >
-            👍 React
-          </button>
-
-          {showEmoji && createPortal(
-            <div style={pickerStyle} className="fixed z-[9999]">
-              <AnimatePresence>
-                <motion.div
-                  ref={pickerRef}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-[#FAFAFA] border-gray-200"} border shadow-2xl rounded-full px-3 py-1.5 flex gap-2 ring-1 ring-black ring-opacity-5`}
-                >
-                  {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
+            {isOwn && (
+              <div className="flex items-center gap-2 ml-2">
+                {editing ? (
+                  <>
                     <button
-                      key={emoji}
+                      className="text-[9px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
                       onClick={() => {
-                        toggleReaction(emoji);
-                        // setShowEmoji(false); // Keep open until click outside
+                        if (isReply) {
+                          onEditReply(comment.parentId, comment._id, editText);
+                        } else {
+                          onEdit(comment._id, editText);
+                        }
+                        setEditing(false);
+                        setShowEmoji(false);
                       }}
-                      className="text-xl hover:scale-125 transition-transform"
                     >
-                      {emoji}
+                      Save
                     </button>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>,
-            document.body
-          )}
+                    <button
+                      className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-400 transition-colors"
+                      onClick={() => {
+                        setEditing(false);
+                        setEditText(comment.text);
+                        setShowEmoji(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="text-[9px] font-black uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
+                      onClick={() => {
+                        setEditText(comment.text);
+                        setEditing(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      disabled={deleting}
+                      className="text-[9px] font-black uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                    >
+                      {deleting ? "Wait" : "Delete"}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {!isReply && (
-          <button
-            onClick={() => setShowReplyBox((v) => !v)}
-            className={`${darkMode ? "text-gray-400 hover:text-blue-400" : "text-gray-500 hover:text-blue-600"} font-bold transition`}
-          >
-            {showReplyBox ? "Cancel" : "Reply"}
-          </button>
-        )}
-
-        {replies.length > 0 && (
-          <button
-            onClick={() => {
-              setShowReplies((prev) => !prev);
-              setVisibleReplies(2);
-            }}
-            className={`${darkMode ? "text-gray-500 hover:text-blue-400" : "text-gray-500 hover:underline"} font-bold`}
-          >
-            {showReplies
-              ? `Hide ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`
-              : `Show ${replies.length} repl${replies.length > 1 ? "ies" : "y"}`}
-          </button>
-        )}
-      </div>
-
-      {/* ✏️ Reply Input */}
-      {showReplyBox && (
-        <ReplyBox
-          parentId={comment._id}
-          onSubmit={(text) => {
-            onReply(comment._id, text);
-            setShowReplyBox(false);
+        <ConfirmationModal
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={async () => {
+             setDeleting(true);
+             if (isReply) {
+               await onDeleteReply(comment.parentId, comment._id);
+             } else {
+               await onDelete(comment._id);
+             }
+             setDeleting(false);
           }}
+          title="Delete Comment?"
+          message="Are you sure you want to delete this comment? This action cannot be undone."
           darkMode={darkMode}
         />
-      )}
+
+        {/* 👍 Reactions Summary */}
+        {reactions && Object.keys(reactions).some(emoji => reactions[emoji]?.length > 0) && (
+          <div className="flex gap-1.5 mt-2 flex-wrap">
+            {Object.entries(reactions).map(([emoji, users]) => {
+              if (!Array.isArray(users) || users.length === 0) return null;
+              const reacted = users.includes(currentUser._id);
+              return (
+                <button
+                  key={emoji}
+                  onClick={() => toggleReaction(emoji)}
+                  className={`text-xs px-2 py-0.5 rounded-lg flex items-center gap-1.5 transition-all border 
+                    ${reacted
+                      ? (darkMode ? "bg-blue-500/20 border-blue-500/40 text-blue-300" : "bg-blue-50 border-blue-300 text-blue-800")
+                      : (darkMode ? "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10" : "bg-gray-100 border-transparent text-gray-700 hover:bg-gray-200")}`}
+                >
+                  <span className="transform hover:scale-110 transition-transform origin-center">{emoji}</span>
+                  <span className={`text-[9px] font-black ${darkMode ? (reacted ? "text-white" : "text-gray-500") : "text-slate-900"}`}>{users.length}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* 💬 Actions */}
+        <div className="flex items-center gap-4 mt-2.5 pt-2.5 border-t border-white/5">
+          {/* React Button */}
+          <div className="relative">
+            <button
+              ref={reactButtonRef}
+              onClick={toggleEmojiPicker}
+              className={`text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-white/5 ${darkMode ? "text-white hover:text-blue-400" : "text-slate-900 hover:text-blue-600"}`}
+            >
+              👍 React
+            </button>
+
+            {showEmoji && createPortal(
+              <div style={pickerStyle} className="fixed z-[9999]">
+                <AnimatePresence>
+                  <motion.div
+                    ref={pickerRef}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className={`${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-200 shadow-xl"} border rounded-full px-2.5 py-1 flex gap-1.5 ring-1 ring-black ring-opacity-5`}
+                  >
+                    {["👍", "❤️", "😂", "😮", "😢", "😊", "👏", "🎉"].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => toggleReaction(emoji)}
+                        className="text-lg hover:scale-125 transition-transform"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>,
+              document.body
+            )}
+          </div>
+
+          {!isReply && (
+            <button
+              onClick={() => setShowReplyBox((v) => !v)}
+              className={`text-[9px] font-black uppercase tracking-[0.2em] transition-all px-2 py-1 rounded-md hover:bg-white/5 ${darkMode ? "text-white hover:text-blue-400" : "text-slate-900 hover:text-blue-600"}`}
+            >
+              {showReplyBox ? "Cancel" : "Reply"}
+            </button>
+          )}
+
+          {replies.length > 0 && (
+            <button
+              onClick={() => {
+                setShowReplies((prev) => !prev);
+                setVisibleReplies(2);
+              }}
+              className={`text-[9px] font-black uppercase tracking-[0.2em] transition-all px-2 py-1 rounded-md hover:bg-white/5 ${darkMode ? "text-blue-400" : "text-blue-600"}`}
+            >
+              {showReplies
+                ? `Hide ${replies.length}`
+                : `${replies.length} ${replies.length > 1 ? "Replies" : "Reply"}`}
+            </button>
+          )}
+        </div>
+
+        {/* ✏️ Reply Input */}
+        {showReplyBox && (
+          <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <ReplyBox
+              parentId={comment._id}
+              onSubmit={(text) => {
+                onReply(comment._id, text);
+                setShowReplyBox(false);
+              }}
+              darkMode={darkMode}
+            />
+          </div>
+        )}
+      </div>
 
       {/* 🧵 Animated, Indented Reply Threads */}
       <AnimatePresence>
         {showReplies && replies.length > 0 && (
           <motion.div
-            className="mt-2 space-y-2 ml-6"
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.2 }}
+            className="mt-2 space-y-3"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
           >
             {[...replies]
               .reverse()
@@ -395,23 +400,25 @@ export default function CommentCard({
                 />
               ))}
 
-            {replies.length > visibleReplies && (
-              <button
-                className="text-blue-500 text-xs ml-4"
-                onClick={() => setVisibleReplies((v) => v + 2)}
-              >
-                Load more replies
-              </button>
-            )}
+            <div className="flex gap-4 ml-6 mt-2">
+              {replies.length > visibleReplies && (
+                <button
+                  className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400"
+                  onClick={() => setVisibleReplies((v) => v + 2)}
+                >
+                  Load more
+                </button>
+              )}
 
-            {visibleReplies > 2 && (
-              <button
-                className="text-red-400 text-xs ml-4"
-                onClick={() => setVisibleReplies(2)}
-              >
-                Show less replies
-              </button>
-            )}
+              {visibleReplies > 2 && (
+                <button
+                  className="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300"
+                  onClick={() => setVisibleReplies(2)}
+                >
+                  Less
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

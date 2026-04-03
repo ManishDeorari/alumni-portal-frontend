@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import socket from "../../../../utils/socket";
 import { triggerReactionEffect } from "./useEmojiAnimation";
@@ -10,6 +10,7 @@ export default function useCommentActions({
   setComment,
   setShowCommentEmoji
 }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const token = localStorage.getItem("token");
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -23,8 +24,8 @@ export default function useCommentActions({
 
   const handleComment = useCallback(
     async (comment) => {
-      if (!checkAuth() || !comment.trim()) return;
-
+      if (!checkAuth() || !comment.trim() || isSubmitting) return;
+      setIsSubmitting(true);
       try {
         const isEvent = post.type === "Event";
         const endpoint = isEvent ? `/api/events/${post._id}/comment` : `/api/posts/${post._id}/comment`;
@@ -63,6 +64,8 @@ export default function useCommentActions({
         toast.success("💬 Comment posted!", { autoClose: 1500 });
       } catch (err) {
         toast.error("❌ Failed to add comment");
+      } finally {
+        setIsSubmitting(false);
       }
     },
     [post._id, post.type, setPosts, setComment, setShowCommentEmoji, API_URL, token, checkAuth]

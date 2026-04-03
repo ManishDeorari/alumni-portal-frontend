@@ -65,6 +65,20 @@ export default function Sidebar() {
     };
 
     initialize();
+
+    // ✅ Listen for live points updates to sync UI
+    import("@/utils/socket").then(({ default: socket }) => {
+      socket.on("pointsUpdated", () => {
+        const token = localStorage.getItem("token");
+        if (token) fetchUser(token);
+      });
+    });
+
+    return () => {
+      import("@/utils/socket").then(({ default: socket }) => {
+        socket.off("pointsUpdated");
+      });
+    };
   }, [fetchUser]);
 
   const handleSignout = () => {
