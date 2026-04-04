@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function ProfileImageAdjust({ imageUrl, onApply, onReset }) {
+  const { darkMode } = useTheme();
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
@@ -131,81 +133,91 @@ export default function ProfileImageAdjust({ imageUrl, onApply, onReset }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-2 border-gray-300 relative">
-        <Image
-          src={imageUrl}
-          alt="Adjust Preview"
-          width={160}
-          height={160}
-          className="w-full h-full object-cover"
-          style={{ filter: filterStyle }}
-        />
-        {/* Darken overlay for preview */}
-        {darken > 0 && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: `rgba(0,0,0,${darken / 100})`,
-            }}
+      <div className="p-[3.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full mb-6 shadow-md border-transparent">
+        <div className={`w-40 h-40 rounded-full overflow-hidden border-4 ${darkMode ? 'border-[#121213]' : 'border-[#FAFAFA]'} relative`}>
+          <Image
+            src={imageUrl}
+            alt="Adjust Preview"
+            width={160}
+            height={160}
+            className="w-full h-full object-cover"
+            style={{ filter: filterStyle }}
           />
-        )}
-      </div>
-
-      <div className="grid grid-cols-5 gap-2 mb-4">
-        {adjustments.map((adj) => (
-          <button
-            key={adj.name}
-            onClick={() => setActiveAdjust(adj.name)}
-            className={`px-2 py-1 text-sm rounded-lg border ${activeAdjust === adj.name ? "bg-blue-600 text-white" : "bg-gray-200"
-              }`}
-          >
-            {adj.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="w-64">
-        {adjustments
-          .filter((adj) => adj.name === activeAdjust)
-          .map((adj) => (
-            <Slider
-              key={adj.name}
-              label={adj.name}
-              value={adj.value}
-              min={adj.min}
-              max={adj.max}
-              onChange={adj.setter}
-              suffix={adj.suffix}
+          {/* Darken overlay for preview */}
+          {darken > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: `rgba(0,0,0,${darken / 100})`,
+              }}
             />
-          ))}
+          )}
+        </div>
       </div>
 
-      <div className="flex gap-4 mt-4">
-        <button
-          onClick={handleApply}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-        >
-          ✅ Apply Adjustments
-        </button>
+      <div className="w-full p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-md mb-6">
+        <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 p-4 rounded-[calc(0.75rem-2.5px)] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+          {adjustments.map((adj) => (
+            <button
+              key={adj.name}
+              onClick={() => setActiveAdjust(adj.name)}
+              className={`px-2 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg border-2 transition-colors ${
+                  activeAdjust === adj.name 
+                      ? (darkMode ? "bg-blue-900/40 border-blue-500/50 text-blue-400" : "bg-blue-100 border-blue-300 text-blue-700") 
+                      : (darkMode ? "bg-[#121213] border-white/10 text-gray-400 hover:text-white hover:border-white/20" : "bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200")
+              }`}
+            >
+              {adj.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full sm:w-64 max-w-sm p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-md">
+        <div className={`w-full p-4 rounded-[calc(0.75rem-2.5px)] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+          {adjustments
+            .filter((adj) => adj.name === activeAdjust)
+            .map((adj) => (
+              <Slider
+                key={adj.name}
+                label={adj.name}
+                value={adj.value}
+                min={adj.min}
+                max={adj.max}
+                onChange={adj.setter}
+                suffix={adj.suffix}
+                darkMode={darkMode}
+              />
+            ))}
+        </div>
+      </div>
+
+      <div className="flex gap-4 mt-6">
         <button
           onClick={handleReset}
-          className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600"
+          className={`px-6 py-2.5 rounded-lg font-black uppercase tracking-widest text-[10px] shadow-sm transition-colors ${ darkMode ? 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900' }`}
         >
-          🔄 Reset
+          Reset
+        </button>
+        <button
+          onClick={handleApply}
+          className={`px-6 py-2.5 rounded-lg font-black uppercase tracking-widest text-[10px] shadow-sm transition-colors ${ darkMode ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-green-600 text-white hover:bg-green-700' }`}
+        >
+          Apply Adjustments
         </button>
       </div>
     </div>
   );
 }
 
-function Slider({ label, value, min, max, onChange, suffix = "" }) {
+function Slider({ label, value, min, max, onChange, suffix = "", darkMode }) {
   return (
     <div>
-      <label className="text-sm font-medium block mb-1">
+      <label className={`text-[10px] font-black uppercase tracking-widest block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
         {label}: {value}{suffix}
       </label>
       <input
@@ -214,7 +226,11 @@ function Slider({ label, value, min, max, onChange, suffix = "" }) {
         max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full"
+        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+        style={{
+          background: darkMode ? "#333" : "#e5e7eb",
+          accentColor: "#3b82f6",
+        }}
       />
     </div>
   );

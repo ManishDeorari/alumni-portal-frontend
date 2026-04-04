@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { X, Save, Info } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) {
     const { darkMode } = useTheme();
@@ -38,6 +39,8 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
     };
 
     return (
+        <>
+        <LoadingOverlay isVisible={loading} />
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-lg">
                 <div className={`rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
@@ -109,5 +112,6 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
             `}</style>
             </div>
         </div>
+        </>
     );
 }

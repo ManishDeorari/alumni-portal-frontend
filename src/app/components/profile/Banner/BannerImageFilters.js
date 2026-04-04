@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useTheme } from "@/context/ThemeContext";
 
 const filters = [
   { name: "Original", css: "none" },
@@ -13,6 +14,7 @@ const filters = [
 ];
 
 export default function BannerImageFilters({ imageSrc, onComplete }) {
+  const { darkMode } = useTheme();
   const [tempFilter, setTempFilter] = useState("Original");
   const originalImageRef = useRef(null);
 
@@ -39,58 +41,63 @@ export default function BannerImageFilters({ imageSrc, onComplete }) {
   return (
     <div className="flex flex-col items-center w-full">
       {/* Preview */}
-      <div className="w-full h-40 rounded-lg overflow-hidden mb-4 border-2 border-gray-300">
-        <Image
-          src={imageSrc}
-          alt="Preview"
-          width={800}
-          height={160}
-          className="w-full h-full object-cover"
-          style={{
-            filter: filters.find((f) => f.name === tempFilter)?.css || "none",
-          }}
-        />
+      <div className="w-full p-[3.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl mb-6 shadow-md border-transparent">
+        <div className={`w-full h-40 rounded-[calc(1rem-3.5px)] overflow-hidden border-4 ${darkMode ? 'border-[#121213]' : 'border-[#FAFAFA]'}`}>
+          <Image
+            src={imageSrc}
+            alt="Preview"
+            width={800}
+            height={160}
+            className="w-full h-full object-cover"
+            style={{
+              filter: filters.find((f) => f.name === tempFilter)?.css || "none",
+            }}
+          />
+        </div>
       </div>
 
       {/* Filters Thumbnails */}
-      <div className="flex gap-4 flex-wrap justify-center mb-4">
-        {filters.map((filter) => (
-          <button
-            key={filter.name}
-            onClick={() => setTempFilter(filter.name)}
-            className={`flex flex-col items-center w-20 ${tempFilter === filter.name
-                ? "text-blue-600 font-bold"
-                : "text-gray-600"
-              }`}
-          >
-            <div className="w-20 h-12 rounded-md overflow-hidden mb-1 border">
-              <Image
-                src={imageSrc}
-                alt={filter.name}
-                width={80}
-                height={48}
-                className="w-full h-full object-cover"
-                style={{ filter: filter.css }}
-              />
-            </div>
-            <span className="text-xs">{filter.name}</span>
-          </button>
-        ))}
+      <div className="w-full p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-md mb-6">
+        <div className={`flex gap-4 flex-wrap justify-center p-4 rounded-[calc(0.75rem-2.5px)] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+          {filters.map((filter) => (
+            <button
+              key={filter.name}
+              onClick={() => setTempFilter(filter.name)}
+              className={`flex flex-col items-center w-20 group transition-all transform hover:scale-105 active:scale-95`}
+            >
+              <div className={`w-20 h-12 rounded-md overflow-hidden mb-2 border-2 transition-colors ${tempFilter === filter.name ? 'border-blue-500' : (darkMode ? 'border-white/10 group-hover:border-white/30' : 'border-gray-200 group-hover:border-gray-300')}`}>
+                <Image
+                  src={imageSrc}
+                  alt={filter.name}
+                  width={80}
+                  height={48}
+                  className="w-full h-full object-cover"
+                  style={{ filter: filter.css }}
+                />
+              </div>
+              <span className={`text-[9px] uppercase font-black tracking-widest text-center leading-tight ${tempFilter === filter.name ? (darkMode ? 'text-blue-400' : 'text-blue-600') : (darkMode ? 'text-gray-400' : 'text-gray-600')}`}>{filter.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 w-full justify-center">
-        <button
-          onClick={handleApply}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Apply Filter
-        </button>
+      <div className="flex gap-3 w-full justify-center mt-2">
         <button
           onClick={handleReset}
-          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+          className={`px-6 py-2.5 rounded-lg font-black uppercase tracking-widest text-[10px] shadow-sm transition-colors ${
+              darkMode ? 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900'
+          }`}
         >
-          Reset
+          Reset Filter
+        </button>
+        <button
+          onClick={handleApply}
+          className={`px-6 py-2.5 rounded-lg font-black uppercase tracking-widest text-[10px] shadow-sm transition-colors ${
+              darkMode ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-green-600 text-white hover:bg-green-700'
+          }`}
+        >
+          Apply Filter
         </button>
       </div>
     </div>

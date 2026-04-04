@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Briefcase, BarChart, Settings, Layers, Code, Heart, MapPin, Clock, DollarSign, FileText } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSave }) {
     const { darkMode } = useTheme();
@@ -69,6 +70,8 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
     };
 
     return (
+        <>
+        <LoadingOverlay isVisible={loading} />
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
             <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-2xl">
                 <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
@@ -255,5 +258,6 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
             `}</style>
             </div>
         </div>
+        </>
     );
 }

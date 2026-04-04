@@ -1,17 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Award } from "lucide-react"; // Importing an icon for Points
 import PointsDistributionModal from "./PointsDistributionModal";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ProfileStats({ profile, isPublicView }) {
+export default function ProfileStats({ profile: initialProfile, isPublicView }) {
     const { darkMode } = useTheme();
     const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
+    
+    const [stats, setStats] = useState({
+        connections: initialProfile?.connections?.length || 0,
+        totalVisits: initialProfile?.visitStats?.totalVisits || 0,
+        todayVisits: initialProfile?.visitStats?.todayVisits || 0,
+        points: initialProfile?.points?.total || 0,
+    });
 
-    if (!profile) return null;
+    useEffect(() => {
+        if (!initialProfile?._id) return;
+        let isMounted = true;
+
+        const fetchLatestStats = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const endpoint = isPublicView 
+                    ? `${process.env.NEXT_PUBLIC_API_URL}/api/user/${initialProfile._id}`
+                    : `${process.env.NEXT_PUBLIC_API_URL}/api/user/me`;
+                    
+                const res = await fetch(endpoint, {
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (isMounted) {
+                        setStats({
+                            connections: data.connections?.length || 0,
+                            totalVisits: data.visitStats?.totalVisits || 0,
+                            todayVisits: data.visitStats?.todayVisits || 0,
+                            points: data.points?.total || 0,
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching live stats:", err);
+            }
+        };
+
+        // Poll every 10 seconds for truly live numbers
+        const intervalId = setInterval(fetchLatestStats, 10000);
+        
+        // Initial sync to catch any immediate changes since load
+        fetchLatestStats();
+
+        return () => {
+            isMounted = false;
+            clearInterval(intervalId);
+        };
+    }, [initialProfile?._id, isPublicView]);
+
+    if (!initialProfile) return null;
 
     const connectionsLink = isPublicView
-        ? `/dashboard/myconnections?id=${profile._id}`
+        ? `/dashboard/myconnections?id=${initialProfile._id}`
         : "/dashboard/myconnections";
 
     return (
@@ -22,7 +72,7 @@ export default function ProfileStats({ profile, isPublicView }) {
                     <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${darkMode ? 'text-gray-400' : 'text-black'}`}>Connections</p>
                     <Link href={connectionsLink}>
                         <button className={`text-3xl font-normal transition-all active:scale-95 ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>
-                            {profile.connections?.length || 0}
+                            {stats.connections}
                         </button>
                     </Link>
                 </div>
@@ -30,17 +80,17 @@ export default function ProfileStats({ profile, isPublicView }) {
                 {/* Total Visitors */}
                 <div className="flex flex-col items-center text-center flex-1 min-w-[120px]">
                     <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${darkMode ? 'text-gray-400' : 'text-black'}`}>Total Visitors</p>
-                    <p className={`text-3xl font-normal ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>{profile.visitStats?.totalVisits || 0}</p>
+                    <p className={`text-3xl font-normal ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>{stats.totalVisits}</p>
                 </div>
 
                 {/* Today's Visits */}
                 <div className="flex flex-col items-center text-center flex-1 min-w-[120px]">
                     <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${darkMode ? 'text-gray-400' : 'text-black'}`}>Today’s Visits</p>
-                    <p className={`text-3xl font-normal ${darkMode ? 'text-green-400' : 'text-green-600'}`}>{profile.visitStats?.todayVisits || 0}</p>
+                    <p className={`text-3xl font-normal ${darkMode ? 'text-green-400' : 'text-green-600'}`}>{stats.todayVisits}</p>
                 </div>
 
                 {/* My Points (Alumni Only) */}
-                {profile.role === "alumni" && (
+                {initialProfile.role === "alumni" && (
                     <div
                         className="flex flex-col items-center text-center cursor-pointer group flex-1 min-w-[120px]"
                         onClick={() => setIsPointsModalOpen(true)}
@@ -50,7 +100,7 @@ export default function ProfileStats({ profile, isPublicView }) {
                             <Award className="w-3.5 h-3.5 text-yellow-500" />
                         </div>
                         <p className={`text-3xl font-normal group-hover:scale-110 transition-transform ${darkMode ? 'text-yellow-500' : 'text-yellow-600'}`}>
-                            {profile.points?.total || 0}
+                            {stats.points}
                         </p>
                     </div>
                 )}
@@ -59,7 +109,7 @@ export default function ProfileStats({ profile, isPublicView }) {
             <PointsDistributionModal
                 isOpen={isPointsModalOpen}
                 onClose={() => setIsPointsModalOpen(false)}
-                user={profile}
+                user={initialProfile}
             />
         </div>
     );

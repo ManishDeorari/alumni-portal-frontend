@@ -8,6 +8,7 @@ import { useTheme } from "@/context/ThemeContext";
 import ProfileImageCropper from "./ProfileImageCropper";
 import ProfileImageFilters from "./ProfileImageFilters";
 import ProfileImageAdjust from "./ProfileImageAdjust";
+import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function ProfileEditorModal({ onClose, onUploaded, userId, currentImage }) {
   const { darkMode } = useTheme();
@@ -198,6 +199,8 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
   };
 
   return (
+    <>
+    <LoadingOverlay isVisible={uploading} message="Uploading Image..." />
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-3xl">
         <div className={`rounded-[calc(2.5rem-2.5px)] p-6 relative max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-[#121213] text-white' : 'bg-[#FAFAFA] text-black'}`}>
@@ -208,60 +211,70 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
             <X size={24} />
           </button>
 
-        <h2 className="text-lg font-semibold mb-4 text-center">Profile Image</h2>
+        <h2 className={`text-xl font-black uppercase tracking-widest mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>Profile Image</h2>
 
         {/* 🖼️ Preview */}
-        <div className="flex justify-center mb-4">
-          <Image
-            src={previewUrl || "/default-profile.jpg"}
-            alt="Preview"
-            width={160}
-            height={160}
-            className="object-cover rounded-full shadow"
-          />
+        <div className="flex justify-center mb-6">
+          <div className="p-[3.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full shadow-[0_10px_30px_rgba(37,99,235,0.4)] flex-shrink-0">
+            <div className="relative w-40 h-40 rounded-full overflow-hidden">
+              <Image
+                src={previewUrl || "/default-profile.jpg"}
+                alt="Preview"
+                fill
+                className={`object-cover border-4 ${darkMode ? 'border-[#121213]' : 'border-[#FAFAFA]'} rounded-full`}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Tabs + Reset */}
-        <div className="flex justify-around mb-4 border-b pb-2 items-center">
+        <div className="flex flex-wrap justify-center gap-3 mb-6 items-center border-b border-dashed border-gray-200 dark:border-white/10 pb-6 shadow-sm">
           {["crop", "filters", "adjust"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                if (!selectedFile) return; // prevent activation if no new image
-                setActiveTab(activeTab === tab ? null : tab);
-              }}
-              disabled={!selectedFile}
-              className={`bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium ${activeTab === tab
-                ? "bg-blue-100 text-blue-600"
-                : "text-black-600"
-                } ${!selectedFile ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
-              title={!selectedFile ? "Select a new image first" : `Open ${tab}`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
+            <div key={tab} className={`p-[1.5px] bg-gradient-to-tr ${activeTab === tab ? 'from-blue-500 to-purple-500' : (darkMode ? 'from-slate-700 to-slate-800' : 'from-gray-300 to-gray-400')} rounded-xl shadow-sm transition-all`}>
+              <button
+                onClick={() => {
+                  if (!selectedFile) return;
+                  setActiveTab(activeTab === tab ? null : tab);
+                }}
+                disabled={!selectedFile}
+                className={`px-6 py-2.5 rounded-[calc(0.75rem-1.5px)] text-[10px] font-black uppercase tracking-widest transition-colors ${
+                    activeTab === tab 
+                        ? (darkMode ? "bg-blue-900/40 text-blue-400" : "bg-blue-50 text-blue-700") 
+                        : (darkMode ? "bg-[#121213] text-gray-400 hover:text-white" : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50")
+                } ${!selectedFile ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                title={!selectedFile ? "Select a new image first" : `Open ${tab}`}
+              >
+                {tab}
+              </button>
+            </div>
           ))}
 
           {/* Reset Button */}
           {selectedFile && (
-            <button
-              onClick={() => {
-                const { url, file } = adjustOriginalRef.current || {};
-                if (url) setPreviewUrl(url);
-                if (file) setSelectedFile(file);
-                setActiveTab(null);
-                setAdjustKey((k) => k + 1); // re-render adjust tool cleanly
-              }}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded ml-2 font-medium"
-              title="Reset adjustments but keep the selected banner"
-            >
-              Reset
-            </button>
+            <div className="p-[1.5px] bg-gradient-to-tr from-orange-500 to-red-500 rounded-xl shadow-sm transition-all">
+              <button
+                onClick={() => {
+                  const { url, file } = adjustOriginalRef.current || {};
+                  if (url) setPreviewUrl(url);
+                  if (file) setSelectedFile(file);
+                  setActiveTab(null);
+                  setAdjustKey((k) => k + 1);
+                }}
+                className={`px-6 py-2.5 rounded-[calc(0.75rem-1.5px)] text-[10px] font-black uppercase tracking-widest ${
+                    darkMode ? "bg-[#121213] text-orange-400 hover:text-orange-300 hover:bg-orange-950/30" : "bg-white text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                }`}
+                title="Reset adjustments"
+              >
+                Reset
+              </button>
+            </div>
           )}
         </div>
 
         {/* Subsection */}
         {activeTab && (
-          <div className="flex justify-center items-center py-4 px-6 border rounded mb-4 min-h-[160px]">
+          <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl mb-6 shadow-xl relative top-0 z-10 w-full animate-fadeIn">
+            <div className={`flex justify-center items-center py-6 px-6 rounded-[calc(1rem-2.5px)] min-h-[160px] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
             {activeTab === "crop" && selectedFile && (
               <ProfileImageCropper
                 imageSrc={previewUrl}
@@ -327,58 +340,72 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
                 }}
               />
             )}
+            </div>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex justify-between items-center mt-6">
-          <button
-            onClick={handleDeletePhoto}
-            className="text-red-600 font-medium hover:underline"
-            title="Delete your current profile photo and set default"
-          >
-            Delete Photo
-          </button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mt-8 pt-4 border-t border-dashed border-gray-200 dark:border-white/10">
+          
+          <div className="w-full sm:w-auto p-[2.5px] bg-gradient-to-tr from-red-500 to-rose-600 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95">
+            <button
+              onClick={handleDeletePhoto}
+              className={`px-8 py-3 rounded-[calc(0.75rem-2.5px)] text-xs font-black uppercase tracking-widest w-full h-full ${
+                  darkMode ? "bg-black text-rose-500 hover:bg-slate-900" : "bg-white text-rose-600 hover:bg-rose-50"
+              }`}
+              title="Delete your current profile photo and set default"
+            >
+              Delete Photo
+            </button>
+          </div>
 
           {/* Change Photo ↔ Cancel toggle */}
-          {selectedFile ? (
-            <button
-              onClick={() => {
-                setSelectedFile(null);
-                setPreviewUrl(currentImage || "/default-profile.jpg");
-                setActiveTab(null);
-              }}
-              className={`px-6 py-2 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
-                  darkMode 
-                      ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
-                      : "border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-100 font-bold"
-              }`}
-              title="Cancel changes and keep previous photo"
-            >
-              Cancel
-            </button>
-          ) : (
-            <button
-              onClick={() => fileInputRef.current.click()}
-              className={`px-6 py-2 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
-                  darkMode 
-                      ? "border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10" 
-                      : "border-gray-200 bg-white text-gray-400 hover:text-blue-600 hover:border-blue-400 font-bold"
-              }`}
-              title="Select a new photo to change your profile image"
-            >
-              Change Photo
-            </button>
-          )}
+          <div className="w-full sm:w-auto">
+            {selectedFile ? (
+              <div className="p-[2.5px] bg-gradient-to-tr from-gray-400 to-gray-500 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 w-full">
+                <button
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setPreviewUrl(currentImage || "/default-profile.jpg");
+                    setActiveTab(null);
+                  }}
+                  className={`px-8 py-3 rounded-[calc(0.75rem-2.5px)] text-xs font-black uppercase tracking-widest w-full h-full ${
+                      darkMode ? "bg-black text-gray-400 hover:bg-slate-900" : "bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
+                  title="Cancel changes and keep previous photo"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 w-full">
+                <button
+                  onClick={() => fileInputRef.current.click()}
+                  className={`px-8 py-3 rounded-[calc(0.75rem-2.5px)] text-xs font-black uppercase tracking-widest w-full h-full ${
+                      darkMode 
+                          ? "bg-[#121213] text-white hover:bg-slate-900/80" 
+                          : "bg-[#FAFAFA] text-gray-900 hover:bg-white"
+                  }`}
+                  title="Select a new photo to change your profile image"
+                >
+                  Change Photo
+                </button>
+              </div>
+            )}
+          </div>
 
-          <button
-            onClick={handleApplyUpload}
-            disabled={uploading}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded disabled:opacity-50"
-            title="Apply all changes and update profile photo"
-          >
-            {uploading ? "Applying..." : "Apply"}
-          </button>
+          <div className="w-full sm:w-auto p-[2.5px] bg-gradient-to-tr from-green-500 to-teal-500 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:scale-95">
+            <button
+              onClick={handleApplyUpload}
+              disabled={uploading}
+              className={`px-8 py-3 rounded-[calc(0.75rem-2.5px)] text-xs font-black uppercase tracking-widest w-full h-full disabled:opacity-50 ${
+                  darkMode ? "bg-black text-white hover:bg-slate-900" : "bg-white text-green-700 hover:bg-green-50"
+              }`}
+              title="Apply all changes and update profile photo"
+            >
+              {uploading ? "Applying..." : "Apply Changes"}
+            </button>
+          </div>
         </div>
 
         {/* Hidden file input */}
@@ -392,5 +419,6 @@ export default function ProfileEditorModal({ onClose, onUploaded, userId, curren
         </div>
       </div>
     </div>
+    </>
   );
 }
