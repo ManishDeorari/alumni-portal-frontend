@@ -41,7 +41,9 @@ export const NotificationProvider = ({ children }) => {
         setUnreadCount(unread);
       }
     } catch (err) {
-      console.error("Failed to fetch notifications:", err);
+      if (err.name !== "TypeError" || err.message !== "Failed to fetch") {
+        console.error("Failed to fetch notifications:", err);
+      }
     }
   }, [API_URL]);
 
@@ -59,7 +61,9 @@ export const NotificationProvider = ({ children }) => {
         setAdminSignupRequestsCount(data.adminSignupRequestsCount || 0);
       }
     } catch (err) {
-      console.error("Failed to fetch counts:", err);
+      if (err.name !== "TypeError" || err.message !== "Failed to fetch") {
+        console.error("Failed to fetch counts:", err);
+      }
     }
   }, [API_URL]);
 

@@ -3,6 +3,8 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Award, Info, ChevronDown, ChevronRight } from "lucide-react";
 
+import { useTheme } from "@/context/ThemeContext";
+
 const CATEGORY_GROUPS = [
     {
         id: "profileCompletion",
@@ -15,7 +17,6 @@ const CATEGORY_GROUPS = [
         icon: "🤝",
         children: [
             { id: "connections", label: "Networking" },
-            { id: "likes", label: "Reactions" },
         ]
     },
     {
@@ -24,6 +25,7 @@ const CATEGORY_GROUPS = [
         icon: "📝",
         children: [
             { id: "posts", label: "Posts" },
+            { id: "likes", label: "Reactions" },
             { id: "comments", label: "Comments" },
         ]
     },
@@ -56,6 +58,7 @@ const CATEGORY_GROUPS = [
 
 export default function PointsDistributionModal({ isOpen, onClose, user }) {
     const [expanded, setExpanded] = React.useState({});
+    const { darkMode } = useTheme();
 
     if (!user || user.role !== "alumni") return null;
 
@@ -75,7 +78,7 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-md overflow-hidden relative"
                     >
-                        <div className="bg-[#FAFAFA] rounded-[calc(2.5rem-2.5px)] overflow-hidden relative">
+                        <div className={`${darkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden relative`}>
                         {/* Header */}
                         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white relative">
                             <button
@@ -88,96 +91,105 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                                 <Award className="w-8 h-8 text-yellow-300" />
                                 <div>
                                     <h2 className="text-xl font-bold">{user.name}&apos;s Points</h2>
-                                    <p className="text-white/80 text-sm">Detailed Breakdown</p>
+                                    <p className="text-white font-bold opacity-100 text-sm">Detailed Breakdown</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Content */}
                         <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100 mb-2">
-                                <span className="font-semibold text-blue-900">Total Balance</span>
-                                <span className="text-2xl font-bold text-blue-600">{points.total || 0}</span>
+                            <div className="relative p-[2px] mb-4 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm">
+                                <div className={`flex items-center justify-between p-4 rounded-[calc(1rem-2px)] ${darkMode ? 'bg-black' : 'bg-white'}`}>
+                                    <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-slate-900'}`}>Total Balance</span>
+                                    <span className="text-2xl font-black bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{points.total || 0}</span>
+                                </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-3">
+                            <div className="space-y-4">
+                                <h3 className={`text-sm font-black uppercase tracking-widest px-1 mb-3 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                                     Activity Breakdown
-                                </h3>
+                               </h3>
                                 {CATEGORY_GROUPS.map((group) => (
-                                    <div key={group.id} className="group/item">
-                                        <div
-                                            onClick={() => group.children && toggleExpand(group.id)}
-                                            className={`flex items-center justify-between p-3 rounded-xl transition-all border ${group.children ? 'cursor-pointer hover:bg-gray-50' : 'bg-[#FAFAFA]'
-                                                } ${expanded[group.id] ? 'bg-gray-50 border-gray-200' : 'border-transparent'}`}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-xl">{group.icon}</span>
-                                                <div className="flex flex-col">
-                                                    <span className="font-semibold text-gray-800">{group.label}</span>
+                                    <div key={group.id} className="group/item relative p-[2px] mb-3 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm">
+                                        <div className={`rounded-[calc(1rem-2px)] flex flex-col w-full ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                                            <div
+                                                onClick={() => group.children && toggleExpand(group.id)}
+                                                className={`flex items-center justify-between p-4 transition-all ${group.children ? 'cursor-pointer' : ''}`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-xl">{group.icon}</span>
+                                                    <div className="flex flex-col">
+                                                        <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{group.label}</span>
+                                                        {group.children && (
+                                                            <span className={`text-[10px] font-bold uppercase tracking-tighter ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                                                {expanded[group.id] ? 'Click to hide details' : 'Click to expand details'}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                        {points[group.id] || 0}
+                                                    </span>
                                                     {group.children && (
-                                                        <span className="text-[10px] text-blue-500 font-medium uppercase tracking-tighter">
-                                                            {expanded[group.id] ? 'Click to hide details' : 'Click to expand details'}
-                                                        </span>
+                                                        expanded[group.id] ? <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-white' : 'text-gray-900'}`} /> : <ChevronRight className={`w-4 h-4 ${darkMode ? 'text-white' : 'text-gray-900'}`} />
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`font-bold text-lg ${points[group.id] > 0 ? 'text-gray-900' : 'text-gray-400'}`}>
-                                                    {points[group.id] || 0}
-                                                </span>
-                                                {group.children && (
-                                                    expanded[group.id] ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />
-                                                )}
-                                            </div>
-                                        </div>
 
-                                        {/* Children */}
-                                        <AnimatePresence>
-                                            {group.children && expanded[group.id] && (
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: "auto", opacity: 1 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    className="overflow-hidden bg-gray-50/50 rounded-b-xl -mt-2 pb-2"
-                                                >
-                                                    {group.children.map(child => (
-                                                        <div key={child.id} className="flex items-center justify-between py-2 px-12 border-l-2 border-gray-200 ml-6 mr-3">
-                                                            <span className="text-sm text-gray-600">{child.label}</span>
-                                                            <span className="text-sm font-bold text-gray-700">{points[child.id] || 0}</span>
-                                                        </div>
-                                                    ))}
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
+                                            {/* Children */}
+                                            <AnimatePresence>
+                                                {group.children && expanded[group.id] && (
+                                                    <motion.div
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: "auto", opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        className="overflow-hidden pb-4"
+                                                    >
+                                                        {group.children.map(child => (
+                                                            <div key={child.id} className="relative p-[2px] mx-4 mb-2 rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                                                              <div className={`flex items-center justify-between py-2 px-4 rounded-[calc(0.5rem-2px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'}`}>
+                                                                  <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{child.label}</span>
+                                                                  <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{points[child.id] || 0}</span>
+                                                              </div>
+                                                            </div>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
 
                             {user.lastYearPoints && (
-                                <div className="mt-8 pt-4 border-t border-gray-100">
-                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-2">
+                                <div className={`mt-8 pt-4 border-t ${darkMode ? 'border-white/20' : 'border-gray-200'}`}>
+                                    <h3 className={`text-sm font-black uppercase tracking-widest px-1 mb-3 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                                         Past Performance
                                     </h3>
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xl">📅</span>
-                                            <span className="font-medium text-gray-700">Year {user.lastYearPoints.year}</span>
-                                        </div>
-                                        <span className="font-bold text-gray-900">{user.lastYearPoints.total || 0}</span>
+                                    <div className="relative p-[2px] rounded-xl bg-gradient-to-r from-gray-500 to-slate-500 shadow-sm">
+                                      <div className={`flex items-center justify-between p-4 rounded-[calc(1rem-2px)] ${darkMode ? 'bg-black' : 'bg-white'}`}>
+                                          <div className="flex items-center gap-3">
+                                              <span className="text-xl">📅</span>
+                                              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Year {user.lastYearPoints.year}</span>
+                                          </div>
+                                          <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user.lastYearPoints.total || 0}</span>
+                                      </div>
                                     </div>
                                 </div>
                             )}
                         </div>
 
                         {/* Footer */}
-                        <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
-                            <button
-                                onClick={onClose}
-                                className="px-10 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all font-semibold shadow-lg shadow-gray-200 active:scale-95"
-                            >
-                                Done
-                            </button>
+                        <div className={`p-4 border-t ${darkMode ? 'bg-[#121212] border-white/20' : 'bg-gray-50 border-gray-200'} text-center flex justify-center`}>
+                            <div className="relative p-[2px] rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 w-full sm:w-auto">
+                              <button
+                                  onClick={onClose}
+                                  className={`px-10 py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] font-bold transition-all active:scale-95 ${darkMode ? 'bg-black hover:bg-black/80 text-white' : 'bg-white hover:bg-gray-50 text-slate-800'}`}
+                              >
+                                  Done
+                              </button>
+                            </div>
                         </div>
                         </div>
                     </motion.div>

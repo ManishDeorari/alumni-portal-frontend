@@ -196,41 +196,45 @@ export default function NotificationsPage() {
             </h1>
             <p className={`mt-2 font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
-          <button
-            onClick={markAllAsRead}
-            disabled={!notifications.some(n => !n.isRead)}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-bold backdrop-blur-md border ${
-              darkMode 
-                ? 'bg-black hover:bg-blue-600/20 border-white/20 hover:border-blue-500/50 text-white' 
-                : 'bg-[#FAFAFA] hover:bg-blue-50 border-gray-200 hover:border-blue-200 text-slate-700 hover:text-blue-600 shadow-sm'
-            } disabled:opacity-30 disabled:cursor-not-allowed active:scale-95`}
-          >
-            <CheckCheck className="w-5 h-5 text-blue-500" />
-            Mark all read
-          </button>
+          <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all shadow-sm ${!notifications.some(n => !n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
+            <button
+              onClick={markAllAsRead}
+              disabled={!notifications.some(n => !n.isRead)}
+              className={`flex items-center gap-2 px-6 py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 font-bold backdrop-blur-md ${
+                darkMode 
+                  ? 'bg-black hover:bg-black/80 text-white' 
+                  : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
+              } disabled:cursor-not-allowed active:scale-95`}
+            >
+              <CheckCheck className="w-5 h-5 text-blue-500" />
+              Mark all read
+            </button>
+          </div>
         </div>
 
         {/* Subsections (Tabs) */}
-        <div className={`flex flex-wrap gap-2 mb-8 p-1.5 backdrop-blur-xl rounded-2xl border w-fit ${darkMode ? 'bg-black border-white/20' : 'bg-gray-100 border-gray-200'}`}>
-          {TABS.filter(tab => {
-            if (tab.id === "POINTS") {
-              const userRole = user?.role || JSON.parse(localStorage.getItem("user") || "{}")?.role;
-              return userRole === "alumni";
-            }
-            return true;
-          }).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
-                ? (darkMode ? "bg-[#FAFAFA] text-blue-600 shadow-lg shadow-black/20" : "bg-blue-600 text-white shadow-md")
-                : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/10" : "text-slate-500 hover:text-slate-700 hover:bg-[#FAFAFA]")
-                }`}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
+        <div className="relative p-[2px] mb-8 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-fit shadow-md">
+          <div className={`flex flex-wrap gap-2 p-1.5 rounded-[calc(1rem-2px)] w-full backdrop-blur-xl ${darkMode ? 'bg-black/90' : 'bg-white'}`}>
+            {TABS.filter(tab => {
+              if (tab.id === "POINTS") {
+                const userRole = user?.role || JSON.parse(localStorage.getItem("user") || "{}")?.role;
+                return userRole === "alumni";
+              }
+              return true;
+            }).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
+                  ? (darkMode ? "bg-white/10 text-blue-400 shadow-lg shadow-black/20" : "bg-blue-50 text-blue-600 shadow-md border border-blue-200")
+                  : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/10" : "text-slate-500 hover:text-slate-700 hover:bg-gray-50")
+                  }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Notifications List */}
@@ -270,18 +274,18 @@ export default function NotificationsPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.98 }}
                         onClick={() => handleNotificationClick(note)}
-                        className="relative p-[1px] bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 rounded-2xl transition-all duration-300 hover:from-blue-400 hover:via-purple-400 hover:to-pink-400 group"
+                        className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-4 p-5 rounded-[calc(1rem-1px)] transition-all ${
+                        <div className={`relative flex items-start gap-4 p-5 rounded-[calc(1rem-2px)] transition-all ${
                           !note.isRead
-                            ? (darkMode ? "bg-black/80 hover:bg-black" : "bg-[#FAFAFA] hover:bg-gray-50 shadow-md")
-                            : (darkMode ? "bg-black/60 shadow-inner" : "bg-gray-100/80 shadow-inner")
+                            ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
+                            : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
                         } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
                           <div className="relative shrink-0">
-                            <div className={`p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 shadow-lg ${!note.isRead ? 'opacity-100' : 'opacity-50 grayscale'}`}>
+                            <div className={`p-[2px] rounded-2xl bg-gradient-to-br ${note.type === 'points_earned' ? 'from-purple-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-[0_0_10px_rgba(255,255,255,0.1)] ${!note.isRead ? 'opacity-100' : 'opacity-80 grayscale-[20%]'}`}>
                               {note.type === "points_earned" ? (
-                                <div className="w-14 h-14 rounded-[0.9rem] flex items-center justify-center bg-yellow-500/10">
-                                  <Award className="w-8 h-8 text-yellow-500" />
+                                <div className={`w-14 h-14 rounded-[0.9rem] flex items-center justify-center ${darkMode ? 'bg-white/10' : 'bg-black/5'}`}>
+                                  <Award className={`w-8 h-8 ${darkMode ? 'text-white' : 'text-slate-900'}`} />
                                 </div>
                               ) : (
                                 <Image
@@ -304,62 +308,111 @@ export default function NotificationsPage() {
                                 <div className="flex flex-col gap-1">
                                   {note.type === "points_earned" ? (
                                     <>
-                                      <span className="text-yellow-500 font-bold text-lg">System</span>
-                                            {note.message?.startsWith("MANUAL_AWARD::") ? (() => {
-                                                const [_, msg, cat, pts] = note.message.split("::");
-                                                return (
-                                                  <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-blue-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
-                                                    <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                                      {msg}
-                                                    </div>
-                                                    <div className="flex justify-center">
-                                                      <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] whitespace-nowrap">
-                                                        {cat?.replace(/([A-Z])/g, ' $1').trim()}
-                                                      </span>
-                                                    </div>
-                                                    <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
-                                                      +{pts} PTS
-                                                    </div>
-                                                  </div>
-                                                );
-                                            })() : note.message?.startsWith("SESSION_AWARD::") ? (() => {
-                                                const pts = note.message.split("::")[1] || "0";
-                                                return (
-                                                  <div className="grid grid-cols-3 gap-6 items-center w-full mt-2 bg-gradient-to-r from-orange-500/10 via-transparent to-yellow-500/10 p-4 rounded-2xl border border-white/10 shadow-lg">
-                                                    <div className={`text-left font-bold text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                                       Congratulations! Your session has been approved.
-                                                    </div>
-                                                    <div className="flex justify-center">
-                                                      <span className="font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-400/30 shadow-[0_0_15px_rgba(249,115,22,0.2)] whitespace-nowrap">
-                                                        Campus Engagement
-                                                      </span>
-                                                    </div>
-                                                    <div className="text-right font-black text-2xl text-yellow-500 tracking-tighter drop-shadow-[0_4px_12px_rgba(234,179,8,0.5)]">
-                                                      +{pts} PTS
-                                                    </div>
-                                                  </div>
-                                                );
-                                            })() : (
-                                                <span className={`font-medium ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
-                                                  {note.message}
-                                                </span>
-                                            )}
+                                      <span className="font-black text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">System</span>
+                                      {(() => {
+                                        let msg = note.message;
+                                        let cat = "Reward";
+                                        let pts = "0";
+
+                                        if (note.message?.startsWith("MANUAL_AWARD::")) {
+                                          const parts = note.message.split("::");
+                                          msg = parts[1] || "";
+                                          cat = parts[2]?.replace(/([A-Z])/g, ' $1').trim() || "Reward";
+                                          pts = parts[3] || "0";
+                                        } else if (note.message?.startsWith("SESSION_AWARD::")) {
+                                          const parts = note.message.split("::");
+                                          pts = parts[1] || "0";
+                                          msg = "Congratulations! Your session has been approved.";
+                                          cat = "Campus Engagement";
+                                        } else {
+                                          const match = note.message?.match(/\+?(\d+)\s*(?:PTS|pts|points|Points)/i);
+                                          if (match) {
+                                              pts = match[1];
+                                              msg = note.message.replace(match[0], '').trim() || "Points Earned";
+                                          } else {
+                                              const matchEnd = note.message?.match(/(\d+)$/);
+                                              if (matchEnd) {
+                                                pts = matchEnd[1];
+                                                msg = note.message.replace(matchEnd[0], '').trim();
+                                              } else {
+                                                pts = "10";
+                                              }
+                                          }
+                                        }
+
+                                        // Apply categorical fallback if the system categorized it as a generic "Reward"
+                                        if (cat === "Reward" || !cat) {
+                                          const lowerMsg = msg?.toLowerCase() || note.message?.toLowerCase() || "";
+                                          if (lowerMsg.includes("like")) cat = "Like";
+                                          else if (lowerMsg.includes("comment")) cat = "Comment";
+                                          else if (lowerMsg.includes("network") || lowerMsg.includes("connect")) cat = "Network";
+                                          else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Alumni Participation";
+                                          else if (lowerMsg.includes("post")) cat = "Post";
+                                          else cat = "Reward";
+                                        }
+
+                                        return (
+                                          <div className="relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 shadow-md">
+                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                                              <div className={`text-left font-bold text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'}`}>
+                                                {msg}
+                                              </div>
+                                              <div className="flex justify-center relative">
+                                                <div className="p-[1px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-sm">
+                                                  <span className={`block font-bold uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700'}`}>
+                                                    {cat}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                              <div className="text-right sm:text-right font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-br from-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-sm">
+                                                +{pts} PTS
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })()}
                                     </>
                                   ) : (
-                                    <p className={`font-bold text-lg leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                      {note.sender?.name || "System"}{" "}
-                                      <span className={`font-medium ml-1 ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
-                                        {note.message}
+                                    <>
+                                      <span className="font-black text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                                        {note.sender?.name || "System"}
                                       </span>
-                                    </p>
+                                      {(() => {
+                                        let cat = "Notification";
+                                        const typeStr = note.type || "";
+                                        if (typeStr.includes("group")) cat = "Group";
+                                        else if (typeStr.includes("comment") || typeStr.includes("reply")) cat = "Discussion";
+                                        else if (typeStr.includes("post") || typeStr.includes("like") || typeStr.includes("reaction")) cat = "Post";
+                                        else if (typeStr.includes("profile_visit")) cat = "Profile Visit";
+                                        else if (typeStr.includes("connect")) cat = "Network";
+                                        else if (typeStr.includes("notice")) cat = "Announcement";
+
+                                        return (
+                                          <div className="relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md">
+                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                                              <div className={`text-left font-bold text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'} sm:col-span-2`}>
+                                                {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
+                                              </div>
+                                              <div className="flex justify-end relative sm:col-span-1">
+                                                <div className="p-[1px] rounded-full bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm">
+                                                  <span className={`block font-bold uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700'}`}>
+                                                    {cat}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })()}
+                                    </>
                                   )}
                                 </div>
                                 <div className="flex items-center gap-3 mt-2">
-                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/10 text-white/90' : 'bg-gray-200/50 text-slate-700'}`}>
                                     <Clock className="w-3 h-3" />
                                     {new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </span>
-                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/5 text-white/40' : 'bg-gray-100 text-slate-400'}`}>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/10 text-white/90' : 'bg-gray-200/50 text-slate-700'}`}>
                                     <Calendar className="w-3 h-3" />
                                     {new Date(note.createdAt).toLocaleDateString()}
                                   </span>
