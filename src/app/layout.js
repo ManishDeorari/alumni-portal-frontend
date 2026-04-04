@@ -36,13 +36,14 @@ export const viewport = {
   userScalable: 0,
 };
 
+import PageTransition from "./components/ui/PageTransition";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* ✅ Stylish Toast */}
         <Toaster
           position="top-center"
           containerStyle={{
@@ -51,12 +52,12 @@ export default function RootLayout({ children }) {
           toastOptions={{
             duration: 3000,
             style: {
-              background: "#1f2937", // Tailwind gray-800
-              color: "#facc15",       // Tailwind yellow-400
+              background: "#1f2937", 
+              color: "#facc15",       
               borderRadius: "12px",
               padding: "12px 20px",
               fontSize: "16px",
-              zIndex: 99999, // Ensure toast is above everything
+              zIndex: 99999, 
             },
           }}
         />
@@ -66,7 +67,9 @@ export default function RootLayout({ children }) {
           </Suspense>
           <NotificationProvider>
             <ClientRouteProtection>
-              {children}
+              <PageTransition>
+                {children}
+              </PageTransition>
             </ClientRouteProtection>
           </NotificationProvider>
         </ThemeProvider>
