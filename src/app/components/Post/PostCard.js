@@ -197,28 +197,24 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           {post.type === "Session" && post.sessionDetails && (
             <div className={`mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
               <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-6`}>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-col">
-                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>School / College</span>
-                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.schoolOrCollege}</span>
-                    </div>
-                    {post.sessionDetails.campus && (
-                      <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Campus</span>
-                        <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.campus}</span>
-                      </div>
-                    )}
+                <div className={`grid grid-cols-2 gap-x-8 gap-y-6`}>
+                  <div className="flex flex-col">
+                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>College</span>
+                    <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.schoolOrCollege}</span>
                   </div>
-                  <div className={`grid grid-cols-2 gap-6 pt-4 border-t border-dashed ${darkMode ? "border-white/10" : "border-gray-200"}`}>
+                  {post.sessionDetails.campus && (
                     <div className="flex flex-col">
-                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Date</span>
-                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.sessionDetails.date).toLocaleDateString()}</span>
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Campus</span>
+                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.campus}</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-purple-400/60" : "text-purple-600/60"}`}>Time</span>
-                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.time}</span>
-                    </div>
+                  )}
+                  <div className="flex flex-col pt-4 border-t border-dashed border-white/10">
+                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Date</span>
+                    <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.sessionDetails.date).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex flex-col pt-4 border-t border-dashed border-white/10">
+                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-purple-400/60" : "text-purple-600/60"}`}>Time</span>
+                    <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.time}</span>
                   </div>
                 </div>
               </div>
@@ -560,7 +556,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
           {showViewer && (
             <FullImageViewer
-              images={post.images?.map((img) => img.url)} // ✅ extract URLs
+              images={post.images?.length > 0 ? post.images.map((img) => img.url) : (post.image ? [post.image] : [])}
               startIndex={startIndex}
               onClose={() => setShowViewer(false)}
               isRestricted={isRestricted}

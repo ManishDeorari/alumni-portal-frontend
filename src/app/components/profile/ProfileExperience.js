@@ -48,8 +48,8 @@ export default function ProfileExperience({ profile, setProfile, isPublicView })
                         const duration = calculateDuration(exp.startDate, exp.endDate);
 
                         return (
-                            <div key={idx} className="p-[1px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl group w-full mb-4">
-                                <div className={`p-5 rounded-[calc(1rem-1px)] flex gap-4 transition duration-300 ${darkMode ? 'bg-slate-800/80 hover:bg-[#121213]' : 'bg-[#FAFAFA]/80 hover:bg-white'}`}>
+                            <div key={idx} className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_10px_30px_rgba(37,99,235,0.2)] group w-full mb-6">
+                                <div className={`p-5 rounded-[calc(2.5rem-2.5px)] flex gap-4 transition duration-300 ${darkMode ? 'bg-[#121213] hover:bg-slate-900' : 'bg-[#FAFAFA] hover:bg-white'}`}>
                                     {/* Logo Placeholder */}
                                     <div className="flex-shrink-0">
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${darkMode ? 'bg-blue-900/30 shadow-none' : 'bg-blue-50 shadow-sm'}`}>
@@ -60,23 +60,23 @@ export default function ProfileExperience({ profile, setProfile, isPublicView })
                                     {/* Content */}
                                     <div className="flex-grow space-y-2.5">
                                         <div className="flex flex-col">
-                                            <h3 className={`text-base font-bold leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                            <h3 className={`text-base font-black leading-tight ${darkMode ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400' : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600'}`}>
                                                 {exp.title}
                                             </h3>
-                                            <p className={`text-sm font-semibold mt-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                            <p className={`text-sm font-black mt-1 ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
                                                 {exp.company}
                                                 {exp.employmentType && ` · ${exp.employmentType}`}
                                             </p>
                                         </div>
 
-                                        <div className={`text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                        <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
                                             <Calendar className="w-3.5 h-3.5" />
                                             {exp.startDate} - {exp.endDate}
-                                            {duration && ` · ${duration}`}
+                                            {duration && <span className={darkMode ? 'text-blue-400' : 'text-blue-600'}> · {duration}</span>}
                                         </div>
 
                                         {(exp.location || exp.locationType) && (
-                                            <div className={`text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                            <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
                                                 <MapPin className="w-3.5 h-3.5" />
                                                 {exp.location}
                                                 {exp.location && exp.locationType && " · "}
@@ -86,7 +86,7 @@ export default function ProfileExperience({ profile, setProfile, isPublicView })
 
                                         {exp.description && (
                                             <div className="pt-1">
-                                                <p className={`text-sm whitespace-pre-wrap leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                <p className={`text-sm font-semibold whitespace-pre-wrap leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                                                     {exp.description}
                                                 </p>
                                             </div>

@@ -70,7 +70,8 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-2xl">
+                <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -98,16 +99,18 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                                 { label: "Industry", field: "industry", target: "work" }
                             ].map((item) => (
                                 <div key={item.field}>
-                                    <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                                         {item.label}
                                     </label>
-                                    <input
-                                        type="text"
-                                        className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        value={workProfile[item.field] || ""}
-                                        onChange={(e) => handleWorkChange(item.field, e.target.value)}
-                                        placeholder={`Enter ${item.label.toLowerCase()}`}
-                                    />
+                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                        <input
+                                            type="text"
+                                            className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                            value={workProfile[item.field] || ""}
+                                            onChange={(e) => handleWorkChange(item.field, e.target.value)}
+                                            placeholder={`Enter ${item.label.toLowerCase()}`}
+                                        />
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -119,16 +122,18 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                             <Code className="w-4 h-4" /> Professional Skills
                         </h3>
                         <div>
-                            <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                            <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                                 Skills (comma separated)
                             </label>
-                            <input
-                                type="text"
-                                placeholder="Java, Python, Leadership, etc."
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                value={skills}
-                                onChange={(e) => setSkills(e.target.value)}
-                            />
+                            <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                <input
+                                    type="text"
+                                    placeholder="Java, Python, Leadership, etc."
+                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                    value={skills}
+                                    onChange={(e) => setSkills(e.target.value)}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -139,74 +144,87 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                                     Preferred Functional Area
                                 </label>
-                                <input
-                                    type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                    value={jobPreferences.functionalArea || ""}
-                                    onChange={(e) => handleJobChange("functionalArea", e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                                    Preferred Locations
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                    value={jobPreferences.preferredLocations ? jobPreferences.preferredLocations.join(", ") : ""}
-                                    onChange={(e) => handleLocationsChange(e.target.value)}
-                                    placeholder="City names separated by commas"
-                                />
-                            </div>
-                            <div>
-                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                                    Notice Period
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                    value={jobPreferences.noticePeriod || ""}
-                                    onChange={(e) => handleJobChange("noticePeriod", e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                                    Expected Salary
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                    value={jobPreferences.salary || ""}
-                                    onChange={(e) => handleJobChange("salary", e.target.value)}
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                                    Resume Link
-                                </label>
-                                <div className="relative">
-                                    <FileText className={`absolute left-3 top-2.5 w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
                                     <input
                                         type="text"
-                                        className={`w-full pl-9 p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        value={jobPreferences.resumeLink || ""}
-                                        onChange={(e) => handleJobChange("resumeLink", e.target.value)}
-                                        placeholder="https://drive.google.com/..."
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                        value={jobPreferences.functionalArea || ""}
+                                        onChange={(e) => handleJobChange("functionalArea", e.target.value)}
                                     />
+                                </div>
+                            </div>
+                            <div>
+                                <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Preferred Locations
+                                </label>
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                    <input
+                                        type="text"
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                        value={jobPreferences.preferredLocations ? jobPreferences.preferredLocations.join(", ") : ""}
+                                        onChange={(e) => handleLocationsChange(e.target.value)}
+                                        placeholder="City names separated by commas"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Notice Period
+                                </label>
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                    <input
+                                        type="text"
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                        value={jobPreferences.noticePeriod || ""}
+                                        onChange={(e) => handleJobChange("noticePeriod", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Expected Salary
+                                </label>
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                    <input
+                                        type="text"
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                        value={jobPreferences.salary || ""}
+                                        onChange={(e) => handleJobChange("salary", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className={`block text-[10px] font-black mb-1.5 uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                                    Resume Link
+                                </label>
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                    <div className="relative">
+                                        <FileText className={`absolute left-3 top-2.5 w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />
+                                        <input
+                                            type="text"
+                                            className={`w-full pl-9 p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                            value={jobPreferences.resumeLink || ""}
+                                            onChange={(e) => handleJobChange("resumeLink", e.target.value)}
+                                            placeholder="https://drive.google.com/..."
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50'}`}>
-                    <button
-                        onClick={onClose}
-                        className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
                     >
                         Cancel
                     </button>
@@ -235,6 +253,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
                     background: ${darkMode ? '#475569' : '#9ca3af'};
                 }
             `}</style>
+            </div>
         </div>
     );
 }

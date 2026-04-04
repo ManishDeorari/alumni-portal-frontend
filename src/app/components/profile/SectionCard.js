@@ -5,8 +5,8 @@ const SectionCard = ({ title, children, onEdit, isPublicView, hasData }) => {
   const { darkMode } = useTheme();
 
   return (
-    <div className={`relative p-[2px] bg-gradient-to-r ${darkMode ? 'from-blue-600 via-purple-500 to-pink-500' : 'from-blue-400 via-purple-400 to-pink-400'} rounded-2xl shadow-xl transition-all`}>
-      <div className={`p-6 rounded-[calc(1rem-1px)] h-full transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+    <div className={`relative p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-[0_20px_60px_rgba(37,99,235,0.25)] transition-all`}>
+      <div className={`p-6 rounded-[calc(1rem-1.5px)] h-full transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
         {!isPublicView && onEdit && (
           <div className="absolute top-6 right-6">
             {hasData ? (

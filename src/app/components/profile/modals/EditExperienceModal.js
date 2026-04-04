@@ -199,7 +199,8 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 text-gray-900">
-            <div className={`rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-3xl">
+                <div className={`rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden animate-fadeIn max-h-[90vh] flex flex-col transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -233,46 +234,52 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                                 {/* Row 1: Title and Employment Type */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-1.5">
-                                        <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-title`] ? 'text-red-500' : darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                        <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-title`] ? 'text-red-500' : darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                                             Title <span className="text-red-500">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            list="job-titles"
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-title`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
-                                            value={exp.title || ""}
-                                            onChange={(e) => handleChange(index, "title", e.target.value)}
-                                            placeholder="Ex: Retail Sales Manager"
-                                        />
-                                        {errors[`${index}-title`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-title`]}</p>}
+                                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-title`] ? 'from-red-500 to-red-600' : ''}`}>
+                                            <input
+                                                type="text"
+                                                list="job-titles"
+                                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                                value={exp.title || ""}
+                                                onChange={(e) => handleChange(index, "title", e.target.value)}
+                                                placeholder="Ex: Retail Sales Manager"
+                                            />
+                                        </div>
+                                        {errors[`${index}-title`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1 mt-1.5">{errors[`${index}-title`]}</p>}
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Employment type</label>
-                                        <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={exp.employmentType || ""}
-                                            onChange={(e) => handleChange(index, "employmentType", e.target.value)}
-                                        >
-                                            <option value="">Please select</option>
-                                            {EMPLOYMENT_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                        </select>
+                                        <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>Employment type</label>
+                                        <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                            <select
+                                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                value={exp.employmentType || ""}
+                                                onChange={(e) => handleChange(index, "employmentType", e.target.value)}
+                                            >
+                                                <option value="">Please select</option>
+                                                {EMPLOYMENT_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Row 2: Company */}
                                 <div className="space-y-1.5">
-                                    <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-company`] ? 'text-red-500' : darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-company`] ? 'text-red-500' : darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
                                         Company or organization <span className="text-red-500">*</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        list="companies"
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${errors[`${index}-company`] ? 'border-red-500 focus:ring-red-200' : darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
-                                        value={exp.company || ""}
-                                        onChange={(e) => handleChange(index, "company", e.target.value)}
-                                        placeholder="Ex: Microsoft"
-                                    />
-                                    {errors[`${index}-company`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-company`]}</p>}
+                                    <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-company`] ? 'from-red-500 to-red-600' : ''}`}>
+                                        <input
+                                            type="text"
+                                            list="companies"
+                                            className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                            value={exp.company || ""}
+                                            onChange={(e) => handleChange(index, "company", e.target.value)}
+                                            placeholder="Ex: Microsoft"
+                                        />
+                                    </div>
+                                    {errors[`${index}-company`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1 mt-1.5">{errors[`${index}-company`]}</p>}
                                 </div>
 
                                 {/* Checkbox: Currently working */}
@@ -291,142 +298,154 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
 
                                 {/* Row 3: Start Date */}
                                 <div className="space-y-2">
-                                    <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-startDate`] ? 'text-red-500' : darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-startDate`] ? 'text-red-500' : darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                                         Start date <span className="text-red-500">*</span>
                                     </label>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={exp.startMonth || ""}
-                                            onChange={(e) => handleChange(index, "startMonth", e.target.value)}
-                                        >
-                                            <option value="">Month</option>
-                                            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                                        </select>
-                                        <select
-                                            className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={exp.startYear || ""}
-                                            onChange={(e) => handleChange(index, "startYear", e.target.value)}
-                                        >
-                                            <option value="">Year</option>
-                                            {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-                                        </select>
-                                    </div>
-                                    {errors[`${index}-startDate`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-startDate`]}</p>}
-                                </div>
-
-                                {/* Row 4: End Date */}
-                                {!exp.isCurrent && (
-                                    <div className="space-y-2">
-                                        <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-endDate`] ? 'text-red-500' : darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                            End date <span className="text-red-500">*</span>
-                                        </label>
-                                        <div className="grid grid-cols-2 gap-4">
+                                    <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-startDate`] ? 'from-red-500 to-red-600' : ''}`}>
+                                        <div className={`grid grid-cols-2 gap-2 p-1 rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
                                             <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                                value={exp.endMonth || ""}
-                                                onChange={(e) => handleChange(index, "endMonth", e.target.value)}
+                                                className={`w-full p-2 rounded-lg text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                value={exp.startMonth || ""}
+                                                onChange={(e) => handleChange(index, "startMonth", e.target.value)}
                                             >
                                                 <option value="">Month</option>
                                                 {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                                             </select>
                                             <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                                value={exp.endYear || ""}
-                                                onChange={(e) => handleChange(index, "endYear", e.target.value)}
+                                                className={`w-full p-2 rounded-lg text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                value={exp.startYear || ""}
+                                                onChange={(e) => handleChange(index, "startYear", e.target.value)}
                                             >
                                                 <option value="">Year</option>
                                                 {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                                             </select>
                                         </div>
-                                        {errors[`${index}-endDate`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-endDate`]}</p>}
+                                    </div>
+                                    {errors[`${index}-startDate`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1 mt-1.5">{errors[`${index}-startDate`]}</p>}
+                                </div>
+
+                                {/* Row 4: End Date */}
+                                {!exp.isCurrent && (
+                                    <div className="space-y-2">
+                                        <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-endDate`] ? 'text-red-500' : darkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
+                                            End date <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-endDate`] ? 'from-red-500 to-red-600' : ''}`}>
+                                            <div className={`grid grid-cols-2 gap-2 p-1 rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                                <select
+                                                    className={`w-full p-2 rounded-lg text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                    value={exp.endMonth || ""}
+                                                    onChange={(e) => handleChange(index, "endMonth", e.target.value)}
+                                                >
+                                                    <option value="">Month</option>
+                                                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                </select>
+                                                <select
+                                                    className={`w-full p-2 rounded-lg text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                    value={exp.endYear || ""}
+                                                    onChange={(e) => handleChange(index, "endYear", e.target.value)}
+                                                >
+                                                    <option value="">Year</option>
+                                                    {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {errors[`${index}-endDate`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1 mt-1.5">{errors[`${index}-endDate`]}</p>}
                                     </div>
                                 )}
 
                                 {/* Row 5: Location Dropdowns */}
                                 <div className="space-y-2">
-                                    <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                        Location <MapPin className="w-3.5 h-3.5 text-red-500" />
+                                    <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+                                        Location <MapPin className="w-3.5 h-3.5" />
                                     </label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                        <select
-                                            value={exp.selectedCountry}
-                                            onChange={(e) => {
-                                                handleChange(index, "selectedCountry", e.target.value);
-                                                handleChange(index, "selectedState", "");
-                                                handleChange(index, "selectedCity", "");
-                                            }}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        >
-                                            <option value="">Select Country</option>
-                                            {Country.getAllCountries().map((c) => (
-                                                <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-                                            ))}
-                                        </select>
+                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                                        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 rounded-[calc(1rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                            <select
+                                                value={exp.selectedCountry}
+                                                onChange={(e) => {
+                                                    handleChange(index, "selectedCountry", e.target.value);
+                                                    handleChange(index, "selectedState", "");
+                                                    handleChange(index, "selectedCity", "");
+                                                }}
+                                                className={`w-full p-2 rounded-lg text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                            >
+                                                <option value="">Select Country</option>
+                                                {Country.getAllCountries().map((c) => (
+                                                    <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                                                ))}
+                                            </select>
 
-                                        <select
-                                            value={exp.selectedState}
-                                            disabled={!exp.selectedCountry}
-                                            onChange={(e) => {
-                                                handleChange(index, "selectedState", e.target.value);
-                                                handleChange(index, "selectedCity", "");
-                                            }}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        >
-                                            <option value="">Select State</option>
-                                            {exp.selectedCountry && State.getStatesOfCountry(exp.selectedCountry).map((s) => (
-                                                <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
-                                            ))}
-                                        </select>
+                                            <select
+                                                value={exp.selectedState}
+                                                disabled={!exp.selectedCountry}
+                                                onChange={(e) => {
+                                                    handleChange(index, "selectedState", e.target.value);
+                                                    handleChange(index, "selectedCity", "");
+                                                }}
+                                                className={`w-full p-2 rounded-lg text-sm outline-none transition disabled:opacity-50 ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                            >
+                                                <option value="">Select State</option>
+                                                {exp.selectedCountry && State.getStatesOfCountry(exp.selectedCountry).map((s) => (
+                                                    <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+                                                ))}
+                                            </select>
 
-                                        <select
-                                            value={exp.selectedCity}
-                                            disabled={!exp.selectedState}
-                                            onChange={(e) => handleChange(index, "selectedCity", e.target.value)}
-                                            className={`w-full p-2 border rounded-lg text-sm focus:ring-2 outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        >
-                                            <option value="">Select City</option>
-                                            {exp.selectedState && City.getCitiesOfState(exp.selectedCountry, exp.selectedState).map((city) => (
-                                                <option key={city.name} value={city.name}>{city.name}</option>
-                                            ))}
-                                        </select>
+                                            <select
+                                                value={exp.selectedCity}
+                                                disabled={!exp.selectedState}
+                                                onChange={(e) => handleChange(index, "selectedCity", e.target.value)}
+                                                className={`w-full p-2 rounded-lg text-sm outline-none transition disabled:opacity-50 ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                            >
+                                                <option value="">Select City</option>
+                                                {exp.selectedState && City.getCitiesOfState(exp.selectedCountry, exp.selectedState).map((city) => (
+                                                    <option key={city.name} value={city.name}>{city.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Row 6: Location Type */}
                                 <div className="space-y-1.5 md:w-1/2">
-                                    <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Location type</label>
-                                    <select
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                        value={exp.locationType || ""}
-                                        onChange={(e) => handleChange(index, "locationType", e.target.value)}
-                                    >
-                                        <option value="">Please select</option>
-                                        {LOCATION_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                    </select>
+                                    <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>Location type</label>
+                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                        <select
+                                            className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                            value={exp.locationType || ""}
+                                            onChange={(e) => handleChange(index, "locationType", e.target.value)}
+                                        >
+                                            <option value="">Please select</option>
+                                            {LOCATION_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {/* Row 7: Description */}
                                 <div className="space-y-1.5">
-                                    <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Description</label>
-                                    <textarea
-                                        className={`w-full p-3 border rounded-lg text-sm focus:ring-2 outline-none transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
-                                        value={exp.description || ""}
-                                        onChange={(e) => handleChange(index, "description", e.target.value)}
-                                        placeholder="Describe your achievements..."
-                                    />
+                                    <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>Description</label>
+                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                                        <textarea
+                                            className={`w-full p-4 rounded-[calc(1rem-2px)] h-32 outline-none transition custom-scrollbar ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-800 placeholder-gray-400'}`}
+                                            value={exp.description || ""}
+                                            onChange={(e) => handleChange(index, "description", e.target.value)}
+                                            placeholder="Describe your achievements..."
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Row 8: Skills */}
                                 <div className="space-y-1.5">
-                                    <label className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Skills (Optional)</label>
-                                    <input
-                                        type="text"
-                                        className={`w-full p-2.5 border rounded-lg text-sm focus:ring-2 outline-none transition ${darkMode ? 'bg-slate-700 border-white/10 text-white focus:ring-blue-500 placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500 placeholder-gray-400'}`}
-                                        value={exp.skills || ""}
-                                        onChange={(e) => handleChange(index, "skills", e.target.value)}
-                                        placeholder="Agile, React, Management (comma separated)"
-                                    />
+                                    <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>Skills (Optional)</label>
+                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                        <input
+                                            type="text"
+                                            className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                            value={exp.skills || ""}
+                                            onChange={(e) => handleChange(index, "skills", e.target.value)}
+                                            placeholder="Agile, React, Management (comma separated)"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -440,9 +459,15 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                     </button>
                 </div>
 
-                {/* Footer */}
-                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-colors ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <button onClick={onClose} className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-white/10 text-gray-300 hover:bg-slate-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
+                    >
                         Cancel
                     </button>
                     <button
@@ -470,6 +495,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
                     background: ${darkMode ? '#475569' : '#9ca3af'};
                 }
             `}</style>
+            </div>
         </div>
     );
 }

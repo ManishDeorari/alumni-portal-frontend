@@ -7,6 +7,7 @@ import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 import CreateEventModal from "./CreateEventModal";
 import CreateAnnouncementModal from "./CreateAnnouncementModal";
 import CreateSessionModal from "./CreateSessionModal";
+import PostLoadingScreen from "./utils/PostLoadingScreen";
 
 const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   const [content, setContent] = useState("");
@@ -282,6 +283,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
           setPosts={setPosts}
         />
       )}
+      <PostLoadingScreen type={selectedType} loading={loading} darkMode={darkMode} />
     </div>
   );
 };

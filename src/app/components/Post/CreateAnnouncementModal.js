@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { createAnnouncement } from "../../../api/dashboard";
 import EmojiPickerToggle from "./utils/EmojiPickerToggle";
 import UserSearchInput from "./utils/UserSearchInput";
+import PostLoadingScreen from "./utils/PostLoadingScreen";
 
 const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = false, setPosts }) => {
   const [loading, setLoading] = useState(false);
@@ -557,6 +558,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
           </form>
         </div>
       </div>
+      <PostLoadingScreen type="Announcement" loading={loading} darkMode={darkMode} />
     </div>
   );
 };

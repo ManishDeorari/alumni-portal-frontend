@@ -81,7 +81,8 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213] border border-white/5' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-lg">
+                <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -105,81 +106,94 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
 
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                <BarChart className={`w-3.5 h-3.5 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} /> Functional Area
+                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                <BarChart className="w-3.5 h-3.5" /> Functional Area
                             </label>
-                            <input
-                                type="text"
-                                list="area-suggestions"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
-                                value={workProfile.functionalArea}
-                                onChange={(e) => handleChange("functionalArea", e.target.value)}
-                                placeholder="Ex: Software Engineering"
-                            />
+                            <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                <input
+                                    type="text"
+                                    list="area-suggestions"
+                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                    value={workProfile.functionalArea}
+                                    onChange={(e) => handleChange("functionalArea", e.target.value)}
+                                    placeholder="Ex: Software Engineering"
+                                />
+                            </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                <Settings className={`w-3.5 h-3.5 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} /> Sub-Functional Area
+                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                                <Settings className="w-3.5 h-3.5" /> Sub-Functional Area
                             </label>
-                            <input
-                                type="text"
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
-                                value={workProfile.subFunctionalArea}
-                                onChange={(e) => handleChange("subFunctionalArea", e.target.value)}
-                                placeholder="Ex: Backend Development"
-                            />
+                            <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                <input
+                                    type="text"
+                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                    value={workProfile.subFunctionalArea}
+                                    onChange={(e) => handleChange("subFunctionalArea", e.target.value)}
+                                    placeholder="Ex: Backend Development"
+                                />
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                    <Layers className={`w-3.5 h-3.5 ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`} /> Experience
+                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                                    <Layers className="w-3.5 h-3.5" /> Experience
                                 </label>
-                                <input
-                                    type="text"
-                                    list="exp-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
-                                    value={workProfile.experience}
-                                    onChange={(e) => handleChange("experience", e.target.value)}
-                                    placeholder="Ex: 1-3 Years"
-                                />
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                    <input
+                                        type="text"
+                                        list="exp-suggestions"
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                        value={workProfile.experience}
+                                        onChange={(e) => handleChange("experience", e.target.value)}
+                                        placeholder="Ex: 1-3 Years"
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                    <BarChart className={`w-3.5 h-3.5 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} /> Industry
+                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                    <BarChart className="w-3.5 h-3.5" /> Industry
                                 </label>
-                                <input
-                                    type="text"
-                                    list="industry-suggestions"
-                                    className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
-                                    value={workProfile.industry}
-                                    onChange={(e) => handleChange("industry", e.target.value)}
-                                    placeholder="Ex: Fintech"
-                                />
+                                <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                    <input
+                                        type="text"
+                                        list="industry-suggestions"
+                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                        value={workProfile.industry}
+                                        onChange={(e) => handleChange("industry", e.target.value)}
+                                        placeholder="Ex: Fintech"
+                                    />
+                                </div>
                             </div>
                         </div>
 
                         {/* Skills Field */}
-                        <div className={`space-y-1.5 pt-2 border-t ${darkMode ? 'border-slate-800' : 'border-gray-100'}`}>
-                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                <Code className="w-3.5 h-3.5 text-blue-500" /> Key Skills (comma separated)
+                        <div className={`space-y-1.5 pt-2 border-t ${darkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                <Code className="w-3.5 h-3.5" /> Key Skills (comma separated)
                             </label>
-                            <textarea
-                                className={`w-full p-2.5 border rounded-lg text-sm transition-all focus:ring-2 outline-none h-24 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'}`}
-                                value={skills}
-                                onChange={(e) => setSkills(e.target.value)}
-                                placeholder="Ex: React, Node.js, Python, Leadership"
-                            />
+                            <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                                <textarea
+                                    className={`w-full p-4 rounded-[calc(1rem-2px)] h-32 outline-none transition custom-scrollbar ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-800 placeholder-gray-400'}`}
+                                    value={skills}
+                                    onChange={(e) => setSkills(e.target.value)}
+                                    placeholder="Ex: React, Node.js, Python, Leadership"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50'}`}>
-                    <button
-                        onClick={onClose}
-                        className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
                     >
                         Cancel
                     </button>
@@ -209,6 +223,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
                     background: ${darkMode ? '#475569' : '#9ca3af'};
                 }
             `}</style>
+            </div>
         </div>
     );
 }

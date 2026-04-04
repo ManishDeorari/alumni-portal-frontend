@@ -67,7 +67,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
         <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-500"} truncate`}>{new Date(post.createdAt).toLocaleString()}</p>
       </div>
 
-      {!hideActions && post.user?._id === currentUser?._id && (
+      {!hideActions && (post.user?._id || post.user) === (currentUser?._id || currentUser) && (
         <div className="ml-auto flex gap-2">
           <button onClick={toggleEdit} className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-sm hover:underline font-bold`}>
             {editing ? "Cancel" : "Edit"}

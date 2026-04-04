@@ -14,7 +14,7 @@ const YEARS = Array.from({ length: currentYearForDropdown + 5 - 2000 + 1 }, (_, 
 
 const DEGREE_SUGGESTIONS = [
     "High School (Secondary - Class 10)", 
-    "Intermediate (Higher Secondary - Class 11-12)", 
+    "Intermediate (Higher Secondary - Class 12)", 
     "Undergraduate (Bachelor's Degree)", 
     "Postgraduate (Master's Degree)", 
     "Diploma", 
@@ -50,7 +50,7 @@ const GEHU_CAMPUSES = ["Dehradun", "Bhimtal", "Haldwani"];
 
 const MANDATORY_DEGREES = [
     "High School (Secondary - Class 10)",
-    "Intermediate (Higher Secondary - Class 11-12)",
+    "Intermediate (Higher Secondary - Class 12)",
     "Undergraduate (Bachelor's Degree)",
     "Postgraduate (Master's Degree)"
 ];
@@ -238,7 +238,8 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-3xl">
+                <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -263,12 +264,13 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     </datalist>
 
                     {educations.map((edu, index) => (
-                        <div key={index} className={`border rounded-2xl relative shadow-sm transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700/50' : 'bg-[#FAFAFA] border-gray-200'} ${expandedIndex === index ? 'ring-2 ring-blue-500/20 shadow-md' : 'hover:shadow-md'}`}>
-                            {/* Header Section */}
-                            <div
-                                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                                className={`p-4 flex items-center justify-between cursor-pointer select-none rounded-t-2xl ${expandedIndex === index ? (darkMode ? 'bg-blue-900/10 border-b border-white/5' : 'bg-blue-50/50 border-b border-gray-100') : ''}`}
-                            >
+                        <div key={index} className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_10px_30px_rgba(37,99,235,0.2)] transition-all duration-300">
+                            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden shadow-2xl`}>
+                                {/* Header Section */}
+                                <div
+                                    onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                                    className={`p-5 flex items-center justify-between cursor-pointer select-none border-b border-dashed ${darkMode ? 'border-white/10' : 'border-gray-200'} ${expandedIndex === index ? (darkMode ? 'bg-blue-600/10' : 'bg-blue-50/50') : ''}`}
+                                >
                                 <div className="flex items-center gap-3">
                                     <div className="text-blue-500 transition-transform duration-300">
                                         {expandedIndex === index ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
@@ -308,201 +310,224 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                 <div className="space-y-6">
                                     {/* School */}
                                     <div className="space-y-1.5">
-                                        <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-institution`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                        <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-institution`] ? 'text-red-500' : (darkMode ? 'text-blue-400' : 'text-blue-600')}`}>
                                             School/College <span className="text-red-500 font-bold">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            list="school-list-final"
-                                            className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500/30'} ${errors[`${index}-institution`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
-                                            value={edu.institution || ""}
-                                            onChange={(e) => handleChange(index, "institution", e.target.value)}
-                                            placeholder="Ex: Graphic Era Hill University"
-                                        />
-                                        {errors[`${index}-institution`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-institution`]}</p>}
+                                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-institution`] ? 'from-red-500 to-red-600' : ''}`}>
+                                            <input
+                                                type="text"
+                                                list="school-list-final"
+                                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                                value={edu.institution || ""}
+                                                onChange={(e) => handleChange(index, "institution", e.target.value)}
+                                                placeholder="Ex: Graphic Era Hill University"
+                                            />
+                                        </div>
+                                        {errors[`${index}-institution`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1">{errors[`${index}-institution`]}</p>}
                                     </div>
 
                                     {/* Campus logic for GEHU */}
                                     {edu.institution === "Graphic Era Hill University" && (
                                         <div className="space-y-1.5 animate-fadeIn">
-                                            <label className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>Campus</label>
-                                            <select
-                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                                value={edu.campus || ""}
-                                                onChange={(e) => handleChange(index, "campus", e.target.value)}
-                                            >
-                                                <option value="">Select Campus</option>
-                                                {GEHU_CAMPUSES.map(c => <option key={c} value={c}>{c}</option>)}
-                                            </select>
+                                            <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>Campus</label>
+                                            <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                                <select
+                                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                    value={edu.campus || ""}
+                                                    onChange={(e) => handleChange(index, "campus", e.target.value)}
+                                                >
+                                                    <option value="">Select Campus</option>
+                                                    {GEHU_CAMPUSES.map(c => <option key={c} value={c}>{c}</option>)}
+                                                </select>
+                                            </div>
                                         </div>
                                     )}
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-1.5">
-                                            <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-degree`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-degree`] ? 'text-red-500' : (darkMode ? 'text-indigo-400' : 'text-indigo-600')}`}>
                                                 Degree/Level <span className="text-red-500 font-bold">*</span>
                                             </label>
-                                            <select
-                                                value={edu.degree || ""}
-                                                onChange={(e) => !edu.isFixed && handleChange(index, "degree", e.target.value)}
-                                                disabled={edu.isFixed}
-                                                className={`w-full p-2.5 border rounded-lg text-sm transition outline-none ${darkMode ? (edu.isFixed ? 'bg-[#121213] text-slate-500 border-slate-700' : 'bg-slate-800 text-white border-slate-700 focus:ring-blue-500/50') : (edu.isFixed ? 'bg-gray-50 text-gray-500 border-gray-300' : 'bg-[#FAFAFA] text-gray-900 border-gray-300 focus:ring-blue-500/30')} ${errors[`${index}-degree`] ? 'border-red-500 focus:ring-red-200' : 'focus:ring-2'}`}
-                                            >
-                                                <option value="">Select Level</option>
-                                                {DEGREE_SUGGESTIONS.map(d => <option key={d} value={d}>{d}</option>)}
-                                            </select>
-                                            {edu.isFixed && <p className="text-[10px] text-blue-500 font-bold uppercase mt-1">Mandatory Level (Fixed)</p>}
-                                            {errors[`${index}-degree`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-degree`]}</p>}
+                                            <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-degree`] ? 'from-red-500 to-red-600' : ''}`}>
+                                                <select
+                                                    value={edu.degree || ""}
+                                                    onChange={(e) => !edu.isFixed && handleChange(index, "degree", e.target.value)}
+                                                    disabled={edu.isFixed}
+                                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition disabled:opacity-70 ${darkMode ? (edu.isFixed ? 'bg-[#121213] text-slate-500' : 'bg-[#121213] text-white') : (edu.isFixed ? 'bg-gray-50 text-gray-500' : 'bg-white text-gray-900')}`}
+                                                >
+                                                    <option value="">Select Level</option>
+                                                    {DEGREE_SUGGESTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+                                                </select>
+                                            </div>
+                                            {edu.isFixed && <p className="text-[10px] text-blue-500 font-bold uppercase mt-1.5 ml-1">Mandatory Level (Fixed)</p>}
+                                            {errors[`${index}-degree`] && <p className="text-red-500 text-[10px] font-bold uppercase mt-1.5 ml-1">{errors[`${index}-degree`]}</p>}
                                         </div>
 
                                         {!edu.degree?.includes("High School") && !edu.degree?.includes("Intermediate") && (
                                             <>
                                                 <div className="space-y-1.5">
-                                                    <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-course`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                                    <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-course`] ? 'text-red-500' : (darkMode ? 'text-blue-400' : 'text-blue-600')}`}>
                                                         Course <span className="text-red-500 font-bold">*</span>
                                                     </label>
-                                                    <HybridInput
-                                                        value={edu.course || ""}
-                                                        onChange={(val) => handleChange(index, "course", val)}
-                                                        options={COURSE_SUGGESTIONS}
-                                                        placeholder="Ex: B.Tech, MCA, etc."
-                                                        uppercase={true}
-                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-300'} ${errors[`${index}-course`] ? 'border-red-500' : ''}`}
-                                                    />
-                                                    {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase">{errors[`${index}-course`]}</p>}
+                                                    <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-course`] ? 'from-red-500 to-red-600' : ''}`}>
+                                                        <HybridInput
+                                                            value={edu.course || ""}
+                                                            onChange={(val) => handleChange(index, "course", val)}
+                                                            options={COURSE_SUGGESTIONS}
+                                                            placeholder="Ex: B.Tech, MCA, etc."
+                                                            uppercase={true}
+                                                            className={`p-2.5 rounded-[calc(0.75rem-2px)] text-sm transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                        />
+                                                    </div>
+                                                    {errors[`${index}-course`] && <p className="text-red-500 text-[10px] font-bold uppercase mt-1.5 ml-1">{errors[`${index}-course`]}</p>}
                                                 </div>
 
                                                 <div className="space-y-1.5">
-                                                    <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                                                    <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
                                                         Branch
                                                     </label>
-                                                    <HybridInput
-                                                        value={edu.branch || ""}
-                                                        onChange={(val) => handleChange(index, "branch", val)}
-                                                        options={BRANCH_SUGGESTIONS}
-                                                        placeholder="Ex: CS, IT, ME, etc."
-                                                        uppercase={true}
-                                                        className={`p-2.5 border rounded-lg text-sm transition ${darkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-300'}`}
-                                                    />
+                                                    <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                                        <HybridInput
+                                                            value={edu.branch || ""}
+                                                            onChange={(val) => handleChange(index, "branch", val)}
+                                                            options={BRANCH_SUGGESTIONS}
+                                                            placeholder="Ex: CS, IT, ME, etc."
+                                                            uppercase={true}
+                                                            className={`p-2.5 rounded-[calc(0.75rem-2px)] text-sm transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </>
                                         )}
                                         <div className="space-y-1.5">
-                                            <label className={`text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>Field of study</label>
-                                            <input
-                                                type="text"
-                                                list="study-list"
-                                                className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                                value={edu.fieldOfStudy || ""}
-                                                onChange={(e) => handleChange(index, "fieldOfStudy", e.target.value)}
-                                                placeholder="Ex: Computer Science"
-                                            />
+                                            <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>Field of study</label>
+                                            <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
+                                                <input
+                                                    type="text"
+                                                    list="study-list"
+                                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900'}`}
+                                                    value={edu.fieldOfStudy || ""}
+                                                    onChange={(e) => handleChange(index, "fieldOfStudy", e.target.value)}
+                                                    placeholder="Ex: Computer Science"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Dates */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-startDate`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-startDate`] ? 'text-red-500' : (darkMode ? 'text-blue-400' : 'text-blue-600')}`}>
                                                 Start date <span className="text-red-500 font-bold">*</span>
                                             </label>
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
-                                                    value={edu.startMonth || ""}
-                                                    onChange={(e) => handleChange(index, "startMonth", e.target.value)}
-                                                >
-                                                    <option value="">Month</option>
-                                                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                                                </select>
-                                                <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
-                                                    value={edu.startYear || ""}
-                                                    onChange={(e) => handleChange(index, "startYear", e.target.value)}
-                                                >
-                                                    <option value="">Year</option>
-                                                    {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-                                                </select>
+                                            <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-startDate`] ? 'from-red-500 to-red-600' : ''}`}>
+                                                <div className={`grid grid-cols-2 gap-2 p-1 rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                                    <select
+                                                        className={`w-full p-2 rounded-lg text-sm outline-none ${darkMode ? 'bg-[#121213] text-white border-none' : 'bg-white text-gray-900 border-none'}`}
+                                                        value={edu.startMonth || ""}
+                                                        onChange={(e) => handleChange(index, "startMonth", e.target.value)}
+                                                    >
+                                                        <option value="">Month</option>
+                                                        {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                    </select>
+                                                    <select
+                                                        className={`w-full p-2 rounded-lg text-sm outline-none ${darkMode ? 'bg-[#121213] text-white border-none' : 'bg-white text-gray-900 border-none'}`}
+                                                        value={edu.startYear || ""}
+                                                        onChange={(e) => handleChange(index, "startYear", e.target.value)}
+                                                    >
+                                                        <option value="">Year</option>
+                                                        {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className={`text-sm font-semibold flex items-center gap-1 ${errors[`${index}-endDate`] ? 'text-red-500' : (darkMode ? 'text-slate-300' : 'text-gray-700')}`}>
+                                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-endDate`] ? 'text-red-500' : (darkMode ? 'text-indigo-400' : 'text-indigo-600')}`}>
                                                 End date (or expected) <span className="text-red-500 font-bold">*</span>
                                             </label>
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
-                                                    value={edu.endMonth || ""}
-                                                    onChange={(e) => handleChange(index, "endMonth", e.target.value)}
-                                                >
-                                                    <option value="">Month</option>
-                                                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                                                </select>
-                                                <select
-                                                    className={`w-full p-2 border rounded-lg text-sm outline-none ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAFAFA] border-gray-300 text-gray-900'}`}
-                                                    value={edu.endYear || ""}
-                                                    onChange={(e) => handleChange(index, "endYear", e.target.value)}
-                                                >
-                                                    <option value="">Year</option>
-                                                    {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-                                                </select>
+                                            <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-endDate`] ? 'from-red-500 to-red-600' : ''}`}>
+                                                <div className={`grid grid-cols-2 gap-2 p-1 rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                                    <select
+                                                        className={`w-full p-2 rounded-lg text-sm outline-none ${darkMode ? 'bg-[#121213] text-white border-none' : 'bg-white text-gray-900 border-none'}`}
+                                                        value={edu.endMonth || ""}
+                                                        onChange={(e) => handleChange(index, "endMonth", e.target.value)}
+                                                    >
+                                                        <option value="">Month</option>
+                                                        {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                                                    </select>
+                                                    <select
+                                                        className={`w-full p-2 rounded-lg text-sm outline-none ${darkMode ? 'bg-[#121213] text-white border-none' : 'bg-white text-gray-900 border-none'}`}
+                                                        value={edu.endYear || ""}
+                                                        onChange={(e) => handleChange(index, "endYear", e.target.value)}
+                                                    >
+                                                        <option value="">Year</option>
+                                                        {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Grade */}
                                     <div className="space-y-1.5 md:w-1/2">
-                                        <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                            <Award className="w-3.5 h-3.5 text-yellow-500" />
+                                        <label className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                            <Award className="w-3.5 h-3.5" />
                                             {edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Percentage" : "CGPA / Grade"}
                                         </label>
-                                        <input
-                                            type="text"
-                                            className={`w-full p-2.5 border rounded-lg text-sm outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={edu.grade || ""}
-                                            onChange={(e) => handleChange(index, "grade", e.target.value)}
-                                            placeholder={edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Ex: 95%" : "Ex: 9.0 CGPA"}
-                                        />
+                                        <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
+                                            <input
+                                                type="text"
+                                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                                value={edu.grade || ""}
+                                                onChange={(e) => handleChange(index, "grade", e.target.value)}
+                                                placeholder={edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Ex: 95%" : "Ex: 9.0 CGPA"}
+                                            />
+                                        </div>
                                     </div>
 
                                     {/* Activities */}
                                     <div className="space-y-1.5">
-                                        <div className="flex justify-between items-center">
-                                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                                <Users className="w-3.5 h-3.5 text-blue-500" /> Activities and societies
+                                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                            <label className={`flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                                <Users className="w-3.5 h-3.5" /> Activities and societies
                                             </label>
-                                            <span className={`text-[10px] font-bold ${(edu.activities?.length || 0) > 450 ? 'text-red-500' : (darkMode ? 'text-slate-500' : 'text-gray-400')}`}>
+                                            <span className={`${(edu.activities?.length || 0) > 450 ? 'text-red-500' : (darkMode ? 'text-slate-500' : 'text-gray-400')}`}>
                                                 {edu.activities?.length || 0}/500
                                             </span>
                                         </div>
-                                        <textarea
-                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-20 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={edu.activities || ""}
-                                            onChange={(e) => handleChange(index, "activities", e.target.value.slice(0, 500))}
-                                            placeholder="Ex: Alpha Phi Omega, Marching Band, Volleyball"
-                                        />
+                                        <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                                            <textarea
+                                                className={`w-full p-4 rounded-[calc(1rem-2px)] h-24 outline-none transition custom-scrollbar ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                                value={edu.activities || ""}
+                                                onChange={(e) => handleChange(index, "activities", e.target.value.slice(0, 500))}
+                                                placeholder="Ex: Alpha Phi Omega, Marching Band, Volleyball"
+                                            />
+                                        </div>
                                     </div>
 
                                     {/* Description */}
                                     <div className="space-y-1.5">
-                                        <div className="flex justify-between items-center">
-                                            <label className={`text-sm font-semibold flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                                                <BookOpen className="w-3.5 h-3.5 text-green-500" /> Description
+                                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                            <label className={`flex items-center gap-1.5 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                                                <BookOpen className="w-3.5 h-3.5" /> Description
                                             </label>
-                                            <span className={`text-[10px] font-bold ${(edu.description?.length || 0) > 900 ? 'text-red-500' : (darkMode ? 'text-slate-500' : 'text-gray-400')}`}>
+                                            <span className={`${(edu.description?.length || 0) > 900 ? 'text-red-500' : (darkMode ? 'text-slate-500' : 'text-gray-400')}`}>
                                                 {edu.description?.length || 0}/1000
                                             </span>
                                         </div>
-                                        <textarea
-                                            className={`w-full p-3 border rounded-lg text-sm outline-none focus:ring-2 transition h-32 custom-scrollbar ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                                            value={edu.description || ""}
-                                            onChange={(e) => handleChange(index, "description", e.target.value.slice(0, 1000))}
-                                            placeholder="Describe your studies, awards, or projects..."
-                                        />
+                                        <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                                            <textarea
+                                                className={`w-full p-4 rounded-[calc(1rem-2px)] h-32 outline-none transition custom-scrollbar ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
+                                                value={edu.description || ""}
+                                                onChange={(e) => handleChange(index, "description", e.target.value.slice(0, 1000))}
+                                                placeholder="Describe your studies, awards, or projects..."
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     ))}
 
                     <button
@@ -514,8 +539,15 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                 </div>
 
                 {/* Footer */}
-                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50'}`}>
-                    <button onClick={onClose} className={`px-5 py-2.5 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>
+                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
+                    >
                         Cancel
                     </button>
                     <button
@@ -543,6 +575,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                     background: ${darkMode ? '#475569' : '#9ca3af'};
                 }
             `}</style>
+            </div>
         </div>
     );
 }

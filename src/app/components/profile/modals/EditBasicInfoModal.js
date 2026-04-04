@@ -153,7 +153,8 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn">
-            <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-lg">
+                <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white flex-shrink-0">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -170,148 +171,159 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                 <div className={`p-6 space-y-5 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                     {/* Name */}
                     <div>
-                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                            <User className="w-4 h-4 text-purple-500" /> Full Name
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                            <User className="w-3.5 h-3.5" /> Full Name
                         </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Your Name"
-                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.name ? 'border-red-500' : ''}`}
-                        />
-                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.name ? 'from-red-500 to-red-600' : ''}`}>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="Your Name"
+                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                            />
+                        </div>
+                        {errors.name && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.name}</p>}
                     </div>
 
                     {/* Phone */}
                     <div className="phone-input-container">
-                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                            <Phone className="w-4 h-4 text-blue-500" /> Phone Number
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                            <Phone className="w-3.5 h-3.5" /> Phone Number
                         </label>
-                        <PhoneInput
-                            country={"in"}
-                            value={formData.phone}
-                            onChange={handlePhoneChange}
-                            inputStyle={{
-                                width: "100%",
-                                height: "42px",
-                                borderRadius: "8px",
-                                border: errors.phone ? "1px solid #ef4444" : (darkMode ? "1px solid #334155" : "1px solid #d1d5db"),
-                                fontSize: "14px",
-                                backgroundColor: darkMode ? "#1e293b" : "#fff",
-                                color: darkMode ? "#fff" : "#111827",
-                            }}
-                            buttonStyle={{
-                                borderRadius: "8px 0 0 8px",
-                                border: errors.phone ? "1px solid #ef4444" : (darkMode ? "1px solid #334155" : "1px solid #d1d5db"),
-                                backgroundColor: darkMode ? "#1e293b" : "#f9fafb",
-                            }}
-                            dropdownStyle={{
-                                backgroundColor: darkMode ? "#1e293b" : "#fff",
-                                color: darkMode ? "#fff" : "#111827",
-                            }}
-                            containerStyle={{
-                                marginTop: "4px",
-                            }}
-                        />
-                        {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.phone ? 'from-red-500 to-red-600' : ''}`}>
+                            <PhoneInput
+                                country={"in"}
+                                value={formData.phone}
+                                onChange={handlePhoneChange}
+                                inputStyle={{
+                                    width: "100%",
+                                    height: "42px",
+                                    borderRadius: "calc(0.75rem - 2px)",
+                                    border: "none",
+                                    fontSize: "14px",
+                                    backgroundColor: darkMode ? "#121213" : "#fff",
+                                    color: darkMode ? "#fff" : "#111827",
+                                }}
+                                buttonStyle={{
+                                    borderRadius: "calc(0.75rem - 2px) 0 0 calc(0.75rem - 2px)",
+                                    border: "none",
+                                    backgroundColor: darkMode ? "#121213" : "#f9fafb",
+                                }}
+                                dropdownStyle={{
+                                    backgroundColor: darkMode ? "#121213" : "#fff",
+                                    color: darkMode ? "#fff" : "#111827",
+                                }}
+                            />
+                        </div>
+                        {errors.phone && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.phone}</p>}
                     </div>
 
                     {/* Address Dropdowns */}
                     <div>
-                        <label className={`block text-sm font-semibold mb-2 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                            <MapPin className="w-4 h-4 text-red-500" /> Location (Address)
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+                            <MapPin className="w-3.5 h-3.5" /> Location (Address)
                         </label>
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                            {/* Country */}
-                            <select
-                                value={selectedCountry}
-                                onChange={(e) => {
-                                    setSelectedCountry(e.target.value);
-                                    setSelectedState("");
-                                    setSelectedCity("");
-                                }}
-                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                            >
-                                <option value="">Select Country</option>
-                                {Country.getAllCountries().map((c) => (
-                                    <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-                                ))}
-                            </select>
+                        <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                            <div className={`grid grid-cols-1 gap-2 p-2 sm:grid-cols-3 rounded-[calc(1rem-2.px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                {/* Country */}
+                                <select
+                                    value={selectedCountry}
+                                    onChange={(e) => {
+                                        setSelectedCountry(e.target.value);
+                                        setSelectedState("");
+                                        setSelectedCity("");
+                                    }}
+                                    className={`w-full p-2 text-sm rounded-lg outline-none transition ${darkMode ? 'bg-slate-900 border-none text-white' : 'bg-gray-50 border-none text-gray-900'}`}
+                                >
+                                    <option value="">Select Country</option>
+                                    {Country.getAllCountries().map((c) => (
+                                        <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                                    ))}
+                                </select>
 
-                            {/* State */}
-                            <select
-                                value={selectedState}
-                                disabled={!selectedCountry}
-                                onChange={(e) => {
-                                    setSelectedState(e.target.value);
-                                    setSelectedCity("");
-                                }}
-                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition disabled:opacity-50 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                            >
-                                <option value="">Select State</option>
-                                {selectedCountry && State.getStatesOfCountry(selectedCountry).map((s) => (
-                                    <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
-                                ))}
-                            </select>
+                                {/* State */}
+                                <select
+                                    value={selectedState}
+                                    disabled={!selectedCountry}
+                                    onChange={(e) => {
+                                        setSelectedState(e.target.value);
+                                        setSelectedCity("");
+                                    }}
+                                    className={`w-full p-2 text-sm rounded-lg outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-900 border-none text-white' : 'bg-gray-50 border-none text-gray-900'}`}
+                                >
+                                    <option value="">Select State</option>
+                                    {selectedCountry && State.getStatesOfCountry(selectedCountry).map((s) => (
+                                        <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+                                    ))}
+                                </select>
 
-                            {/* City */}
-                            <select
-                                value={selectedCity}
-                                disabled={!selectedState}
-                                onChange={(e) => setSelectedCity(e.target.value)}
-                                className={`w-full p-2 text-sm border rounded-lg outline-none focus:ring-2 transition disabled:opacity-50 ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500'}`}
-                            >
-                                <option value="">Select City</option>
-                                {selectedState && City.getCitiesOfState(selectedCountry, selectedState).map((city) => (
-                                    <option key={city.name} value={city.name}>{city.name}</option>
-                                ))}
-                            </select>
+                                {/* City */}
+                                <select
+                                    value={selectedCity}
+                                    disabled={!selectedState}
+                                    onChange={(e) => setSelectedCity(e.target.value)}
+                                    className={`w-full p-2 text-sm rounded-lg outline-none transition disabled:opacity-50 ${darkMode ? 'bg-slate-900 border-none text-white' : 'bg-gray-50 border-none text-gray-900'}`}
+                                >
+                                    <option value="">Select City</option>
+                                    {selectedState && City.getCitiesOfState(selectedCountry, selectedState).map((city) => (
+                                        <option key={city.name} value={city.name}>{city.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     {/* WhatsApp */}
                     <div>
-                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                            <MessageCircle className="w-4 h-4 text-green-500" /> WhatsApp Number
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Number
                         </label>
-                        <input
-                            type="text"
-                            name="whatsapp"
-                            value={formData.whatsapp}
-                            onChange={handleChange}
-                            placeholder="Ex: 919876543210"
-                            className={`w-full p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.whatsapp ? 'border-red-500' : ''}`}
-                        />
-                        {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
-                        <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>* Enter digits only, including country code (e.g. 91...)</p>
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.whatsapp ? 'from-red-500 to-red-600' : ''}`}>
+                            <input
+                                type="text"
+                                name="whatsapp"
+                                value={formData.whatsapp}
+                                onChange={handleChange}
+                                placeholder="Ex: 919876543210"
+                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                            />
+                        </div>
+                        {errors.whatsapp && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.whatsapp}</p>}
+                        <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'} ml-1`}>* Enter digits only, including country code (e.g. 91...)</p>
                     </div>
 
                     {/* LinkedIn */}
                     <div>
-                        <label className={`block text-sm font-semibold mb-1 flex items-center gap-1 ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                            <Linkedin className="w-4 h-4 text-blue-700" /> LinkedIn URL
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-blue-500' : 'text-blue-700'}`}>
+                            <Linkedin className="w-3.5 h-3.5" /> LinkedIn URL
                         </label>
-                        <div className="relative">
-                            <Globe className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
-                            <input
-                                type="text"
-                                name="linkedin"
-                                value={formData.linkedin}
-                                onChange={handleChange}
-                                placeholder="https://linkedin.com/in/username"
-                                className={`w-full pl-9 p-2.5 border rounded-lg outline-none transition ${darkMode ? 'bg-slate-800 border-slate-700 text-white focus:ring-blue-500/50' : 'bg-[#FAFAFA] border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500'} ${errors.linkedin ? 'border-red-500' : ''}`}
-                            />
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.linkedin ? 'from-red-500 to-red-600' : ''}`}>
+                            <div className={`relative flex items-center rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                <Globe className="absolute left-3 text-gray-400 w-3.5 h-3.5" />
+                                <input
+                                    type="text"
+                                    name="linkedin"
+                                    value={formData.linkedin}
+                                    onChange={handleChange}
+                                    placeholder="https://linkedin.com/in/username"
+                                    className={`w-full pl-9 p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                />
+                            </div>
                         </div>
-                        {errors.linkedin && <p className="text-red-500 text-xs mt-1">{errors.linkedin}</p>}
+                        {errors.linkedin && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.linkedin}</p>}
                     </div>
                 </div>
 
                 <div className={`p-4 flex justify-end gap-3 flex-shrink-0 ${darkMode ? 'bg-slate-800/50 border-t border-white/5' : 'bg-gray-50 border-t'}`}>
-                    <button
-                        onClick={onClose}
-                        className={`px-5 py-2 border rounded-xl transition font-semibold ${darkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
                     >
                         Cancel
                     </button>
@@ -348,6 +360,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
           background-color: transparent !important;
         }
       `}</style>
+            </div>
         </div>
     );
 }

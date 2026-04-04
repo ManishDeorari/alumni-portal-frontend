@@ -4,6 +4,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { createEvent } from "../../../api/dashboard";
 import EmojiPickerToggle from "./utils/EmojiPickerToggle";
+import PostLoadingScreen from "./utils/PostLoadingScreen";
 
 const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setPosts }) => {
   const [loading, setLoading] = useState(false);
@@ -366,6 +367,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           </button>
         </form>
       </div>
+      <PostLoadingScreen type="Event" loading={loading} darkMode={darkMode} />
      </div>
     </div>
   );

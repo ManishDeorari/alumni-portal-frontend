@@ -86,7 +86,7 @@ export default function AlumniExport() {
 
         const MANDATORY_DEGREES = [
             "High School (Secondary - Class 10)",
-            "Intermediate (Higher Secondary - Class 11-12)",
+            "Intermediate (Higher Secondary - Class 12)",
             "Undergraduate (Bachelor's Degree)",
             "Postgraduate (Master's Degree)"
         ];

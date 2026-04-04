@@ -4,6 +4,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { createPost } from "../../../api/dashboard";
 import EmojiPickerToggle from "./utils/EmojiPickerToggle";
+import PostLoadingScreen from "./utils/PostLoadingScreen";
 
 const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, setPosts }) => {
   const [loading, setLoading] = useState(false);
@@ -28,12 +29,15 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImages([file]);
-      setVideo(null);
-      setPreviewVideo(null);
+    const files = Array.from(e.target.files);
+    if (files.length + images.length > 6) {
+      toast.error("❌ You can upload up to 6 images.");
+      return;
     }
+    setImages([...images, ...files]);
+    setVideo(null);
+    setPreviewVideo(null);
+    e.target.value = ""; // Reset for re-selection
   };
 
   const handleVideoChange = (e) => {
@@ -136,7 +140,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
                     <label className="cursor-pointer group flex flex-col items-center">
                       <span className="text-3xl block filter grayscale group-hover:grayscale-0 transition-all">📷</span>
                       <span className={`text-[9px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Add Photo</span>
-                      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                      <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                     </label>
                     <label className="cursor-pointer group flex flex-col items-center">
                       <span className="text-3xl block filter grayscale group-hover:grayscale-0 transition-all">🎥</span>
@@ -147,12 +151,15 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
 
                   {images.length > 0 && (
                     <div className="flex flex-wrap gap-2 justify-center mt-4 border-t pt-4 border-white/5">
-                      {images.map((img, idx) => (
-                        <div key={idx} className="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10 shadow-lg group/img">
+                      {images.map((img, index) => (
+                        <div key={index} className="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10 shadow-lg group/img">
                           <Image src={URL.createObjectURL(img)} alt="preview" fill className="object-cover" />
                           <button 
                             type="button"
-                            onClick={() => setImages([])}
+                            onClick={() => {
+                                const updated = images.filter((_, i) => i !== index);
+                                setImages(updated);
+                            }}
                             className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover/img:opacity-100 transition-opacity"
                           >
                             &times;
@@ -196,17 +203,24 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
               {/* Session Logistics (School, Campus, Time) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("schoolOrCollege") ? "text-red-500" : ""}`}>School / College</label>
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("schoolOrCollege") ? "text-red-500" : ""}`}>College</label>
                   <div className={errors.includes("schoolOrCollege") ? "p-[2px] rounded-2xl bg-red-500 shadow-lg animate-pulse" : "p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm"}>
-                    <select
-                      name="schoolOrCollege"
-                      value={sessionDetails.schoolOrCollege}
-                      onChange={(e) => handleInputChange(e.target)}
-                      className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none cursor-pointer appearance-none`}
-                    >
-                      <option value="Graphic Era Hill University">Graphic Era Hill University</option>
-                      <option value="Graphic Era Deemed to be University">Graphic Era Deemed to be University</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        name="schoolOrCollege"
+                        value={sessionDetails.schoolOrCollege}
+                        onChange={(e) => handleInputChange(e.target)}
+                        className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none cursor-pointer appearance-none font-bold`}
+                      >
+                        <option value="Graphic Era Hill University">Graphic Era Hill University</option>
+                        <option value="Graphic Era Deemed to be University">Graphic Era Deemed to be University</option>
+                      </select>
+                      <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-white" : "text-black"}`}>
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -214,16 +228,23 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
                   <div className="space-y-2">
                     <label className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("campus") ? "text-red-500" : ""}`}>Campus</label>
                     <div className={errors.includes("campus") ? "p-[2px] rounded-2xl bg-red-500 shadow-lg animate-pulse" : "p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm"}>
-                      <select
-                        name="campus"
-                        value={sessionDetails.campus}
-                        onChange={(e) => handleInputChange(e.target)}
-                        className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none cursor-pointer appearance-none`}
-                      >
-                        <option value="Dehradun">Dehradun</option>
-                        <option value="Haldwani">Haldwani</option>
-                        <option value="Bhimtal">Bhimtal</option>
-                      </select>
+                      <div className="relative">
+                        <select
+                          name="campus"
+                          value={sessionDetails.campus}
+                          onChange={(e) => handleInputChange(e.target)}
+                          className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none cursor-pointer appearance-none font-bold`}
+                        >
+                          <option value="Dehradun">Dehradun</option>
+                          <option value="Haldwani">Haldwani</option>
+                          <option value="Bhimtal">Bhimtal</option>
+                        </select>
+                        <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-white" : "text-black"}`}>
+                          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -236,7 +257,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
                       name="date"
                       value={sessionDetails.date}
                       onChange={(e) => handleInputChange(e.target)}
-                      className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-opacity`}
+                      className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none font-bold [&::-webkit-calendar-picker-indicator]:opacity-100 ${darkMode ? "[&::-webkit-calendar-picker-indicator]:invert" : ""}`}
                     />
                   </div>
                 </div>
@@ -249,7 +270,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
                       name="time"
                       value={sessionDetails.time}
                       onChange={(e) => handleInputChange(e.target)}
-                      className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-opacity`}
+                      className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none font-bold [&::-webkit-calendar-picker-indicator]:opacity-100 ${darkMode ? "[&::-webkit-calendar-picker-indicator]:invert" : ""}`}
                     />
                   </div>
                 </div>
@@ -271,6 +292,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
           </form>
         </div>
       </div>
+      <PostLoadingScreen type="Session" loading={loading} darkMode={darkMode} />
     </div>
   );
 };

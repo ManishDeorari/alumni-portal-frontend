@@ -172,12 +172,8 @@ export default function PointsSystemManagement({ user }) {
 
     return (
         <div className="space-y-12 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
-            {/* Section 1: Points Requests */}
-            <div className="relative p-[2px] bg-gradient-to-tr from-orange-400 to-red-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
-                    <PointsRequestsList darkMode={darkMode} user={user} />
-                </section>
-            </div>
+            {/* Section 1: Points Requests - Now handled as two separate cards inside the component */}
+            <PointsRequestsList darkMode={darkMode} user={user} />
 
             {/* Separator */}
             <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-white/10" : "via-slate-200"} to-transparent`} />
@@ -204,14 +200,14 @@ export default function PointsSystemManagement({ user }) {
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
                                     {item.label}
                                 </label>
-                                <div className="relative group/input p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl">
+                                <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
                                     <input
                                         type="number"
                                         value={config[item.key]}
                                         onChange={(e) => setConfig({ ...config, [item.key]: parseInt(e.target.value) })}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
                                     />
-                                    {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-slate-500"} uppercase`}>{item.sub}</span>}
+                                    {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase`}>{item.sub}</span>}
                                 </div>
                             </div>
                         ))}
@@ -247,53 +243,53 @@ export default function PointsSystemManagement({ user }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
-                                <div className="relative group/input p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl">
+                                <div className="relative group/input p-[2px] bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl shadow-sm">
                                     <input
                                         type="text"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
+                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
                                         placeholder="Name or ID..."
                                     />
-                                    <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-green-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
                             </div>
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Grant Amount</label>
-                                <div className="p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl">
+                                <div className="p-[2px] bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl shadow-sm">
                                     <input
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                         placeholder="0"
                                     />
                                 </div>
                             </div>
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Activity Category</label>
-                                <div className="p-[1px] bg-gradient-to-r from-green-400/50 to-blue-400/50 rounded-2xl relative">
+                                <div className="p-[2px] bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl relative shadow-sm">
                                     <select
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
+                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
                                     >
                                         {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
                                             <option key={val} value={val}>{label}</option>
                                         ))}
                                     </select>
-                                    <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-green-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                                    <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
                         </div>
                         <div className="space-y-3">
                             <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Custom Note (Appears in User Notification)</label>
-                            <div className="p-[1px] bg-gradient-to-r from-green-400/30 via-blue-400/30 to-purple-400/30 rounded-2xl">
+                            <div className="p-[2px] bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-2xl shadow-sm">
                                 <input
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                     placeholder="e.g. Exceptional contribution to the annual tech summit..."
                                 />
                             </div>
@@ -324,29 +320,33 @@ export default function PointsSystemManagement({ user }) {
                         Advanced Data Management
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className={`space-y-4 ${darkMode ? "bg-[#FAFAFA]/5 border-white/5" : "bg-[#FAFAFA] border-red-100"} p-8 rounded-[2rem] border hover:border-red-500/30 transition-all`}>
-                            <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Season Rollover</h3>
-                            <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
-                                Resets all current season points and moves balances to <span className="text-red-300 font-bold underline decoration-red-500/50 underline-offset-4">Historical Rankings</span>. This action is irreversible.
-                            </p>
-                            <button
-                                onClick={triggerRollover}
-                                className="w-full bg-red-600 hover:bg-red-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
-                            >
-                                Trigger Annual Rollover
-                            </button>
+                        <div className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-red-500 to-orange-500 shadow-xl transition-all hover:scale-[1.02]">
+                            <div className={`space-y-4 p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
+                                <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Season Rollover</h3>
+                                <p className={`text-sm ${darkMode ? "text-gray-300" : "text-slate-700"} leading-relaxed flex-1`}>
+                                    Resets all current season points and moves balances to <span className="text-red-500 font-black underline decoration-red-500 underline-offset-4">Historical Rankings</span>. This action is irreversible.
+                                </p>
+                                <button
+                                    onClick={triggerRollover}
+                                    className="w-full bg-red-600 hover:bg-red-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95 mt-6"
+                                >
+                                    Trigger Annual Rollover
+                                </button>
+                            </div>
                         </div>
-                        <div className={`space-y-4 ${darkMode ? "bg-[#FAFAFA]/5 border-white/5" : "bg-[#FAFAFA] border-purple-100"} p-8 rounded-[2rem] border hover:border-purple-500/30 transition-all`}>
-                            <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Consistency Sync</h3>
-                            <p className={`text-sm ${darkMode ? "text-white" : "text-slate-500"} leading-relaxed`}>
-                                Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-600 font-bold">Safe to run.</span>
-                            </p>
-                            <button
-                                onClick={triggerSync}
-                                className="w-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
-                            >
-                                Execute Global Sync
-                            </button>
+                        <div className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-purple-500 to-pink-500 shadow-xl transition-all hover:scale-[1.02]">
+                            <div className={`space-y-4 p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
+                                <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Consistency Sync</h3>
+                                <p className={`text-sm ${darkMode ? "text-gray-300" : "text-slate-700"} leading-relaxed flex-1`}>
+                                    Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-600 font-black">Safe to run.</span>
+                                </p>
+                                <button
+                                    onClick={triggerSync}
+                                    className="w-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-lg active:scale-95 mt-6"
+                                >
+                                    Execute Global Sync
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>

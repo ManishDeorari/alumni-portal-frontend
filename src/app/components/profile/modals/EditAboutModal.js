@@ -39,7 +39,8 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className={`rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-lg">
+                <div className={`rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden animate-fadeIn transition-colors duration-500 ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center text-white">
                     <h2 className="text-lg font-bold flex items-center gap-2">
@@ -55,20 +56,28 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
 
                 <div className="p-6 space-y-4">
                     <div>
-                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Your Bio</label>
-                        <textarea
-                            className={`w-full p-3 rounded-lg h-40 outline-none transition custom-scrollbar focus:ring-2 focus:ring-blue-500 ${darkMode ? 'bg-slate-800 border-white/10 text-white placeholder-gray-500' : 'bg-[#FAFAFA] border-gray-300 text-gray-800 placeholder-gray-400'}`}
-                            value={bio}
-                            onChange={(e) => setBio(e.target.value)}
-                            placeholder="Write something about yourself..."
-                        />
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                            <Info className="w-3.5 h-3.5" /> Your Bio
+                        </label>
+                        <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm">
+                            <textarea
+                                className={`w-full p-4 rounded-[calc(1rem-2.5px)] h-48 outline-none transition custom-scrollbar ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-800 placeholder-gray-400'}`}
+                                value={bio}
+                                onChange={(e) => setBio(e.target.value)}
+                                placeholder="Write something about yourself..."
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className={`p-4 flex justify-end gap-3 border-t transition-colors ${darkMode ? 'bg-slate-800/50 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <button
-                        onClick={onClose}
-                        className={`px-4 py-2 border rounded-lg transition ${darkMode ? 'border-white/10 text-gray-300 hover:bg-slate-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                <div className={`p-4 flex justify-end gap-3 border-t transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <button 
+                        onClick={onClose} 
+                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                            darkMode 
+                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        }`}
                     >
                         Cancel
                     </button>
@@ -98,6 +107,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
                     background: #9ca3af;
                 }
             `}</style>
+            </div>
         </div>
     );
 }

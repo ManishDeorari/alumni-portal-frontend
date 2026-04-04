@@ -119,13 +119,15 @@ export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
         onClick={(e) => e.stopPropagation()}
         onMouseDown={handleMouseDown}
       >
-        <img
-          src={imageUrl}
-          alt="Full view"
-          className={`max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl ${isRestricted ? 'select-none pointer-events-none' : ''}`}
-          onContextMenu={(e) => isRestricted && e.preventDefault()}
-          draggable={false}
-        />
+        <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-[0_20px_60px_rgba(37,99,235,0.4)]">
+          <img
+            src={imageUrl}
+            alt="Full view"
+            className={`max-w-[90vw] max-h-[90vh] object-contain rounded-[calc(1rem-2.5px)] shadow-2xl ${isRestricted ? 'select-none pointer-events-none' : ''}`}
+            onContextMenu={(e) => isRestricted && e.preventDefault()}
+            draggable={false}
+          />
+        </div>
 
         {/* Protective Overlay */}
         {isRestricted && (

@@ -4,11 +4,13 @@ import { X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { useTheme } from "@/context/ThemeContext";
 import BannerImageCropper from "./BannerImageCropper";
 import BannerImageFilters from "./BannerImageFilters";
 import BannerImageAdjust from "./BannerImageAdjust";
 
 export default function BannerEditorModal({ onClose, onUploaded, userId, currentImage }) {
+  const { darkMode } = useTheme();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(currentImage || "/default_banner.jpg");
   const [uploading, setUploading] = useState(false);
@@ -146,11 +148,12 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-      <div className="bg-[#FAFAFA] rounded-lg w-[90%] max-w-5xl p-4 relative text-black max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 hover:text-black">
-          <X />
-        </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-5xl">
+        <div className={`rounded-[calc(2.5rem-2.5px)] p-6 relative max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-[#121213] text-white' : 'bg-[#FAFAFA] text-black'}`}>
+          <button onClick={onClose} className={`absolute top-4 right-4 transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-black'}`}>
+            <X size={24} />
+          </button>
 
         <h2 className="text-lg font-semibold mb-4 text-center">Banner Image</h2>
 
@@ -278,7 +281,11 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
                 setPreviewUrl(currentImage || "/default_banner.jpg");
                 setActiveTab(null);
               }}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+              className={`px-6 py-2 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                  darkMode 
+                      ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
+                      : "border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-100 font-bold"
+              }`}
               title="Cancel changes and keep previous banner"
             >
               Cancel
@@ -286,7 +293,11 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
           ) : (
             <button
               onClick={() => fileInputRef.current.click()}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+              className={`px-6 py-2 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+                  darkMode 
+                      ? "border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10" 
+                      : "border-gray-200 bg-white text-gray-400 hover:text-blue-600 hover:border-blue-400 font-bold"
+              }`}
               title="Select a new banner to change"
             >
               Change Banner
@@ -310,6 +321,7 @@ export default function BannerEditorModal({ onClose, onUploaded, userId, current
           accept="image/*"
           onChange={handleFileChange}
         />
+        </div>
       </div>
     </div>
   );

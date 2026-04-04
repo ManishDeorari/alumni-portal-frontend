@@ -60,7 +60,8 @@ export default function PostModal({
   likeIconRef,
   darkMode = false,
   setPosts, // Add setPosts to update state after registration
-  handleReactToComment // Add handleReactToComment
+  handleReactToComment, // Add handleReactToComment
+  hideInteractions = false // New prop to hide interactive elements
 }) {
   const [showCommentsState, setShowCommentsState] = useState(true);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
@@ -108,6 +109,7 @@ export default function PostModal({
               toggleEdit={() => toggleEdit(editKey, setEditContent, editing, post.content)}
               handleDelete={() => setShowDeleteConfirm(true)}
               darkMode={darkMode}
+              hideActions={hideInteractions}
             />
           </div>
 
@@ -139,28 +141,24 @@ export default function PostModal({
             {post.type === "Session" && post.sessionDetails && (
               <div className={`mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
                 <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-6`}>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>School / College</span>
-                        <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.schoolOrCollege}</span>
-                      </div>
-                      {post.sessionDetails.campus && (
-                        <div className="flex flex-col">
-                          <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Campus</span>
-                          <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.campus}</span>
-                        </div>
-                      )}
+                  <div className={`grid grid-cols-2 gap-x-8 gap-y-6`}>
+                    <div className="flex flex-col">
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>College</span>
+                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.schoolOrCollege}</span>
                     </div>
-                    <div className={`grid grid-cols-2 gap-6 pt-4 border-t border-dashed ${darkMode ? "border-white/10" : "border-gray-200"}`}>
+                    {post.sessionDetails.campus && (
                       <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Date</span>
-                        <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.sessionDetails.date).toLocaleDateString()}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Campus</span>
+                        <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.campus}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-purple-400/60" : "text-purple-600/60"}`}>Time</span>
-                        <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.time}</span>
-                      </div>
+                    )}
+                    <div className="flex flex-col pt-4 border-t border-dashed border-white/10">
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Date</span>
+                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.sessionDetails.date).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex flex-col pt-4 border-t border-dashed border-white/10">
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-purple-400/60" : "text-purple-600/60"}`}>Time</span>
+                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.time}</span>
                     </div>
                   </div>
                 </div>
@@ -338,12 +336,12 @@ export default function PostModal({
                     ));
                   })()}
                 </div>
-                {post.announcementDetails.pointsRequested && post.announcementDetails.pointsStatus === "pending" && (
+                {post.pointsRequested && post.pointsStatus === "pending" && (
                   <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-orange-500 italic">
                     <span className="animate-pulse">●</span> Points Approval Pending by Admin
                   </div>
                 )}
-                {post.announcementDetails.pointsStatus === "approved" && (
+                {post.pointsStatus === "approved" && (
                   <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-green-500 italic">
                     <span>✅</span> Points Awarded to Alumni
                   </div>
@@ -367,68 +365,73 @@ export default function PostModal({
             </div>
           )}
 
-          {/* Reaction & Comment Toggle Buttons */}
-          <div className="mb-6">
-            <PostReactions
-              post={post}
-              handleReact={handleReact}
-              getReactionCount={getReactionCount}
-              userReacted={userReacted}
-              reactionEffect={reactionEffect}
-              setReactionEffect={setReactionEffect}
-              showComments={showCommentsState}
-              setShowComments={setShowCommentsState}
-              darkMode={darkMode}
-            />
-          </div>
+          {/* Interaction Section (Hidden if hideInteractions is true) */}
+          {!hideInteractions && (
+            <>
+              {/* Reaction & Comment Toggle Buttons */}
+              <div className="mb-6">
+                <PostReactions
+                  post={post}
+                  handleReact={handleReact}
+                  getReactionCount={getReactionCount}
+                  userReacted={userReacted}
+                  reactionEffect={reactionEffect}
+                  setReactionEffect={setReactionEffect}
+                  showComments={showCommentsState}
+                  setShowComments={setShowCommentsState}
+                  darkMode={darkMode}
+                />
+              </div>
 
-          {/* Comment Input */}
-          <div className="mb-6">
-            <CommentInput
-              comment={comment}
-              setComment={setComment}
-              onSubmit={() => handleComment(comment)}
-              postId={post._id}
-              currentUser={currentUser}
-              darkMode={darkMode}
-            />
-          </div>
+              {/* Comment Input */}
+              <div className="mb-6">
+                <CommentInput
+                  comment={comment}
+                  setComment={setComment}
+                  onSubmit={() => handleComment(comment)}
+                  postId={post._id}
+                  currentUser={currentUser}
+                  darkMode={darkMode}
+                />
+              </div>
 
-          {/* Full Comment Thread */}
-          <AnimatePresence>
-            {showCommentsState && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-4 pt-6 overflow-hidden"
-              >
-                <h3 className={`font-black uppercase tracking-widest text-[10px] ${darkMode ? "text-gray-400" : "text-gray-900"} border-b-2 border-blue-500 w-fit pb-1 mb-4`}>
-                  Comments ({post.comments?.length || 0})
-                </h3>
+              {/* Full Comment Thread */}
+              <AnimatePresence>
+                {showCommentsState && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4 pt-6 overflow-hidden"
+                  >
+                    <h3 className={`font-black uppercase tracking-widest text-[10px] ${darkMode ? "text-gray-400" : "text-gray-900"} border-b-2 border-blue-500 w-fit pb-1 mb-4`}>
+                      Comments ({post.comments?.length || 0})
+                    </h3>
 
-                <div className="space-y-4">
-                  {(post.comments || []).slice().reverse().map((c) => (
-                    <CommentCard
-                      key={c._id}
-                      comment={c}
-                      currentUser={currentUser}
-                      onReply={handleReply}
-                      onDelete={handleDeleteComment}
-                      onEdit={handleEditComment}
-                      replies={c.replies || []}
-                      postId={post._id}
-                      onEditReply={handleEditReply}
-                      onDeleteReply={handleDeleteReply}
-                      onReactToReply={handleReactToReply}
-                      onReactToComment={handleReactToComment}
-                      darkMode={darkMode}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    <div className="space-y-4">
+                      {(post.comments || []).slice().reverse().map((c) => (
+                        <CommentCard
+                          key={c._id}
+                          comment={c}
+                          currentUser={currentUser}
+                          onReply={handleReply}
+                          onDelete={handleDeleteComment}
+                          onEdit={handleEditComment}
+                          replies={c.replies || []}
+                          postId={post._id}
+                          onEditReply={handleEditReply}
+                          onDeleteReply={handleDeleteReply}
+                          onReactToReply={handleReactToReply}
+                          onReactToComment={handleReactToComment}
+                          darkMode={darkMode}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          )}
 
           {showRegistrationModal && (
             <EventRegistrationModal
