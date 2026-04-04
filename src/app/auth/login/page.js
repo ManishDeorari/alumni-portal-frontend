@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -78,8 +79,7 @@ export default function LoginPage() {
       console.error("Login Error:", err);
       setError(err.message || "Something went wrong");
       toast.error(err.message || "Login failed");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only stop loading if there was an error
     }
   };
 
@@ -135,6 +135,7 @@ export default function LoginPage() {
 
   return (
     <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-8 transition-colors duration-500`}>
+      <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>

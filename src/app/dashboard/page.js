@@ -54,13 +54,22 @@ export default function DashboardPage() {
       }
 
       try {
+        // ⚡ INSTANT LOAD: Hydrate UI immediately from valid cache
+        const cachedUser = localStorage.getItem("user");
+        if (cachedUser) {
+          setUser(JSON.parse(cachedUser));
+          setLoading(false); 
+        }
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/me`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        const data = await res.json();
         if (!res.ok) throw new Error("User fetch failed");
+        
+        const data = await res.json();
         setUser(data);
+        localStorage.setItem("user", JSON.stringify(data)); // Refresh cache silently
       } catch (err) {
         console.error("User fetch error:", err.message);
         router.push("/auth/login");

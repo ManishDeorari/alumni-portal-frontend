@@ -31,10 +31,23 @@ function ProfileContent() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    setUser(userData);
-    setIsAdmin(userData?.isAdmin || userData?.role === "admin");
-  }, []);
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const userData = JSON.parse(userStr);
+      setUser(userData);
+      setIsAdmin(userData?.isAdmin || userData?.role === "admin");
+
+      // ⚡ OPTIMISTIC HYDRATION: If viewing own profile, show cached data immediately
+      const currentUserId = userData._id;
+      const targetId = params?.publicId || searchParams.get("id");
+      const viewingOther = !!(targetId && targetId !== currentUserId && targetId !== userData.publicId);
+
+      if (!viewingOther) {
+        setProfile(prev => ({ ...userData, ...prev }));
+        setLoading(false); // Bypass initial spinner for self
+      }
+    }
+  }, [params, searchParams]);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -45,7 +58,7 @@ function ProfileContent() {
 
       // Determine the target user profile to fetch
       const targetId = profileId || currentUserId;
-      const viewingOther = !!(profileId && profileId !== currentUserId);
+      const viewingOther = !!(profileId && profileId !== currentUserId && profileId !== currentUser?.publicId);
       setIsPublicView(viewingOther);
 
       // If no ID is available and we don't have a token, then redirect
@@ -55,47 +68,37 @@ function ProfileContent() {
         return;
       }
 
-      // 1) Profile info
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      // 1) Define endpoints
       const profileEndpoint = viewingOther
-        ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/${targetId}`
-        : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/me`;
+        ? `${API_URL}/api/user/${targetId}`
+        : `${API_URL}/api/user/me`;
 
-      const resProfile = await fetch(profileEndpoint, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (!resProfile.ok) {
-        throw new Error(`Profile fetch failed: ${resProfile.status}`);
-      }
-      const profileData = await resProfile.json();
-
-      // 1.5) Visit Recording handled by backend on profile fetch
-
-      // 2) Posts
       const postsEndpoint = viewingOther
-        ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts?userId=${targetId}&limit=50&type=all`
-        : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/myposts`;
+        ? `${API_URL}/api/posts?userId=${targetId}&limit=50&type=all`
+        : `${API_URL}/api/user/myposts`;
 
-      const resPosts = await fetch(postsEndpoint, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const activityEndpoint = `${API_URL}/api/user/activity`;
+
+      // ⚡ PARALLEL FETCH: Load everything at once instead of one-by-one
+      const [resProfile, resPosts, resActivity] = await Promise.all([
+        fetch(profileEndpoint, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(postsEndpoint, { headers: { Authorization: `Bearer ${token}` } }),
+        !viewingOther 
+          ? fetch(activityEndpoint, { headers: { Authorization: `Bearer ${token}` } })
+          : Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      ]);
+
+      if (!resProfile.ok) throw new Error(`Profile fetch failed: ${resProfile.status}`);
       
-      let postsData = [];
-      if (resPosts.ok) {
-        const postsRaw = await resPosts.json();
-        postsData = postsRaw.posts || postsRaw;
-      }
+      const [profileData, postsRaw, activityData] = await Promise.all([
+        resProfile.json(),
+        resPosts.ok ? resPosts.json() : Promise.resolve([]),
+        resActivity.ok ? resActivity.json() : Promise.resolve([])
+      ]);
 
-      // 3) Activity
-      let activityData = [];
-      if (!viewingOther) {
-        const resActivity = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/user/activity`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (resActivity.ok) {
-          activityData = await resActivity.json();
-        }
-      }
+      const postsData = postsRaw.posts || postsRaw;
 
       setProfile({
         ...profileData,
@@ -106,6 +109,7 @@ function ProfileContent() {
       setLoading(false);
     } catch (error) {
       console.error("❌ Error fetching profile:", error.message);
+      setLoading(false);
     }
   }, [profileId, router]);
 

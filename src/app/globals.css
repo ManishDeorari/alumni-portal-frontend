@@ -15,9 +15,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Tailwind dark mode class support overrides */
+:root.dark {
+  --background: #0f172a; /* Slate 900 for premium dark feeling instead of pure black/white flash */
+  --foreground: #ededed;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #0f172a;
     --foreground: #ededed;
   }
 }

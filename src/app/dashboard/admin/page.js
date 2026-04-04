@@ -52,12 +52,24 @@ export default function AdminDashboardPage() {
         return;
       }
       try {
+        // ⚡ INSTANT LOAD: Hydrate UI immediately from valid cache
+        const cachedUser = localStorage.getItem("user");
+        if (cachedUser) {
+          const parsed = JSON.parse(cachedUser);
+          if (parsed.isAdmin || parsed.role === "admin") {
+            setUser(parsed);
+            setLoading(false);
+          }
+        }
+
         const res = await fetch(`${API}/api/user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Unauthorized");
+        
         setUser(data);
+        localStorage.setItem("user", JSON.stringify(data)); // Refresh cache silently
 
         if (!data.isAdmin) {
           toast.error("Access denied — admin only");

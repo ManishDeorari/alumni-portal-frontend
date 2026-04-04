@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -57,8 +58,7 @@ export default function SignupPage() {
       router.push("/auth/login");
     } catch (err) {
       setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only stop loading if there was an error
     }
   };
 
@@ -66,6 +66,7 @@ export default function SignupPage() {
 
   return (
     <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-8 transition-colors duration-500 text-white`}>
+      <LoadingOverlay isVisible={loading} message="Creating Account..." />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>

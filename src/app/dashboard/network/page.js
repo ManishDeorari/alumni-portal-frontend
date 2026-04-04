@@ -31,24 +31,35 @@ const NetworkPage = () => {
     industry: ""
   });
 
+  // ⚡ OPTIMISTIC HYDRATION
+  useEffect(() => {
+    const cachedUser = localStorage.getItem("user");
+    if (cachedUser) {
+      setCurrentUser(JSON.parse(cachedUser));
+    }
+  }, []);
+
   const fetchData = useCallback(async () => {
     const token = localStorage.getItem("token");
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
     try {
-      // Get current user
-      const meRes = await fetch(`${BASE_URL}/api/user/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const meData = await meRes.json();
-      setCurrentUser(meData);
+      // ⚡ PARALLEL FETCH: Load user and suggestions simultaneously
+      const [meRes, suggRes] = await Promise.all([
+        fetch(`${BASE_URL}/api/user/me`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${BASE_URL}/api/connect/suggestions`, { headers: { Authorization: `Bearer ${token}` } })
+      ]);
 
-      // Get suggestions
-      const suggRes = await fetch(`${BASE_URL}/api/connect/suggestions`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const suggData = await suggRes.json();
-      setSuggestions(suggData || []);
+      const [meData, suggData] = await Promise.all([
+        meRes.json(),
+        suggRes.json().catch(() => ({}))
+      ]);
+
+      if (meRes.ok) {
+        setCurrentUser(meData);
+        localStorage.setItem("user", JSON.stringify(meData)); // Keep cache fresh
+      }
+      setSuggestions(suggData || {});
     } catch (err) {
       console.error("Fetch initial data error:", err);
     }

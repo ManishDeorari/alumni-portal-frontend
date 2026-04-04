@@ -28,6 +28,7 @@ export const metadata = {
 
 import ClientRouteProtection from "./components/ClientRouteProtection";
 import { NotificationProvider } from "@/context/NotificationContext";
+import GlobalNavigationLoader from "./components/ui/GlobalNavigationLoader";
 
 export default function RootLayout({ children }) {
   return (
@@ -54,6 +55,7 @@ export default function RootLayout({ children }) {
           }}
         />
         <ThemeProvider>
+          <GlobalNavigationLoader />
           <NotificationProvider>
             <ClientRouteProtection>
               {children}

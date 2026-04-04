@@ -40,6 +40,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
 
     // Get the absolute latest 5 notifications (sorted by date)
     const latestNotifications = [...notifications]
+        .filter(isNoteUnread)
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 5);
 

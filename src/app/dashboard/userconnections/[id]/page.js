@@ -15,21 +15,31 @@ const UserConnectionsPage = () => {
     const [loading, setLoading] = useState(true);
     const [requested, setRequested] = useState({});
 
+    // ⚡ OPTIMISTIC HYDRATION
+    useEffect(() => {
+        const cachedUser = localStorage.getItem("user");
+        if (cachedUser) {
+            setCurrentUser(JSON.parse(cachedUser));
+        }
+    }, []);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             const token = localStorage.getItem("token");
             const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
             try {
-                // Get current user
-                const meRes = await fetch(`${BASE_URL}/api/user/me`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                // ⚡ PARALLEL FETCH: Load user info and connections simultaneously
+                const [meRes, connectionsData] = await Promise.all([
+                    fetch(`${BASE_URL}/api/user/me`, { headers: { Authorization: `Bearer ${token}` } }),
+                    getUserConnections(id)
+                ]);
+                
                 const meData = await meRes.json();
-                setCurrentUser(meData);
-
-                // Get user connections
-                const data = await getUserConnections(id);
-                setConnections(data || []);
+                if (meRes.ok) {
+                    setCurrentUser(meData);
+                    localStorage.setItem("user", JSON.stringify(meData)); // Refresh cache
+                }
+                setConnections(connectionsData || []);
             } catch (err) {
                 console.error("Fetch initial data error:", err);
             } finally {

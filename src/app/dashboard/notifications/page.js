@@ -54,23 +54,32 @@ export default function NotificationsPage() {
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  // ⚡ OPTIMISTIC HYDRATION
+  useEffect(() => {
+    const cachedUser = localStorage.getItem("user");
+    if (cachedUser) {
+      setUser(JSON.parse(cachedUser));
+      setLoading(false); // Can show UI immediately if we have a cached user
+    }
+  }, []);
+
   useEffect(() => {
     const fetchUserAndNotes = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // Fetch user
+        // Fetch user profile to ensure permissions/role are up to date
         const userRes = await fetch(`${API_URL}/api/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (userRes.ok) {
           const userData = await userRes.json();
           setUser(userData);
+          localStorage.setItem("user", JSON.stringify(userData)); // Sync cache
         }
         
-        // Context handles initial notification fetch on mount, 
-        // but we ensure it's fresh if needed.
+        // Notification context manages fetching notifications; we just trigger a refresh
         refreshNotifications();
       } catch (err) {
         console.error("Error initializing Notifications page:", err);
