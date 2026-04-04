@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { Toaster } from "react-hot-toast"; // ✅ Import Toaster
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -17,13 +18,19 @@ export const metadata = {
   title: "Alumni Portal",
   description: "Connect with your alumni network",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Alumni Portal",
   },
+};
+
+export const viewport = {
+  themeColor: "#2563eb",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: 0,
 };
 
 import ClientRouteProtection from "./components/ClientRouteProtection";
@@ -55,7 +62,9 @@ export default function RootLayout({ children }) {
           }}
         />
         <ThemeProvider>
-          <GlobalNavigationLoader />
+          <Suspense fallback={null}>
+            <GlobalNavigationLoader />
+          </Suspense>
           <NotificationProvider>
             <ClientRouteProtection>
               {children}
