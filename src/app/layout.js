@@ -1,8 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { Toaster } from "react-hot-toast"; // ✅ Import Toaster
+import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/context/ThemeContext";
+import ClientRouteProtection from "./components/ClientRouteProtection";
+import { NotificationProvider } from "@/context/NotificationContext";
+import GlobalNavigationLoader from "./components/ui/GlobalNavigationLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,10 +35,6 @@ export const viewport = {
   maximumScale: 1,
   userScalable: 0,
 };
-
-import ClientRouteProtection from "./components/ClientRouteProtection";
-import { NotificationProvider } from "@/context/NotificationContext";
-import GlobalNavigationLoader from "./components/ui/GlobalNavigationLoader";
 
 export default function RootLayout({ children }) {
   return (
