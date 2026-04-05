@@ -193,11 +193,20 @@ export const NotificationProvider = ({ children }) => {
         fetchCounts(token);
       };
 
+      const handleForceLogout = () => {
+        console.warn("🔐 Account deleted by admin. Forcing logout...");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        // Use window.location for a hard reset of all states
+        window.location.href = "/auth/login?reason=deleted";
+      };
+
       socket.on("newNotification", handleNewNotification);
       socket.on("newPost", handleNewPost);
       socket.on("receiveGroupMessage", handleNewGroupMessage);
       socket.on("newSignupRequest", handleNewSignupRequest);
       socket.on("pointsUpdated", handlePointsUpdated);
+      socket.on("forceLogout", handleForceLogout);
 
       return () => {
         socket.off("connect", handleSocketConnect);
@@ -206,6 +215,7 @@ export const NotificationProvider = ({ children }) => {
         socket.off("receiveGroupMessage", handleNewGroupMessage);
         socket.off("newSignupRequest", handleNewSignupRequest);
         socket.off("pointsUpdated", handlePointsUpdated);
+        socket.off("forceLogout", handleForceLogout);
       };
     }
   }, [fetchNotifications, fetchCounts]);

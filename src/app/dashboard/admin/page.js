@@ -224,19 +224,34 @@ export default function AdminDashboardPage() {
   };
 
   const bulkDeleteUsers = async (ids) => {
+    if (!ids || ids.length === 0) return;
+    setLoading(true);
     try {
-      await Promise.all(ids.map(id => deleteUser(id, true)));
-      toast.success(`Successfully deleted ${ids.length} users!`, { autoClose: 2000 });
+      const res = await fetch(`${API}/api/admin/delete-users-bulk`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify({ userIds: ids })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Bulk delete failed");
+      
+      toast.success(`Successfully deleted ${data.summary.successful} users!`, { duration: 4000 });
+      if (data.summary.failed > 0) {
+        toast.error(`${data.summary.failed} deletions failed.`, { duration: 4000 });
+      }
+
       fetchPendingUsers();
       fetchAdminsList();
       fetchLeaderboard();
       fetchAllUsers();
     } catch (err) {
-      toast.error("Some deletions failed. Please check list.");
-      fetchPendingUsers();
-      fetchAdminsList();
-      fetchLeaderboard();
-      fetchAllUsers();
+      console.error(err);
+      toast.error(err.message || "Bulk deletion failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -363,6 +378,7 @@ export default function AdminDashboardPage() {
               users={allUsers}
               loading={allUsersLoading}
               onDelete={deleteUser}
+              onBulkDelete={bulkDeleteUsers}
               onRefresh={fetchAllUsers}
             />
           )}

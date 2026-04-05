@@ -1,12 +1,21 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const [view, setView] = useState("LOGIN"); // LOGIN | FORGOT_EMAIL | FORGOT_OTP
   const [form, setForm] = useState({ identifier: "", password: "" });
@@ -24,6 +33,27 @@ export default function LoginPage() {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   // Countdown timer for OTP
+  const searchParams = useSearchParams();
+  const logoutReason = searchParams.get("reason");
+
+  React.useEffect(() => {
+    if (logoutReason === "deleted") {
+      toast.error("Your account has been removed by the administrator.", {
+        duration: 6000,
+        icon: "🚫",
+        style: {
+          background: "#991b1b",
+          color: "#fff",
+          border: "1px solid #7f1d1d",
+          borderRadius: "15px",
+          fontWeight: "bold"
+        }
+      });
+      // Clear URL params to avoid showing toast again on refresh
+      router.replace("/auth/login");
+    }
+  }, [logoutReason, router]);
+
   React.useEffect(() => {
     let interval;
     if (view === "FORGOT_OTP" && timer > 0) {
