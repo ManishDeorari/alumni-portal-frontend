@@ -18,8 +18,14 @@ export default function PointsSystemManagement({ user }) {
         profileCompletionPoints: 50,
         connectionPoints: 10,
         postPoints: 10,
+        likePoints: 2,
+        commentPoints: 3,
         postLimitCount: 3,
         postLimitDays: 7,
+        likeLimitCount: 10,
+        likeLimitDays: 1,
+        commentLimitCount: 5,
+        commentLimitDays: 1,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -186,37 +192,106 @@ export default function PointsSystemManagement({ user }) {
                         <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
                         <span className={darkMode ? "text-white" : "text-slate-900"}>Global System Config</span>
                     </h2>
-                    <form onSubmit={handleUpdateConfig} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[
-                            { label: "Profile Completion", key: "profileCompletionPoints" },
-                            { label: "Networking (Connect)", key: "connectionPoints" },
-                            { label: "Post Creation", key: "postPoints" },
-                            { label: "Post Likes", key: "likePoints" },
-                            { label: "Post Comments", key: "commentPoints" },
-                            { label: "Alumni Session Points", key: "sessionPoints" },
-                            { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
-                            { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
-                        ].map((item) => (
-                            <div key={item.key} className="space-y-3">
-                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
-                                    {item.label}
-                                </label>
-                                <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
-                                    <input
-                                        type="number"
-                                        value={config[item.key]}
-                                        onChange={(e) => setConfig({ ...config, [item.key]: parseInt(e.target.value) })}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner`}
-                                    />
-                                    {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase`}>{item.sub}</span>}
+                    <form onSubmit={handleUpdateConfig} className="space-y-10">
+                        {/* Row 1: Reward Points */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {[
+                                { label: "Post Creation", key: "postPoints" },
+                                { label: "Post Likes", key: "likePoints" },
+                                { label: "Post Comments", key: "commentPoints" },
+                            ].map((item) => (
+                                <div key={item.key} className="space-y-3">
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
+                                        {item.label}
+                                    </label>
+                                    <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
+                                        <input
+                                            type="number"
+                                            value={config[item.key] ?? ""}
+                                            onChange={(e) => setConfig({ ...config, [item.key]: e.target.value === "" ? "" : parseInt(e.target.value) })}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                        <div className="flex items-end">
+                            ))}
+                        </div>
+
+                        {/* Row 2: Frequency Limits */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {[
+                                { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
+                                { label: "Like Frequency Limit", key: "likeLimitCount", sub: "Max likes" },
+                                { label: "Comment Frequency Limit", key: "commentLimitCount", sub: "Max comments" },
+                            ].map((item) => (
+                                <div key={item.key} className="space-y-3">
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
+                                        {item.label}
+                                    </label>
+                                    <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
+                                        <input
+                                            type="number"
+                                            value={config[item.key] ?? ""}
+                                            onChange={(e) => setConfig({ ...config, [item.key]: e.target.value === "" ? "" : parseInt(e.target.value) })}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                        />
+                                        {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase pointer-events-none`}>{item.sub}</span>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Row 3: Rolling Windows */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {[
+                                { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
+                                { label: "Like Window (Days)", key: "likeLimitDays", sub: "Rolling days" },
+                                { label: "Comment Window (Days)", key: "commentLimitDays", sub: "Rolling days" },
+                            ].map((item) => (
+                                <div key={item.key} className="space-y-3">
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
+                                        {item.label}
+                                    </label>
+                                    <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
+                                        <input
+                                            type="number"
+                                            value={config[item.key] ?? ""}
+                                            onChange={(e) => setConfig({ ...config, [item.key]: e.target.value === "" ? "" : parseInt(e.target.value) })}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                        />
+                                        {item.sub && <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase pointer-events-none`}>{item.sub}</span>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Row 4: Other Points & Submit */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+                            {[
+                                { label: "Profile Completion", key: "profileCompletionPoints" },
+                                { label: "Networking (Connect)", key: "connectionPoints" },
+                            ].map((item) => (
+                                <div key={item.key} className="space-y-3">
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
+                                        {item.label}
+                                    </label>
+                                    <div className="relative group/input p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-sm">
+                                        <input
+                                            type="number"
+                                            value={config[item.key] ?? ""}
+                                            onChange={(e) => setConfig({ ...config, [item.key]: e.target.value === "" ? "" : parseInt(e.target.value) })}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2 group/btn"
+                                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black h-[58px] rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2 group/btn mb-[2px]"
                             >
                                 {saving ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

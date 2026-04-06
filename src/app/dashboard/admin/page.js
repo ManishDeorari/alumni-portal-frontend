@@ -161,11 +161,18 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
+    // 🛡️ RBAC: If a normal admin somehow lands on a restricted tab, reset to pending
+    const restrictedTabs = ["users", "admins", "points"];
+    if (user && !user.isMainAdmin && restrictedTabs.includes(activeTab)) {
+      setActiveTab("pending");
+      return;
+    }
+
     if (activeTab === "pending") fetchPendingUsers();
-    if (activeTab === "admins") fetchAdminsList();
+    if (activeTab === "admins" && user?.isMainAdmin) fetchAdminsList();
     if (activeTab === "leaderboard") fetchLeaderboard();
-    if (activeTab === "users") fetchAllUsers();
-  }, [activeTab, fetchAdminsList, fetchLeaderboard, fetchPendingUsers, fetchAllUsers]);
+    if (activeTab === "users" && user?.isMainAdmin) fetchAllUsers();
+  }, [activeTab, fetchAdminsList, fetchLeaderboard, fetchPendingUsers, fetchAllUsers, user]);
 
   // Actions
   const approveUser = async (id) => {
@@ -345,7 +352,7 @@ export default function AdminDashboardPage() {
                 <nav className={`flex flex-wrap items-center justify-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem]`}>
                   <TabButton id="pending" label="Pending" />
                   {user?.isMainAdmin && <TabButton id="users" label="Users" />}
-                  <TabButton id="admins" label="Admins" />
+                  {user?.isMainAdmin && <TabButton id="admins" label="Admins" />}
                   <TabButton id="leaderboard" label="Rankings" />
                   <TabButton id="export" label="Export" />
                   {user?.isMainAdmin && <TabButton id="points" label="Points" />}
@@ -370,7 +377,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* USER MANAGEMENT */}
-          {activeTab === "users" && (
+          {activeTab === "users" && user?.isMainAdmin && (
             <UserManagement
               users={allUsers}
               loading={allUsersLoading}
@@ -381,7 +388,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* MANAGE ADMINS */}
-          {activeTab === "admins" && (
+          {activeTab === "admins" && user?.isMainAdmin && (
             <AdminsManager
               adminsList={adminsList}
               adminsLoading={adminsLoading}

@@ -71,10 +71,10 @@ export default function AlumniExport() {
 
         // Row 3: Column Names
         const r3 = [
-            "S.No", "Enrollment No", "Name", "Email", "Phone",
+            "S.No", "ID", "Enrollment No", "Name", "Email", "Linkedin URL", "Phone",
             "City", "State", "Country",
-            "School Name", "Year", "Grades/%",
-            "School Name", "Year", "Grades/%",
+            "School Name", "Passing Year", "Grades/%",
+            "School Name", "Passing Year", "Grades/%",
             "College Name", "Campus", "Course", "Start Year", "End Year", "Grades/%",
             "College Name", "Campus", "Course", "Start Year", "End Year", "Grades/%",
             "Recent Role", "Company", "Duration"
@@ -126,17 +126,24 @@ export default function AlumniExport() {
             const state = addrParts[1] || "N/A";
             const country = addrParts[2] || "N/A";
 
+            // Format plain text values for Excel
+            const publicIdText = u.publicId ? `@${u.publicId}` : "N/A";
+            const linkedinText = u.linkedin && u.linkedin.startsWith("http") ? u.linkedin : 
+                                u.linkedin ? `https://linkedin.com/in/${u.linkedin.replace(/[^a-zA-Z0-9-]/g, '')}` : "N/A";
+
             worksheet.addRow([
                 index + 1,
+                publicIdText,
                 u.enrollmentNumber || "N/A",
                 u.name,
                 u.email,
+                linkedinText,
                 formatPhone(u.phone),
                 city, state, country,
                 hs.institution || "NA", hs.endDate?.split(" ").pop() || "NA", hs.grade || "NA",
                 inter.institution || "NA", inter.endDate?.split(" ").pop() || "NA", inter.grade || "NA",
-                ug.institution || "NA", ug.campus || "NA", ug.fieldOfStudy || "NA", ug.startDate?.split(" ").pop() || "NA", ug.endDate?.split(" ").pop() || "NA", ug.grade || "NA",
-                pg.institution || "NA", pg.campus || "NA", pg.fieldOfStudy || "NA", pg.startDate?.split(" ").pop() || "NA", pg.endDate?.split(" ").pop() || "NA", pg.grade || "NA",
+                ug.institution || "NA", ug.campus || "NA", ug.course || ug.fieldOfStudy || "NA", ug.startDate?.split(" ").pop() || "NA", ug.endDate?.split(" ").pop() || "NA", ug.grade || "NA",
+                pg.institution || "NA", pg.campus || "NA", pg.course || pg.fieldOfStudy || "NA", pg.startDate?.split(" ").pop() || "NA", pg.endDate?.split(" ").pop() || "NA", pg.grade || "NA",
                 recentExp.title || "NA", recentExp.company || "NA", recentExp.startDate && recentExp.endDate ? `${recentExp.startDate} - ${recentExp.endDate}` : "NA"
             ]);
         });
@@ -258,10 +265,10 @@ export default function AlumniExport() {
                         <div className="space-y-4">
                             {/* Header Row */}
                             <div className={`flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white/60" : "text-slate-500"} text-[10px] uppercase font-black tracking-[0.3em]`}>
-                                <div className="flex-1">Alumni Identity</div>
-                                <div className="w-48">Academic Info</div>
-                                <div className="w-48 font-black">Location</div>
-                                <div className="w-32 font-black text-right">Industry</div>
+                                <div className="flex-1"></div>
+                                <div className="w-48"></div>
+                                <div className="w-48 font-black"></div>
+                                <div className="w-32 font-black text-right"></div>
                             </div>
 
                             {/* Alumni Preview Rows */}
@@ -270,29 +277,41 @@ export default function AlumniExport() {
                                     key={u._id} 
                                     className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
                                 >
-                                    <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-5 flex items-center gap-4`}>
-                                        {/* Identity */}
-                                        <div className="flex-1 min-w-0">
-                                            <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
-                                            <p className={`${darkMode ? "text-blue-400" : "text-slate-600"} text-xs font-bold truncate`}>{u.email}</p>
+                                    <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-4 flex items-center justify-between gap-6`}>
+                                        <div className="flex items-center gap-5 flex-1 min-w-0">
+                                            {/* Profile Image */}
+                                            <div className="relative flex-shrink-0">
+                                                <div className="absolute -inset-1 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl blur-[2px] opacity-30"></div>
+                                                <img 
+                                                    src={u.profilePicture || "/default-profile.jpg"} 
+                                                    alt={u.name}
+                                                    className="h-12 w-12 rounded-xl object-cover relative z-10 border-2 border-white/10"
+                                                />
+                                            </div>
+
+                                            {/* Name */}
+                                            <div className="min-w-0 flex-1">
+                                                <p className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"} font-black mb-0.5`}>Full Name</p>
+                                                <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                                            </div>
+
+                                            {/* Enrollment Number */}
+                                            <div className="hidden md:block w-40">
+                                                <p className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-purple-400" : "text-purple-600"} font-black mb-0.5`}>Enrollment</p>
+                                                <p className={`font-black text-sm ${darkMode ? "text-white" : "text-slate-900"} truncate opacity-80`}>{u.enrollmentNumber || "N/A"}</p>
+                                            </div>
+
+                                            {/* Email */}
+                                            <div className="hidden lg:block flex-1 min-w-0">
+                                                <p className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-pink-400" : "text-pink-600"} font-black mb-0.5`}>Email Address</p>
+                                                <p className={`font-black text-sm ${darkMode ? "text-white" : "text-slate-900"} truncate opacity-80`}>{u.email}</p>
+                                            </div>
                                         </div>
 
-                                        {/* Academic */}
-                                        <div className="w-48">
-                                            <span className={`text-[10px] font-black ${darkMode ? "text-white bg-blue-600/20 border-blue-500/30" : "text-slate-900 bg-blue-50 border-blue-100"} px-4 py-2 rounded-xl border-2 uppercase tracking-widest whitespace-nowrap`}>
-                                                {u.course} | {u.year}
-                                            </span>
-                                        </div>
-
-                                        {/* Location */}
-                                        <div className={`w-48 text-[10px] font-black uppercase tracking-tight ${darkMode ? "text-white" : "text-slate-900"} truncate`}>
-                                            {u.address || "N/A"}
-                                        </div>
-
-                                        {/* Industry */}
-                                        <div className="w-32 text-right">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full border-2 border-blue-500/20">
-                                                {u.workProfile?.industry || "N/A"}
+                                        {/* Status Tag (Optional, for visual balance) */}
+                                        <div className="hidden sm:block">
+                                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border-2 ${darkMode ? "border-white/10 text-white/40" : "border-slate-100 text-slate-400"}`}>
+                                                Ready for Export
                                             </span>
                                         </div>
                                     </div>

@@ -277,6 +277,17 @@ export  const NotificationProvider = ({ children }) => {
         fetchCounts(token);
       };
 
+      const handleLiveNotification = (notification) => {
+        if (!notification) return;
+        setNotifications(prev => {
+          if (prev.some(n => n._id === notification._id)) return prev;
+          return [{ ...notification, isRead: false }, ...prev];
+        });
+        setUnreadCount(prev => prev + 1);
+        setShakeNotification(true);
+        setTimeout(() => setShakeNotification(false), 1000);
+      };
+
       const handleForceLogout = () => {
         console.warn("🔐 Account deleted by admin. Forcing logout...");
         localStorage.removeItem("token");
@@ -286,6 +297,7 @@ export  const NotificationProvider = ({ children }) => {
       };
 
       socket.on("newNotification", handleNewNotification);
+      socket.on("liveNotification", handleLiveNotification);
       socket.on("newPost", handleNewPost);
       socket.on("receiveGroupMessage", handleNewGroupMessage);
       socket.on("newSignupRequest", handleNewSignupRequest);
@@ -295,6 +307,7 @@ export  const NotificationProvider = ({ children }) => {
       return () => {
         socket.off("connect", handleSocketConnect);
         socket.off("newNotification", handleNewNotification);
+        socket.off("liveNotification", handleLiveNotification);
         socket.off("newPost", handleNewPost);
         socket.off("receiveGroupMessage", handleNewGroupMessage);
         socket.off("newSignupRequest", handleNewSignupRequest);
