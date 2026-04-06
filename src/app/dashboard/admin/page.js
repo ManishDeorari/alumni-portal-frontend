@@ -185,7 +185,6 @@ export default function AdminDashboardPage() {
   };
 
   const deleteUser = async (id, isBulk = false) => {
-    if (!isBulk && !window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const res = await fetch(`${API}/api/admin/delete-user/${id}`, {
         method: "DELETE",
@@ -279,8 +278,6 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (!window.confirm("Are you sure you want to demote this admin back to faculty?")) return;
-
     try {
       const res = await fetch(`${API}/api/admin/remove-admin/${id}`, {
         method: "PUT",
@@ -299,12 +296,12 @@ export default function AdminDashboardPage() {
   const TabButton = ({ id, label }) => {
     const isActive = activeTab === id;
     return (
-      <div className={`p-[1px] rounded-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-r from-blue-400 to-purple-400 scale-105 shadow-xl shadow-blue-500/20" : "bg-transparent"}`}>
+      <div className={`p-[2px] rounded-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl shadow-blue-500/10" : "bg-transparent"}`}>
         <button
           onClick={() => setActiveTab(id)}
-          className={`px-6 py-2.5 rounded-[calc(1rem-1px)] transition-all duration-300 font-bold text-sm ${isActive
-            ? `${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-blue-700"}`
-            : `${darkMode ? "bg-[#FAFAFA]/5 text-white/60 hover:bg-[#FAFAFA]/10 hover:text-white" : "bg-black/5 text-black/60 hover:bg-black/10 hover:text-black"} border border-white/5`
+          className={`px-6 py-3.5 rounded-[calc(1rem-2px)] transition-all duration-300 font-black text-[10px] uppercase tracking-wider ${isActive
+            ? `${darkMode ? "bg-black text-white" : "bg-white text-blue-600"}`
+            : `${darkMode ? "bg-white/5 text-white hover:bg-white/10" : "bg-black/5 text-slate-900 hover:bg-black/10"} border-2 border-transparent`
             }`}
         >
           {label}
@@ -329,27 +326,27 @@ export default function AdminDashboardPage() {
 
       <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Header & Tabs */}
-        <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
+        <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
           <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
             <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/20 shadow-inner">
-                  <Shield className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border-2 border-blue-400/30 shadow-2xl">
+                  <Shield className="w-6 h-6 text-blue-500" />
                 </div>
                 <div className="text-left">
                   <h1 className={`text-2xl md:text-3xl font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Admin Panel</h1>
-                  <p className={`${darkMode ? "text-blue-100/40" : "text-slate-500"} text-xs font-bold uppercase tracking-widest mt-1`}>
+                  <p className={`${darkMode ? "text-white" : "text-slate-900"} text-xs font-black uppercase tracking-[0.2em] mt-2`}>
                     Master Control Center
                   </p>
                 </div>
               </div>
 
-              <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[1.6rem] shadow-lg">
-                <nav className={`flex flex-wrap items-center justify-center gap-2 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-1 rounded-[1.5rem]`}>
+              <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[1.6rem] shadow-lg">
+                <nav className={`flex flex-wrap items-center justify-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem]`}>
                   <TabButton id="pending" label="Pending" />
-                  {user?.isMainAdmin && <TabButton id="users" label="User Mgmt" />}
+                  {user?.isMainAdmin && <TabButton id="users" label="Users" />}
                   <TabButton id="admins" label="Admins" />
-                  <TabButton id="leaderboard" label="Leaderboard" />
+                  <TabButton id="leaderboard" label="Rankings" />
                   <TabButton id="export" label="Export" />
                   {user?.isMainAdmin && <TabButton id="points" label="Points" />}
                 </nav>

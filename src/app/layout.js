@@ -50,14 +50,39 @@ export default function RootLayout({ children }) {
             top: 100,
           }}
           toastOptions={{
-            duration: 3000,
+            duration: 4000,
             style: {
-              background: "#1f2937", 
-              color: "#facc15",       
-              borderRadius: "12px",
-              padding: "12px 20px",
-              fontSize: "16px",
-              zIndex: 99999, 
+              background: "rgba(0, 0, 0, 0.85)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              color: "#fff",
+              borderRadius: "20px",
+              padding: "16px 24px",
+              fontSize: "14px",
+              fontWeight: "900",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              zIndex: 99999,
+            },
+            success: {
+              iconTheme: {
+                primary: "#10b981",
+                secondary: "#fff",
+              },
+              style: {
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "#ef4444",
+                secondary: "#fff",
+              },
+              style: {
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+              },
             },
           }}
         />

@@ -62,62 +62,60 @@ export default function Leaderboard() {
   };
 
   const Card = ({ title, users, pointsKey }) => (
-    <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-12 transition-all hover:shadow-blue-500/10">
-      <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
-        <div className={`px-10 py-6 ${darkMode ? "bg-[#FAFAFA]/5" : "bg-gray-50/50"} flex items-center justify-between`}>
+    <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden mb-12 transition-all hover:shadow-blue-500/10">
+      <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-2px)] overflow-hidden`}>
+        <div className={`px-10 py-6 ${darkMode ? "bg-white/5" : "bg-gray-50/50"} flex items-center justify-between border-b ${darkMode ? "border-white/10" : "border-gray-200"}`}>
           <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight`}>{title}</h2>
-          <div className={`px-4 py-1.5 ${darkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"} rounded-xl shadow-lg`}>
-            <span className="font-black text-[10px] uppercase tracking-widest">{users.length} Ranked</span>
+          <div className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow-lg border border-blue-400/30">
+            <span className="font-black text-xs uppercase tracking-widest">{users.length} Ranked</span>
           </div>
         </div>
-        {/* Gradient Separator */}
-        <div className="h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-sm"></div>
         <div className="p-6 md:p-10">
           {users.length === 0 ? (
             <div className="py-20 text-center">
-              <div className="w-20 h-20 bg-[#FAFAFA]/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
-                <svg className="w-10 h-10 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
-              <p className={`${darkMode ? "text-blue-300" : "text-slate-500"} font-bold italic text-lg`}>No eligible users found for this rank.</p>
+              <p className={`${darkMode ? "text-white" : "text-slate-500"} font-black italic text-lg`}>No eligible users found for this rank.</p>
             </div>
           ) : (
-            <ul className="space-y-4">
+            <ul className="space-y-5">
               {users.map((user, index) => (
-                <div key={user._id} className="p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl shadow-xl transition-all hover:scale-[1.01]">
-                  <li
-                    className={`flex items-center justify-between ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1rem-1px)] p-5 group transition-all duration-300`}
-                  >
-                    <div className="flex items-center space-x-5">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${index === 0 ? "bg-yellow-500/30 text-yellow-500 border-2 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)]" :
-                        index === 1 ? "bg-slate-300/30 text-slate-300 border-2 border-slate-300" :
-                          index === 2 ? "bg-amber-600/30 text-amber-500 border-2 border-amber-600" :
-                            darkMode ? "bg-[#FAFAFA]/10 text-white border border-white/10" : "bg-gray-100 text-slate-900 border-gray-200"
-                        }`}>
-                        {index + 1}
-                      </div>
-                      <Image
-                        src={user.profilePicture || "/default-profile.jpg"}
-                        alt={user.name}
-                        width={56}
-                        height={56}
-                        className="w-14 h-14 rounded-2xl object-cover border-2 border-white/10 bg-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="min-w-0">
-                        <Link
-                          href={`/profile/${user.publicId || user._id}`}
-                          className={`font-black text-xl ${darkMode ? "text-white" : "text-slate-900"} hover:text-blue-500 transition-colors block truncate`}
-                        >
-                          {user.name}
-                        </Link>
-                        <p className={`text-xs font-black ${darkMode ? "text-blue-300" : "text-slate-600"} tracking-widest uppercase`}>{user.enrollmentNumber || "Alumni"}</p>
+                <div key={user._id} className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl transition-all hover:scale-[1.01]">
+                    <li
+                      className={`flex items-center justify-between ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1rem-2px)] p-3 group transition-all duration-300`}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg shadow-xl ${index === 0 ? "bg-yellow-500 text-white border-2 border-yellow-400 shadow-yellow-500/40" :
+                          index === 1 ? "bg-slate-300 text-slate-900 border-2 border-slate-200 shadow-slate-300/40" :
+                            index === 2 ? "bg-amber-600 text-white border-2 border-amber-500 shadow-amber-600/40" :
+                              darkMode ? "bg-white/10 text-white border border-white/20" : "bg-gray-100 text-slate-900 border-gray-200"
+                          }`}>
+                          {index + 1}
+                        </div>
+                        <Image
+                          src={user.profilePicture || "/default-profile.jpg"}
+                          alt={user.name}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-xl object-cover border-2 border-white/10 bg-gray-800 shadow-2xl group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="min-w-0">
+                          <Link
+                            href={`/profile/${user.publicId || user._id}`}
+                            className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} hover:text-blue-500 transition-colors block truncate`}
+                          >
+                            {user.name}
+                          </Link>
+                          <p className={`text-[10px] font-black ${darkMode ? "text-white/60" : "text-slate-500"} tracking-widest uppercase mt-0.5`}>{user.enrollmentNumber || "Alumni"}</p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handlePointClick(user)}
-                      className={`px-6 py-3 ${darkMode ? "bg-blue-600/20 border-blue-500/30 text-blue-300" : "bg-blue-600 text-white border-blue-700"} hover:bg-blue-600 hover:text-white border rounded-xl font-black text-xl transition-all shadow-lg active:scale-95 flex items-center gap-2`}
-                    >
-                      {user[pointsKey]?.total ?? 0} <span className="text-xs uppercase tracking-tighter">pts</span>
-                    </button>
+                      <button
+                        onClick={() => handlePointClick(user)}
+                        className={`px-6 py-2.5 ${darkMode ? "bg-blue-600/20 border-blue-500/40 text-blue-400" : "bg-blue-600 text-white border-blue-700"} hover:bg-blue-600 hover:text-white border-2 rounded-xl font-black text-lg transition-all shadow-2xl active:scale-95 flex items-center gap-2`}
+                      >
+                        {user[pointsKey]?.total ?? 0} <span className="text-[8px] uppercase tracking-tighter">pts</span>
+                      </button>
                   </li>
                 </div>
               ))}
@@ -135,24 +133,24 @@ export default function Leaderboard() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-4xl mx-auto space-y-10"
     >
-      <div className="p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2rem] shadow-2xl overflow-hidden">
-        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
+      <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden">
+        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-8 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-3xl p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden`}>
           <div>
-            <h1 className={`text-3xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight mb-2 flex items-center gap-3`}>
+            <h1 className={`text-4xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight mb-3 flex items-center gap-4`}>
               🏆 Alumni Leaderboard
             </h1>
-            <p className={`${darkMode ? "text-blue-100/40" : "text-slate-500"} text-sm font-bold uppercase tracking-widest`}>Global Rankings &amp; Points breakdown</p>
+            <p className={`${darkMode ? "text-white" : "text-slate-900"} text-sm font-black uppercase tracking-[0.2em]`}>Global Rankings &amp; Verified Points</p>
           </div>
-          <div className="relative w-full md:w-80 p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
+          <div className="relative w-full md:w-96 p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl shadow-xl">
             <div className="relative h-full">
               <input
                 type="text"
-                placeholder="Search by name or enrollment…"
+                placeholder="Search individuals..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black"} rounded-2xl outline-none transition-all font-medium`}
+                className={`w-full pl-14 pr-4 py-4 ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-black text-lg`}
               />
-              <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white/20" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className={`absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 ${darkMode ? "text-white" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
           </div>
         </div>

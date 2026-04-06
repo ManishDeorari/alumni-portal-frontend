@@ -174,16 +174,16 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
                     <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-8 rounded-[calc(1.5rem-1px)] space-y-8`}>
                         {/* Status Bar Section (As Requested: Counters) */}
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-white/5 font-black uppercase tracking-widest">
-                            <div className="flex items-center gap-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-white/10 font-black uppercase tracking-widest text-lg">
+                            <div className="flex items-center gap-8">
                                 <div className="text-left">
-                                    <p className={`${darkMode ? "text-blue-300" : "text-blue-600"} text-[10px]`}>Total Members</p>
-                                    <p className={`text-4xl ${darkMode ? "text-white" : "text-slate-900"}`}>{users.length}</p>
+                                    <p className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-[11px]`}>Total Members</p>
+                                    <p className={`text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{users.length}</p>
                                 </div>
-                                <div className={`w-[2px] h-12 ${darkMode ? "bg-white/10" : "bg-gray-200"}`}></div>
+                                <div className={`w-[2px] h-12 ${darkMode ? "bg-white/20" : "bg-gray-300"}`}></div>
                                 <div className="text-left">
-                                    <p className={`${darkMode ? "text-purple-400" : "text-purple-600"} text-[10px]`}>In Current View</p>
-                                    <p className={`text-4xl ${darkMode ? "text-white" : "text-slate-900"}`}>{displayedUsers.length}</p>
+                                    <p className={`${darkMode ? "text-purple-500" : "text-purple-600"} text-[11px]`}>In Current View</p>
+                                    <p className={`text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{displayedUsers.length}</p>
                                 </div>
                             </div>
                             
@@ -199,7 +199,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
 
                         {/* Search Bar Grid */}
                         <div className="flex flex-col md:flex-row gap-4">
-                            <div className="relative flex-1 p-[1px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
+                            <div className="relative flex-1 p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg">
                                 <div className="relative h-full">
                                     <input
                                         type="text"
@@ -207,9 +207,9 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         value={searchQuery}
                                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-2xl outline-none transition-all font-medium`}
+                                        className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
                                     />
-                                    <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-blue-400" : "text-gray-400"}`} />
+                                    <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white" : "text-gray-900"}`} />
                                 </div>
                             </div>
                             <button
@@ -222,10 +222,10 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         </div>
 
                         {/* Filter Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5 z-[60]">
-                                <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white/50" : "text-slate-500"} ml-2 font-black`}>Course</label>
-                                <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl relative">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2 z-[60]">
+                                <label className={`text-[10px] uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-3 font-black`}>Course</label>
+                                <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
                                     <HybridInput
                                         value={filters.course}
                                         onChange={(val) => setFilters({ ...filters, course: val })}
@@ -233,22 +233,22 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         placeholder="All Courses"
                                         uppercase={true}
                                         placement="top"
-                                        className={`w-full px-4 py-3.5 ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-200"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold italic`}
+                                        className={`w-full px-5 py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[11px] uppercase tracking-[0.2em] outline-none font-black`}
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-1.5 relative">
-                                <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white/50" : "text-slate-500"} ml-2 font-black`}>Batch / Graduation Year</label>
-                                <div className="p-[1px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl relative">
+                            <div className="space-y-2 relative">
+                                <label className={`text-[10px] uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-3 font-black`}>Batch / Graduation Year</label>
+                                <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
                                     <select
                                         value={filters.year}
                                         onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                                        className={`w-full px-4 py-[15px] ${darkMode ? "bg-black text-white" : "bg-[#FAFAFA] text-black border border-gray-100"} rounded-xl text-[10px] uppercase tracking-widest outline-none font-bold appearance-none cursor-pointer`}
+                                        className={`w-full px-5 py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[11px] uppercase tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
                                     >
                                         <option value="">All Years</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                     </select>
-                                    <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-blue-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                                    <svg className={`w-5 h-5 absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-blue-400" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                                 </div>
                             </div>
                         </div>
@@ -263,127 +263,129 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         </p>
                     </div>
                 ) : (
-                    <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all">
-                        <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-1px)] overflow-hidden`}>
-                            <div className="overflow-x-auto custom-scrollbar">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className={`${darkMode ? "text-white border-white/10 bg-[#FAFAFA]/5" : "text-slate-900 border-gray-100 bg-gray-50"} text-[10px] uppercase font-black tracking-[0.2em] border-b`}>
-                                            <th className="py-4 px-6 text-left w-12">
-                                                <div 
-                                                    onClick={handleSelectAll}
-                                                    className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
-                                                        isAllSelected 
-                                                            ? "bg-blue-500 border-blue-500" 
-                                                            : isIndeterminate 
-                                                                ? "bg-blue-500/50 border-blue-500" 
-                                                                : `${darkMode ? "border-white/20 hover:border-white/40" : "border-gray-300 hover:border-gray-400"}`
-                                                    }`}
-                                                >
-                                                    {isAllSelected && <Check className="w-3.5 h-3.5 text-white stroke-[4]" />}
-                                                    {isIndeterminate && <Minus className="w-3.5 h-3.5 text-white stroke-[4]" />}
-                                                </div>
-                                            </th>
-                                            <th className="py-4 px-4 text-left font-black">User Profile</th>
-                                            <th className="py-4 px-8 text-left font-black">Role</th>
-                                            <th className="py-4 px-8 text-left md:table-cell hidden font-black">Identity</th>
-                                            <th className="py-4 px-8 text-right font-black">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className={`${darkMode ? "divide-white/5" : "divide-gray-100"}`}>
-                                        {displayedUsers.map((u) => {
-                                            const isSelected = selectedUsers.includes(u._id);
-                                            return (
-                                                <tr 
-                                                    key={u._id} 
-                                                    onClick={() => toggleSelect(u._id)}
-                                                    className={`group ${darkMode ? "hover:bg-[#FAFAFA]/5" : "hover:bg-gray-50"} ${isSelected ? (darkMode ? "bg-blue-500/10" : "bg-blue-50") : ""} transition-all cursor-pointer`}
-                                                >
-                                                    <td className="py-5 px-6" onClick={(e) => e.stopPropagation()}>
-                                                        <div 
-                                                            onClick={() => toggleSelect(u._id)}
-                                                            className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
-                                                                isSelected 
-                                                                    ? "bg-blue-500 border-blue-500" 
-                                                                    : `${darkMode ? "border-white/20 group-hover:border-white/40" : "border-gray-300 group-hover:border-gray-400"}`
-                                                            }`}
-                                                        >
-                                                            {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-5 px-4">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="relative shrink-0">
-                                                                {u.profilePicture ? (
-                                                                    <img 
-                                                                        src={u.profilePicture} 
-                                                                        alt={u.name} 
-                                                                        className={`w-10 h-10 rounded-full object-cover border ${darkMode ? "border-white/10" : "border-gray-200"}`}
-                                                                    />
-                                                                ) : (
-                                                                    <div className={`w-10 h-10 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border ${darkMode ? "border-blue-400/20" : "border-blue-200"} flex items-center justify-center font-black text-xs`}>
-                                                                        {u.name.charAt(0)}
-                                                                    </div>
-                                                                )}
-                                                                {isSelected && (
-                                                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center border-2 border-black">
-                                                                        <Check className="w-2.5 h-2.5 text-white stroke-[4]" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className="min-w-0">
-                                                                <p className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} truncate text-sm`}>{u.name}</p>
-                                                                <p className={`text-[10px] ${darkMode ? "text-blue-300" : "text-slate-600"} truncate`}>{u.email}</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-5 px-8">
-                                                        <span className={`text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest ${u.isAdmin
-                                                            ? (darkMode ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" : "bg-purple-100 text-purple-700 border border-purple-200")
-                                                            : (darkMode ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" : "bg-blue-100 text-blue-700 border border-blue-200")
-                                                            }`}>
-                                                            {u.role || (u.isAdmin ? 'Admin' : 'Member')}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-5 px-8 md:table-cell hidden">
-                                                        <span className={`text-[10px] font-black ${darkMode ? "text-white bg-[#FAFAFA]/10 border-white/10" : "text-slate-900 bg-gray-100 border-gray-300"} px-3 py-1.5 rounded-lg border whitespace-nowrap`}>
-                                                            {u.enrollmentNumber || u.employeeId || u.studentId || "N/A"}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-5 px-8 text-right" onClick={(e) => e.stopPropagation()}>
-                                                        <div className="flex items-center justify-end gap-2">
-                                                            <button
-                                                                onClick={() => handleMessageClick(u)}
-                                                                className={`p-2.5 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 text-blue-400 hover:text-white rounded-xl transition-all active:scale-90`}
-                                                                title="Message User"
-                                                            >
-                                                                <Mail className="w-5 h-5" />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleDeleteClick(u)}
-                                                                disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
-                                                                className={`p-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 text-red-400 hover:text-white rounded-xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
-                                                                    }`}
-                                                                title="Delete User"
-                                                            >
-                                                                <Trash2 className="w-5 h-5" />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                                {displayedUsers.length === 0 && (
-                                    <div className="py-20 text-center">
-                                        <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${darkMode ? "bg-white/5" : "bg-gray-100"}`}>
-                                            <Search className="w-8 h-8 opacity-20" />
-                                        </div>
-                                        <p className="font-black uppercase tracking-widest text-xs opacity-40">No matching users found in member database</p>
-                                    </div>
-                                )}
+                    <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden mb-12">
+                        <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] overflow-hidden`}>
+                    <div className="space-y-4 p-4">
+                        {/* Header Row */}
+                        <div className={`flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
+                            <div className="w-12 flex items-center justify-center">
+                                <div 
+                                    onClick={handleSelectAll}
+                                    className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
+                                        isAllSelected 
+                                            ? "bg-blue-500 border-blue-500" 
+                                            : isIndeterminate 
+                                                ? "bg-blue-500/50 border-blue-500" 
+                                                : `${darkMode ? "border-white/20 hover:border-white/40" : "border-gray-300 hover:border-gray-400"}`
+                                    }`}
+                                >
+                                    {isAllSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
+                                    {isIndeterminate && <Minus className="w-4 h-4 text-white stroke-[4]" />}
+                                </div>
                             </div>
+                            <div className="flex-1">User Profile</div>
+                            <div className="w-32">Role</div>
+                            <div className="w-40 md:block hidden">Identity</div>
+                            <div className="w-32 text-right">Actions</div>
+                        </div>
+
+                        {/* Member Card Rows */}
+                        {displayedUsers.map((u) => {
+                            const isSelected = selectedUsers.includes(u._id);
+                            return (
+                                <div 
+                                    key={u._id} 
+                                    className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
+                                >
+                                    <div 
+                                        onClick={() => toggleSelect(u._id)}
+                                        className={`${darkMode ? (isSelected ? "bg-blue-900/20" : "bg-black") : (isSelected ? "bg-blue-50" : "bg-white")} rounded-[calc(1.5rem-2px)] p-5 flex items-center gap-4 cursor-pointer`}
+                                    >
+                                        {/* Checkbox */}
+                                        <div className="w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                                            <div 
+                                                onClick={() => toggleSelect(u._id)}
+                                                className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
+                                                    isSelected 
+                                                        ? "bg-blue-500 border-blue-500" 
+                                                        : `${darkMode ? "border-white/20 group-hover:border-white/40" : "border-gray-300 group-hover:border-gray-400"}`
+                                                }`}
+                                            >
+                                                {isSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
+                                            </div>
+                                        </div>
+
+                                        {/* Profile */}
+                                        <div className="flex-1 flex items-center gap-5 min-w-0">
+                                            <div className="relative shrink-0">
+                                                {u.profilePicture ? (
+                                                    <img 
+                                                        src={u.profilePicture} 
+                                                        alt={u.name} 
+                                                        className={`w-12 h-12 rounded-full object-cover border-2 ${darkMode ? "border-white/10" : "border-gray-200"}`}
+                                                    />
+                                                ) : (
+                                                    <div className={`w-12 h-12 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-lg`}>
+                                                        {u.name.charAt(0)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                                                <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-slate-600"} truncate`}>{u.email}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Role */}
+                                        <div className="w-32">
+                                            <span className={`text-[10px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest border-2 ${u.isAdmin
+                                                ? (darkMode ? "bg-purple-500/20 text-purple-400 border-purple-500/30" : "bg-purple-100 text-purple-700 border-purple-200")
+                                                : (darkMode ? "bg-blue-500/20 text-blue-400 border-blue-500/30" : "bg-blue-100 text-blue-700 border-blue-200")
+                                                }`}>
+                                                {u.role || (u.isAdmin ? 'Admin' : 'Member')}
+                                            </span>
+                                        </div>
+
+                                        {/* Identity */}
+                                        <div className="w-40 md:block hidden flex-shrink-0">
+                                            <span className={`text-[10px] font-black ${darkMode ? "text-white bg-white/5 border-white/20" : "text-slate-900 bg-gray-100 border-gray-300"} px-4 py-2 rounded-xl border-2 whitespace-nowrap uppercase tracking-widest`}>
+                                                {u.enrollmentNumber || u.employeeId || u.studentId || "N/A"}
+                                            </span>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="w-32 flex items-center justify-end gap-3 flex-shrink-0 ml-auto" onClick={(e) => e.stopPropagation()}>
+                                            <button
+                                                onClick={() => handleMessageClick(u)}
+                                                className={`p-3 bg-blue-600/10 hover:bg-blue-600 border-2 border-blue-500/20 text-blue-400 hover:text-white rounded-2xl transition-all active:scale-90`}
+                                                title="Message User"
+                                            >
+                                                <Mail className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteClick(u)}
+                                                disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
+                                                className={`p-3 bg-red-600/10 hover:bg-red-600 border-2 border-red-500/20 text-red-400 hover:text-white rounded-2xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
+                                                    }`}
+                                                title="Delete User"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        {displayedUsers.length === 0 && (
+                            <div className="py-20 text-center">
+                                <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl flex items-center justify-center ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"} border-2 shadow-inner`}>
+                                    <Search className="w-10 h-10 opacity-20" />
+                                </div>
+                                <p className={`font-black uppercase tracking-[0.3em] text-xs ${darkMode ? "text-white/40" : "text-slate-400"}`}>No matching users found in member database</p>
+                            </div>
+                        )}
+                    </div>
                         </div>
                     </div>
                 )}
@@ -543,45 +545,46 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         <motion.div
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className={`${darkMode ? "bg-slate-900 border-white/10" : "bg-[#FAFAFA] border-gray-200"} border rounded-[2.5rem] p-8 w-full max-w-md shadow-2xl relative overflow-hidden`}
+                            className="relative p-[1px] bg-gradient-to-br from-red-500 via-purple-500 to-pink-500 rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden"
                         >
-                            {/* Decorative background alert icon */}
-                            <div className="absolute -top-10 -right-10 opacity-5 rotate-12 scale-150">
-                                <AlertTriangle className="w-40 h-40 text-red-500" />
-                            </div>
+                            <div className={`relative ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2rem-1px)] p-6 sm:p-8 h-full w-full overflow-hidden`}>
+                                {/* Decorative background alert icon */}
+                                <div className="absolute -top-6 -right-6 opacity-10 rotate-12 scale-110">
+                                    <AlertTriangle className="w-24 h-24 text-red-600" />
+                                </div>
 
-                            <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20 animate-bounce">
-                                <UserX className="w-8 h-8 text-red-500" />
-                            </div>
-                            
-                            <h3 className={`text-2xl md:text-3xl font-black ${darkMode ? "text-white" : "text-slate-900"} text-center mb-2 leading-tight`}>
-                                {confirmDelete.type === "bulk" ? `Delete ${confirmDelete.data.length} Users?` : "Delete Member?"}
-                            </h3>
-                            
-                            <div className={`p-4 rounded-2xl mb-6 ${darkMode ? "bg-red-500/5 border-red-500/10" : "bg-red-50 border-red-100"} border`}>
-                                <p className={`text-sm md:text-base font-medium ${darkMode ? "text-red-300" : "text-red-600"} text-center`}>
-                                    {confirmDelete.type === "bulk" 
-                                        ? "This will permanently remove selected accounts and all their associated data including posts, media, and connections."
-                                        : `This will permanently delete ${confirmDelete.data.name}'s account and all associated data.`}
-                                </p>
-                                <p className={`text-[10px] font-black uppercase tracking-[0.1em] text-center mt-3 ${darkMode ? "text-red-400/50" : "text-red-500/50"}`}>
-                                    ⚠️ THIS ACTION CANNOT BE UNDONE
-                                </p>
-                            </div>
+                                <div className="w-14 h-14 bg-red-600/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-red-500/20">
+                                    <UserX className="w-7 h-7 text-red-600" />
+                                </div>
+                                
+                                <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} text-center mb-2 uppercase tracking-tighter leading-tight`}>
+                                    {confirmDelete.type === "bulk" ? `Delete ${confirmDelete.data.length} Users?` : "Confirm Deletion"}
+                                </h3>
+                                
+                                <div className="relative p-[1.5px] bg-gradient-to-r from-red-500 via-purple-500 to-pink-500 rounded-2xl mb-6">
+                                    <div className={`p-4 rounded-[calc(1rem-1.5px)] ${darkMode ? "bg-black" : "bg-white"}`}>
+                                        <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-white/80" : "text-red-900"} text-center leading-relaxed`}>
+                                            {confirmDelete.type === "bulk" 
+                                                ? "IRREVERSIBLE: PURGING ALL SELECTED DATA"
+                                                : `PERMANENTLY DELETE: ${confirmDelete.data.name}`}
+                                        </p>
+                                    </div>
+                                </div>
 
-                            <div className="flex flex-col gap-3 font-black">
-                                <button
-                                    onClick={executeDelete}
-                                    className="px-6 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl shadow-xl shadow-red-600/20 active:scale-95 transition-all text-sm uppercase tracking-widest"
-                                >
-                                    Confirm Permanent Deletion
-                                </button>
-                                <button
-                                    onClick={() => setConfirmDelete(null)}
-                                    className={`px-6 py-4 ${darkMode ? "bg-white/5 hover:bg-white/10 text-white border-white/10" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-200"} rounded-2xl border transition-all text-sm uppercase tracking-widest`}
-                                >
-                                    Cancel
-                                </button>
+                                <div className="flex flex-col gap-3 font-black">
+                                    <button
+                                        onClick={executeDelete}
+                                        className="px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white rounded-xl shadow-2xl active:scale-95 transition-all text-[10px] uppercase tracking-[0.3em] font-black"
+                                    >
+                                        Execute Deletion
+                                    </button>
+                                    <button
+                                        onClick={() => setConfirmDelete(null)}
+                                        className={`px-8 py-3.5 ${darkMode ? "bg-white/5 hover:bg-white/10 text-white border-white/20" : "bg-gray-100 hover:bg-gray-200 text-slate-900 border-gray-300"} rounded-xl border transition-all text-[10px] uppercase tracking-[0.3em] font-black`}
+                                    >
+                                        Abort Action
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

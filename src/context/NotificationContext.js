@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import socket from "@/utils/socket";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import { ShieldAlert, X } from "lucide-react";
+import { ShieldAlert, X, MessageSquare } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -172,26 +172,28 @@ export  const NotificationProvider = ({ children }) => {
         
         if (notification.type === "connect_request") {
           setPendingRequestsCount(prev => prev + 1);
-        } else if (notification.type === "admin_notice") {
-          // 🚀 SHOW PREMIUM POPUP FOR ADMIN NOTICES
+        } else if (notification.type === "admin_notice" || notification.type === "feedback") {
+          // 🚀 SHOW PREMIUM POPUP FOR ADMIN NOTICES & FEEDBACK
+          const isFeedback = notification.type === "feedback";
+          
           toast.custom((t) => (
             <motion.div
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className={`${t.visible ? 'block' : 'hidden'} max-w-sm w-full p-[2px] bg-gradient-to-r from-[#3b82f6] via-[#a855f7] to-[#6366f1] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto`}
+              className={`${t.visible ? 'block' : 'hidden'} max-w-sm w-full p-[2px] bg-gradient-to-r ${isFeedback ? "from-emerald-500 via-teal-500 to-cyan-500" : "from-[#3b82f6] via-[#a855f7] to-[#6366f1]"} rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto`}
             >
               <div className={`p-5 ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] flex flex-col gap-4 overflow-hidden relative`}>
                 {/* Decorative subtle background glow */}
-                <div className={`absolute -top-10 -right-10 w-32 h-32 ${darkMode ? "bg-purple-600/20" : "bg-purple-100/50"} blur-[60px] rounded-full`}></div>
+                <div className={`absolute -top-10 -right-10 w-32 h-32 ${isFeedback ? (darkMode ? "bg-emerald-600/20" : "bg-emerald-100/50") : (darkMode ? "bg-purple-600/20" : "bg-purple-100/50")} blur-[60px] rounded-full`}></div>
 
                 <div className="flex items-start z-10">
                   <div className="flex-shrink-0 pt-0.5">
-                    <div className="p-[2.5px] rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-500 shadow-lg">
+                    <div className={`p-[2.5px] rounded-2xl bg-gradient-to-br ${isFeedback ? "from-emerald-500 to-cyan-500" : "from-blue-500 via-purple-500 to-indigo-500"} shadow-lg`}>
                       <Image
                         className="h-11 w-11 rounded-[0.9rem] object-cover"
                         src={notification.sender?.profilePicture || "/default-profile.jpg"}
-                        alt={notification.sender?.name || "Admin"}
+                        alt={notification.sender?.name || "User"}
                         width={44}
                         height={44}
                       />
@@ -199,15 +201,19 @@ export  const NotificationProvider = ({ children }) => {
                   </div>
                   <div className="ml-4 flex-1 pr-6">
                     <div className="flex items-center gap-2 mb-1.5">
-                       <div className={`${darkMode ? "bg-blue-500/20" : "bg-blue-100"} p-1.5 rounded-xl`}>
-                        <ShieldAlert className={`w-3.5 h-3.5 ${darkMode ? "text-blue-400" : "text-blue-600"}`} />
+                       <div className={`${darkMode ? (isFeedback ? "bg-emerald-500/20" : "bg-blue-500/20") : (isFeedback ? "bg-emerald-100" : "bg-blue-100")} p-1.5 rounded-xl`}>
+                        {isFeedback ? (
+                          <MessageSquare className={`w-3.5 h-3.5 ${darkMode ? "text-emerald-400" : "text-emerald-600"}`} />
+                        ) : (
+                          <ShieldAlert className={`w-3.5 h-3.5 ${darkMode ? "text-blue-400" : "text-blue-600"}`} />
+                        )}
                        </div>
-                       <p className={`text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase tracking-[0.25em]`}>
-                         Official Notice
+                       <p className={`text-[10px] font-black ${darkMode ? (isFeedback ? "text-emerald-400" : "text-blue-400") : (isFeedback ? "text-emerald-600" : "text-blue-600")} uppercase tracking-[0.25em]`}>
+                         {isFeedback ? "User Feedback" : "Official Notice"}
                        </p>
                     </div>
                     <p className={`text-[15px] font-black ${darkMode ? "text-white" : "text-black"} leading-none mb-1`}>
-                      {notification.sender?.name || "Management"}
+                      {notification.sender?.name || (isFeedback ? "Anonymous User" : "Management")}
                     </p>
                     <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-slate-600"} line-clamp-3 italic leading-relaxed`}>
                       &quot;{notification.message}&quot;
@@ -224,11 +230,11 @@ export  const NotificationProvider = ({ children }) => {
                 <button
                   onClick={() => {
                     toast.dismiss(t.id);
-                    window.location.href = "/dashboard/notifications";
+                    window.location.href = isFeedback ? "/dashboard/admin?tab=export" : "/dashboard/notifications";
                   }}
-                  className={`z-10 w-full py-4 rounded-2xl bg-gradient-to-r from-[#3b82f6] via-[#a855f7] to-[#6366f1] text-white text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:brightness-110 active:scale-95 shadow-xl shadow-blue-500/30`}
+                  className={`z-10 w-full py-4 rounded-2xl bg-gradient-to-r ${isFeedback ? "from-emerald-500 to-cyan-500 shadow-emerald-500/30" : "from-[#3b82f6] via-[#a855f7] to-[#6366f1] shadow-blue-500/30"} text-white text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:brightness-110 active:scale-95 shadow-xl`}
                 >
-                  View in Notice Board
+                  {isFeedback ? "View All Feedback" : "View in Notice Board"}
                 </button>
               </div>
             </motion.div>
@@ -305,7 +311,7 @@ export  const NotificationProvider = ({ children }) => {
       setAdminSignupRequestsCount(0);
       userRef.current = null;
     }
-  }, [fetchNotifications, fetchCounts, authTrigger]);
+  }, [fetchNotifications, fetchCounts, authTrigger, darkMode]);
 
   const value = {
     notifications,
