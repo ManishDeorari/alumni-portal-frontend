@@ -33,6 +33,7 @@ const TABS = [
   { id: "VISIT", label: "Visits", icon: <Eye className="w-4 h-4" /> },
   { id: "POINTS", label: "Points", icon: <Award className="w-4 h-4" /> },
   { id: "NOTICE", label: "Notice", icon: <ShieldAlert className="w-4 h-4" /> },
+  { id: "FEEDBACK", label: "Feedback", icon: <MessageSquare className="w-4 h-4" /> },
 ];
 
 import { useNotifications } from "@/context/NotificationContext";
@@ -95,7 +96,7 @@ export default function NotificationsPage() {
     if (note.isRead) return; // Prevent clicking on read notifications
     markAsRead(note._id);
 
-    if (note.type === "connect_request" || note.type === "connect_accept") {
+    if (note.type === "connect_request" || note.type === "connect_accept" || note.type === "feedback") {
       router.push(`/profile/${note.sender?._id || note.sender}`);
     } else if (note.type === "profile_visit") {
       router.push(`/profile/${note.sender?._id || note.sender}`);
@@ -124,7 +125,9 @@ export default function NotificationsPage() {
     let filtered = notifications;
 
     // 1. Filter by Tab
-    if (activeTab === "POST") {
+    if (activeTab === "FEEDBACK") {
+      filtered = notifications.filter(n => n.type === "feedback");
+    } else if (activeTab === "POST") {
       filtered = notifications.filter(n => ["post_like", "post_comment", "comment_like", "comment_reply", "reply_like", "comment_reaction", "reply_reaction"].includes(n.type));
     } else if (activeTab === "NETWORK") {
       filtered = notifications.filter(n => ["connect_request", "connect_accept"].includes(n.type));
@@ -225,6 +228,10 @@ export default function NotificationsPage() {
         <div className="relative p-[2px] mb-8 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-fit shadow-md">
           <div className={`flex flex-wrap gap-2 p-1.5 rounded-[calc(1rem-2px)] w-full backdrop-blur-xl ${darkMode ? 'bg-black/90' : 'bg-white'}`}>
             {TABS.filter(tab => {
+              const isAdmin = user?.isAdmin || user?.role === "admin" || JSON.parse(localStorage.getItem("user") || "{}")?.isAdmin;
+              const isMainAdmin = user?.isMainAdmin || JSON.parse(localStorage.getItem("user") || "{}")?.isMainAdmin;
+
+              if (tab.id === "FEEDBACK") return isMainAdmin;
               if (tab.id === "POINTS") {
                 const userRole = user?.role || JSON.parse(localStorage.getItem("user") || "{}")?.role;
                 return userRole === "alumni";
@@ -389,22 +396,27 @@ export default function NotificationsPage() {
                                       {(() => {
                                         let cat = "Notification";
                                         const typeStr = note.type || "";
-                                        if (typeStr.includes("group")) cat = "Group";
+                                        if (typeStr === "feedback") cat = "User Feedback";
+                                        else if (typeStr.includes("group")) cat = "Group";
                                         else if (typeStr.includes("comment") || typeStr.includes("reply")) cat = "Discussion";
                                         else if (typeStr.includes("post") || typeStr.includes("like") || typeStr.includes("reaction")) cat = "Post";
                                         else if (typeStr.includes("profile_visit")) cat = "Profile Visit";
                                         else if (typeStr.includes("connect")) cat = "Network";
                                         else if (typeStr.includes("notice")) cat = "Announcement";
 
+                                        const gradient = note.type === "feedback" 
+                                          ? "from-indigo-600 via-blue-600 to-indigo-600" 
+                                          : "from-blue-500 via-purple-500 to-pink-500";
+
                                         return (
-                                          <div className="relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md">
+                                          <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${gradient} shadow-md`}>
                                             <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
-                                              <div className={`text-left font-bold text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'} sm:col-span-2`}>
+                                              <div className={`text-left font-black text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'} sm:col-span-2`}>
                                                 {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
                                               </div>
                                               <div className="flex justify-end relative sm:col-span-1">
-                                                <div className="p-[1px] rounded-full bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm">
-                                                  <span className={`block font-bold uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700'}`}>
+                                                <div className={`p-[1px] rounded-full bg-gradient-to-r ${note.type === 'feedback' ? 'from-indigo-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-sm`}>
+                                                  <span className={`block font-extrabold uppercase tracking-widest text-[9px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-indigo-700'}`}>
                                                     {cat}
                                                   </span>
                                                 </div>

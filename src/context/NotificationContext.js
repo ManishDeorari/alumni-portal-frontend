@@ -2,6 +2,11 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import socket from "@/utils/socket";
+import { toast } from "react-hot-toast";
+import Image from "next/image";
+import { ShieldAlert, X } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const NotificationContext = createContext();
 
@@ -13,7 +18,8 @@ export const useNotifications = () => {
   return context;
 };
 
-export const NotificationProvider = ({ children }) => {
+export  const NotificationProvider = ({ children }) => {
+  const { darkMode } = useTheme();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
@@ -21,6 +27,7 @@ export const NotificationProvider = ({ children }) => {
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [adminSignupRequestsCount, setAdminSignupRequestsCount] = useState(0);
   const [shakeNotification, setShakeNotification] = useState(false);
+  const [authTrigger, setAuthTrigger] = useState(0);
   
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
   const userRef = useRef(null);
@@ -124,6 +131,16 @@ export const NotificationProvider = ({ children }) => {
   }, [API_URL]);
 
   useEffect(() => {
+    const handleAuthChange = () => setAuthTrigger(prev => prev + 1);
+    window.addEventListener("local-auth-change", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("local-auth-change", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     
@@ -155,6 +172,67 @@ export const NotificationProvider = ({ children }) => {
         
         if (notification.type === "connect_request") {
           setPendingRequestsCount(prev => prev + 1);
+        } else if (notification.type === "admin_notice") {
+          // 🚀 SHOW PREMIUM POPUP FOR ADMIN NOTICES
+          toast.custom((t) => (
+            <motion.div
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className={`${t.visible ? 'block' : 'hidden'} max-w-sm w-full p-[2px] bg-gradient-to-r from-[#3b82f6] via-[#a855f7] to-[#6366f1] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto`}
+            >
+              <div className={`p-5 ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] flex flex-col gap-4 overflow-hidden relative`}>
+                {/* Decorative subtle background glow */}
+                <div className={`absolute -top-10 -right-10 w-32 h-32 ${darkMode ? "bg-purple-600/20" : "bg-purple-100/50"} blur-[60px] rounded-full`}></div>
+
+                <div className="flex items-start z-10">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <div className="p-[2.5px] rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-500 shadow-lg">
+                      <Image
+                        className="h-11 w-11 rounded-[0.9rem] object-cover"
+                        src={notification.sender?.profilePicture || "/default-profile.jpg"}
+                        alt={notification.sender?.name || "Admin"}
+                        width={44}
+                        height={44}
+                      />
+                    </div>
+                  </div>
+                  <div className="ml-4 flex-1 pr-6">
+                    <div className="flex items-center gap-2 mb-1.5">
+                       <div className={`${darkMode ? "bg-blue-500/20" : "bg-blue-100"} p-1.5 rounded-xl`}>
+                        <ShieldAlert className={`w-3.5 h-3.5 ${darkMode ? "text-blue-400" : "text-blue-600"}`} />
+                       </div>
+                       <p className={`text-[10px] font-black ${darkMode ? "text-blue-400" : "text-blue-600"} uppercase tracking-[0.25em]`}>
+                         Official Notice
+                       </p>
+                    </div>
+                    <p className={`text-[15px] font-black ${darkMode ? "text-white" : "text-black"} leading-none mb-1`}>
+                      {notification.sender?.name || "Management"}
+                    </p>
+                    <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-slate-600"} line-clamp-3 italic leading-relaxed`}>
+                      &quot;{notification.message}&quot;
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => toast.dismiss(t.id)}
+                    className={`p-1.5 rounded-xl ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-black"} transition-all`}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    window.location.href = "/dashboard/notifications";
+                  }}
+                  className={`z-10 w-full py-4 rounded-2xl bg-gradient-to-r from-[#3b82f6] via-[#a855f7] to-[#6366f1] text-white text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:brightness-110 active:scale-95 shadow-xl shadow-blue-500/30`}
+                >
+                  View in Notice Board
+                </button>
+              </div>
+            </motion.div>
+          ), { duration: 6000 });
         }
       };
 
@@ -217,8 +295,17 @@ export const NotificationProvider = ({ children }) => {
         socket.off("pointsUpdated", handlePointsUpdated);
         socket.off("forceLogout", handleForceLogout);
       };
+    } else {
+      // ✅ Explicitly clear state if no user/token found (Log out happened)
+      setNotifications([]);
+      setUnreadCount(0);
+      setPendingRequestsCount(0);
+      setUnreadGroupMessagesCount(0);
+      setNewPostsCount(0);
+      setAdminSignupRequestsCount(0);
+      userRef.current = null;
     }
-  }, [fetchNotifications, fetchCounts]);
+  }, [fetchNotifications, fetchCounts, authTrigger]);
 
   const value = {
     notifications,

@@ -2,9 +2,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Trash2, Mail, UserX, Shield, Check, Minus, X, AlertTriangle, Filter } from "lucide-react";
+import { Search, Trash2, Mail, UserX, Shield, Check, Minus, X, AlertTriangle, Filter, Send } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import HybridInput from "../ui/HybridInput";
+import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
+import { toast } from "react-hot-toast";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const COURSE_OPTIONS = ["B.Tech", "M.Tech", "MBA", "BCA", "MCA"];
 const currentYearForDropdown = new Date().getFullYear();
@@ -20,20 +24,24 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
     const [displayedUsers, setDisplayedUsers] = useState(users);
     const [isSearching, setIsSearching] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(null); // { type: 'single' | 'bulk', data: user | ids[] }
+    const [messageModal, setMessageModal] = useState(null); // { userIds: [], names: "" }
+    const [messageText, setMessageText] = useState("");
+    const [isSendingMessage, setIsSendingMessage] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     // Sync displayedUsers with users prop whenever prop changes (for initials or updates)
     useEffect(() => {
-        setDisplayedUsers(users);
+        const filtered = (users || []).filter(u => !(u.isMainAdmin || u.email === "manishdeorari377@gmail.com"));
+        setDisplayedUsers(filtered);
     }, [users]);
 
     const handleSearch = () => {
         setIsSearching(true);
         // Simulate a small delay for "Export Search" feel
         setTimeout(() => {
-            const results = users.filter((u) => {
-                // Remove the exclusion check here so admins ARE visible and searchable
-                // We handle deletion restriction in the table action button instead
+            const results = (users || []).filter((u) => {
+                // Exclusion check for Main Admin
+                if (u.isMainAdmin || u.email === "manishdeorari377@gmail.com") return false;
 
                 // 1. Text Search (Name, Email, Enrollment, StudentID, EmployeeID, Role)
                 const searchStr = `${u.name || ""} ${u.email || ""} ${u.enrollmentNumber || ""} ${u.studentId || ""} ${u.employeeId || ""} ${u.role || ""}`.toLowerCase();
@@ -103,6 +111,58 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
         onRefresh();
     };
 
+    // --- Messaging Logic ---
+    const handleMessageClick = (user) => {
+        setMessageModal({ userIds: [user._id], names: user.name });
+        setMessageText("");
+    };
+
+    const handleBulkMessageClick = () => {
+        if (selectedUsers.length === 0) return;
+        const selectedNames = users
+            .filter(u => selectedUsers.includes(u._id))
+            .map(u => u.name)
+            .join(", ");
+        
+        const displayName = selectedNames.length > 30 ? `${selectedUsers.length} selected users` : selectedNames;
+        
+        setMessageModal({ userIds: selectedUsers, names: displayName });
+        setMessageText("");
+    };
+
+    const sendNotice = async () => {
+        if (!messageText.trim() || !messageModal) return;
+        setIsSendingMessage(true);
+        try {
+            const res = await fetch(`${API}/api/admin/send-notice`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({
+                    userIds: messageModal.userIds,
+                    message: messageText
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Failed to send notice");
+            
+            toast.success(`Notice sent successfully!`);
+            setMessageModal(null);
+            setMessageText("");
+        } catch (err) {
+            console.error(err);
+            toast.error(err.message || "Could not send notice");
+        } finally {
+            setIsSendingMessage(false);
+        }
+    };
+
+    const handleEmojiSelect = (emoji) => {
+        setMessageText(prev => prev + emoji.native);
+    };
+
     return (
         <div className="space-y-6 relative pb-20">
             <motion.div
@@ -154,7 +214,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                             </div>
                             <button
                                 onClick={handleSearch}
-                                className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black transition-all shadow-lg active:scale-95 flex items-center gap-2 whitespace-nowrap"
+                                className="px-10 py-3.5 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black transition-all shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_25px_rgba(37,99,235,0.4)] active:scale-95 flex items-center gap-2 whitespace-nowrap"
                             >
                                 <Search className="w-5 h-5" />
                                 Search Users
@@ -291,15 +351,24 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                                         </span>
                                                     </td>
                                                     <td className="py-5 px-8 text-right" onClick={(e) => e.stopPropagation()}>
-                                                        <button
-                                                            onClick={() => handleDeleteClick(u)}
-                                                            disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
-                                                            className={`p-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 text-red-400 hover:text-white rounded-xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
-                                                                }`}
-                                                            title="Delete User"
-                                                        >
-                                                            <Trash2 className="w-5 h-5" />
-                                                        </button>
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <button
+                                                                onClick={() => handleMessageClick(u)}
+                                                                className={`p-2.5 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 text-blue-400 hover:text-white rounded-xl transition-all active:scale-90`}
+                                                                title="Message User"
+                                                            >
+                                                                <Mail className="w-5 h-5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteClick(u)}
+                                                                disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
+                                                                className={`p-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 text-red-400 hover:text-white rounded-xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
+                                                                    }`}
+                                                                title="Delete User"
+                                                            >
+                                                                <Trash2 className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             );
@@ -348,11 +417,18 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
 
                                 <div className="flex items-center gap-2">
                                     <button
+                                        onClick={handleBulkMessageClick}
+                                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2 active:scale-95"
+                                    >
+                                        <Mail className="w-4 h-4" />
+                                        Message
+                                    </button>
+                                    <button
                                         onClick={handleBulkDeleteClick}
-                                        className="bg-red-600 hover:bg-red-500 text-white px-5 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 active:scale-95"
+                                        className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 active:scale-95"
                                     >
                                         <Trash2 className="w-4 h-4" />
-                                        Delete Selected
+                                        Delete
                                     </button>
                                     <button
                                         onClick={() => setSelectedUsers([])}
@@ -363,6 +439,94 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                 </div>
                             </div>
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Message Modal */}
+            <AnimatePresence>
+                {messageModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4"
+                    >
+                    <motion.div
+                        initial={{ scale: 0.9, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        className="relative p-[2px] bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative overflow-hidden"
+                    >
+                        <div className={`relative ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(2.5rem-2px)] p-8 h-full w-full overflow-hidden`}>
+                            <div className="flex items-center justify-between mb-8 relative z-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20">
+                                        <Mail className="w-7 h-7 text-blue-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Send Notice</h3>
+                                        <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-2 ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+                                            To: {messageModal.names}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => setMessageModal(null)}
+                                    className={`p-3 rounded-full hover:bg-gray-100/10 transition-all ${darkMode ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-gray-900"}`}
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-6 relative z-10">
+                                <div className={`relative p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md`}>
+                                    <div className={`rounded-[calc(1rem-2px)] overflow-hidden ${darkMode ? "bg-black" : "bg-white"}`}>
+                                        <textarea
+                                            value={messageText}
+                                            onChange={(e) => setMessageText(e.target.value)}
+                                            placeholder="Type your official administrative notice here..."
+                                            className={`w-full h-40 p-6 rounded-2xl outline-none resize-none bg-transparent ${darkMode ? "text-white placeholder-white/20" : "text-slate-900 placeholder-slate-400"} font-bold text-sm leading-relaxed`}
+                                        />
+                                        <div className="absolute bottom-6 right-6 flex items-center gap-4">
+                                            <span className={`text-[10px] font-black tracking-widest ${darkMode ? "text-white/20" : "text-gray-400"}`}>
+                                                {messageText.length} Characters
+                                            </span>
+                                            <EmojiPickerToggle 
+                                                onEmojiSelect={handleEmojiSelect}
+                                                darkMode={darkMode}
+                                                iconSize="text-2xl"
+                                                placement="top"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-4 pt-2">
+                                    <button
+                                        onClick={sendNotice}
+                                        disabled={isSendingMessage || !messageText.trim()}
+                                        className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-[0.3em] transition-all ${
+                                            !messageText.trim()
+                                            ? `${darkMode ? "bg-white/5 text-white/20" : "bg-gray-100 text-gray-400"} cursor-not-allowed`
+                                            : "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_15px_30px_rgba(37,99,235,0.3)] active:scale-95"
+                                        }`}
+                                    >
+                                        {isSendingMessage ? (
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        ) : (
+                                            <>
+                                                <Send className="w-5 h-5" />
+                                                Send Announcement Notice
+                                            </>
+                                        )}
+                                    </button>
+                                    <p className={`text-[9px] text-center font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"}`}>
+                                        Notice will be delivered to the system notification center
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -43,6 +43,10 @@ const LoginPopup = () => {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("role", data.role);
                 localStorage.setItem("userId", data.userId);
+                if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
+
+                // ✅ Notify other components that auth has changed
+                window.dispatchEvent(new Event("local-auth-change"));
 
                 toast.success("✅ Login Successful!");
 

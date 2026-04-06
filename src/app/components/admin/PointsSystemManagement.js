@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
 import PointsRequestsList from "./PointsRequestsList";
+import UserSearchInput from "../Post/utils/UserSearchInput";
 
 const getApiUrl = () => {
     const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -244,14 +245,17 @@ export default function PointsSystemManagement({ user }) {
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
                                 <div className="relative group/input p-[2px] bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl shadow-sm">
-                                    <input
-                                        type="text"
+                                    <UserSearchInput
                                         value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] pl-12 pr-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner px-12`}
+                                        onChange={(val) => setSearch(val)}
+                                        onSelect={(user) => setSearch(user.name)}
+                                        role="alumni"
+                                        darkMode={darkMode}
                                         placeholder="Name or ID..."
+                                        className={`!w-full !border-none !shadow-none font-black !py-4 !px-5 !h-[58px] ${
+                                            darkMode ? "!bg-black !text-white" : "!bg-white !text-black"
+                                        }`}
                                     />
-                                    <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
                             </div>
                             <div className="space-y-3">

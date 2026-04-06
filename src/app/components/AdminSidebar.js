@@ -62,6 +62,7 @@ export default function AdminSidebar() {
   const handleSignout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    window.dispatchEvent(new Event("local-auth-change"));
     router.push("/auth/login");
   };
 

@@ -172,9 +172,12 @@ export const approvePointsRequest = async (postId, action, awardedPoints = undef
   return res.json();
 };
 
-export const searchUsers = async (query) => {
+export const searchUsers = async (query, role = null) => {
   try {
-    const res = await fetch(`${BASE}/user/search?q=${encodeURIComponent(query)}`, {
+    let url = `${BASE}/user/search?q=${encodeURIComponent(query)}`;
+    if (role) url += `&role=${role}`;
+
+    const res = await fetch(url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

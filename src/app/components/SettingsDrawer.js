@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes, FaKey, FaSignOutAlt, FaCog, FaMoon, FaSun } from "react-icons/fa";
+import { FaTimes, FaKey, FaSignOutAlt, FaCog, FaMoon, FaSun, FaCommentAlt } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
+import FeedbackModal from "./FeedbackModal";
 
 const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
     const { darkMode, toggleDarkMode } = useTheme();
+    const [showFeedback, setShowFeedback] = useState(false);
 
     return (
         <AnimatePresence>
@@ -56,19 +58,19 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                                 </p>
 
                                 {/* Theme Toggle */}
-                                <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-blue-400 to-purple-500 shadow-md group hover:shadow-lg transition-all">
+                                <div className="relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md group hover:shadow-lg transition-all">
                                     <button
                                         onClick={toggleDarkMode}
-                                        className={`w-full flex items-center justify-between px-4 py-4 rounded-[15px] transition-all ${darkMode ? "bg-gray-900 hover:bg-gray-800" : "bg-[#FAFAFA] hover:bg-gray-50"}`}
+                                        className={`w-full flex items-center justify-between px-4 py-4 rounded-[calc(1rem-2px)] transition-all ${darkMode ? "bg-black hover:bg-black/80" : "bg-white hover:bg-gray-50"}`}
                                     >
                                         <div className="flex items-center gap-4">
                                             <div className={`p-2 rounded-lg transition-colors ${darkMode ? "bg-yellow-500/20" : "bg-blue-500/10"}`}>
                                                 {darkMode ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-500" />}
                                             </div>
-                                            <span className="font-semibold">Mode: {darkMode ? "Dark" : "Light"}</span>
+                                            <span className={`font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>Mode: {darkMode ? "Dark" : "Light"}</span>
                                         </div>
                                         <div className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${darkMode ? "bg-blue-600" : "bg-gray-200"}`}>
-                                            <div className={`absolute top-1 w-4 h-4 bg-[#FAFAFA] rounded-full transition-all duration-300 shadow-sm ${darkMode ? "left-7" : "left-1"}`}></div>
+                                            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-sm ${darkMode ? "left-7" : "left-1"}`}></div>
                                         </div>
                                     </button>
                                 </div>
@@ -78,32 +80,51 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                                 </p>
 
                                 {/* Reset Password */}
-                                <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-purple-400 to-pink-500 shadow-md group hover:shadow-lg transition-all">
+                                <div className="relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md group hover:shadow-lg transition-all">
                                     <button
                                         onClick={() => {
                                             onResetPassword();
                                             onClose();
                                         }}
-                                        className={`w-full flex items-center gap-4 px-4 py-4 rounded-[15px] transition-all ${darkMode ? "bg-gray-900 hover:bg-gray-800" : "bg-[#FAFAFA] hover:bg-gray-50 text-gray-800"}`}
+                                        className={`w-full flex items-center gap-4 px-4 py-4 rounded-[calc(1rem-2px)] transition-all ${darkMode ? "bg-black hover:bg-black/80" : "bg-white hover:bg-gray-50"}`}
                                     >
                                         <div className={`p-2 rounded-lg transition-colors ${darkMode ? "bg-purple-500/20" : "bg-purple-50"}`}>
                                             <FaKey className="text-purple-500" />
                                         </div>
-                                        <span className="font-semibold">Reset Password</span>
+                                        <span className={`font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>Reset Password</span>
                                     </button>
                                 </div>
 
-                                <div className="pt-6 mt-6 border-t border-gray-100 dark:border-white/10">
+                                <div className="pt-6 mt-6 border-t border-gray-100 dark:border-white/10 space-y-4">
+                                    <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+                                        Support & Feedback
+                                    </p>
+                                    
+                                    {/* Feedback Button */}
+                                    <div className="relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md group hover:shadow-lg transition-all">
+                                        <button
+                                            onClick={() => setShowFeedback(true)}
+                                            className={`w-full flex items-center gap-4 px-4 py-4 rounded-[calc(1rem-2px)] transition-all ${darkMode ? "bg-black hover:bg-black/80" : "bg-white hover:bg-gray-50"}`}
+                                        >
+                                            <div className={`p-2 rounded-lg transition-colors ${darkMode ? "bg-blue-500/20" : "bg-blue-100"}`}>
+                                                <FaCommentAlt className="text-blue-500" />
+                                            </div>
+                                            <span className={`font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>Share Feedback</span>
+                                        </button>
+                                    </div>
+
                                     {/* Sign Out */}
-                                    <button
-                                        onClick={onSignout}
-                                        className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all shadow-md hover:shadow-lg border ${darkMode ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20" : "bg-red-50 border-red-100 text-red-600 hover:bg-red-100"}`}
-                                    >
-                                        <div className={`p-2 rounded-lg transition-colors ${darkMode ? "bg-red-500/20" : "bg-red-100"}`}>
-                                            <FaSignOutAlt />
-                                        </div>
-                                        <span className="font-bold">Sign Out</span>
-                                    </button>
+                                    <div className="relative p-[2px] rounded-2xl bg-gradient-to-r from-red-400 via-pink-500 to-red-500 shadow-md group hover:shadow-lg transition-all">
+                                        <button
+                                            onClick={onSignout}
+                                            className={`w-full flex items-center gap-4 px-4 py-4 rounded-[calc(1rem-2px)] transition-all ${darkMode ? "bg-black hover:bg-black/80" : "bg-white hover:bg-gray-50"}`}
+                                        >
+                                            <div className={`p-2 rounded-lg transition-colors ${darkMode ? "bg-red-500/20" : "bg-red-100"}`}>
+                                                <FaSignOutAlt className="text-red-500" />
+                                            </div>
+                                            <span className={`font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>Sign Out</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -115,6 +136,13 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                             </div>
                         </div>
                     </motion.div>
+
+                    {/* Feedback Modal */}
+                    <FeedbackModal 
+                        isOpen={showFeedback} 
+                        onClose={() => setShowFeedback(false)} 
+                        darkMode={darkMode}
+                    />
                 </>
             )}
         </AnimatePresence>

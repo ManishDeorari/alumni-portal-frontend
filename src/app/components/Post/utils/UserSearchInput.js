@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { searchUsers } from "../../../../api/dashboard";
 
-const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = false }) => {
+const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = false, role = null, className = "" }) => {
   const [query, setQuery] = useState(value || "");
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +35,7 @@ const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = fa
 
     setLoading(true);
     try {
-      const data = await searchUsers(val);
+      const data = await searchUsers(val, role);
       setResults(data);
       setIsOpen(true);
     } catch (error) {
@@ -64,7 +64,7 @@ const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = fa
           darkMode 
             ? "bg-slate-900 text-white border-white/10" 
             : "bg-white text-black border-gray-100 shadow-sm"
-        } outline-none focus:ring-1 focus:ring-blue-500 transition-all`}
+        } outline-none focus:ring-1 focus:ring-blue-500 transition-all ${className}`}
       />
       
       {isOpen && results.length > 0 && (
