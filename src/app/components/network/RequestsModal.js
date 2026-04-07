@@ -65,94 +65,106 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                         </button>
                     </div>
 
-                    <div className={`flex p-1 mx-6 mt-6 rounded-xl border ${darkMode ? 'bg-[#FAFAFA]/5 border-white/5' : 'bg-gray-100 border-gray-200'}`}>
-                        <button
-                            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === "received"
-                                ? (darkMode ? "bg-[#FAFAFA] text-blue-700 shadow-lg" : "bg-[#FAFAFA] text-blue-600 shadow-md")
-                                : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/5" : "text-slate-500 hover:text-slate-700")
-                                }`}
-                            onClick={() => setActiveTab("received")}
-                        >
-                            Received
-                        </button>
-                        <button
-                            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === "sent"
-                                ? (darkMode ? "bg-[#FAFAFA] text-blue-700 shadow-lg" : "bg-[#FAFAFA] text-blue-600 shadow-md")
-                                : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/5" : "text-slate-500 hover:text-slate-700")
-                                }`}
-                            onClick={() => setActiveTab("sent")}
-                        >
-                            Sent
-                        </button>
+                    <div className={`p-1 mx-6 mt-6 rounded-2xl border ${darkMode ? 'bg-black/40 border-white/10' : 'bg-gray-100 border-gray-200'} p-[2px] bg-gradient-to-r from-blue-500/20 to-purple-500/20`}>
+                        <div className="flex p-0.5 w-full h-full">
+                            <button
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === "received"
+                                    ? (darkMode ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl" : "bg-white text-blue-600 shadow-md")
+                                    : (darkMode ? "text-white opacity-40 hover:opacity-100 hover:bg-white/5" : "text-slate-500 hover:text-slate-900")
+                                    }`}
+                                onClick={() => setActiveTab("received")}
+                            >
+                                Received
+                            </button>
+                            <button
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === "sent"
+                                    ? (darkMode ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl" : "bg-white text-blue-600 shadow-md")
+                                    : (darkMode ? "text-white opacity-40 hover:opacity-100 hover:bg-white/5" : "text-slate-500 hover:text-slate-900")
+                                    }`}
+                                onClick={() => setActiveTab("sent")}
+                            >
+                                Sent
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-5">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-20 gap-3">
-                                <div className={`w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin`}></div>
-                                <p className={`${darkMode ? 'text-white/40' : 'text-slate-400'} text-sm`}>Loading requests...</p>
+                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                <div className={`w-10 h-10 border-4 border-blue-500 border-t-purple-600 rounded-full animate-spin shadow-[0_0_15px_rgba(59,130,246,0.5)]`}></div>
+                                <p className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-white' : 'text-slate-900'}`}>Syncing requests...</p>
                             </div>
                         ) : requests.length === 0 ? (
-                            <div className="text-center py-20 flex flex-col items-center gap-4">
-                                <div className={`p-4 rounded-full ${darkMode ? 'bg-[#FAFAFA]/5' : 'bg-gray-100'}`}>
-                                    <svg className={`w-10 h-10 ${darkMode ? 'text-white/20' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                            <div className="text-center py-20 flex flex-col items-center gap-5">
+                                <div className={`p-6 rounded-full ${darkMode ? 'bg-white/5 shadow-inner' : 'bg-gray-100 shadow-sm'}`}>
+                                    <svg className={`w-12 h-12 ${darkMode ? 'text-white opacity-10' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                 </div>
-                                <p className={`${darkMode ? 'text-white/40' : 'text-slate-400'} text-sm italic`}>No {activeTab} requests found</p>
+                                <p className={`text-xs font-bold italic ${darkMode ? 'text-white opacity-40' : 'text-slate-500'}`}>No {activeTab} requests found</p>
                             </div>
                         ) : (
                             requests.map((user) => (
-                                <div key={user._id} className={`flex items-center justify-between gap-4 p-4 border rounded-2xl transition-all group ${darkMode ? 'bg-[#FAFAFA]/5 border-white/5 hover:bg-[#FAFAFA]/10' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'}`}>
-                                    <div className="flex items-center gap-3">
-                                        <Image
-                                            src={user.profilePicture || "/default-profile.jpg"}
-                                            alt={user.name}
-                                            width={48}
-                                            height={48}
-                                            className={`w-12 h-12 rounded-full object-cover border ${darkMode ? 'border-white/20 bg-gray-800' : 'border-white bg-[#FAFAFA] shadow-sm'}`}
-                                        />
-                                        <div className="min-w-0">
-                                            <Link href={`/profile/${user.publicId || user._id}`} onClick={onClose}>
-                                                <h3 className={`font-bold transition-colors truncate ${darkMode ? 'text-white hover:text-blue-300' : 'text-slate-900 hover:text-blue-600'}`}>{user.name}</h3>
-                                            </Link>
-                                            <p className={`text-xs truncate ${darkMode ? 'text-white/40' : 'text-slate-500'}`}>{user.course || "Alumni"}</p>
+                                <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-2xl group transition-all duration-500 hover:from-blue-400 hover:to-purple-400">
+                                    <div className={`flex items-center justify-between gap-4 p-4 rounded-2xl transition-all relative overflow-hidden ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'}`}>
+                                        <div className="flex items-center gap-4 min-w-0 z-10">
+                                            <div className="relative p-[1.5px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shadow-md">
+                                                <Image
+                                                    src={user.profilePicture || "/default-profile.jpg"}
+                                                    alt={user.name}
+                                                    width={56}
+                                                    height={56}
+                                                    className={`w-12 h-12 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
+                                                />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <Link href={`/profile/${user.publicId || user._id}`} onClick={onClose}>
+                                                    <h3 className={`font-black text-sm transition-colors truncate uppercase tracking-tight ${darkMode ? 'text-white hover:text-blue-400' : 'text-slate-900 hover:text-blue-600'}`}>{user.name}</h3>
+                                                </Link>
+                                                {/* Enrollment ID */}
+                                                {user.role !== "admin" && (
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-blue-500 mt-0.5">
+                                                        {user.enrollmentNumber || user.employeeId || (user.role === "faculty" ? "Faculty" : "Alumni")}
+                                                    </p>
+                                                )}
+                                                <p className={`text-[9px] font-black uppercase tracking-widest truncate mt-1 ${darkMode ? 'text-white' : 'text-slate-600'}`}>
+                                                    {user.course || (user.role === "faculty" ? "Faculty" : "Alumni")}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-2 z-10 shrink-0">
+                                            {activeTab === "received" ? (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleAction(user._id, "accept")}
+                                                        className="relative group/abtn p-[1px] bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg overflow-hidden transition-all active:scale-90"
+                                                    >
+                                                        <div className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1px)]">
+                                                            Accept
+                                                        </div>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleAction(user._id, "reject")}
+                                                        className="px-5 py-2.5 bg-red-500/10 border-2 border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleAction(user._id, "cancel")}
+                                                    className="relative group/cbtn p-[1.5px] bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg overflow-hidden transition-all active:scale-90 shadow-lg shadow-orange-500/20"
+                                                >
+                                                    <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1.5px)]">
+                                                        Cancel
+                                                    </div>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
-
-                                <div className="flex gap-2">
-                                    {activeTab === "received" ? (
-                                        <>
-                                            <button
-                                                onClick={() => handleAction(user._id, "accept")}
-                                                className="px-4 py-1.5 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-400 transition-all shadow-md shadow-green-500/20"
-                                            >
-                                                Accept
-                                            </button>
-                                            <button
-                                                onClick={() => handleAction(user._id, "reject")}
-                                                className="px-4 py-1.5 bg-[#FAFAFA]/10 text-white/60 text-xs font-bold rounded-lg hover:bg-red-500 hover:text-white transition-all"
-                                            >
-                                                Reject
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleAction(user._id, "cancel")}
-                                            className="px-4 py-1.5 bg-[#FAFAFA]/10 text-white/60 text-xs font-bold rounded-lg hover:bg-[#FAFAFA]/20 transition-all border border-white/10 hover:text-white"
-                                        >
-                                            Cancel
-                                        </button>
-                                    )}
                                 </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                <div className="p-4 bg-[#FAFAFA]/5 border-t border-white/10 text-center">
-                    <button onClick={onClose} className="text-white/40 hover:text-white text-xs font-medium transition-colors">
-                        Close Manager
-                    </button>
-                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

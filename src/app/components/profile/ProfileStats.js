@@ -13,6 +13,7 @@ export default function ProfileStats({ profile: initialProfile, isPublicView }) 
         totalVisits: initialProfile?.visitStats?.totalVisits || 0,
         todayVisits: initialProfile?.visitStats?.todayVisits || 0,
         points: initialProfile?.points?.total || 0,
+        fullPoints: initialProfile?.points || {},
     });
 
     useEffect(() => {
@@ -38,6 +39,7 @@ export default function ProfileStats({ profile: initialProfile, isPublicView }) 
                             totalVisits: data.visitStats?.totalVisits || 0,
                             todayVisits: data.visitStats?.todayVisits || 0,
                             points: data.points?.total || 0,
+                            fullPoints: data.points || {},
                         });
                     }
                 }
@@ -109,7 +111,7 @@ export default function ProfileStats({ profile: initialProfile, isPublicView }) 
             <PointsDistributionModal
                 isOpen={isPointsModalOpen}
                 onClose={() => setIsPointsModalOpen(false)}
-                user={initialProfile}
+                user={{ ...initialProfile, points: stats.fullPoints }}
             />
         </div>
     );

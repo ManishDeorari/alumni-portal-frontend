@@ -91,30 +91,33 @@ const PointsScenario = ({ darkMode = false }) => {
     ];
 
     return (
-        <div className={`${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-6 rounded-[2rem] shadow-xl relative overflow-hidden group transition-colors duration-500 min-h-[460px] flex flex-col justify-between`}>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-amber-500"></div>
+        <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-amber-500 rounded-[2rem] shadow-2xl relative overflow-hidden group transition-all duration-500">
+            <div className={`${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-4 md:p-5 rounded-[calc(2rem-2.5px)] min-h-[400px] flex flex-col justify-between relative`}>
+                <div>
+                    <div className="mb-2">
+                        <h3 className={`text-xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight flex items-center gap-2.5`}>
+                            🎖️ Points System
+                        </h3>
+                        <p className={`text-[10px] ${darkMode ? "text-white" : "text-black"} font-black uppercase tracking-[0.2em] mt-1 opacity-100`}>
+                            Earn &amp; Rank Up
+                        </p>
+                    </div>
 
-            <div>
-                <div className="mb-4">
-                    <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
-                        🎖️ Points System
-                    </h3>
-                    <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-widest mt-1`}>Earn &amp; Rank Up</p>
-                </div>
-
-                <div className="space-y-1.5">
-                    {scenarios.map((item, idx) => (
-                        <div key={idx} className="p-[1px] bg-gradient-to-tr from-blue-600 to-purple-700 rounded-xl">
-                            <div className={`flex items-center justify-between py-2.5 px-3.5 ${darkMode ? "bg-[#1e293b]" : "bg-[#FAFAFA]"} rounded-[11px] group/item shadow-sm hover:shadow-md transition-all`}>
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2 ${darkMode ? "bg-[#FAFAFA]/5" : "bg-gray-50"} rounded-lg group-hover/item:scale-110 transition-transform shadow-sm`}>
-                                        {item.icon}
+                    <div className="space-y-2">
+                        {scenarios.map((item, idx) => (
+                            <div key={idx} className="p-[1px] bg-gradient-to-tr from-blue-600 via-purple-600 to-pink-500 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                                <div className={`flex items-center justify-between py-2 px-3 ${darkMode ? "bg-[#1e293b]" : "bg-white"} rounded-[15px] group/item transition-all`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-[1.5px] bg-gradient-to-br from-blue-400 to-purple-600 rounded-xl">
+                                            <div className={`p-1.5 ${darkMode ? "bg-black" : "bg-gray-50"} rounded-[calc(0.75rem-1.5px)] group-hover/item:scale-110 transition-transform shadow-sm`}>
+                                                {item.icon}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className={`text-[11px] font-black ${darkMode ? "text-white" : "text-slate-900"} leading-tight tracking-tight`}>{item.label}</p>
+                                            <p className={`text-[9px] ${darkMode ? "text-gray-300" : "text-slate-600"} font-bold leading-tight mt-0.5`}>{item.desc}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className={`text-xs font-bold ${darkMode ? "text-white" : "text-gray-800"} leading-tight`}>{item.label}</p>
-                                        <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-500"} font-medium leading-tight`}>{item.desc}</p>
-                                    </div>
-                                </div>
                                     <div className="text-right flex items-center gap-3">
                                         {item.completed && (
                                             <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 shadow-lg shadow-green-500/20 animate-in zoom-in duration-300">
@@ -122,20 +125,21 @@ const PointsScenario = ({ darkMode = false }) => {
                                             </div>
                                         )}
                                         <div className={`transition-opacity duration-300 ${item.completed ? "opacity-40" : "opacity-100"}`}>
-                                            <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>+{item.value}</span>
+                                            <span className={`text-sm font-black ${darkMode ? "text-white" : "text-black"}`}>+{item.value}</span>
                                             <p className={`text-[9px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-black uppercase tracking-tighter`}>pts</p>
                                         </div>
                                     </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            <div className={`mt-6 pt-6 ${darkMode ? "border-white/5" : "border-gray-100"} border-t text-center`}>
-                <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-400"} font-bold italic leading-relaxed`}>
-                    &quot;Consistent engagement leads to higher ranking!&quot;
-                </p>
+                <div className={`mt-6 pt-6 ${darkMode ? "border-white/10" : "border-gray-200"} border-t text-center`}>
+                    <p className={`text-[10px] ${darkMode ? "text-white" : "text-black"} font-extrabold italic leading-relaxed opacity-80`}>
+                        &quot;Consistent engagement leads to higher ranking!&quot;
+                    </p>
+                </div>
             </div>
         </div>
     );

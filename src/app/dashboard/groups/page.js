@@ -344,11 +344,9 @@ export default function GroupsPage() {
             <SidebarComponent />
 
             <main className="p-4 max-w-[1200px] mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
-                <div className="relative p-[2px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500" />
-
-                    <div className={`relative flex gap-10 px-10 py-8 rounded-[calc(2.5rem-1px)] transition-colors duration-300 h-full justify-center ${darkMode ? "bg-gray-950/90" : "bg-[#FAFAFA]/90"}`}>
-                        <div className="w-[32%] flex-shrink-0">
+                <div className="relative p-[2.5px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+                    <div className={`relative flex gap-4 px-6 py-8 rounded-[calc(2.5rem-2.5px)] transition-colors duration-300 h-full justify-between ${darkMode ? "bg-black/90" : "bg-white/90"}`}>
+                        <div className="w-[30%] flex-shrink-0">
                             <GroupSidebar
                                 groups={filteredGroups}
                                 selectedGroup={selectedGroup}
@@ -363,7 +361,10 @@ export default function GroupsPage() {
                             />
                         </div>
 
-                        <div className="w-[66%] flex-shrink-0">
+                        {/* Modern Vertical Separator */}
+                        <div className="w-[1.5px] h-full bg-gradient-to-b from-transparent via-blue-500/30 to-transparent" />
+
+                        <div className="w-[68%] flex-shrink-0">
                             <GroupChatWindow
                                 selectedGroup={selectedGroup}
                                 messages={messages}

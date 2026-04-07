@@ -130,7 +130,7 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
 
                             {/* Footer */}
                             <div className="mt-auto pt-6 text-center">
-                                <div className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${darkMode ? "bg-[#FAFAFA]/5 text-gray-500" : "bg-gray-100 text-gray-400"}`}>
+                                <div className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase transition-all shadow-sm ${darkMode ? "bg-white/10 text-white" : "bg-slate-200 text-slate-900"}`}>
                                     Alumni Portal v0.1.0
                                 </div>
                             </div>

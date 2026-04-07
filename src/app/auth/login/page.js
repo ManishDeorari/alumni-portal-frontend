@@ -179,213 +179,237 @@ function LoginContent() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16"
+          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-32 lg:mt-0"
         >
-          <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-6 px-8 md:py-8 md:px-10 shadow-2xl space-y-6 relative overflow-hidden transition-all duration-500`}>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-
-            {view === "LOGIN" && (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2 text-center">
-                  <h2 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-black"}`}>Welcome Back</h2>
-                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>Enter your credentials to access your account</p>
-                </div>
-
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className={`${darkMode ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-bold`}
-                  >
-                    {error}
-                  </motion.div>
-                )}
-
-                <div className="space-y-5">
-                  <div className="space-y-1.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"} ml-4 font-black`}>Email or ID</label>
-                    <input
-                      type="text"
-                      name="identifier"
-                      placeholder="example@univ.edu"
-                      value={form.identifier}
-                      onChange={handleChange}
-                      className={`w-full px-6 py-4 rounded-2xl outline-none gradient-border-input ${darkMode ? "gradient-border-input-dark text-white placeholder-white/20" : "gradient-border-input-light text-gray-900 placeholder-gray-400"} shadow-sm hover:shadow-blue-500/20`}
-                      required
-                    />
+          <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
+            <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-6 px-8 md:py-8 md:px-10 space-y-6 relative overflow-hidden transition-all duration-500`}>
+              {view === "LOGIN" && (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2 text-center">
+                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Welcome Back</h2>
+                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Enter your credentials to access your account</p>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center ml-4 mr-2">
-                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"} font-black`}>Password</label>
-                      <button
-                        type="button"
-                        onClick={() => setView("FORGOT_EMAIL")}
-                        className="text-[10px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-black transition-colors"
-                      >
-                        Forgot?
-                      </button>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className={`${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <div className="space-y-5">
+                    <div className="space-y-1.5">
+                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email or ID</label>
+                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                        <input
+                          type="text"
+                          name="identifier"
+                          placeholder="example@univ.edu"
+                          value={form.identifier}
+                          onChange={handleChange}
+                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          required
+                        />
+                      </div>
                     </div>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="••••••••"
-                      value={form.password}
-                      onChange={handleChange}
-                      className={`w-full px-6 py-4 rounded-2xl outline-none gradient-border-input ${darkMode ? "gradient-border-input-dark text-white placeholder-white/20" : "gradient-border-input-light text-gray-900 placeholder-gray-400"} shadow-sm hover:shadow-blue-500/20`}
-                      required
-                    />
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center ml-4 mr-2">
+                        <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password</label>
+                        <button
+                          type="button"
+                          onClick={() => setView("FORGOT_EMAIL")}
+                          className="text-[10px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-extrabold transition-colors border-b-2 border-transparent hover:border-blue-400"
+                        >
+                          Forgot?
+                        </button>
+                      </div>
+                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                        <input
+                          type="password"
+                          name="password"
+                          placeholder="••••••••"
+                          value={form.password}
+                          onChange={handleChange}
+                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                  style={{ boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.5)' }}
-                >
-                  {loading ? "Authenticating..." : "Login"}
-                </button>
-
-                <div className="pt-2 text-center">
-                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    New here?{" "}
-                    <Link href="/auth/signup" className="text-blue-500 font-bold hover:underline underline-offset-4">
-                      Create an Account
-                    </Link>
-                  </p>
-                </div>
-              </form>
-            )}
-
-            {view === "FORGOT_EMAIL" && (
-              <form onSubmit={handleForgotPassword} className="space-y-6">
-                <div className="space-y-2 text-center">
-                  <h2 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-black"}`}>Reset Access</h2>
-                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>We&apos;ll send a code to your registered email</p>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"} ml-4 font-black`}>Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      className={`w-full px-6 py-4 rounded-2xl outline-none gradient-border-input ${darkMode ? "gradient-border-input-dark text-white placeholder-white/20" : "gradient-border-input-light text-gray-900 placeholder-gray-400"} shadow-sm hover:shadow-blue-500/20`}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full ${darkMode ? "bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-900"} py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all`}
+                    className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
                   >
-                    {loading ? "Sending..." : "Send Verification Code"}
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                      <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                        {loading ? "Authenticating..." : "Login"}
+                      </span>
+                    </div>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setView("LOGIN")}
-                    className={`w-full ${darkMode ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
-                  >
-                    Return to Login
-                  </button>
-                </div>
-              </form>
-            )}
 
-            {view === "FORGOT_OTP" && (
-              <form onSubmit={handleResetPassword} className="space-y-6">
-                <div className="space-y-2 text-center">
-                  <h2 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-black"}`}>Security Check</h2>
-                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>Verification code sent to your inbox</p>
-                </div>
+                  <div className="pt-2 text-center">
+                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold`}>
+                      New here?{" "}
+                      <Link href="/auth/signup" className="text-blue-500 font-black hover:underline underline-offset-4">
+                        Create an Account
+                      </Link>
+                    </p>
+                  </div>
+                </form>
+              )}
 
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"} ml-4 font-black`}>Verification Code</label>
-                    <input
-                      type="text"
-                      placeholder="6-digit code"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className={`w-full px-6 py-4 rounded-2xl outline-none text-center tracking-[0.5em] font-black gradient-border-input ${darkMode ? "gradient-border-input-dark text-white placeholder-white/20" : "gradient-border-input-light text-gray-900 placeholder-gray-400"} shadow-sm hover:shadow-blue-500/20`}
-                      required
-                    />
+              {view === "FORGOT_EMAIL" && (
+                <form onSubmit={handleForgotPassword} className="space-y-6">
+                  <div className="space-y-2 text-center">
+                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Reset Access</h2>
+                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>We&apos;ll send a code to your registered email</p>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"} ml-4 font-black`}>New Password</label>
-                    <input
-                      type="password"
-                      placeholder="Enter new password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className={`w-full px-6 py-4 rounded-2xl outline-none gradient-border-input ${darkMode ? "gradient-border-input-dark text-white placeholder-white/20" : "gradient-border-input-light text-gray-900 placeholder-gray-400"} shadow-sm hover:shadow-blue-500/20`}
-                      required
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                        <input
+                          type="email"
+                          placeholder="Enter your email"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="text-center">
-                  {timer > 0 ? (
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Code expires in <span className="text-blue-500">{timer}s</span></p>
-                  ) : (
+                  <div className="space-y-3">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                    >
+                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                        <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                          {loading ? "Sending..." : "Send Verification Code"}
+                        </span>
+                      </div>
+                    </button>
                     <button
                       type="button"
-                      onClick={handleForgotPassword}
-                      className="text-[10px] uppercase tracking-widest text-red-500 font-black hover:underline"
+                      onClick={() => setView("LOGIN")}
+                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
                     >
-                      Code Expired. Resend?
+                      Return to Login
                     </button>
-                  )}
-                </div>
+                  </div>
+                </form>
+              )}
 
-                <div className="space-y-3">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-green-600 hover:bg-green-500 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg"
-                  >
-                    {loading ? "Updating..." : "Verify & Reset"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setView("LOGIN")}
-                    className={`w-full ${darkMode ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            )}
+              {view === "FORGOT_OTP" && (
+                <form onSubmit={handleResetPassword} className="space-y-6">
+                  <div className="space-y-2 text-center">
+                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Security Check</h2>
+                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Verification code sent to your inbox</p>
+                  </div>
 
-            {/* Back to Home Inside the Div */}
-            <div className="pt-4 border-t border-white/5 text-center">
-              <Link
-                href="/"
-                className={`group inline-flex items-center gap-2.5 px-6 py-2 rounded-full transition-all duration-300 ${darkMode
-                  ? "text-gray-400 hover:text-white hover:bg-[#FAFAFA]/5"
-                  : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
-                  }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1 ${darkMode ? "text-gray-500 group-hover:text-blue-400" : "text-gray-400 group-hover:text-blue-500"}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                <span className="text-[11px] uppercase tracking-[0.2em] font-black italic">
-                  Return to Home
-                </span>
-              </Link>
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
+                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                        <input
+                          type="text"
+                          placeholder="6-digit code"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none text-center tracking-[0.5em] font-black ${darkMode ? "bg-black text-white" : "bg-white text-black"} font-bold`}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>New Password</label>
+                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                        <input
+                          type="password"
+                          placeholder="Enter new password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    {timer > 0 ? (
+                      <p className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Code expires in <span className="text-blue-500">{timer}s</span></p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        className="text-[10px] uppercase tracking-widest text-red-500 font-black hover:underline underline-offset-4"
+                      >
+                        Code Expired. Resend?
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full relative group p-[2px] bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                    >
+                      <div className="bg-gradient-to-r from-green-600 to-emerald-600 group-hover:from-green-500 group-hover:to-emerald-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                        <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                          {loading ? "Updating..." : "Verify & Reset"}
+                        </span>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setView("LOGIN")}
+                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Back to Home Inside the Div */}
+              <div className="pt-6 border-t border-white/5 text-center">
+                <div className="p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full inline-block group transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] shadow-lg">
+                  <Link
+                    href="/"
+                    className={`flex items-center gap-2.5 px-8 py-2.5 rounded-full transition-all duration-300 font-black ${darkMode
+                      ? "bg-[#0f172a] text-white hover:bg-black"
+                      : "bg-white text-slate-900 hover:bg-gray-50"
+                      }`}
+                  >
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 text-blue-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      whileHover={{ x: -4 }}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </motion.svg>
+                    <span className="text-[10px] uppercase tracking-[0.25em] italic">
+                      Return to Home
+                    </span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>

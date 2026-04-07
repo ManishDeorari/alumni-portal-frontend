@@ -52,6 +52,7 @@ export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState("ALL");
   const [selectedPost, setSelectedPost] = useState(null);
   const [showPostModal, setShowPostModal] = useState(false);
+  const [notFoundError, setNotFoundError] = useState(null);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -93,29 +94,53 @@ export default function NotificationsPage() {
   }, [API_URL, refreshNotifications]);
 
   const handleNotificationClick = async (note) => {
-    if (note.isRead) return; // Prevent clicking on read notifications
-    markAsRead(note._id);
+    if (!note.isRead) {
+      markAsRead(note._id);
+    }
 
-    if (note.type === "connect_request" || note.type === "connect_accept" || note.type === "feedback") {
-      router.push(`/profile/${note.sender?._id || note.sender}`);
-    } else if (note.type === "profile_visit") {
-      router.push(`/profile/${note.sender?._id || note.sender}`);
+    if (note.type === "connect_request" || note.type === "connect_accept" || note.type === "feedback" || note.type === "profile_visit") {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_URL}/api/user/${note.sender?._id || note.sender}`, {
+           headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+           router.push(`/profile/${note.sender?._id || note.sender}`);
+        } else {
+           setNotFoundError("User");
+        }
+      } catch (err) {
+         setNotFoundError("User");
+      }
     } else if (note.type === "group_joined" || note.type === "group_added") {
       router.push("/dashboard/groups");
     } else if (note.type === "points_earned") {
-      // Allow it to fall through to note.postId logic
+      if (note.postId) {
+        try {
+          const res = await fetch(`${API_URL}/api/posts/${note.postId._id || note.postId}`);
+          if (res.ok) {
+            const postData = await res.json();
+            setSelectedPost(postData);
+            setShowPostModal(true);
+          } else {
+            setNotFoundError("Post");
+          }
+        } catch (err) {
+          setNotFoundError("Post");
+        }
+      }
     } else if (note.postId) {
       try {
         const res = await fetch(`${API_URL}/api/posts/${note.postId._id || note.postId}`);
-        const postData = await res.json();
         if (res.ok) {
+          const postData = await res.json();
           setSelectedPost(postData);
           setShowPostModal(true);
         } else {
-          console.error("Post not found or deleted");
+          setNotFoundError("Post");
         }
       } catch (err) {
-        console.error("Failed to fetch post:", err);
+        setNotFoundError("Post");
       }
     }
   };
@@ -329,6 +354,7 @@ export default function NotificationsPage() {
                                         let msg = note.message;
                                         let cat = "Reward";
                                         let pts = "0";
+                                        const isPenalty = note.message?.startsWith("MANUAL_PENALTY::");
 
                                         if (note.message?.startsWith("MANUAL_AWARD::")) {
                                           const parts = note.message.split("::");
@@ -340,6 +366,11 @@ export default function NotificationsPage() {
                                           pts = parts[1] || "0";
                                           msg = "Congratulations! Your session has been approved.";
                                           cat = "Campus Engagement";
+                                        } else if (isPenalty) {
+                                          const parts = note.message.split("::");
+                                          msg = parts[1] || "";
+                                          cat = "Penalty";
+                                          pts = parts[3] || "0";
                                         } else {
                                           const match = note.message?.match(/\+?(\d+)\s*(?:PTS|pts|points|Points)/i);
                                           if (match) {
@@ -356,32 +387,38 @@ export default function NotificationsPage() {
                                           }
                                         }
 
-                                        // Apply categorical fallback if the system categorized it as a generic "Reward"
-                                        if (cat === "Reward" || !cat) {
+                                        // Apply categorical fallback
+                                        if ((cat === "Reward" || !cat) && !isPenalty) {
                                           const lowerMsg = msg?.toLowerCase() || note.message?.toLowerCase() || "";
-                                          if (lowerMsg.includes("like")) cat = "Like";
+                                          if (lowerMsg.includes("post")) cat = "Post";
+                                          else if (lowerMsg.includes("like")) cat = "Like";
                                           else if (lowerMsg.includes("comment")) cat = "Comment";
                                           else if (lowerMsg.includes("network") || lowerMsg.includes("connect")) cat = "Network";
                                           else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Alumni Participation";
-                                          else if (lowerMsg.includes("post")) cat = "Post";
                                           else cat = "Reward";
                                         }
 
+                                        const cardGrad = isPenalty ? "from-red-600 via-orange-500 to-red-600" : "from-purple-500 via-blue-500 to-purple-500";
+                                        const textGrad = isPenalty ? "from-red-500 to-orange-500" : "from-purple-500 to-blue-500";
+                                        const tagTheme = isPenalty 
+                                          ? (darkMode ? 'bg-black text-red-400' : 'bg-white text-red-700')
+                                          : (darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700');
+
                                         return (
-                                          <div className="relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 shadow-md">
+                                          <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${cardGrad} shadow-md`}>
                                             <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
                                               <div className={`text-left font-bold text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'}`}>
                                                 {msg}
                                               </div>
                                               <div className="flex justify-center relative">
-                                                <div className="p-[1px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-sm">
-                                                  <span className={`block font-bold uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700'}`}>
+                                                <div className={`p-[1px] rounded-full bg-gradient-to-r ${textGrad} shadow-sm`}>
+                                                  <span className={`block font-bold uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full whitespace-nowrap ${tagTheme}`}>
                                                     {cat}
                                                   </span>
                                                 </div>
                                               </div>
-                                              <div className="text-right sm:text-right font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-br from-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-sm">
-                                                +{pts} PTS
+                                              <div className={`text-right sm:text-right font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-br ${textGrad} bg-clip-text text-transparent drop-shadow-sm`}>
+                                                {isPenalty ? "-" : "+"}{pts} PTS
                                               </div>
                                             </div>
                                           </div>
@@ -465,11 +502,11 @@ export default function NotificationsPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-[#FAFAFA] rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 text-slate-900"
+              className={`relative ${darkMode ? 'bg-[#121213] border-white/10 text-white' : 'bg-[#FAFAFA] border-gray-100 text-slate-900'} rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border`}
             >
               <button
                 onClick={() => setShowPostModal(false)}
-                className="absolute top-6 right-6 z-10 p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-all active:scale-90 border border-gray-200"
+                className={`absolute top-6 right-6 z-20 p-2 rounded-full transition-all active:scale-90 border ${darkMode ? 'bg-white/5 hover:bg-white/10 text-gray-300 border-white/10' : 'bg-gray-100 hover:bg-gray-200 text-gray-600 border-gray-200'}`}
               >
                 <X className="w-6 h-6" />
               </button>
@@ -487,8 +524,40 @@ export default function NotificationsPage() {
                       }
                     }}
                     initialShowComments={true}
+                    darkMode={darkMode}
+                    transparentBackground={true}
                   />
                 )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Not Found Error Modal */}
+      <AnimatePresence>
+        {notFoundError && (
+          <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className={`p-[2.5px] rounded-[2rem] shadow-2xl max-w-sm w-full bg-gradient-to-tr from-red-500 to-orange-500`}
+            >
+              <div className={`p-8 rounded-[calc(2rem-2px)] flex flex-col items-center text-center ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                  <ShieldAlert className="w-8 h-8" />
+                </div>
+                <h3 className={`text-xl font-black mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>{notFoundError} Not Found</h3>
+                <p className={`text-sm font-semibold mb-6 ${darkMode ? 'text-gray-400' : 'text-slate-600'}`}>
+                  The {notFoundError.toLowerCase()} you are looking for has been deleted or no longer exists.
+                </p>
+                <button
+                  onClick={() => setNotFoundError(null)}
+                  className={`w-full py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-105 active:scale-95 text-white bg-gradient-to-r from-red-500 to-orange-500 shadow-lg`}
+                >
+                  Okay
+                </button>
               </div>
             </motion.div>
           </div>

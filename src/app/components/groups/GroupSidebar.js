@@ -29,8 +29,8 @@ export default function GroupSidebar({
 
             <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-[#FAFAFA]/95 text-gray-900"
                 }`}>
-                <div className="p-4">
-                    <div className="flex justify-between items-center mb-4">
+                <div className="px-4 py-3">
+                    <div className="flex justify-between items-center mb-3">
                         <h2 className={`text-xl font-black tracking-tight ${darkMode ? "text-white" : "text-gray-900"}`}>Groups</h2>
                         {isAdmin && (
                             <button 
@@ -51,7 +51,7 @@ export default function GroupSidebar({
                                     placeholder="Search groups..."
                                     value={searchTerm}
                                     onChange={handleSearch}
-                                    className={`w-full bg-transparent py-2.5 font-bold text-sm placeholder-gray-400 focus:outline-none ${darkMode ? "text-white" : "text-black"}`}
+                                    className={`w-full bg-transparent py-2 font-bold text-sm placeholder-gray-400 focus:outline-none ${darkMode ? "text-white" : "text-black"}`}
                                 />
                             </div>
                         </div>
@@ -59,7 +59,7 @@ export default function GroupSidebar({
                 </div>
 
                 {/* Gradient Divider */}
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+                <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                     {groups.length === 0 ? (

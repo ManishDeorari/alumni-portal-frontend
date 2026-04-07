@@ -64,47 +64,49 @@ export default function ImageViewerModal({ isOpen, onClose, imageUrl }) {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
         >
-            <div className="absolute top-6 right-6 flex items-center gap-3 z-[201]" onClick={e => e.stopPropagation()}>
-                {scale > 1 && (
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-[201] p-[1.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl backdrop-blur-md" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-3 px-6 py-3 bg-black/80 rounded-[calc(1.5rem-1.5px)]">
+                    {scale > 1 && (
+                        <button 
+                            onClick={handleReset}
+                            className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl transition-all animate-in zoom-in duration-300 shadow-lg shadow-blue-500/40"
+                            title="Reset Zoom"
+                        >
+                            <FaExpandArrowsAlt size={18} />
+                        </button>
+                    )}
                     <button 
-                        onClick={handleReset}
-                        className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all animate-in slide-in-from-right-2"
-                        title="Reset Zoom"
+                        onClick={handleZoomIn}
+                        className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all hover:scale-110 active:scale-95"
+                        title="Zoom In"
                     >
-                        <FaExpandArrowsAlt size={18} />
+                        <FaSearchPlus size={18} />
                     </button>
-                )}
-                <button 
-                    onClick={handleZoomIn}
-                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
-                    title="Zoom In"
-                >
-                    <FaSearchPlus size={18} />
-                </button>
-                <button 
-                    onClick={handleZoomOut}
-                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
-                    title="Zoom Out"
-                >
-                    <FaSearchMinus size={18} />
-                </button>
-                <div className="w-[1px] h-8 bg-[#FAFAFA]/20 mx-1" />
-                <a 
-                    href={imageUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="p-3 bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white rounded-full transition-all"
-                    title="Download Full Image"
-                >
-                    <FaDownload size={18} />
-                </a>
-                <button 
-                    onClick={onClose} 
-                    className="p-3 bg-red-500/20 hover:bg-red-500/40 text-red-500 rounded-full transition-all"
-                    title="Close"
-                >
-                    <FaTimes size={18} />
-                </button>
+                    <button 
+                        onClick={handleZoomOut}
+                        className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all hover:scale-110 active:scale-95"
+                        title="Zoom Out"
+                    >
+                        <FaSearchMinus size={18} />
+                    </button>
+                    <div className="w-[1px] h-8 bg-white/20 mx-2" />
+                    <a 
+                        href={imageUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all hover:scale-110 active:scale-95"
+                        title="Download Full Image"
+                    >
+                        <FaDownload size={18} />
+                    </a>
+                    <button 
+                        onClick={onClose} 
+                        className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl transition-all hover:scale-110 active:scale-95 shadow-lg shadow-red-500/40"
+                        title="Close"
+                    >
+                        <FaTimes size={18} />
+                    </button>
+                </div>
             </div>
 
             <div 

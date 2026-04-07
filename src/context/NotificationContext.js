@@ -161,14 +161,19 @@ export  const NotificationProvider = ({ children }) => {
       socket.on("connect", handleSocketConnect);
       
       const handleNewNotification = (notification) => {
+        let isNew = false;
         setNotifications(prev => {
           // Prevent duplicates
-          if (prev.some(n => n._id === notification._id)) return prev;
+          if (prev.some(n => n?._id === notification?._id)) return prev;
+          isNew = true;
           return [{ ...notification, isRead: false }, ...prev];
         });
-        setUnreadCount(prev => prev + 1);
-        setShakeNotification(true);
-        setTimeout(() => setShakeNotification(false), 1000);
+
+        if (isNew) {
+          setUnreadCount(prev => prev + 1);
+          setShakeNotification(true);
+          setTimeout(() => setShakeNotification(false), 1000);
+        }
         
         if (notification.type === "connect_request") {
           setPendingRequestsCount(prev => prev + 1);
@@ -279,13 +284,18 @@ export  const NotificationProvider = ({ children }) => {
 
       const handleLiveNotification = (notification) => {
         if (!notification) return;
+        let isNew = false;
         setNotifications(prev => {
-          if (prev.some(n => n._id === notification._id)) return prev;
+          if (prev.some(n => n?._id === notification?._id)) return prev;
+          isNew = true;
           return [{ ...notification, isRead: false }, ...prev];
         });
-        setUnreadCount(prev => prev + 1);
-        setShakeNotification(true);
-        setTimeout(() => setShakeNotification(false), 1000);
+        
+        if (isNew) {
+          setUnreadCount(prev => prev + 1);
+          setShakeNotification(true);
+          setTimeout(() => setShakeNotification(false), 1000);
+        }
       };
 
       const handleForceLogout = () => {

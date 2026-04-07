@@ -14,6 +14,7 @@ import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import AuthGuard from "../components/AuthGuard";
 
 function ProfileContent() {
   const router = useRouter();
@@ -63,8 +64,7 @@ function ProfileContent() {
 
       // If no ID is available and we don't have a token, then redirect
       if (!targetId && !token) {
-        console.warn("[Profile] No targetId or token found, redirecting to login.");
-        router.push("/auth/login");
+        console.warn("[Profile] No targetId or token found.");
         return;
       }
 
@@ -173,17 +173,19 @@ function ProfileContent() {
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
-        <div className="flex flex-col items-center gap-6 animate-pulse">
-          <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
-          <div className="text-center space-y-2">
-              <h2 className="font-black tracking-[0.3em] uppercase text-sm">Authenticating Route...</h2>
+    <AuthGuard>
+      <Suspense fallback={
+        <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
+          <div className="flex flex-col items-center gap-6 animate-pulse">
+            <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
+            <div className="text-center space-y-2">
+                <h2 className="font-black tracking-[0.3em] uppercase text-sm">Authenticating Route...</h2>
+            </div>
           </div>
         </div>
-      </div>
-    }>
-      <ProfileContent />
-    </Suspense>
+      }>
+        <ProfileContent />
+      </Suspense>
+    </AuthGuard>
   );
 }

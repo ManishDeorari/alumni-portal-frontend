@@ -67,14 +67,18 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
         <p className={`text-[10px] ${darkMode ? "text-gray-500" : "text-gray-500"} truncate`}>{new Date(post.createdAt).toLocaleString()}</p>
       </div>
 
-      {!hideActions && (post.user?._id || post.user) === (currentUser?._id || currentUser) && (
+      {!hideActions && (
         <div className="ml-auto flex gap-2">
-          <button onClick={toggleEdit} className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-sm hover:underline font-bold`}>
-            {editing ? "Cancel" : "Edit"}
-          </button>
-          <button onClick={handleDelete} className={`${darkMode ? "text-red-400" : "text-red-600"} text-sm hover:underline font-bold`}>
-            Delete
-          </button>
+          {((post.user?._id || post.user) === (currentUser?._id || currentUser)) && (
+            <button onClick={toggleEdit} className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-sm hover:underline font-bold`}>
+              {editing ? "Cancel" : "Edit"}
+            </button>
+          )}
+          {(((post.user?._id || post.user) === (currentUser?._id || currentUser)) || currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin) && (
+            <button onClick={handleDelete} className={`${darkMode ? "text-red-400" : "text-red-600"} text-sm hover:underline font-bold`}>
+              Delete
+            </button>
+          )}
         </div>
       )}
 

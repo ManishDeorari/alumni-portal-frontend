@@ -37,6 +37,12 @@ export default function PointsSystemManagement({ user }) {
     const [category, setCategory] = useState("other");
     const [awarding, setAwarding] = useState(false);
 
+    // Manual Penalty State
+    const [penaltySearch, setPenaltySearch] = useState("");
+    const [penaltyAmount, setPenaltyAmount] = useState("");
+    const [penaltyMessage, setPenaltyMessage] = useState("");
+    const [penalizing, setPenalizing] = useState(false);
+
     const CATEGORY_LABELS = {
         profileCompletion: "Profile Completion",
         studentEngagement: "Student Engagement",
@@ -134,6 +140,35 @@ export default function PointsSystemManagement({ user }) {
         }
     };
 
+    const handleManualPenalty = async (e) => {
+        e.preventDefault();
+        if (!penaltySearch || !penaltyAmount) return toast.error("Please fill search and amount");
+        setPenalizing(true);
+        try {
+            const res = await fetch(`${API}/api/admin-points-mgmt/manual-penalty`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`,
+                },
+                body: JSON.stringify({ search: penaltySearch, amount: Number(penaltyAmount), message: penaltyMessage }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success(`Deducted ${penaltyAmount} points from ${data.user.name}`);
+                setPenaltySearch("");
+                setPenaltyAmount("");
+                setPenaltyMessage("");
+            } else {
+                throw new Error(data.message || "Penalty failed");
+            }
+        } catch (err) {
+            toast.error(err.message);
+        } finally {
+            setPenalizing(false);
+        }
+    };
+
     const triggerRollover = async () => {
         if (!window.confirm("ARE YOU SURE? This will reset all current points and logs for ALL alumni!")) return;
         try {
@@ -196,9 +231,9 @@ export default function PointsSystemManagement({ user }) {
                         {/* Row 1: Reward Points */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {[
-                                { label: "Post Creation", key: "postPoints" },
-                                { label: "Post Likes", key: "likePoints" },
-                                { label: "Post Comments", key: "commentPoints" },
+                                { label: "Post Creation Points", key: "postPoints" },
+                                { label: "Post Likes Points", key: "likePoints" },
+                                { label: "Post Comments Points", key: "commentPoints" },
                             ].map((item) => (
                                 <div key={item.key} className="space-y-3">
                                     <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
@@ -270,8 +305,8 @@ export default function PointsSystemManagement({ user }) {
                         {/* Row 4: Other Points & Submit */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
                             {[
-                                { label: "Profile Completion", key: "profileCompletionPoints" },
-                                { label: "Networking (Connect)", key: "connectionPoints" },
+                                { label: "Profile Completion Points", key: "profileCompletionPoints" },
+                                { label: "Networking (Connect) Points", key: "connectionPoints" },
                             ].map((item) => (
                                 <div key={item.key} className="space-y-3">
                                     <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>
@@ -384,6 +419,75 @@ export default function PointsSystemManagement({ user }) {
                                 <>
                                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                     Grant Points & Notify User
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </section>
+            </div>
+
+            {/* Manual Penalty Section */}
+            <div className="relative p-[2px] bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-red-500/10 transition-colors"></div>
+                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                        <span className="p-3 bg-red-600/20 rounded-2xl text-red-500">⚠️</span>
+                        <span className={darkMode ? "text-white" : "text-slate-900"}>Custom Points Penalty</span>
+                    </h2>
+                    <form onSubmit={handleManualPenalty} className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
+                                <div className="relative group/input p-[2px] bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl shadow-sm">
+                                    <UserSearchInput
+                                        value={penaltySearch}
+                                        onChange={(val) => setPenaltySearch(val)}
+                                        onSelect={(user) => setPenaltySearch(user.name)}
+                                        role="alumni"
+                                        darkMode={darkMode}
+                                        placeholder="Name or ID..."
+                                        className={`!w-full !border-none !shadow-none font-black !py-4 !px-5 !h-[58px] ${
+                                            darkMode ? "!bg-black !text-white" : "!bg-white !text-black"
+                                        }`}
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Penalty Amount</label>
+                                <div className="p-[2px] bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl shadow-sm">
+                                    <input
+                                        type="number"
+                                        value={penaltyAmount}
+                                        onChange={(e) => setPenaltyAmount(e.target.value)}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
+                                        placeholder="0"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Custom Reason (Appears in Notice)</label>
+                            <div className="p-[2px] bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 rounded-2xl shadow-sm">
+                                <input
+                                    type="text"
+                                    value={penaltyMessage}
+                                    onChange={(e) => setPenaltyMessage(e.target.value)}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-6 py-5 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
+                                    placeholder="e.g. Violation of community guidelines..."
+                                />
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={penalizing}
+                            className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
+                        >
+                            {penalizing ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            ) : (
+                                <>
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                    Deduct Points & Issue Notice
                                 </>
                             )}
                         </button>

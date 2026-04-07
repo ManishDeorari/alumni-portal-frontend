@@ -94,24 +94,23 @@ const LoginPopup = () => {
                     <p className="text-white/70 mt-2 font-medium text-sm">Reconnect. Network. Grow.</p>
                 </div>
 
-                <div className={`${darkMode ? "bg-[#0f172a]/90 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-[2.5rem] py-4 px-6 md:py-6 md:px-8 shadow-2xl space-y-4 relative overflow-hidden transition-all duration-500`}>
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-
-                    {/* Popup Status Header */}
-                    <div className="flex justify-between items-center text-white flex-shrink-0">
-                        <div className="space-y-0.5">
-                            <h2 className={`text-xl font-bold flex items-center gap-2 ${darkMode ? "text-white" : "text-black"}`}>
-                                Access Restricted
-                            </h2>
-                            <p className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-gray-600"} font-black`}>Login to continue</p>
+                <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
+                    <div className={`${darkMode ? "bg-[#0f172a]" : "bg-[#FAFAFA]"} backdrop-blur-2xl rounded-[calc(2.5rem-2px)] py-4 px-6 md:py-5 md:px-8 space-y-4 relative transition-all duration-500`}>
+                        {/* Popup Status Header */}
+                        <div className="flex justify-between items-center text-white flex-shrink-0">
+                            <div className="space-y-0.5">
+                                <h2 className={`text-lg font-black flex items-center gap-2 tracking-tight ${darkMode ? "text-white" : "text-black"}`}>
+                                    Access Restricted
+                                </h2>
+                                <p className={`text-[8.5px] uppercase tracking-[0.2em] ${darkMode ? "text-blue-400" : "text-blue-600"} font-black`}>Authentication required</p>
+                            </div>
+                            <button
+                                onClick={handleClose}
+                                className={`${darkMode ? "text-white/40 hover:text-white hover:bg-white/10" : "text-gray-400 hover:text-gray-900 hover:bg-gray-100"} p-2 rounded-full transition-all`}
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
-                        <button
-                            onClick={handleClose}
-                            className={`${darkMode ? "text-white/40 hover:text-white hover:bg-[#FAFAFA]/10" : "text-gray-400 hover:text-gray-900 hover:bg-gray-100"} p-2 rounded-full transition-all`}
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
 
                     {error && (
                         <motion.div
@@ -123,41 +122,45 @@ const LoginPopup = () => {
                         </motion.div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-1">
-                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-black"} ml-4 font-black flex items-center gap-1`}>
-                                <User className="w-3 h-3" /> Email or ID
-                            </label>
-                            <input
-                                type="text"
-                                name="identifier"
-                                placeholder="example@univ.edu"
-                                value={form.identifier}
-                                onChange={handleChange}
-                                className={`w-full px-5 py-3 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
-                                required
-                            />
-                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-1.5">
+                                <label className={`text-[8.5px] uppercase tracking-[0.2em] ${darkMode ? "text-gray-400" : "text-slate-500"} ml-4 font-black flex items-center gap-1.5`}>
+                                    <User className="w-3 h-3 text-blue-500" /> Email or ID
+                                </label>
+                                <div className="p-[1.5px] bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all">
+                                    <input
+                                        type="text"
+                                        name="identifier"
+                                        placeholder="example@univ.edu"
+                                        value={form.identifier}
+                                        onChange={handleChange}
+                                        className={`w-full px-5 py-2.5 ${darkMode ? "bg-[#0f172a] text-white placeholder-white/20" : "bg-white text-gray-900 placeholder-gray-400"} rounded-[calc(1rem-1.5px)] outline-none transition-all text-xs font-bold`}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                        <div className="space-y-1">
-                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-gray-500" : "text-black"} ml-4 font-black flex items-center gap-1`}>
-                                <Lock className="w-3 h-3" /> Password
-                            </label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="••••••••"
-                                value={form.password}
-                                onChange={handleChange}
-                                className={`w-full px-5 py-3 ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-white placeholder-white/20" : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400"} border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm`}
-                                required
-                            />
-                        </div>
+                            <div className="space-y-1.5">
+                                <label className={`text-[8.5px] uppercase tracking-[0.2em] ${darkMode ? "text-gray-400" : "text-slate-500"} ml-4 font-black flex items-center gap-1.5`}>
+                                    <Lock className="w-3 h-3 text-purple-500" /> Password
+                                </label>
+                                <div className="p-[1.5px] bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all">
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="••••••••"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        className={`w-full px-5 py-2.5 ${darkMode ? "bg-[#0f172a] text-white placeholder-white/20" : "bg-white text-gray-900 placeholder-gray-400"} rounded-[calc(1rem-1.5px)] outline-none transition-all text-xs font-bold`}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:brightness-110 text-white py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <span className="flex items-center gap-2">
@@ -175,23 +178,39 @@ const LoginPopup = () => {
                         </button>
                     </form>
 
-                    <div className="flex flex-col space-y-3 pt-2">
-                        <button
-                            onClick={handleSignupRedirect}
-                            className={`w-full ${darkMode ? "bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 text-white" : "bg-gray-100 hover:bg-gray-200 text-black"} font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest`}
-                        >
-                            <UserPlus className="w-4 h-4 text-blue-400" /> Create New Account
-                        </button>
-                    </div>
+                        <div className="flex flex-col space-y-3 pt-1">
+                            <div className="p-[1.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg hover:shadow-blue-500/20 transition-all active:scale-[0.98]">
+                                <button
+                                    onClick={handleSignupRedirect}
+                                    className={`w-full ${darkMode ? "bg-black hover:bg-white/5 text-white" : "bg-white hover:bg-gray-50 text-slate-900"} font-black py-3.5 px-6 rounded-[calc(1rem-1.5px)] transition-all flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.2em] group`}
+                                >
+                                    <UserPlus className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" /> 
+                                    Create New Account
+                                </button>
+                            </div>
+                        </div>
 
-                    {/* Footer Inside the Div */}
-                    <div className="pt-2 border-t border-white/5 flex justify-between items-center">
-                        <Link href="/" className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-gray-500 hover:text-white" : "text-black hover:text-gray-600"} font-black transition-colors flex items-center gap-1`}>
-                            <ArrowLeft className="w-3 h-3" /> Home
-                        </Link>
-                        <Link href="/auth/login" className="text-[10px] uppercase tracking-widest text-blue-500 font-black hover:underline transition-all">
-                            Full Login Page
-                        </Link>
+                        <div className="pt-3 border-t border-white/10 flex justify-between items-center gap-3">
+                            <Link 
+                                href="/" 
+                                className="flex-1 p-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-xl shadow-lg active:scale-95 group transition-all"
+                            >
+                                <div className={`w-full h-full flex items-center justify-center gap-2 py-2 rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-black text-emerald-400 group-hover:bg-emerald-500/10" : "bg-white text-emerald-600 group-hover:bg-emerald-50"}`}>
+                                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" /> 
+                                    <span className="text-[8.5px] font-black uppercase tracking-widest">Home</span>
+                                </div>
+                            </Link>
+
+                            <Link 
+                                href="/auth/login" 
+                                className="flex-1 p-[1.5px] bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 rounded-xl shadow-lg active:scale-95 group transition-all"
+                            >
+                                <div className={`w-full h-full flex items-center justify-center gap-2 py-2 rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-black text-orange-400 group-hover:bg-orange-500/10" : "bg-white text-orange-600 group-hover:bg-orange-50"}`}>
+                                    <LogIn className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                    <span className="text-[8.5px] font-black uppercase tracking-widest">Full Login</span>
+                                </div>
+                            </Link>
+                        </div>
                     </div>
                 </div>
 

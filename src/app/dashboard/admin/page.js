@@ -47,10 +47,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const token = getToken();
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
+      if (!token) return;
       try {
         // ⚡ INSTANT LOAD: Hydrate UI immediately from valid cache
         const cachedUser = localStorage.getItem("user");
@@ -78,7 +75,6 @@ export default function AdminDashboardPage() {
         }
       } catch (err) {
         console.error("fetch current user error:", err);
-        router.push("/auth/login");
       } finally {
         setLoading(false);
       }

@@ -4,17 +4,15 @@ import React, { useEffect, useState } from "react";
 import LoginPopup from "./LoginPopup";
 
 const AuthGuard = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    // Synchronous initial check for client-side hydration
+    const initialToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const [isAuthenticated, setIsAuthenticated] = useState(!!initialToken);
+    const [isLoading, setIsLoading] = useState(false); // No spinner needed if we check sync
 
     useEffect(() => {
-        // Check for token in localStorage
+        // Double check in useEffect to handle storage changes or edge cases
         const token = localStorage.getItem("token");
-        if (token) {
-            setIsAuthenticated(true);
-        } else {
-            setIsAuthenticated(false);
-        }
+        setIsAuthenticated(!!token);
         setIsLoading(false);
     }, []);
 

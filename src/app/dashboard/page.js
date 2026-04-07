@@ -48,10 +48,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
-        router.push("/auth/login");
-        return;
-      }
+      if (!token) return;
 
       try {
         // ⚡ INSTANT LOAD: Hydrate UI immediately from valid cache
@@ -72,7 +69,6 @@ export default function DashboardPage() {
         localStorage.setItem("user", JSON.stringify(data)); // Refresh cache silently
       } catch (err) {
         console.error("User fetch error:", err.message);
-        router.push("/auth/login");
       } finally {
         setLoading(false);
       }
@@ -211,23 +207,26 @@ export default function DashboardPage() {
           </aside>
 
           <div className="flex-1 space-y-8 order-1 lg:order-2">
-            <section className={`${darkMode ? "bg-[#121213] border-white/10" : "bg-[#FAFAFA] border-gray-200"} p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border shadow-sm relative overflow-hidden group transition-colors duration-500`}>
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-500">
-                  <span className="text-3xl md:text-4xl">👋</span>
-                </div>
-                <div className="text-center sm:text-left">
-                  <h2 className={`text-2xl md:text-3xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-1`}>
-                    Welcome back, {user?.name || "Alumni"}!
-                  </h2>
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-2 md:gap-4 mt-2">
-                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-[#FAFAFA]/5 border-white/10 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-500"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.enrollmentNumber || "N/A"}</span>
-                    <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest`}>{user?.role || "Member"}</span>
+            <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl md:rounded-[2.5rem] shadow-xl overflow-hidden">
+              <section className={`${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-4 md:p-6 rounded-[calc(1.875rem-2.5px)] md:rounded-[calc(2.5rem-2.5px)] relative overflow-hidden group transition-colors duration-500`}>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
+                  <div className="p-[2px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl md:rounded-3xl shadow-lg">
+                    <div className={`w-16 h-16 md:w-20 md:h-20 rounded-[calc(1rem-2px)] md:rounded-[calc(1.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
+                      <span className="text-3xl md:text-4xl text-white">👋</span>
+                    </div>
+                  </div>
+                  <div className="text-center sm:text-left">
+                    <h2 className={`text-2xl md:text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight mb-1`}>
+                      Welcome back, {user?.name || "Alumni"}!
+                    </h2>
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-2 md:gap-4 mt-2">
+                      <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-white/10 text-white" : "bg-gray-200 text-black"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest border border-white/10`}>{user?.enrollmentNumber || "N/A"}</span>
+                      <span className={`text-[9px] md:text-[10px] ${darkMode ? "bg-blue-500 text-white" : "bg-blue-600 text-white"} px-2 md:px-3 py-1 rounded-full font-black uppercase tracking-widest shadow-md`}>{user?.role || "Member"}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
 
             <CreatePost setPosts={setPosts} currentUser={user} darkMode={darkMode} />
 

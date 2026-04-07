@@ -198,46 +198,50 @@ export default function CommentCard({
               </div>
             </div>
 
-            {isOwn && (
+            {(isOwn || currentUser?.role === 'admin' || currentUser?.isMainAdmin) && (
               <div className="flex items-center gap-2 ml-2">
                 {editing ? (
-                  <>
-                    <button
-                      className="text-[9px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
-                      onClick={() => {
-                        if (isReply) {
-                          onEditReply(comment.parentId, comment._id, editText);
-                        } else {
-                          onEdit(comment._id, editText);
-                        }
-                        setEditing(false);
-                        setShowEmoji(false);
-                      }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-400 transition-colors"
-                      onClick={() => {
-                        setEditing(false);
-                        setEditText(comment.text);
-                        setShowEmoji(false);
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </>
+                  isOwn && (
+                    <>
+                      <button
+                        className="text-[9px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
+                        onClick={() => {
+                          if (isReply) {
+                            onEditReply(comment.parentId, comment._id, editText);
+                          } else {
+                            onEdit(comment._id, editText);
+                          }
+                          setEditing(false);
+                          setShowEmoji(false);
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-400 transition-colors"
+                        onClick={() => {
+                          setEditing(false);
+                          setEditText(comment.text);
+                          setShowEmoji(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )
                 ) : (
                   <>
-                    <button
-                      className="text-[9px] font-black uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
-                      onClick={() => {
-                        setEditText(comment.text);
-                        setEditing(true);
-                      }}
-                    >
-                      Edit
-                    </button>
+                    {isOwn && (
+                      <button
+                        className="text-[9px] font-black uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
+                        onClick={() => {
+                          setEditText(comment.text);
+                          setEditing(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
                       disabled={deleting}

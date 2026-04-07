@@ -53,6 +53,11 @@ const CATEGORY_GROUPS = [
         id: "other",
         label: "Other Activities",
         icon: "⚙️",
+    },
+    {
+        id: "penalty",
+        label: "Penalty",
+        icon: "⚠️",
     }
 ];
 
@@ -110,7 +115,14 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                                     Activity Breakdown
                                </h3>
                                 {CATEGORY_GROUPS.map((group) => (
-                                    <div key={group.id} className="group/item relative p-[2px] mb-3 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm">
+                                    <div 
+                                        key={group.id} 
+                                        className={`group/item relative p-[2px] mb-3 rounded-xl shadow-sm bg-gradient-to-r ${
+                                            group.id === 'penalty' 
+                                            ? 'from-red-600 via-orange-500 to-yellow-500' 
+                                            : 'from-blue-500 via-purple-500 to-pink-500'
+                                        }`}
+                                    >
                                         <div className={`rounded-[calc(1rem-2px)] flex flex-col w-full ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
                                             <div
                                                 onClick={() => group.children && toggleExpand(group.id)}

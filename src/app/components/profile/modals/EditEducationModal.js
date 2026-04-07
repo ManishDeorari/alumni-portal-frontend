@@ -167,7 +167,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
         educations.forEach((edu, idx) => {
             const hasData = edu.institution || edu.course || edu.startMonth || edu.startYear || edu.endMonth || edu.endYear || edu.grade || edu.activities || edu.description;
             if (hasData || !edu.isMandatory) {
-                if (!edu.institution) newErrors[`${idx}-institution`] = "School is required";
+                if (!edu.institution) newErrors[`${idx}-institution`] = `${edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "School" : "College"} name is required`;
                 if (!edu.degree) newErrors[`${idx}-degree`] = "Degree is required";
                 if (edu.degree && !edu.degree.includes("High School") && !edu.degree.includes("Intermediate") && !edu.course) {
                     newErrors[`${idx}-course`] = "Course is required";
@@ -314,7 +314,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                     {/* School */}
                                     <div className="space-y-1.5">
                                         <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${errors[`${index}-institution`] ? 'text-red-500' : (darkMode ? 'text-blue-400' : 'text-blue-600')}`}>
-                                            School/College <span className="text-red-500 font-bold">*</span>
+                                            {edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "School" : "College"} <span className="text-red-500 font-bold">*</span>
                                         </label>
                                         <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors[`${index}-institution`] ? 'from-red-500 to-red-600' : ''}`}>
                                             <input
@@ -323,7 +323,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                                                 className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-slate-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
                                                 value={edu.institution || ""}
                                                 onChange={(e) => handleChange(index, "institution", e.target.value)}
-                                                placeholder="Ex: Graphic Era Hill University"
+                                                placeholder={edu.degree?.includes("High School") || edu.degree?.includes("Intermediate") ? "Ex: St. Mary's School" : "Ex: Graphic Era Hill University"}
                                             />
                                         </div>
                                         {errors[`${index}-institution`] && <p className="text-red-500 text-[10px] font-bold uppercase ml-1">{errors[`${index}-institution`]}</p>}

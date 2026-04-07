@@ -21,8 +21,7 @@ export default function AlumniExport() {
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         course: "",
-        year: "",
-        industry: ""
+        year: ""
     });
 
     const getToken = () => localStorage.getItem("token");
@@ -33,7 +32,6 @@ export default function AlumniExport() {
             let url = `${API}/api/admin/export-alumni?query=${searchQuery}`;
             if (filters.course) url += `&course=${filters.course}`;
             if (filters.year) url += `&year=${filters.year}`;
-            if (filters.industry) url += `&industry=${filters.industry}`;
 
             const res = await fetch(url, {
                 headers: { Authorization: `Bearer ${getToken()}` }
@@ -199,7 +197,7 @@ export default function AlumniExport() {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 z-[60]">
                             <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Course</label>
                             <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
@@ -226,18 +224,6 @@ export default function AlumniExport() {
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                 </select>
                                 <svg className={`w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${darkMode ? "text-blue-400" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Industry</label>
-                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl shadow-md">
-                                <input
-                                    type="text"
-                                    placeholder="e.g. IT, Finance"
-                                    value={filters.industry}
-                                    onChange={(e) => setFilters({ ...filters, industry: e.target.value })}
-                                    className={`w-full px-4 py-[15px] ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-slate-900 placeholder-slate-400"} rounded-[calc(0.75rem-2px)] outline-none text-xs font-bold`}
-                                />
                             </div>
                         </div>
                     </div>

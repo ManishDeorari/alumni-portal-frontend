@@ -24,7 +24,7 @@ export default function GroupChatWindow({
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
     const emojiPickerRef = useRef(null);
-    
+
     const [newMessage, setNewMessage] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -72,15 +72,15 @@ export default function GroupChatWindow({
                 const formData = new FormData();
                 formData.append("file", selectedFile);
                 formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-                
+
                 const res = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
                     method: "POST",
                     body: formData
                 });
                 const data = await res.json();
                 if (data.secure_url) {
-                    mediaData = { 
-                        mediaUrl: data.secure_url, 
+                    mediaData = {
+                        mediaUrl: data.secure_url,
                         mediaPublicId: data.public_id,
                         type: "image"
                     };
@@ -130,7 +130,7 @@ export default function GroupChatWindow({
                 {/* Header */}
                 <div className="p-4 flex items-center justify-between relative bg-black/5">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
-                        <div 
+                        <div
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onViewImage(selectedGroup.profileImage || "/default-group.jpg");
@@ -146,7 +146,7 @@ export default function GroupChatWindow({
                             </p>
                         </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                         {isAdmin && (
                             <>
@@ -164,10 +164,10 @@ export default function GroupChatWindow({
                     </div>
                 </div>
 
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+                <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-chat-pattern">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-chat-pattern">
                     {messages.map((msg, index) => {
                         const isMe = String(msg.sender?._id || msg.sender?.id || msg.sender) === String(currentUser?._id || currentUser?.id);
 
@@ -190,23 +190,23 @@ export default function GroupChatWindow({
                                             ? "bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-tr-none"
                                             : "bg-gradient-to-br from-blue-400/30 via-purple-500/30 to-pink-500/30 rounded-tl-none border border-transparent"
                                             }`}>
-                                            <div className={`rounded-[calc(1rem-1px)] overflow-hidden ${isMe 
-                                                ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white" 
+                                            <div className={`rounded-[calc(1rem-1px)] overflow-hidden ${isMe
+                                                ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white"
                                                 : (darkMode ? "bg-gray-900 text-white" : "bg-[#FAFAFA] text-gray-950")
-                                            }`}>
+                                                }`}>
                                                 {msg.type === "image" && (
-                                                    <div 
+                                                    <div
                                                         onClick={() => onViewImage(msg.mediaUrl)}
                                                         className="relative cursor-zoom-in hover:opacity-90 transition-opacity p-1"
                                                     >
                                                         <img src={msg.mediaUrl} className="max-w-full max-h-[300px] object-cover rounded-xl" alt="Shared Media" />
                                                     </div>
                                                 )}
-                                                
+
                                                 {msg.type === "image" && msg.content && (
                                                     <div className={`h-[1px] w-full ${darkMode ? "bg-[#FAFAFA]/20" : "bg-black/20"}`} />
                                                 )}
-                                                
+
                                                 {msg.content && (
                                                     <div className="p-3">
                                                         <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
@@ -226,7 +226,7 @@ export default function GroupChatWindow({
                                                 )}
                                             </div>
                                         </div>
-                                        
+
                                         {/* Quick Reaction Button */}
                                         <div className={`absolute top-0 ${isMe ? "right-full mr-3" : "left-full ml-3"} opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2 items-center`}>
                                             <div className="flex gap-1.5 scale-90 group-hover:scale-100">
@@ -235,7 +235,7 @@ export default function GroupChatWindow({
                                                 ))}
                                             </div>
                                             {(isMe || isAdmin) && (
-                                                <button 
+                                                <button
                                                     onClick={() => onDeleteMessage(msg._id)}
                                                     className="p-1.5 px-3 rounded-lg bg-red-600/10 text-red-600 text-[8px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-lg"
                                                 >
@@ -259,7 +259,7 @@ export default function GroupChatWindow({
                     <div className="p-4 bg-black/10 backdrop-blur-md border-t dark:border-white/5 animate-in slide-in-from-bottom-4 duration-300">
                         <div className="relative inline-block group">
                             <img src={mediaPreview} className="w-32 h-32 object-cover rounded-2xl border-4 border-blue-500/30 shadow-2xl" alt="Preview" />
-                            <button 
+                            <button
                                 onClick={() => { setMediaPreview(null); setSelectedFile(null); }}
                                 className="absolute -top-2 -right-2 p-1.5 bg-red-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform"
                             >
@@ -274,10 +274,10 @@ export default function GroupChatWindow({
                     </div>
                 )}
 
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+                <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Input Area */}
-                <div className="p-6 bg-black/5">
+                <div className="p-4 bg-black/5">
                     {canMessage ? (
                         <form onSubmit={handleSend} className="flex items-center gap-4 relative">
                             <div className="flex items-center gap-1">
@@ -296,7 +296,7 @@ export default function GroupChatWindow({
                                 </button>
                                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                             </div>
-                            
+
                             <div className="flex-1 relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl focus-within:scale-[1.01] transition-all">
                                 <input
                                     type="text"
@@ -316,7 +316,7 @@ export default function GroupChatWindow({
                         </form>
                     ) : (
                         <div className="py-4 px-6 text-center bg-red-500/10 rounded-2xl border-2 border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.2em] shadow-lg animate-pulse">
-                             Messaging is currently disabled for this group
+                            Messaging is currently disabled for this group
                         </div>
                     )}
                 </div>

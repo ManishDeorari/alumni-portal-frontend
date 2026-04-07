@@ -147,221 +147,222 @@ export default function MemberSearchModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            {/* Height reduced by 20% -> h-[75vh] instead of full or larger h */}
-            <div className={`w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border flex flex-col max-h-[95vh] ${darkMode ? "bg-gray-900 border-white/10" : "bg-[#FAFAFA] border-gray-200"}`}>
+            <div className="relative w-full max-w-xl p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden">
+                <div className={`relative w-full rounded-[calc(2.5rem-2.5px)] overflow-hidden flex flex-col max-h-[90vh] ${darkMode ? "bg-black" : "bg-white"}`}>
+                    
+                    {/* Header */}
+                    <div className="p-6 border-b dark:border-white/10">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className={`text-2xl font-black uppercase tracking-tight ${darkMode ? "text-white" : "text-slate-900"}`}>{title}</h2>
+                            <button onClick={onClose} className={`p-2 rounded-full transition-colors ${darkMode ? "hover:bg-white/10 text-white" : "hover:bg-slate-100 text-slate-900"}`}>
+                                <FaTimes />
+                            </button>
+                        </div>
 
-                {/* Header */}
-                <div className="p-6 border-b dark:border-white/5">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{title}</h2>
-                        <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#FAFAFA]/5 transition-colors">
-                            <FaTimes className="text-gray-500" />
-                        </button>
-                    </div>
+                        {/* Quick Role Select Buttons */}
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsAllFacultyFlag(!isAllFacultyFlag);
+                                    if (!isAllFacultyFlag) setIsAllAlumniFlag(false);
+                                }}
+                                className={`py-4 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
+                                    isAllFacultyFlag 
+                                    ? "bg-gradient-to-br from-purple-600 to-purple-800 border-purple-400 text-white shadow-lg shadow-purple-500/40" 
+                                    : (darkMode ? "bg-slate-950 border-slate-800 text-white hover:border-purple-500" : "bg-white border-slate-200 text-slate-900 hover:border-purple-500")
+                                }`}
+                            >
+                                <span>Add All Faculty</span>
+                                {isAllFacultyFlag && <div className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+                            </button>
 
-                    {/* Quick Role Select Buttons */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setIsAllFacultyFlag(!isAllFacultyFlag);
-                                if (!isAllFacultyFlag) setIsAllAlumniFlag(false); // Exclusive for clarity? No, let's allow both
-                            }}
-                            className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
-                                isAllFacultyFlag 
-                                ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/20" 
-                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-purple-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-purple-500/50")
-                            }`}
-                        >
-                            <span>Add All Faculty</span>
-                            {isAllFacultyFlag && <div className="w-1.5 h-1.5 rounded-full bg-[#FAFAFA] animate-pulse" />}
-                        </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsAllAlumniFlag(!isAllAlumniFlag)}
+                                className={`py-4 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
+                                    isAllAlumniFlag 
+                                    ? "bg-gradient-to-br from-blue-600 to-blue-800 border-blue-400 text-white shadow-lg shadow-blue-500/40" 
+                                    : (darkMode ? "bg-slate-950 border-slate-800 text-white hover:border-blue-500" : "bg-white border-slate-200 text-slate-900 hover:border-blue-500")
+                                }`}
+                            >
+                                <span>Add All Alumni</span>
+                                {isAllAlumniFlag && <div className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+                            </button>
+                        </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setIsAllAlumniFlag(!isAllAlumniFlag)}
-                            className={`py-3 px-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest ${
-                                isAllAlumniFlag 
-                                ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20" 
-                                : (darkMode ? "bg-gray-950 border-gray-800 text-gray-500 hover:border-blue-500/50" : "bg-[#FAFAFA] border-gray-200 text-gray-500 hover:border-blue-500/50")
-                            }`}
-                        >
-                            <span>Add All Alumni</span>
-                            {isAllAlumniFlag && <div className="w-1.5 h-1.5 rounded-full bg-[#FAFAFA] animate-pulse" />}
-                        </button>
-                    </div>
+                        {/* Advanced Multi-Filter Search Bar */}
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-3 gap-3">
+                                {/* Name/General Query */}
+                                <div className="col-span-2 p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10">
+                                    <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1.5px)] h-full transition-all ${darkMode ? "bg-black" : "bg-white"}`}>
+                                        <FaSearch className="text-blue-500" size={14} />
+                                        <input
+                                            type="text"
+                                            placeholder="Search by name, roll..."
+                                            className={`bg-transparent border-none outline-none w-full font-black text-sm ${darkMode ? "text-white" : "text-black"}`}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
 
-                    {/* Advanced Multi-Filter Search Bar */}
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-3 gap-3">
-                            {/* Name/General Query */}
-                            <div className="col-span-2 p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/5">
-                                <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1px)] h-full transition-all ${darkMode ? "bg-gray-950 focus-within:bg-gray-900" : "bg-[#FAFAFA] focus-within:bg-gray-50"}`}>
-                                    <FaSearch className="text-gray-400" size={14} />
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name, roll..."
-                                        className={`bg-transparent border-none outline-none w-full font-bold text-sm ${darkMode ? "text-white" : "text-black"}`}
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                {/* Role Filter */}
+                                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500">
+                                    <select
+                                        value={roleFilter}
+                                        onChange={(e) => setRoleFilter(e.target.value)}
+                                        className={`w-full px-4 py-3 rounded-[calc(1rem-1.5px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
+                                    >
+                                        <option value="ALL">ALL ROLES</option>
+                                        <option value="ALUMNI">ALUMNI</option>
+                                        <option value="FACULTY">FACULTY</option>
+                                    </select>
+                                    <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 text-orange-500" />
+                                </div>
+                            </div>
+
+                            {/* Custom Filters (Course, Year) */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500/50 to-purple-500/50">
+                                    <HybridInput
+                                        value={course}
+                                        onChange={(val) => setCourse(val)}
+                                        options={COURSE_OPTIONS}
+                                        placeholder="Course (e.g. B.Tech)"
+                                        uppercase={true}
+                                        className={`w-full px-4 py-3 rounded-[calc(1rem-1.5px)] font-black text-[11px] uppercase tracking-[0.1em] outline-none transition-all ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
                                     />
                                 </div>
-                            </div>
 
-                            {/* Role Filter */}
-                            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500">
-                                <select
-                                    value={roleFilter}
-                                    onChange={(e) => setRoleFilter(e.target.value)}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-gray-950 text-white" : "bg-[#FAFAFA] text-gray-900"}`}
-                                >
-                                    <option value="ALL">ALL ROLES</option>
-                                    <option value="ALUMNI">ALUMNI</option>
-                                    <option value="FACULTY">FACULTY</option>
-                                </select>
-                                <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
-                            </div>
-                        </div>
-
-                        {/* Custom Filters (Course, Year) */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500/30 to-purple-500/30">
-                                <HybridInput
-                                    value={course}
-                                    onChange={(val) => setCourse(val)}
-                                    options={COURSE_OPTIONS}
-                                    placeholder="Course (e.g. B.Tech)"
-                                    uppercase={true}
-                                    className={`w-full px-4 py-3 rounded-[calc(1rem-1px)] font-black text-[10px] uppercase tracking-widest outline-none transition-all ${darkMode ? "bg-gray-950 text-white" : "bg-[#FAFAFA] text-gray-900"}`}
-                                />
-                            </div>
-
-                            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-purple-500/30 to-pink-500/30">
-                                <select
-                                    value={year}
-                                    disabled={!course}
-                                    onChange={(e) => setYear(e.target.value)}
-                                    className={`w-full px-4 py-[11px] rounded-[calc(1rem-1px)] appearance-none font-black text-[10px] uppercase tracking-widest outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-gray-950 text-white focus:bg-gray-900" : "bg-[#FAFAFA] text-gray-900 focus:bg-gray-50"}`}
-                                >
-                                    <option value="">{course ? "Passing Year" : "Select Course First"}</option>
-                                    {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
-                                </select>
-                                <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-6 px-1">
-                        <span className="text-[10px] uppercase tracking-widest font-black text-gray-500">
-                            {users.length} Users Found
-                        </span>
-                    </div>
-                </div>
-
-                {/* User List - Scrollable */}
-                <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-2 custom-scrollbar">
-                    {loading && users.length === 0 ? (
-                        <div className="py-10 text-center animate-pulse text-gray-400 font-bold uppercase text-[10px] tracking-widest flex flex-col items-center gap-3">
-                            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                            <span>Filtering Alumnis...</span>
-                        </div>
-                    ) : users.length === 0 ? (
-                        <div className="py-20 text-center text-gray-500 font-bold uppercase text-[10px] tracking-widest italic opacity-50 flex flex-col items-center gap-4">
-                            <FaUsers size={40} className="opacity-20" />
-                            <span>No members match your filters</span>
-                        </div>
-                    ) : (
-                        ["FACULTY", "ALUMNI"].map(roleKey => {
-                            const groupUsers = users.filter(u => (u.role || "alumni").toUpperCase() === roleKey);
-                            if (groupUsers.length === 0) return null;
-                            
-                            return (
-                                <div key={roleKey} className="space-y-3 pt-2">
-                                    <div className="flex items-center gap-4 px-2">
-                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
-                                        <button 
-                                            type="button"
-                                            onClick={() => handleSelectRole(roleKey)}
-                                            className="group flex items-center gap-2 hover:opacity-80 transition-all"
-                                        >
-                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{roleKey}</span>
-                                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full transition-all ${
-                                                groupUsers.every(u => selectedIds.includes(String(u._id)))
-                                                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
-                                                : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
-                                            }`}>
-                                                {groupUsers.every(u => selectedIds.includes(String(u._id))) ? "Selected" : "Select All"}
-                                            </span>
-                                        </button>
-                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gray-500/20 to-transparent" />
-                                    </div>
-                                    
-                                    {groupUsers.map(user => (
-                                        <div
-                                            key={user._id}
-                                            onClick={() => toggleUser(user._id)}
-                                            className="p-[1px] rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 transition-all hover:scale-[1.01]"
-                                        >
-                                            <div className={`p-4 flex items-center gap-4 rounded-[calc(1.5rem-1px)] cursor-pointer transition-all border group ${selectedIds.includes(String(user._id))
-                                                    ? (darkMode ? "bg-blue-600/20 border-blue-500 shadow-xl" : "bg-blue-50 border-blue-200 shadow-xl")
-                                                    : (darkMode ? "bg-gray-900 border-transparent hover:bg-gray-850" : "bg-[#FAFAFA] border-transparent hover:bg-gray-50")
-                                                }`}>
-                                                <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-400">
-                                                    <div className="relative w-12 h-12 rounded-[calc(1rem-2px)] overflow-hidden bg-[#FAFAFA] dark:bg-gray-800">
-                                                        <Image 
-                                                            src={user.profilePicture || "/default-profile.jpg"} 
-                                                            fill 
-                                                            className="object-cover" 
-                                                            alt={user.name} 
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 min-w-0 text-left">
-                                                    <div className="flex items-center gap-2">
-                                                        <h4 className={`text-sm font-black truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{user.name}</h4>
-                                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
-                                                            user.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 
-                                                            user.role === 'faculty' ? 'bg-purple-500/20 text-purple-500' : 
-                                                            'bg-blue-500/20 text-blue-500'
-                                                        }`}>
-                                                            {user.role || 'alumni'}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">
-                                                        {user.role === 'faculty' ? user.employeeId : (user.enrollmentNumber || "Alumni")}
-                                                    </p>
-                                                </div>
-                                                {selectedIds.includes(String(user._id)) && (
-                                                    <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 animate-in zoom-in duration-300">
-                                                        <FaCheck size={12} strokeWidth={4} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
+                                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-purple-500/50 to-pink-500/50">
+                                    <select
+                                        value={year}
+                                        disabled={!course}
+                                        onChange={(e) => setYear(e.target.value)}
+                                        className={`w-full px-4 py-[11px] rounded-[calc(1rem-1.5px)] appearance-none font-black text-[11px] uppercase tracking-[0.1em] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-black text-white focus:bg-slate-900" : "bg-white text-slate-900 focus:bg-slate-50"}`}
+                                    >
+                                        <option value="">{course ? "Passing Year" : "Select Course First"}</option>
+                                        {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
+                                    </select>
+                                    <FaChevronDown className="w-3 h-3 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 text-pink-500" />
                                 </div>
-                            );
-                        })
-                    )}
-                </div>
+                            </div>
+                        </div>
 
-                {/* Footer Controls */}
-                <div className="p-6 border-t dark:border-white/5 flex gap-4">
-                    <button
-                        onClick={onClose}
-                        className={`flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${darkMode ? "bg-gray-800 text-gray-400 hover:text-white" : "bg-gray-100 text-gray-500 hover:text-gray-900"}`}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleConfirm}
-                        disabled={selectedIds.length === 0}
-                        className={`flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 ${darkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
-                            }`}
-                        style={{ boxShadow: selectedIds.length > 0 ? '0 10px 30px -5px rgba(37, 99, 235, 0.4)' : 'none' }}
-                    >
-                        Initialize ({selectedIds.length})
-                    </button>
+                        <div className="flex justify-between items-center mt-6 px-1">
+                            <span className={`text-[10px] uppercase tracking-[0.2em] font-black ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+                                {users.length} Users Found
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* User List - Scrollable */}
+                    <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-3 custom-scrollbar">
+                        {loading && users.length === 0 ? (
+                            <div className="py-10 text-center animate-pulse text-blue-500 font-black uppercase text-[10px] tracking-widest flex flex-col items-center gap-3">
+                                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span>Filtering Community...</span>
+                            </div>
+                        ) : users.length === 0 ? (
+                            <div className="py-20 text-center text-slate-500 font-black uppercase text-[10px] tracking-widest italic opacity-50 flex flex-col items-center gap-4">
+                                <FaUsers size={48} className="opacity-20" />
+                                <span>No members match your refinement</span>
+                            </div>
+                        ) : (
+                            ["FACULTY", "ALUMNI"].map(roleKey => {
+                                const groupUsers = users.filter(u => (u.role || "alumni").toUpperCase() === roleKey);
+                                if (groupUsers.length === 0) return null;
+                                
+                                return (
+                                    <div key={roleKey} className="space-y-4 pt-4">
+                                        <div className="flex items-center gap-4 px-2">
+                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-slate-500/20 to-transparent" />
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleSelectRole(roleKey)}
+                                                className="group flex items-center gap-3 hover:opacity-80 transition-all font-black text-[10px] uppercase tracking-[0.3em]"
+                                            >
+                                                <span className={`${darkMode ? "text-white" : "text-slate-900"}`}>{roleKey}</span>
+                                                <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-xl transition-all shadow-sm ${
+                                                    groupUsers.every(u => selectedIds.includes(String(u._id)))
+                                                    ? "bg-blue-600 text-white shadow-blue-500/40"
+                                                    : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
+                                                }`}>
+                                                    {groupUsers.every(u => selectedIds.includes(String(u._id))) ? "Selected" : "Select All"}
+                                                </span>
+                                            </button>
+                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-slate-500/20 to-transparent" />
+                                        </div>
+                                        
+                                        {groupUsers.map(user => (
+                                            <div
+                                                key={user._id}
+                                                onClick={() => toggleUser(user._id)}
+                                                className="p-[1.5px] rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all hover:scale-[1.01] hover:shadow-xl group"
+                                            >
+                                                <div className={`p-4 flex items-center gap-5 rounded-[calc(1.5rem-1.5px)] cursor-pointer transition-all border group ${selectedIds.includes(String(user._id))
+                                                        ? (darkMode ? "bg-blue-600/20 border-blue-500 shadow-xl" : "bg-blue-50 border-blue-200 shadow-xl")
+                                                        : (darkMode ? "bg-black border-transparent hover:bg-slate-900" : "bg-slate-50 border-transparent hover:bg-white")
+                                                    }`}>
+                                                    <div className="p-[2.5px] rounded-2xl bg-gradient-to-tr from-blue-400 to-pink-400 shadow-lg">
+                                                        <div className="relative w-12 h-12 rounded-[calc(1rem-2.5px)] overflow-hidden bg-slate-800">
+                                                            <Image 
+                                                                src={user.profilePicture || "/default-profile.jpg"} 
+                                                                fill 
+                                                                className="object-cover" 
+                                                                alt={user.name} 
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0 text-left">
+                                                        <div className="flex items-center gap-2">
+                                                            <h4 className={`text-[15px] font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"}`}>{user.name}</h4>
+                                                            <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
+                                                                user.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 
+                                                                user.role === 'faculty' ? 'bg-purple-500/20 text-purple-500' : 
+                                                                'bg-blue-500/20 text-blue-500'
+                                                            }`}>
+                                                                {user.role || 'alumni'}
+                                                            </span>
+                                                        </div>
+                                                        <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-1 ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+                                                            {user.role === 'faculty' ? user.employeeId : (user.enrollmentNumber || "Alumni")}
+                                                        </p>
+                                                    </div>
+                                                    {selectedIds.includes(String(user._id)) && (
+                                                        <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/40 animate-in zoom-in duration-300">
+                                                            <FaCheck size={16} strokeWidth={4} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+
+                    {/* Footer Controls */}
+                    <div className="p-6 border-t dark:border-white/10 flex gap-4">
+                        <button
+                            onClick={onClose}
+                            className={`flex-1 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.3em] transition-all ${darkMode ? "bg-slate-900 text-slate-400 hover:text-white" : "bg-slate-100 text-slate-500 hover:text-slate-900"}`}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleConfirm}
+                            disabled={selectedIds.length === 0}
+                            className={`flex-1 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 ${darkMode ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                                }`}
+                            style={{ boxShadow: selectedIds.length > 0 ? '0 10px 30px -5px rgba(37, 99, 235, 0.4)' : 'none' }}
+                        >
+                            Initialize ({selectedIds.length})
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
