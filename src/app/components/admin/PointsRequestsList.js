@@ -69,7 +69,7 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
             ? "bg-gradient-to-r from-orange-500/50 to-red-500/50" 
             : "bg-gradient-to-r from-blue-500/50 to-purple-500/50"
     }`}>
-      <div className={`p-6 flex flex-col lg:flex-row gap-6 items-start lg:items-center rounded-[calc(2rem-2px)] ${
+      <div className={`p-3 sm:p-6 flex flex-col lg:flex-row gap-4 sm:gap-6 items-start lg:items-center rounded-[calc(2rem-2px)] ${
           darkMode ? "bg-black" : "bg-white"
       }`}>
         <div className="flex-1 space-y-3 w-full">
@@ -127,16 +127,16 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
           </div>
         </div>
 
-        <div className="flex gap-3 w-full lg:w-auto">
+        <div className="flex flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
             <button 
               onClick={() => handleAction(post._id, "approve")}
-              className="flex-1 lg:flex-none px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+              className="flex-1 lg:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all"
             >
               Approve
             </button>
             <button 
               onClick={() => handleAction(post._id, "reject")}
-              className={`flex-1 lg:flex-none px-6 py-3 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
+              className={`flex-1 lg:flex-none px-4 sm:px-6 py-2.5 sm:py-3 border rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
                 darkMode 
                   ? "border-red-500/30 text-red-400 hover:bg-red-500/10" 
                   : "border-red-100 text-red-600 hover:bg-red-50 shadow-red-100/20"
@@ -149,7 +149,7 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
                 setSelectedPost(post);
                 setShowPostModal(true);
               }}
-              className={`hidden lg:flex items-center justify-center w-12 h-12 rounded-xl border transition-all active:scale-95 group/eye ${
+              className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl border transition-all active:scale-95 group/eye ${
                 darkMode 
                   ? "border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10" 
                   : "border-gray-200 bg-white text-gray-400 hover:text-blue-600 hover:border-blue-400 font-bold"
@@ -169,10 +169,10 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-3 duration-500">
       {/* 1. EVENTS SECTION */}
       <div className="relative p-[2px] bg-gradient-to-tr from-blue-400 to-purple-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-        <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+        <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b pb-4 border-dashed border-gray-200 dark:border-white/10">
-              <h3 className={`text-xl font-black ${darkMode ? "text-white" : "text-slate-900"} flex items-center gap-3`}>
+              <h3 className={`text-base sm:text-xl font-black ${darkMode ? "text-white" : "text-slate-900"} flex items-center gap-2 sm:gap-3`}>
                 <span className="p-2 bg-blue-600/20 rounded-xl text-blue-400">📢</span>
                 Event & Announcement Points
               </h3>
@@ -200,11 +200,11 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
 
       {/* 2. SESSIONS SECTION */}
       <div className="relative p-[2px] bg-gradient-to-tr from-orange-400 to-red-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-        <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+        <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between border-b pb-4 border-dashed border-gray-200 dark:border-white/10 gap-4">
               <div className="flex items-center gap-3">
-                 <h3 className={`text-xl font-black ${darkMode ? "text-white" : "text-slate-900"} flex items-center gap-3`}>
+                 <h3 className={`text-base sm:text-xl font-black ${darkMode ? "text-white" : "text-slate-900"} flex items-center gap-2 sm:gap-3`}>
                     <span className="p-2 bg-orange-600/20 rounded-xl text-orange-400">🤝</span>
                     Alumni Session Points
                  </h3>

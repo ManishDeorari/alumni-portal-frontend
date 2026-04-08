@@ -62,10 +62,10 @@ export default function AdminsManager({
   /* ---------------- CARD ---------------- */
 
   const Card = ({ title, users, badge, children, actions }) => (
-    <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all hover:shadow-blue-500/10">
+    <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden mb-6 sm:mb-10 transition-all hover:shadow-blue-500/10">
       <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-2px)] overflow-hidden`}>
-        <div className="flex flex-col sm:flex-row items-center justify-between px-8 py-6 relative">
-          <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-xl flex items-center gap-3`}>
+        <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-4 sm:py-6 relative">
+          <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-base sm:text-xl flex items-center gap-2 sm:gap-3`}>
             {title}
             <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badge}`}>
               {users.length}
@@ -77,7 +77,7 @@ export default function AdminsManager({
           {/* Hard Gradient Divider */}
           <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-50" />
         </div>
-        <div className="p-2 sm:p-4">
+        <div className="p-1.5 sm:p-4">
           {users.length === 0 ? (
             <div className="py-20 text-center">
               <p className={`${darkMode ? "text-white" : "text-slate-900"} font-bold italic`}>No users found in this category.</p>
@@ -99,7 +99,7 @@ export default function AdminsManager({
         className="space-y-8"
       >
         <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] shadow-2xl overflow-hidden">
-          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
+          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} backdrop-blur-xl p-4 sm:p-8 rounded-[calc(2rem-2px)] relative overflow-hidden`}>
             <div className="relative flex-1 max-w-md p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
               <div className="relative h-full">
                 <input
@@ -107,7 +107,7 @@ export default function AdminsManager({
                   placeholder="Search by name, email, ID…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white" : "bg-[#FAFAFA] text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
+                  className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white" : "bg-[#FAFAFA] text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
                 />
                 <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </div>
@@ -262,32 +262,32 @@ function Table({
   return (
     <div className="space-y-4">
       {/* Header Row */}
-      <div className={`flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
-        <div className="w-12 flex items-center justify-center">
+      <div className={`flex items-center gap-2 sm:gap-4 px-3 sm:px-8 py-3 sm:py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[9px] sm:text-[10px] uppercase font-black tracking-[0.2em] sm:tracking-[0.3em]`}>
+        <div className="w-8 sm:w-12 flex items-center justify-center">
           <input
             type="checkbox"
-            className="w-6 h-6 bg-transparent border-2 border-blue-500 rounded cursor-pointer accent-blue-600"
+            className="w-5 h-5 sm:w-6 sm:h-6 bg-transparent border-2 border-blue-500 rounded cursor-pointer accent-blue-600"
             checked={users.every((u) => selected.includes(u._id))}
             onChange={() => toggleSelectAll(users)}
           />
         </div>
         <div className="flex-1">User Profile</div>
         <div className="w-40 md:block hidden">Identification</div>
-        <div className="w-48 text-right">Actions</div>
+        <div className="w-24 sm:w-48 text-right">Actions</div>
       </div>
 
       {/* User Card Rows */}
       {users.map((u) => (
         <div 
           key={u._id} 
-          className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
+          className="relative p-[1.5px] sm:p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
         >
-          <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-5 flex items-center gap-4`}>
+          <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1rem-1.5px)] sm:rounded-[calc(1.5rem-2px)] p-3 sm:p-5 flex items-center gap-2 sm:gap-4`}>
             {/* Checkbox */}
-            <div className="w-12 flex items-center justify-center">
+            <div className="w-8 sm:w-12 flex items-center justify-center">
               <input
                 type="checkbox"
-                className="w-6 h-6 bg-transparent border-2 border-blue-500 rounded cursor-pointer accent-blue-600"
+                className="w-5 h-5 sm:w-6 sm:h-6 bg-transparent border-2 border-blue-500 rounded cursor-pointer accent-blue-600"
                 checked={selected.includes(u._id)}
                 onChange={() => toggleUser(u._id)}
                 disabled={u.isMainAdmin}
@@ -295,13 +295,13 @@ function Table({
             </div>
 
             {/* Profile */}
-            <div className="flex-1 flex items-center gap-5 min-w-0">
-              <div className={`w-12 h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-purple-600/20 shadow-[0_0_15px_rgba(147,51,234,0.2)]" : "bg-purple-100"} border-2 border-purple-500/30 flex items-center justify-center text-purple-500 font-black text-lg`}>
+            <div className="flex-1 flex items-center gap-3 sm:gap-5 min-w-0">
+              <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-purple-600/20 shadow-[0_0_15px_rgba(147,51,234,0.2)]" : "bg-purple-100"} border-2 border-purple-500/30 flex items-center justify-center text-purple-500 font-black text-sm sm:text-lg`}>
                 {u.name.charAt(0)}
               </div>
               <div className="min-w-0">
-                <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
-                <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-purple-400" : "text-slate-600"} truncate`}>{u.email}</p>
+                <p className={`font-black text-xs sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                <p className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider sm:tracking-widest ${darkMode ? "text-purple-400" : "text-slate-600"} truncate`}>{u.email}</p>
               </div>
             </div>
 
@@ -313,25 +313,25 @@ function Table({
             </div>
 
             {/* Actions */}
-            <div className="w-48 flex items-center justify-end gap-3 flex-shrink-0 ml-auto">
+            <div className="w-auto sm:w-48 flex items-center justify-end gap-2 sm:gap-3 flex-shrink-0 ml-auto">
               {type === "admin" ? (
                  onDemote && !u.isMainAdmin && (
                   <button
                     onClick={() => onDemote(u)}
-                    className="p-3 bg-orange-600 hover:bg-orange-500 text-white rounded-2xl transition-all shadow-xl active:scale-90"
+                    className="p-2 sm:p-3 bg-orange-600 hover:bg-orange-500 text-white rounded-xl sm:rounded-2xl transition-all shadow-xl active:scale-90"
                     title="Demote to Faculty"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
                   </button>
                 )
               ) : (
                 onPromote && (
                   <button
                     onClick={() => onPromote(u)}
-                    className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl transition-all shadow-xl active:scale-90"
+                    className="p-2 sm:p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl sm:rounded-2xl transition-all shadow-xl active:scale-90"
                     title="Promote to Admin"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 11l7-7 7 7M5 19l7-7 7 7" /></svg>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 11l7-7 7 7M5 19l7-7 7 7" /></svg>
                   </button>
                 )
               )}

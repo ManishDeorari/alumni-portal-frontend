@@ -302,10 +302,10 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         className={`${darkMode ? (isSelected ? "bg-blue-900/20" : "bg-black") : (isSelected ? "bg-blue-50" : "bg-white")} rounded-[calc(1.5rem-2px)] p-3 sm:p-5 flex flex-wrap md:flex-nowrap items-center gap-3 sm:gap-4 cursor-pointer`}
                                     >
                                         {/* Checkbox */}
-                                        <div className="w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                                        <div className="w-8 sm:w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                                             <div 
                                                 onClick={() => toggleSelect(u._id)}
-                                                className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
+                                                className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
                                                     isSelected 
                                                         ? "bg-blue-500 border-blue-500" 
                                                         : `${darkMode ? "border-white/20 group-hover:border-white/40" : "border-gray-300 group-hover:border-gray-400"}`
@@ -316,23 +316,23 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         </div>
 
                                         {/* Profile */}
-                                        <div className="flex-1 flex items-center gap-5 min-w-0">
+                                        <div className="flex-1 flex items-center gap-3 sm:gap-5 min-w-0">
                                             <div className="relative shrink-0">
                                                 {u.profilePicture ? (
                                                     <img 
                                                         src={u.profilePicture} 
                                                         alt={u.name} 
-                                                        className={`w-12 h-12 rounded-full object-cover border-2 ${darkMode ? "border-white/10" : "border-gray-200"}`}
+                                                        className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full object-cover border-2 ${darkMode ? "border-white/10" : "border-gray-200"}`}
                                                     />
                                                 ) : (
-                                                    <div className={`w-12 h-12 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-lg`}>
+                                                    <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-sm sm:text-lg`}>
                                                         {u.name.charAt(0)}
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
-                                                <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-slate-600"} truncate`}>{u.email}</p>
+                                                <p className={`font-black text-xs sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                                                <p className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider sm:tracking-widest ${darkMode ? "text-blue-400" : "text-slate-600"} truncate`}>{u.email}</p>
                                             </div>
                                         </div>
 
@@ -357,19 +357,19 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         <div className="w-full md:w-32 flex items-center justify-end gap-2 sm:gap-3 flex-shrink-0 md:ml-auto mt-2 md:mt-0" onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 onClick={() => handleMessageClick(u)}
-                                                className={`p-3 bg-blue-600/10 hover:bg-blue-600 border-2 border-blue-500/20 text-blue-400 hover:text-white rounded-2xl transition-all active:scale-90`}
+                                                className={`p-2 sm:p-3 bg-blue-600/10 hover:bg-blue-600 border-2 border-blue-500/20 text-blue-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90`}
                                                 title="Message User"
                                             >
-                                                <Mail className="w-5 h-5" />
+                                                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteClick(u)}
                                                 disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
-                                                className={`p-3 bg-red-600/10 hover:bg-red-600 border-2 border-red-500/20 text-red-400 hover:text-white rounded-2xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
+                                                className={`p-2 sm:p-3 bg-red-600/10 hover:bg-red-600 border-2 border-red-500/20 text-red-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
                                                     }`}
                                                 title="Delete User"
                                             >
-                                                <Trash2 className="w-5 h-5" />
+                                                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                                             </button>
                                         </div>
                                     </div>

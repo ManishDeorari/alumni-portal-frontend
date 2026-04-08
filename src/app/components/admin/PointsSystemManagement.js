@@ -221,15 +221,15 @@ export default function PointsSystemManagement({ user }) {
             <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-white/10" : "via-slate-200"} to-transparent`} />
             {/* Settings Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors"></div>
-                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                    <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
                         <span className="p-3 bg-blue-600/20 rounded-2xl text-blue-400">⚙️</span>
                         <span className={darkMode ? "text-white" : "text-slate-900"}>Global System Config</span>
                     </h2>
-                    <form onSubmit={handleUpdateConfig} className="space-y-10">
+                    <form onSubmit={handleUpdateConfig} className="space-y-6 sm:space-y-10">
                         {/* Row 1: Reward Points */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                             {[
                                 { label: "Post Creation Points", key: "postPoints" },
                                 { label: "Post Likes Points", key: "likePoints" },
@@ -245,7 +245,7 @@ export default function PointsSystemManagement({ user }) {
                                             value={config[item.key] ?? ""}
                                             onChange={(e) => setConfig({ ...config, [item.key]: e.target.value === "" ? "" : parseInt(e.target.value) })}
                                             onWheel={(e) => e.target.blur()}
-                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-5 py-3 sm:py-4 focus:ring-2 focus:ring-blue-400 outline-none transition-all font-bold shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                         />
                                     </div>
                                 </div>
@@ -253,7 +253,7 @@ export default function PointsSystemManagement({ user }) {
                         </div>
 
                         {/* Row 2: Frequency Limits */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                             {[
                                 { label: "Post Frequency Limit", key: "postLimitCount", sub: "Max posts" },
                                 { label: "Like Frequency Limit", key: "likeLimitCount", sub: "Max likes" },
@@ -278,7 +278,7 @@ export default function PointsSystemManagement({ user }) {
                         </div>
 
                         {/* Row 3: Rolling Windows */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                             {[
                                 { label: "Post Window (Days)", key: "postLimitDays", sub: "Rolling days" },
                                 { label: "Like Window (Days)", key: "likeLimitDays", sub: "Rolling days" },
@@ -303,7 +303,7 @@ export default function PointsSystemManagement({ user }) {
                         </div>
 
                         {/* Row 4: Other Points & Submit */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-end">
                             {[
                                 { label: "Profile Completion Points", key: "profileCompletionPoints" },
                                 { label: "Networking (Connect) Points", key: "connectionPoints" },
@@ -344,14 +344,14 @@ export default function PointsSystemManagement({ user }) {
 
             {/* Manual Award Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-green-500/10 transition-colors"></div>
-                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                    <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
                         <span className="p-3 bg-green-600/20 rounded-2xl text-green-400">🏆</span>
                         <span className={darkMode ? "text-white" : "text-slate-900"}>Custom Points Grant</span>
                     </h2>
-                    <form onSubmit={handleManualAward} className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <form onSubmit={handleManualAward} className="space-y-4 sm:space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
                                 <div className="relative group/input p-[2px] bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl shadow-sm">
@@ -362,7 +362,7 @@ export default function PointsSystemManagement({ user }) {
                                         role="alumni"
                                         darkMode={darkMode}
                                         placeholder="Name or ID..."
-                                        className={`!w-full !border-none !shadow-none font-black !py-4 !px-5 !h-[58px] ${
+                                        className={`!w-full !border-none !shadow-none font-black !py-3 sm:!py-4 !px-4 sm:!px-5 !h-[46px] sm:!h-[58px] ${
                                             darkMode ? "!bg-black !text-white" : "!bg-white !text-black"
                                         }`}
                                     />
@@ -375,7 +375,7 @@ export default function PointsSystemManagement({ user }) {
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-5 py-3 sm:py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                         placeholder="0"
                                     />
                                 </div>
@@ -386,7 +386,7 @@ export default function PointsSystemManagement({ user }) {
                                     <select
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
+                                        className={`w-full ${darkMode ? "bg-[#1a1a2e] text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-5 py-3 sm:py-4 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner appearance-none cursor-pointer`}
                                     >
                                         {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
                                             <option key={val} value={val}>{label}</option>
@@ -403,7 +403,7 @@ export default function PointsSystemManagement({ user }) {
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-6 py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-6 py-3 sm:py-5 focus:ring-2 focus:ring-green-400 outline-none transition-all font-bold shadow-inner`}
                                     placeholder="e.g. Exceptional contribution to the annual tech summit..."
                                 />
                             </div>
@@ -411,7 +411,7 @@ export default function PointsSystemManagement({ user }) {
                         <button
                             type="submit"
                             disabled={awarding}
-                            className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
+                            className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-3 sm:py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
                         >
                             {awarding ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -428,14 +428,14 @@ export default function PointsSystemManagement({ user }) {
 
             {/* Manual Penalty Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
-                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-red-500/10 transition-colors"></div>
-                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
+                    <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
                         <span className="p-3 bg-red-600/20 rounded-2xl text-red-500">⚠️</span>
                         <span className={darkMode ? "text-white" : "text-slate-900"}>Custom Points Penalty</span>
                     </h2>
-                    <form onSubmit={handleManualPenalty} className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <form onSubmit={handleManualPenalty} className="space-y-4 sm:space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                             <div className="space-y-3">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-1`}>Search Recipient</label>
                                 <div className="relative group/input p-[2px] bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl shadow-sm">
@@ -446,7 +446,7 @@ export default function PointsSystemManagement({ user }) {
                                         role="alumni"
                                         darkMode={darkMode}
                                         placeholder="Name or ID..."
-                                        className={`!w-full !border-none !shadow-none font-black !py-4 !px-5 !h-[58px] ${
+                                        className={`!w-full !border-none !shadow-none font-black !py-3 sm:!py-4 !px-4 sm:!px-5 !h-[46px] sm:!h-[58px] ${
                                             darkMode ? "!bg-black !text-white" : "!bg-white !text-black"
                                         }`}
                                     />
@@ -459,7 +459,7 @@ export default function PointsSystemManagement({ user }) {
                                         type="number"
                                         value={penaltyAmount}
                                         onChange={(e) => setPenaltyAmount(e.target.value)}
-                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-5 py-4 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
+                                        className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-5 py-3 sm:py-4 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
                                         placeholder="0"
                                     />
                                 </div>
@@ -472,7 +472,7 @@ export default function PointsSystemManagement({ user }) {
                                     type="text"
                                     value={penaltyMessage}
                                     onChange={(e) => setPenaltyMessage(e.target.value)}
-                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-6 py-5 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
+                                    className={`w-full ${darkMode ? "bg-black text-white placeholder-white/30" : "bg-white text-black border border-gray-100"} rounded-[calc(1rem-2px)] px-4 sm:px-6 py-3 sm:py-5 focus:ring-2 focus:ring-red-400 outline-none transition-all font-bold shadow-inner`}
                                     placeholder="e.g. Violation of community guidelines..."
                                 />
                             </div>
@@ -480,7 +480,7 @@ export default function PointsSystemManagement({ user }) {
                         <button
                             type="submit"
                             disabled={penalizing}
-                            className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
+                            className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-3 sm:py-5 rounded-2xl transition-all shadow-xl active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2"
                         >
                             {penalizing ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -497,14 +497,14 @@ export default function PointsSystemManagement({ user }) {
 
             {/* Danger Zone / Rollover / Sync */}
             <div className="relative p-[2px] bg-gradient-to-r from-red-600 via-purple-600 to-pink-600 rounded-[2.5rem] shadow-2xl overflow-hidden">
-                <section className={`${darkMode ? "bg-black/80" : "bg-red-50/50"} backdrop-blur-3xl p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
-                    <h2 className="text-2xl font-black text-red-500 mb-8 flex items-center gap-3">
+                <section className={`${darkMode ? "bg-black/80" : "bg-red-50/50"} backdrop-blur-3xl p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
+                    <h2 className="text-xl sm:text-2xl font-black text-red-500 mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
                         <span className="p-3 bg-red-600/20 rounded-2xl text-red-500">⚠️</span>
                         Advanced Data Management
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10">
                         <div className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-red-500 to-orange-500 shadow-xl transition-all hover:scale-[1.02]">
-                            <div className={`space-y-4 p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
+                            <div className={`space-y-3 sm:space-y-4 p-4 sm:p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
                                 <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Season Rollover</h3>
                                 <p className={`text-sm ${darkMode ? "text-gray-300" : "text-slate-700"} leading-relaxed flex-1`}>
                                     Resets all current season points and moves balances to <span className="text-red-500 font-black underline decoration-red-500 underline-offset-4">Historical Rankings</span>. This action is irreversible.
@@ -518,7 +518,7 @@ export default function PointsSystemManagement({ user }) {
                             </div>
                         </div>
                         <div className="p-[2px] rounded-[2.5rem] bg-gradient-to-tr from-purple-500 to-pink-500 shadow-xl transition-all hover:scale-[1.02]">
-                            <div className={`space-y-4 p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
+                            <div className={`space-y-3 sm:space-y-4 p-4 sm:p-8 rounded-[calc(2.5rem-2px)] ${darkMode ? "bg-black" : "bg-white"} h-full flex flex-col`}>
                                 <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-slate-900"}`}>Consistency Sync</h3>
                                 <p className={`text-sm ${darkMode ? "text-gray-300" : "text-slate-700"} leading-relaxed flex-1`}>
                                     Recalculates point aggregates for all users and cleans up orphaned point logs. <span className="text-purple-600 font-black">Safe to run.</span>

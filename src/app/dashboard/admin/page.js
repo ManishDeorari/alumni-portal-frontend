@@ -345,7 +345,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[1.6rem] shadow-lg w-full xl:w-auto">
-              <nav className={`flex items-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem] overflow-x-auto no-scrollbar w-full`}>
+              <nav className={`flex items-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem] overflow-x-auto no-scrollbar w-full flex-nowrap`}>
                   <TabButton id="pending" label="Pending" />
                   {user?.isMainAdmin && <TabButton id="users" label="Users" />}
                   {user?.isMainAdmin && <TabButton id="admins" label="Admins" />}

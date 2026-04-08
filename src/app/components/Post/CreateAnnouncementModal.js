@@ -212,13 +212,13 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[2px] rounded-2xl sm:rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-4xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-xl sm:rounded-[2.5rem] overflow-hidden`}>
           {/* Header */}
-          <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
+          <div className={`px-4 sm:px-8 py-4 sm:py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <div className="flex items-center gap-3">
                <span className="text-3xl">📢</span>
                <div>
-                  <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-none`}>
+                  <h2 className={`text-lg sm:text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-none`}>
                     Create Announcement
                   </h2>
                   <p className={`text-[10px] uppercase tracking-widest font-bold mt-1 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
@@ -231,7 +231,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-5 sm:space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
             {/* Event Content & Media Section - Vertical Stack */}
             <div className="space-y-6">
               {/* Media Section */}
@@ -303,17 +303,17 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
             {/* Winner Table Toggle */}
             <div className="space-y-4">
               <div className={`p-[2px] rounded-[2rem] bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500 ${formData.isWinnerAnnouncement ? "opacity-100 shadow-[0_0_20px_rgba(59,130,246,0.15)]" : "opacity-60"}`}>
-                <label className={`flex items-center justify-between p-7 rounded-[calc(2rem-2px)] transition-all duration-300 cursor-pointer ${
+                <label className={`flex items-center justify-between p-4 sm:p-7 rounded-[calc(2rem-2px)] transition-all duration-300 cursor-pointer ${
                   formData.isWinnerAnnouncement 
                     ? (darkMode ? "bg-blue-600/20" : "bg-blue-50/80")
                     : (darkMode ? "bg-[#18181b]" : "bg-white")
                 }`}>
-                  <div className="flex items-center gap-5">
-                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl transition-transform duration-500 ${formData.isWinnerAnnouncement ? "scale-110 rotate-12" : "scale-100"} ${darkMode ? "bg-white/5" : "bg-black/5"}`}>
+                  <div className="flex items-center gap-3 sm:gap-5">
+                     <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-xl sm:text-2xl transition-transform duration-500 ${formData.isWinnerAnnouncement ? "scale-110 rotate-12" : "scale-100"} ${darkMode ? "bg-white/5" : "bg-black/5"}`}>
                         🏆
                      </div>
                      <div>
-                        <span className={`text-base font-black tracking-tight block ${darkMode ? "text-white" : "text-black"}`}>Include Winners/Ranking Table</span>
+                        <span className={`text-sm sm:text-base font-black tracking-tight block ${darkMode ? "text-white" : "text-black"}`}>Include Winners/Ranking Table</span>
                         <p className={`text-[10px] font-black uppercase tracking-[0.15em] mt-0.5 ${darkMode ? "text-blue-400/80" : "text-blue-600/70"}`}>
                           Enable to list winners and request points
                         </p>
@@ -327,7 +327,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
 
               {formData.isWinnerAnnouncement && (
                 <div className={`p-[2px] rounded-[3rem] bg-gradient-to-br from-blue-500 to-purple-600`}>
-                  <div className={`space-y-8 p-8 rounded-[calc(3rem-2px)] ${darkMode ? "bg-[#121213]" : "bg-white"} shadow-2xl`}>
+                  <div className={`space-y-6 sm:space-y-8 p-4 sm:p-8 rounded-[calc(3rem-2px)] ${darkMode ? "bg-[#121213]" : "bg-white"} shadow-2xl`}>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-between">
                          <h3 className={`text-sm font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Winner List / Ranking Configuration</h3>
@@ -347,18 +347,18 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                       </div>
                       <div className="space-y-4">
                         <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-gray-400" : "text-black/60"}`}>Select Achievement Type</label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                        <div className="grid grid-cols-1 gap-3 sm:gap-4 w-full">
                           <button
                             type="button"
                             onClick={addWinnerRow}
-                            className={`flex items-center justify-center gap-4 py-5 px-8 rounded-2xl transition-all shadow-xl active:scale-95 bg-gradient-to-r from-blue-600 to-purple-700 text-white w-full h-[68px] hover:shadow-blue-500/25 group`}
+                            className={`flex items-center justify-center gap-2 sm:gap-4 py-3 sm:py-5 px-4 sm:px-8 rounded-2xl transition-all shadow-xl active:scale-95 bg-gradient-to-r from-blue-600 to-purple-700 text-white w-full h-[52px] sm:h-[68px] hover:shadow-blue-500/25 group`}
                           >
                             <span className="text-2xl group-hover:scale-110 transition-transform">👤</span>
                             <span className="text-[11px] font-black uppercase tracking-[0.2em]">Add Individual</span>
                           </button>
                           
-                          <div className={`p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl h-[68px]`}>
-                             <div className={`flex items-center justify-between h-full px-8 py-2 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-800" : "bg-white"}`}>
+                          <div className={`p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl h-[52px] sm:h-[68px]`}>
+                             <div className={`flex items-center justify-between h-full px-3 sm:px-8 py-2 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-800" : "bg-white"}`}>
                                <div className="flex items-center gap-3">
                                  <span className="text-2xl">👥</span>
                                  <span className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>Add Group:</span>
@@ -548,7 +548,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-6 rounded-[2.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 ${
+              className={`w-full py-4 sm:py-6 rounded-2xl sm:rounded-[2.5rem] text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all shadow-2xl active:scale-95 ${
                 loading 
                   ? "bg-gray-400 cursor-not-allowed opacity-60" 
                   : "bg-gradient-to-r from-blue-600 to-purple-700 text-white hover:shadow-blue-500/25"

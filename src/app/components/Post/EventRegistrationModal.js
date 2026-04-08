@@ -181,13 +181,13 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[1.5px] rounded-2xl sm:rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2rem] overflow-hidden`}>
-          <div className={`px-8 py-4 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
-            <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-black"}`}>Register for Event</h2>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-xl sm:rounded-[2rem] overflow-hidden`}>
+          <div className={`px-4 sm:px-8 py-3 sm:py-4 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
+            <h2 className={`text-base sm:text-xl font-black ${darkMode ? "text-white" : "text-black"}`}>Register for Event</h2>
             <button onClick={onClose} className="text-2xl text-gray-400 hover:text-red-500">&times;</button>
           </div>
 
-          <form onSubmit={handleRegister} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <form onSubmit={handleRegister} className="p-4 sm:p-8 space-y-4 sm:space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <div className="space-y-4">
             <h3 className={`font-bold ${darkMode ? "text-white" : "text-black"}`}>Event: {event.title}</h3>
             
@@ -363,7 +363,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-5 rounded-3xl text-sm font-black uppercase tracking-[0.2em] transition-all ${loading ? "bg-gray-400" : "bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-xl active:scale-95"}`}
+            className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-3xl text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all ${loading ? "bg-gray-400" : "bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-xl active:scale-95"}`}
           >
             {loading ? "Registering..." : "Confirm Registration"}
           </button>

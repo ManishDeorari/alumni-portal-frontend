@@ -174,7 +174,7 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 rounded-2xl outline-none transition-all font-black text-sm sm:text-base ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
+                    className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-4 rounded-2xl outline-none transition-all font-black text-xs sm:text-base ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
                   />
                   <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white' : 'text-slate-800'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -293,22 +293,22 @@ const NetworkPage = () => {
           ].map((section) => (
             section.data?.length > 0 && (
               <div key={section.id} className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden">
-                <div className={`px-8 py-8 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-8`}>
+                <div className={`px-4 sm:px-8 py-4 sm:py-8 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-4 sm:space-y-8`}>
                   <div className="flex items-center gap-3">
                     <div className={`h-8 w-2 rounded-full ${section.color === 'blue' ? 'bg-blue-600' : section.color === 'amber' ? 'bg-amber-500' : 'bg-purple-600 shadow-[0_0_15px_rgba(147,51,234,0.5)]'}`}></div>
-                    <h2 className={`text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{section.icon} {section.title}</h2>
+                    <h2 className={`text-lg sm:text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{section.icon} {section.title}</h2>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     {section.data.map((user) => (
                       <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-400/50 via-purple-400/50 to-pink-400/50 rounded-2xl h-full group transition-all duration-500 hover:from-blue-500 hover:to-pink-500 hover:shadow-xl">
-                        <div className={`rounded-2xl flex flex-col items-center text-center p-6 space-y-4 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900 border'}`}>
+                        <div className={`rounded-2xl flex flex-col items-center text-center p-3 sm:p-6 space-y-2 sm:space-y-4 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900 border'}`}>
                           <div className="relative p-[2px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 shadow-lg group-hover:scale-105 transition-transform">
                             <Image
                               src={user.profilePicture || "/default-profile.jpg"}
                               alt={user.name || "User"}
                               width={72}
                               height={72}
-                              className={`w-16 h-16 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
+                              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
                             />
                           </div>
                           <div className="w-full min-w-0">

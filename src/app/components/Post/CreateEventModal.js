@@ -152,10 +152,10 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[2px] rounded-2xl sm:rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-2xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-xl sm:rounded-[2.5rem] overflow-hidden`}>
         {/* Header */}
-        <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
-          <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
+        <div className={`px-4 sm:px-8 py-4 sm:py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
+          <h2 className={`text-lg sm:text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight flex items-center gap-2`}>
             <span>📅</span> Create Event
           </h2>
           <button onClick={onClose} className={`text-2xl ${darkMode ? "text-gray-400 hover:text-white" : "text-gray-400 hover:text-black"} transition-colors`}>
@@ -163,7 +163,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-5 sm:space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           {/* Media Section */}
           <div className="space-y-4">
             <div className="p-[2px] rounded-3xl bg-gradient-to-r from-blue-500 to-purple-500">
@@ -213,7 +213,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.title}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "title")); }}
                   placeholder="Enter event title..."
-                  className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
+                  className={`w-full p-3 sm:p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
             </div>
@@ -292,7 +292,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           {/* Registration Form Builder */}
           <div className="p-[2px] rounded-[2rem] bg-gradient-to-r from-blue-500 to-purple-500 shadow-sm transition-all text-left">
             <div className={`p-6 rounded-[1.8rem] ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} space-y-6`}>
-              <h3 className={`text-lg font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Registration Form <span className="text-xs font-normal opacity-60 ml-2">[Questions to be asked]</span></h3>
+              <h3 className={`text-base sm:text-lg font-black ${darkMode ? "text-white" : "text-gray-900"}`}>Registration Form <span className="text-xs font-normal opacity-60 ml-2">[Questions to be asked]</span></h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {Object.keys(registrationFields).map((field) => {
@@ -321,9 +321,9 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   placeholder="Custom question..."
-                  className={`flex-1 p-3 text-sm rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-200"}`}
+                  className={`flex-1 min-w-0 p-2.5 sm:p-3 text-xs sm:text-sm rounded-xl border ${darkMode ? "bg-slate-800 border-white/10 text-white" : "bg-[#FAFAFA] border-gray-200"}`}
                 />
-                <button type="button" onClick={addCustomQuestion} className="px-4 py-2 bg-black text-white rounded-xl font-bold text-sm">+ Add</button>
+                <button type="button" onClick={addCustomQuestion} className="px-3 sm:px-4 py-2 bg-black text-white rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap shrink-0">+ Add</button>
               </div>
 
               <div className="space-y-2">
@@ -357,7 +357,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-5 rounded-3xl text-sm font-black uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${
+            className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-3xl text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all shadow-xl active:scale-95 ${
               loading 
                 ? "bg-gray-400 cursor-not-allowed" 
                 : "bg-gradient-to-r from-blue-600 to-purple-700 text-white hover:shadow-blue-500/25"

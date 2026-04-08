@@ -112,13 +112,13 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
       <div className={`p-[2px] rounded-2xl sm:rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-2xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
-        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
+        <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-xl sm:rounded-[2.5rem] overflow-hidden`}>
           {/* Header */}
-          <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
+          <div className={`px-4 sm:px-8 py-4 sm:py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <div className="flex items-center gap-3">
                <span className="text-3xl">🤝</span>
                <div>
-                  <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-none`}>
+                  <h2 className={`text-lg sm:text-2xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-none`}>
                     Create Alumni Session
                   </h2>
                   <p className={`text-[10px] uppercase tracking-widest font-bold mt-1 ${darkMode ? "text-blue-500" : "text-blue-400"}`}>
@@ -131,7 +131,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-5 sm:space-y-8">
             <div className="space-y-6">
               {/* Media Section */}
               <div className="p-[2px] rounded-3xl bg-gradient-to-r from-blue-500 to-purple-500">
@@ -281,7 +281,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-6 rounded-[2.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 ${
+              className={`w-full py-4 sm:py-6 rounded-2xl sm:rounded-[2.5rem] text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all shadow-2xl active:scale-95 ${
                 loading 
                   ? "bg-gray-400 cursor-not-allowed opacity-60" 
                   : "bg-gradient-to-r from-blue-600 to-purple-700 text-white hover:shadow-blue-500/25"
