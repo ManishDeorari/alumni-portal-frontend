@@ -13,6 +13,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
     const [name, setName] = useState(group?.name || "");
     const [description, setDescription] = useState(group?.description || "");
     const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(group?.allowFacultyMessaging ?? true);
+    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(group?.allowAlumniMessaging ?? true);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState(group?.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(group?.profileImage || "/default-group.jpg");
@@ -31,6 +32,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
             setName(group.name || "");
             setDescription(group.description || "");
             setAllowFacultyMessaging(group.allowFacultyMessaging ?? true);
+            setAllowAlumniMessaging(group.allowAlumniMessaging ?? true);
             setImagePreview(group.profileImage || "/default-group.jpg");
             setProfileImageSettings(group.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
         }
@@ -96,6 +98,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
             name, 
             description, 
             allowFacultyMessaging: allowFacultyMessaging,
+            allowAlumniMessaging: allowAlumniMessaging,
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId,
             profileImageSettings,
@@ -230,20 +233,35 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                 </div>
                             </div>
 
-                            {/* Faculty Messaging Toggle */}
-                            <div className="p-[1.5px] rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg">
-                                <div className={`p-6 rounded-[calc(1.5rem-1.5px)] flex items-center justify-between transition-all ${darkMode ? "bg-slate-950" : "bg-white"}`}>
-                                    <div>
-                                        <h3 className={`font-black text-sm uppercase tracking-tight ${darkMode ? "text-white" : "text-slate-900"}`}>Faculty Messaging</h3>
-                                        <p className="text-[10px] text-slate-500 font-bold mt-1">Allow faculty members to send messages</p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-[1.5px] rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg">
+                                    <div className={`p-5 rounded-[calc(1.5rem-1.5px)] flex flex-col items-center justify-between gap-3 h-full transition-all ${darkMode ? "bg-slate-950" : "bg-white"}`}>
+                                        <div className="text-center">
+                                            <h3 className={`font-black text-[10px] uppercase tracking-tighter ${darkMode ? "text-white" : "text-slate-900"}`}>Faculty Messaging</h3>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setAllowFacultyMessaging(!allowFacultyMessaging)}
+                                            className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner ${allowFacultyMessaging ? "bg-blue-600" : "bg-slate-800"}`}
+                                        >
+                                            <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-xl transition-all duration-500 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
+                                        </button>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setAllowFacultyMessaging(!allowFacultyMessaging)}
-                                        className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner ${allowFacultyMessaging ? "bg-blue-600" : "bg-slate-800"}`}
-                                    >
-                                        <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-xl transition-all duration-500 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
-                                    </button>
+                                </div>
+
+                                <div className="p-[1.5px] rounded-3xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-lg">
+                                    <div className={`p-5 rounded-[calc(1.5rem-1.5px)] flex flex-col items-center justify-between gap-3 h-full transition-all ${darkMode ? "bg-slate-950" : "bg-white"}`}>
+                                        <div className="text-center">
+                                            <h3 className={`font-black text-[10px] uppercase tracking-tighter ${darkMode ? "text-white" : "text-slate-900"}`}>Alumni Messaging</h3>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setAllowAlumniMessaging(!allowAlumniMessaging)}
+                                            className={`w-14 h-8 rounded-full relative transition-all duration-500 shadow-inner ${allowAlumniMessaging ? "bg-blue-600" : "bg-slate-800"}`}
+                                        >
+                                            <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-xl transition-all duration-500 ${allowAlumniMessaging ? "right-1" : "left-1"}`} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

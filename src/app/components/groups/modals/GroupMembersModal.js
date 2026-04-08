@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { FaTimes, FaSearch, FaUserPlus, FaCheck } from "react-icons/fa";
+import { FaTimes, FaSearch, FaUserPlus, FaCheck, FaChevronDown } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 

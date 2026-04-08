@@ -13,6 +13,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     const [description, setDescription] = useState("");
     const [isAllAlumni, setIsAllAlumni] = useState(false);
     const [isAllFaculty, setIsAllFaculty] = useState(false);
+    const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(false);
+    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(true);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState({ x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(null);
@@ -89,6 +91,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
             profileImage: finalImageUrl,
             profileImagePublicId: finalPublicId,
             profileImageSettings,
+            allowFacultyMessaging,
+            allowAlumniMessaging,
             members: selectedMemberIds 
         });
 
@@ -99,6 +103,8 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         setIsAllFaculty(false);
         setProfileImage(null);
         setImagePreview(null);
+        setAllowFacultyMessaging(false);
+        setAllowAlumniMessaging(true);
         setSelectedMemberIds([]);
         setUploading(false);
     };
@@ -197,6 +203,43 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
                                             {isAllAlumni && <span className="text-[8px] font-black relative z-10">ACTIVE ✨</span>}
                                         </button>
                                     </div>
+                                    
+                                    <div className="space-y-4 pt-4">
+                                        <label className={`block text-[11px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"}`}>Messaging Logic</label>
+                                        
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg">
+                                                <div className={`p-4 rounded-[calc(1rem-1.5px)] flex flex-col items-center justify-between gap-3 h-full transition-all ${darkMode ? "bg-slate-950" : "bg-white"}`}>
+                                                    <div className="text-center">
+                                                        <h3 className={`font-black text-[9px] uppercase tracking-tighter ${darkMode ? "text-white" : "text-slate-900"}`}>Faculty Message</h3>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setAllowFacultyMessaging(!allowFacultyMessaging)}
+                                                        className={`w-12 h-6 rounded-full relative transition-all duration-300 shadow-inner ${allowFacultyMessaging ? "bg-blue-600" : "bg-slate-800"}`}
+                                                    >
+                                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${allowFacultyMessaging ? "right-1" : "left-1"}`} />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="p-[1.5px] rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-lg">
+                                                <div className={`p-4 rounded-[calc(1rem-1.5px)] flex flex-col items-center justify-between gap-3 h-full transition-all ${darkMode ? "bg-slate-950" : "bg-white"}`}>
+                                                    <div className="text-center">
+                                                        <h3 className={`font-black text-[9px] uppercase tracking-tighter ${darkMode ? "text-white" : "text-slate-900"}`}>Alumni Message</h3>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setAllowAlumniMessaging(!allowAlumniMessaging)}
+                                                        className={`w-12 h-6 rounded-full relative transition-all duration-300 shadow-inner ${allowAlumniMessaging ? "bg-blue-600" : "bg-slate-800"}`}
+                                                    >
+                                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${allowAlumniMessaging ? "right-1" : "left-1"}`} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                     <div className="p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg">
                                         <button
