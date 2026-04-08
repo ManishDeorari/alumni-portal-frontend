@@ -45,6 +45,17 @@ export default function SignupPage() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+    // ✅ Pre-flight: Ping the health endpoint to wake the server (fire-and-forget)
+    const wakeServer = async () => {
+      try {
+        await fetch(`${apiUrl}/api/health`, { method: "GET", mode: "cors" });
+      } catch {
+        // Expected to fail on cold start — the ping itself wakes Render
+      }
+    };
+
+    const RETRY_DELAYS = [4000, 8000, 15000]; // Escalating delays for cold start
+
     const attemptSignup = async (retryCount = 0) => {
       try {
         const res = await fetch(
@@ -61,22 +72,32 @@ export default function SignupPage() {
         setLoading(false);
         setShowSuccess(true);
       } catch (err) {
-        // ✅ If network error (cold start / server sleeping), retry once automatically
-        const isNetworkError = err.name === "TypeError" && err.message.includes("fetch");
-        if (isNetworkError && retryCount < 1) {
-          console.warn("⚠️ Server may be waking up. Retrying in 3s...");
-          setError("Server is waking up... retrying automatically.");
-          await new Promise(resolve => setTimeout(resolve, 3000));
+        // ✅ If network/server error (cold start / server sleeping), retry with escalating delays
+        const isNetworkError = err.name === "TypeError" || err.message?.includes("fetch") || err.message?.includes("Failed");
+        if (isNetworkError && retryCount < RETRY_DELAYS.length) {
+          const delay = RETRY_DELAYS[retryCount];
+          const seconds = Math.round(delay / 1000);
+          console.warn(`⚠️ Server may be waking up. Retry ${retryCount + 1}/${RETRY_DELAYS.length} in ${seconds}s...`);
+          setError(`Server is starting up... retrying in ${seconds}s (attempt ${retryCount + 1}/${RETRY_DELAYS.length})`);
+          
+          wakeServer();
+          await new Promise(resolve => setTimeout(resolve, delay));
           return attemptSignup(retryCount + 1);
         }
 
-        setError(err.message || "Something went wrong");
+        const userMessage = isNetworkError
+          ? "Server is currently unavailable. Please try again in a minute."
+          : (err.message || "Something went wrong");
+        setError(userMessage);
         setLoading(false);
       }
     };
 
+    // Fire initial wake ping, then attempt signup
+    wakeServer();
     await attemptSignup();
   };
+
 
 
   const [darkMode, setDarkMode] = useState(false);
