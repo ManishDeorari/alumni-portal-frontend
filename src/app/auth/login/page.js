@@ -79,7 +79,7 @@ function LoginContent() {
       }
     };
 
-    const RETRY_DELAYS = [4000, 8000, 15000]; // Escalating delays for cold start
+    const RETRY_DELAYS = [4000, 8000, 15000, 20000, 25000]; // Escalating delays for cold start (total ~72s)
 
     const attemptLogin = async (retryCount = 0) => {
       try {

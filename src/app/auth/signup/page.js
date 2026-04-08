@@ -54,7 +54,7 @@ export default function SignupPage() {
       }
     };
 
-    const RETRY_DELAYS = [4000, 8000, 15000]; // Escalating delays for cold start
+    const RETRY_DELAYS = [4000, 8000, 15000, 20000, 25000]; // Escalating delays for cold start (total ~72s)
 
     const attemptSignup = async (retryCount = 0) => {
       try {
