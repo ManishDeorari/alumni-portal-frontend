@@ -233,7 +233,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         placeholder="All Courses"
                                         uppercase={true}
                                         placement="top"
-                                        className={`w-full px-4 sm:px-5 py-3 sm:py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[10px] sm:text-[11px] uppercase tracking-[0.2em] outline-none font-black`}
+                                        className={`w-full px-4 sm:px-5 py-2.5 sm:py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black`}
                                     />
                                 </div>
                             </div>
@@ -243,7 +243,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     <select
                                         value={filters.year}
                                         onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                                        className={`w-full px-4 sm:px-5 py-3 sm:py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[10px] sm:text-[11px] uppercase tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
+                                        className={`w-full px-4 sm:px-5 py-2.5 sm:py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
                                     >
                                         <option value="">All Years</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}

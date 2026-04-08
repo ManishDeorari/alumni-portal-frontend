@@ -196,12 +196,12 @@ export default function MemberSearchModal({
                             <div className="grid grid-cols-3 gap-3">
                                 {/* Name/General Query */}
                                 <div className="col-span-2 p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10">
-                                    <div className={`flex items-center gap-3 px-4 py-3 rounded-[calc(1rem-1.5px)] h-full transition-all ${darkMode ? "bg-black" : "bg-white"}`}>
+                                    <div className={`flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] h-full transition-all ${darkMode ? "bg-black" : "bg-white"}`}>
                                         <FaSearch className="text-blue-500" size={14} />
                                         <input
                                             type="text"
                                             placeholder="Search by name, roll..."
-                                            className={`bg-transparent border-none outline-none w-full font-black text-sm ${darkMode ? "text-white" : "text-black"}`}
+                                            className={`bg-transparent border-none outline-none w-full font-black text-xs sm:text-sm ${darkMode ? "text-white" : "text-black"}`}
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
@@ -213,7 +213,7 @@ export default function MemberSearchModal({
                                     <select
                                         value={roleFilter}
                                         onChange={(e) => setRoleFilter(e.target.value)}
-                                        className={`w-full px-4 py-3 rounded-[calc(1rem-1.5px)] h-full appearance-none font-black text-[10px] uppercase tracking-widest outline-none cursor-pointer ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
+                                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] h-full appearance-none font-black text-[9px] sm:text-[10px] uppercase tracking-wider sm:tracking-widest outline-none cursor-pointer ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
                                     >
                                         <option value="ALL">ALL ROLES</option>
                                         <option value="ALUMNI">ALUMNI</option>
@@ -232,7 +232,7 @@ export default function MemberSearchModal({
                                         options={COURSE_OPTIONS}
                                         placeholder="Course (e.g. B.Tech)"
                                         uppercase={true}
-                                        className={`w-full px-4 py-3 rounded-[calc(1rem-1.5px)] font-black text-[11px] uppercase tracking-[0.1em] outline-none transition-all ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
+                                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
                                     />
                                 </div>
 
@@ -241,7 +241,7 @@ export default function MemberSearchModal({
                                         value={year}
                                         disabled={!course}
                                         onChange={(e) => setYear(e.target.value)}
-                                        className={`w-full px-4 py-[11px] rounded-[calc(1rem-1.5px)] appearance-none font-black text-[11px] uppercase tracking-[0.1em] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-black text-white focus:bg-slate-900" : "bg-white text-slate-900 focus:bg-slate-50"}`}
+                                        className={`w-full px-3 sm:px-4 py-2 sm:py-[11px] rounded-[calc(1rem-1.5px)] appearance-none font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-black text-white focus:bg-slate-900" : "bg-white text-slate-900 focus:bg-slate-50"}`}
                                     >
                                         <option value="">{course ? "Passing Year" : "Select Course First"}</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}

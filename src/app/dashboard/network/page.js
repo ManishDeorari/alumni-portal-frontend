@@ -195,7 +195,7 @@ const NetworkPage = () => {
                   options={COURSE_OPTIONS}
                   placeholder="Course (e.g. BCA)"
                   uppercase={true}
-                  className={`w-full pl-4 pr-10 py-3 sm:py-4 rounded-2xl font-black text-[10px] sm:text-[11px] uppercase tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-2 sm:py-4 rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
                 />
               </div>
 
@@ -203,7 +203,7 @@ const NetworkPage = () => {
                 <select
                   value={filters.year}
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-3 sm:py-[15px] rounded-2xl appearance-none outline-none font-black text-[10px] sm:text-[11px] uppercase tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-2 sm:py-[15px] rounded-2xl appearance-none outline-none font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
                 >
                   <option value="">Graduation / Passing Year</option>
                   {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
