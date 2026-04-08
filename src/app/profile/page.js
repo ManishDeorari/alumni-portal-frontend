@@ -15,6 +15,7 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import AuthGuard from "../components/AuthGuard";
+import { useNotifications } from "@/context/NotificationContext";
 
 function ProfileContent() {
   const router = useRouter();
@@ -24,6 +25,7 @@ function ProfileContent() {
   // Transition logic: Prioritize SEO slug in path, fallback to old DB ID if passed via query
   const profileId = params?.publicId || searchParams.get("id"); 
   const { darkMode } = useTheme();
+  const { handleDailyLoginPoints } = useNotifications();
 
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
@@ -97,6 +99,11 @@ function ProfileContent() {
         resPosts.ok ? resPosts.json() : Promise.resolve([]),
         resActivity.ok ? resActivity.json() : Promise.resolve([])
       ]);
+      
+      // ✅ Check for daily login reward flag from API
+      if (profileData && profileData.loginPointsAwarded) {
+        handleDailyLoginPoints(profileData.loginPointsAwarded);
+      }
 
       const postsData = postsRaw.posts || postsRaw;
 

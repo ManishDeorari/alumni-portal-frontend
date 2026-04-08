@@ -67,11 +67,12 @@ function LoginContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    console.log("🌐 Connecting to API:", apiUrl);
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/auth/login`,
+        `${apiUrl}/api/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

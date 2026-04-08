@@ -44,8 +44,11 @@ export default function SignupPage() {
             enrollmentNumber: form.enrollmentNumber,
           };
 
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      console.log("🌐 Connecting to API:", apiUrl);
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/auth/signup`,
+        `${apiUrl}/api/auth/signup`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

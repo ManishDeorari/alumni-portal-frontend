@@ -130,6 +130,35 @@ export  const NotificationProvider = ({ children }) => {
     }
   }, [API_URL]);
 
+  const handleDailyLoginPoints = useCallback((awardedPoints) => {
+    toast.custom((t) => (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: -20 }}
+        className={`${t.visible ? 'block' : 'hidden'} p-[2px] rounded-3xl bg-gradient-to-r from-[#2563EB] via-[#9333EA] to-[#DB2777] shadow-[0_20px_50px_rgba(37,99,235,0.3)] pointer-events-none max-w-sm w-full mx-auto`}
+      >
+        <div className={`${darkMode ? 'bg-[#0A0A0B]' : 'bg-white'} px-8 py-5 rounded-[calc(1.5rem-2px)] flex items-center justify-between gap-6`}>
+          <div className="flex flex-col">
+            <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+              Daily Login Reward
+            </h3>
+            <p className={`text-[13px] font-black leading-tight uppercase tracking-tight ${darkMode ? 'text-white' : 'text-black'}`}>
+              You earned <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">+{awardedPoints} Points</span> Today
+            </p>
+          </div>
+          <div className="text-3xl animate-bounce drop-shadow-[0_0_15px_rgba(234,179,8,0.4)]">🏆</div>
+        </div>
+      </motion.div>
+    ), { duration: 5000, position: 'top-center' });
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchNotifications(token);
+      fetchCounts(token);
+    }
+  }, [darkMode, fetchNotifications, fetchCounts]);
+
   useEffect(() => {
     const handleAuthChange = () => setAuthTrigger(prev => prev + 1);
     window.addEventListener("local-auth-change", handleAuthChange);
@@ -253,33 +282,39 @@ export  const NotificationProvider = ({ children }) => {
 
       const handlePointsUpdated = (data) => {
         const { awardedPoints, reason } = data;
-        toast.success(
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🏆</span>
-              <span className="font-black text-yellow-400">Points Awarded!</span>
-            </div>
-            <div className="text-xs font-bold text-gray-300">
-              You earned <span className="text-blue-400">+{awardedPoints}</span> points
-            </div>
-            <div className="text-[10px] uppercase tracking-widest opacity-50 font-black">
-              {reason || "Activity Reward"}
-            </div>
-          </div>,
-          {
-            duration: 5000,
-            icon: null,
-            style: {
-              background: "#1e293b",
-              border: "1px solid #334155",
-              padding: "16px",
-              color: "#fff",
-              borderRadius: "20px"
+        
+        if (reason === "Daily Login Reward") {
+          handleDailyLoginPoints(awardedPoints);
+        } else {
+          toast.success(
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏆</span>
+                <span className="font-black text-yellow-400">Points Awarded!</span>
+              </div>
+              <div className="text-xs font-bold text-gray-300">
+                You earned <span className="text-blue-400">+{awardedPoints}</span> points
+              </div>
+              <div className="text-[10px] uppercase tracking-widest opacity-50 font-black">
+                {reason || "Activity Reward"}
+              </div>
+            </div>,
+            {
+              duration: 5000,
+              icon: null,
+              style: {
+                background: "#1e293b",
+                border: "1px solid #334155",
+                padding: "16px",
+                color: "#fff",
+                borderRadius: "20px"
+              }
             }
-          }
-        );
-        // Refresh counts to update the unread count if points_earned was also sent
-        fetchCounts(token);
+          );
+        }
+        
+        const token = localStorage.getItem("token");
+        if (token) fetchCounts(token);
       };
 
       const handleLiveNotification = (notification) => {
@@ -347,6 +382,7 @@ export  const NotificationProvider = ({ children }) => {
     markSectionAsSeen,
     markAsRead,
     markAllAsRead,
+    handleDailyLoginPoints, // Exported for direct triggering from API responses
     refreshNotifications: () => {
         const token = localStorage.getItem("token");
         if (token) fetchNotifications(token);

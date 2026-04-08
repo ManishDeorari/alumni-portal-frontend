@@ -7,6 +7,11 @@ import { useTheme } from "@/context/ThemeContext";
 
 const CATEGORY_GROUPS = [
     {
+        id: "login",
+        label: "Daily Login",
+        icon: "🔑",
+    },
+    {
         id: "profileCompletion",
         label: "Profile Completion",
         icon: "👤",

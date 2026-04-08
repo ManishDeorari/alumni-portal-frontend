@@ -11,11 +11,13 @@ import socket from "../../utils/socket";
 
 import PointsScenario from "../components/dashboard/PointsScenario";
 import { useTheme } from "@/context/ThemeContext";
+import { useNotifications } from "@/context/NotificationContext";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const { darkMode } = useTheme();
+  const { handleDailyLoginPoints } = useNotifications();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,6 +69,11 @@ export default function DashboardPage() {
         const data = await res.json();
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data)); // Refresh cache silently
+
+        // ✅ Check for daily login reward flag from API
+        if (data.loginPointsAwarded) {
+          handleDailyLoginPoints(data.loginPointsAwarded);
+        }
       } catch (err) {
         console.error("User fetch error:", err.message);
       } finally {
