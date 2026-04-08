@@ -137,18 +137,7 @@ export default function GroupMembersModal({
                                             </div>
                                         </div>
 
-                                        {!isMe && (
-                                            <button 
-                                                onClick={() => !isConnected && onConnect(member._id)}
-                                                className={`px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-md active:scale-95 ${
-                                                    isConnected 
-                                                        ? "bg-green-500/10 text-green-500 border-2 border-green-500/20 cursor-default" 
-                                                        : "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-blue-500/20 hover:shadow-blue-500/40"
-                                                }`}
-                                            >
-                                                {isConnected ? <div className="flex items-center gap-2"><FaCheck /> Connected</div> : <div className="flex items-center gap-2"><FaUserPlus /> Connect</div>}
-                                            </button>
-                                        )}
+
                                     </div>
                                 </div>
                             );

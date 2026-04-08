@@ -360,7 +360,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                                 <button 
                                                     type="button"
                                                     onClick={() => onRemoveMember(member._id)}
-                                                    className="px-5 py-2.5 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-red-600/30 hover:scale-105 active:scale-95 transition-all"
+                                                    className="shrink-0 px-3 sm:px-5 py-2 rounded-xl bg-red-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-[0.2em] shadow-lg shadow-red-600/30 hover:scale-105 active:scale-95 transition-all"
                                                 >
                                                     Remove
                                                 </button>
