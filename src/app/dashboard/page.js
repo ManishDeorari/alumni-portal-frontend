@@ -207,7 +207,7 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 pb-32 md:pb-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="lg:w-80 order-2 lg:order-1 relative">
+          <aside className="hidden lg:block lg:w-80 order-2 lg:order-1 relative">
             <div className="lg:fixed lg:top-24 lg:w-80 z-40">
               <PointsScenario darkMode={darkMode} />
             </div>
@@ -237,12 +237,12 @@ export default function DashboardPage() {
 
             <CreatePost setPosts={setPosts} currentUser={user} darkMode={darkMode} />
 
-            <div className="flex justify-center gap-3 flex-wrap">
+            <div className="flex justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
               {[
                 { id: "all", label: "ALL" },
                 { id: "Regular", label: "Posts" },
                 { id: "Session", label: "Session" },
-                { id: "Announcement", label: "Announcement" },
+                { id: "Announcement", label: "Announce" },
                 { id: "Event", label: "Event" },
                 { id: "my", label: "My Posts" }
               ].map((tab) => (
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   disabled={isFetchingFeed}
-                  className={`px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === tab.id
+                  className={`px-4 sm:px-6 py-2.5 rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all whitespace-nowrap flex-shrink-0 ${activeTab === tab.id
                     ? "bg-[#FAFAFA] text-blue-700 shadow-xl scale-105"
                     : "bg-[#FAFAFA]/10 text-white hover:bg-[#FAFAFA]/20 border border-white/10"
                     } ${isFetchingFeed ? "opacity-50 cursor-wait" : ""}`}
@@ -300,7 +300,7 @@ export default function DashboardPage() {
 
                   {hasMore ? (
                     <div className="text-center mt-12 pb-12">
-                      <button onClick={handleLoadMore} disabled={fetchingMore} className="group relative px-12 py-5 bg-[#FAFAFA] text-blue-700 font-black text-xs uppercase tracking-widest rounded-[2rem] hover:bg-blue-50 border-b-4 border-blue-100 hover:border-blue-200 transition-all shadow-xl active:scale-95 flex items-center gap-3 mx-auto">
+                      <button onClick={handleLoadMore} disabled={fetchingMore} className="group relative px-8 sm:px-12 py-4 sm:py-5 bg-[#FAFAFA] text-blue-700 font-black text-xs uppercase tracking-widest rounded-[2rem] hover:bg-blue-50 border-b-4 border-blue-100 hover:border-blue-200 transition-all shadow-xl active:scale-95 flex items-center gap-3 mx-auto w-full sm:w-auto justify-center">
                         {fetchingMore ? (
                           <>
                             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>

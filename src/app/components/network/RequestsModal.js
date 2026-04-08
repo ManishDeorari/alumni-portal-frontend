@@ -56,7 +56,7 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className={`relative p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]`}>
+            <div className={`relative p-[1px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[85vh]`}>
                 <div className={`flex flex-col h-full rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} overflow-hidden`}>
                     <div className={`p-6 border-b flex justify-between items-center ${darkMode ? 'border-white/10 bg-[#FAFAFA]/5' : 'border-gray-100 bg-gray-50'}`}>
                         <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Manage Requests</h2>

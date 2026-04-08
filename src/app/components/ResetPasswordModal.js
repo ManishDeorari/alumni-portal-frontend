@@ -64,9 +64,9 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-2 sm:px-4">
             {/* Container with purple-blue theme gradient */}
-            <div className="w-full max-w-md bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
+            <div className="w-full max-w-md bg-[#0a0a0a] border border-white/10 p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden max-h-[95dvh] overflow-y-auto">
 
                 {/* Glow effects */}
                 <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>

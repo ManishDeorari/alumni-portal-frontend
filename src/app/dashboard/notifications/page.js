@@ -216,10 +216,10 @@ export default function NotificationsPage() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className={`min-h-screen pb-20 bg-gradient-to-br from-blue-600 to-purple-700`}>
+    <div className={`min-h-screen pb-24 md:pb-20 bg-gradient-to-br from-blue-600 to-purple-700`}>
       <SidebarComponent />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
@@ -250,8 +250,8 @@ export default function NotificationsPage() {
         </div>
 
         {/* Subsections (Tabs) */}
-        <div className="relative p-[2px] mb-8 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-fit shadow-md">
-          <div className={`flex flex-wrap gap-2 p-1.5 rounded-[calc(1rem-2px)] w-full backdrop-blur-xl ${darkMode ? 'bg-black/90' : 'bg-white'}`}>
+        <div className="relative p-[2px] mb-6 sm:mb-8 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full sm:w-fit shadow-md">
+          <div className={`flex gap-1.5 sm:gap-2 p-1.5 rounded-[calc(1rem-2px)] w-full backdrop-blur-xl overflow-x-auto no-scrollbar ${darkMode ? 'bg-black/90' : 'bg-white'}`}>
             {TABS.filter(tab => {
               const isAdmin = user?.isAdmin || user?.role === "admin" || JSON.parse(localStorage.getItem("user") || "{}")?.isAdmin;
               const isMainAdmin = user?.isMainAdmin || JSON.parse(localStorage.getItem("user") || "{}")?.isMainAdmin;
@@ -266,7 +266,7 @@ export default function NotificationsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 ${activeTab === tab.id
                   ? (darkMode ? "bg-white/10 text-blue-400 shadow-lg shadow-black/20" : "bg-blue-50 text-blue-600 shadow-md border border-blue-200")
                   : (darkMode ? "text-white/60 hover:text-white hover:bg-[#FAFAFA]/10" : "text-slate-500 hover:text-slate-700 hover:bg-gray-50")
                   }`}

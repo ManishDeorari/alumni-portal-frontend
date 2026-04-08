@@ -205,7 +205,7 @@ function LoginContent() {
   const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-8 transition-colors duration-500`}>
+    <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-4 sm:px-8 transition-colors duration-500`}>
       <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -216,10 +216,10 @@ function LoginContent() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-32 lg:mt-0"
+          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-8 sm:mt-12 lg:mt-0 mb-8"
         >
           <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
-            <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-6 px-8 md:py-8 md:px-10 space-y-6 relative overflow-hidden transition-all duration-500`}>
+            <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-5 px-5 sm:py-8 sm:px-10 space-y-5 sm:space-y-6 relative overflow-hidden transition-all duration-500`}>
               {view === "LOGIN" && (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2 text-center">

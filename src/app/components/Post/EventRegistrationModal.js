@@ -180,7 +180,7 @@ const EventRegistrationModal = ({ event, isOpen, onClose, currentUser, darkMode 
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className={`p-[1.5px] rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all`}>
+      <div className={`p-[1.5px] rounded-2xl sm:rounded-[2.1rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
         <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2rem] overflow-hidden`}>
           <div className={`px-8 py-4 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
             <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-black"}`}>Register for Event</h2>

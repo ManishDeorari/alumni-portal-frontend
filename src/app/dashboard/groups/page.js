@@ -339,18 +339,41 @@ export default function GroupsPage() {
 
     const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
+    // Mobile: show chat if group selected, otherwise show group list
+    const [mobileShowChat, setMobileShowChat] = useState(false);
+
+    const handleMobileSelectGroup = (g) => {
+        fetchGroupDetails(g._id);
+        setShowDetailsModal(false);
+        setMobileShowChat(true);
+    };
+
+    const handleMobileBack = () => {
+        setMobileShowChat(false);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white overflow-hidden">
             <SidebarComponent />
 
-            <main className="p-4 max-w-[1200px] mx-auto h-[calc(100vh-64px)] flex flex-col justify-center">
-                <div className="relative p-[2.5px] rounded-[2.5rem] shadow-2xl overflow-hidden h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
-                    <div className={`relative flex gap-4 px-6 py-8 rounded-[calc(2.5rem-2.5px)] transition-colors duration-300 h-full justify-between ${darkMode ? "bg-black/90" : "bg-white/90"}`}>
-                        <div className="w-[30%] flex-shrink-0">
+            <main className="p-2 sm:p-4 max-w-[1200px] mx-auto h-[calc(100dvh-64px)] flex flex-col justify-center pb-20 md:pb-4">
+                <div className="relative p-[2px] sm:p-[2.5px] rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+                    <div className={`relative flex flex-col md:flex-row gap-0 md:gap-4 px-3 py-4 sm:px-6 sm:py-8 rounded-[calc(1rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] transition-colors duration-300 h-full ${darkMode ? "bg-black/90" : "bg-white/90"}`}>
+                        
+                        {/* Group Sidebar — hidden on mobile when chat is active */}
+                        <div className={`${mobileShowChat ? 'hidden' : 'flex'} md:flex w-full md:w-[30%] flex-shrink-0 h-full`}>
                             <GroupSidebar
                                 groups={filteredGroups}
                                 selectedGroup={selectedGroup}
-                                onSelectGroup={(g) => { fetchGroupDetails(g._id); setShowDetailsModal(false); }}
+                                onSelectGroup={(g) => {
+                                    // Desktop: normal select; Mobile: switch panel
+                                    if (window.innerWidth < 768) {
+                                        handleMobileSelectGroup(g);
+                                    } else {
+                                        fetchGroupDetails(g._id);
+                                        setShowDetailsModal(false);
+                                    }
+                                }}
                                 onSearch={(term) => {
                                     const filtered = groups.filter(g => g.name.toLowerCase().includes(term.toLowerCase()));
                                     setFilteredGroups(filtered);
@@ -361,10 +384,11 @@ export default function GroupsPage() {
                             />
                         </div>
 
-                        {/* Modern Vertical Separator */}
-                        <div className="w-[1.5px] h-full bg-gradient-to-b from-transparent via-blue-500/30 to-transparent" />
+                        {/* Modern Vertical Separator — desktop only */}
+                        <div className="hidden md:block w-[1.5px] h-full bg-gradient-to-b from-transparent via-blue-500/30 to-transparent" />
 
-                        <div className="w-[68%] flex-shrink-0">
+                        {/* Chat Window — hidden on mobile when group list is active */}
+                        <div className={`${mobileShowChat ? 'flex' : 'hidden'} md:flex w-full md:w-[68%] flex-shrink-0 h-full flex-col`}>
                             <GroupChatWindow
                                 selectedGroup={selectedGroup}
                                 messages={messages}
@@ -375,7 +399,7 @@ export default function GroupsPage() {
                                 onInviteMembers={() => setShowInviteModal(true)}
                                 onToggleDetails={() => setShowDetailsModal(true)}
                                 onViewImage={(url) => { setViewerImageUrl(url); setShowImageViewer(true); }}
-                                onDeleteMessage={handleDeleteMedia} // Using same handler for generic deletion
+                                onDeleteMessage={handleDeleteMedia}
                                 onReact={(msgId, emoji) => {
                                     const token = localStorage.getItem("token");
                                     fetch(`${API_URL}/api/groups/${selectedGroup._id}/react`, {
@@ -384,6 +408,8 @@ export default function GroupsPage() {
                                         body: JSON.stringify({ messageId: msgId, emoji }),
                                     });
                                 }}
+                                onBack={handleMobileBack}
+                                showBackButton={mobileShowChat}
                             />
                         </div>
 

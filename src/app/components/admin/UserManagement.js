@@ -265,9 +265,9 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                 ) : (
                     <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden mb-12">
                         <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] overflow-hidden`}>
-                    <div className="space-y-4 p-4">
-                        {/* Header Row */}
-                        <div className={`flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
+                        <div className="space-y-4 p-2 sm:p-4">
+                        {/* Header Row — desktop only */}
+                        <div className={`hidden md:flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
                             <div className="w-12 flex items-center justify-center">
                                 <div 
                                     onClick={handleSelectAll}
@@ -299,7 +299,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                 >
                                     <div 
                                         onClick={() => toggleSelect(u._id)}
-                                        className={`${darkMode ? (isSelected ? "bg-blue-900/20" : "bg-black") : (isSelected ? "bg-blue-50" : "bg-white")} rounded-[calc(1.5rem-2px)] p-5 flex items-center gap-4 cursor-pointer`}
+                                        className={`${darkMode ? (isSelected ? "bg-blue-900/20" : "bg-black") : (isSelected ? "bg-blue-50" : "bg-white")} rounded-[calc(1.5rem-2px)] p-3 sm:p-5 flex flex-wrap md:flex-nowrap items-center gap-3 sm:gap-4 cursor-pointer`}
                                     >
                                         {/* Checkbox */}
                                         <div className="w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
@@ -337,7 +337,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         </div>
 
                                         {/* Role */}
-                                        <div className="w-32">
+                                        <div className="hidden md:block w-32">
                                             <span className={`text-[10px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest border-2 ${u.isAdmin
                                                 ? (darkMode ? "bg-purple-500/20 text-purple-400 border-purple-500/30" : "bg-purple-100 text-purple-700 border-purple-200")
                                                 : (darkMode ? "bg-blue-500/20 text-blue-400 border-blue-500/30" : "bg-blue-100 text-blue-700 border-blue-200")
@@ -354,7 +354,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="w-32 flex items-center justify-end gap-3 flex-shrink-0 ml-auto" onClick={(e) => e.stopPropagation()}>
+                                        <div className="w-full md:w-32 flex items-center justify-end gap-2 sm:gap-3 flex-shrink-0 md:ml-auto mt-2 md:mt-0" onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 onClick={() => handleMessageClick(u)}
                                                 className={`p-3 bg-blue-600/10 hover:bg-blue-600 border-2 border-blue-500/20 text-blue-400 hover:text-white rounded-2xl transition-all active:scale-90`}
@@ -398,7 +398,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         initial={{ y: 100, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: 100, opacity: 0 }}
-                        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[50] w-[calc(100%-2rem)] max-w-2xl px-4"
+                        className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-[50] w-[calc(100%-2rem)] max-w-2xl px-4"
                     >
                         <div className={`p-1 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 shadow-[0_20px_50px_rgba(0,0,0,0.3)]`}>
                             <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem+3px)] px-6 py-4 flex items-center justify-between gap-4 backdrop-blur-xl`}>

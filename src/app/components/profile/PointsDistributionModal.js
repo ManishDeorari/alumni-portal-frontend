@@ -86,7 +86,7 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-md overflow-hidden relative"
+                        className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-md overflow-hidden relative max-h-[95dvh] sm:max-h-[90vh]"
                     >
                         <div className={`${darkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden relative`}>
                         {/* Header */}

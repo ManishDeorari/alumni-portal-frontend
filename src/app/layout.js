@@ -34,6 +34,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: 0,
+  viewportFit: "cover",
 };
 
 import PageTransition from "./components/ui/PageTransition";
@@ -47,7 +48,11 @@ export default function RootLayout({ children }) {
         <Toaster
           position="top-center"
           containerStyle={{
-            top: 100,
+            top: 80,
+            left: 0,
+            right: 0,
+            paddingLeft: "env(safe-area-inset-left, 0px)",
+            paddingRight: "env(safe-area-inset-right, 0px)",
           }}
           toastOptions={{
             duration: 4000,
@@ -57,14 +62,16 @@ export default function RootLayout({ children }) {
               WebkitBackdropFilter: "blur(12px)",
               color: "#fff",
               borderRadius: "20px",
-              padding: "16px 24px",
-              fontSize: "14px",
+              padding: "12px 20px",
+              fontSize: "13px",
               fontWeight: "900",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
               border: "1px solid rgba(255, 255, 255, 0.15)",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
               zIndex: 99999,
+              maxWidth: "calc(100vw - 2rem)",
+              wordBreak: "break-word",
             },
             success: {
               iconTheme: {

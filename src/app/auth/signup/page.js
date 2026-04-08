@@ -103,7 +103,7 @@ export default function SignupPage() {
   const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-8 transition-colors duration-500 text-white`}>
+    <div className={`min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden px-4 sm:px-8 transition-colors duration-500 text-white`}>
       <LoadingOverlay isVisible={loading} message="Creating Account..." />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -114,10 +114,10 @@ export default function SignupPage() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-32 lg:mt-0"
+          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-8 sm:mt-12 lg:mt-0 mb-8"
         >
           <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
-            <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-4 px-8 md:py-5 md:px-10 space-y-3 relative overflow-hidden transition-all duration-500`}>
+            <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-4 px-5 sm:px-8 md:py-5 md:px-10 space-y-3 relative overflow-hidden transition-all duration-500`}>
               <div className="space-y-0.5 text-center">
                 <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Join Global Network</h2>
                 <p className={`text-sm ${darkMode ? "text-white font-bold" : "text-black font-bold"} opacity-70`}>Create account to connect with fellow alumni</p>

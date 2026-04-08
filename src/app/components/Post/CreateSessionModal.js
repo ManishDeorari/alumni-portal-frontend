@@ -111,7 +111,7 @@ const CreateSessionModal = ({ isOpen, onClose, currentUser, darkMode = false, se
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className={`p-[2px] rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-2xl my-auto shadow-2xl transition-all`}>
+      <div className={`p-[2px] rounded-2xl sm:rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-2xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
         <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
           {/* Header */}
           <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>

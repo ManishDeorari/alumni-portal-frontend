@@ -156,10 +156,10 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-4"} rounded-[3rem] transition-all duration-500`}
+      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-2 sm:p-4"} rounded-2xl sm:rounded-[3rem] transition-all duration-500`}
     >
-      <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[2.6rem]`}>
-        <div className={`relative rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+      <div className={`p-[2px] sm:p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.6rem]`}>
+        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.5rem] p-4 sm:p-8 space-y-4 sm:space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
           <PostHeader {...{
             post, currentUser, editing, toggleEdit: () => {
               toggleEdit(editKey, (val) => {
@@ -197,7 +197,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           {post.type === "Session" && post.sessionDetails && (
             <div className={`mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
               <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-6`}>
-                <div className={`grid grid-cols-2 gap-x-8 gap-y-6`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6`}>
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>College</span>
                     <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{post.sessionDetails.schoolOrCollege}</span>
@@ -224,7 +224,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           {post.type === "Event" && (
             <div className="mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
               <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-6`}>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Start</span>
                     <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.startDate).toLocaleDateString()} at {post.startTime}</span>
@@ -233,7 +233,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-purple-400/60" : "text-purple-600/60"}`}>Ends</span>
                     <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.endDate).toLocaleDateString()}</span>
                   </div>
-                  <div className="col-span-2 flex flex-col pt-4 border-t border-dashed border-gray-200 dark:border-white/10">
+                  <div className="sm:col-span-2 flex flex-col pt-4 border-t border-dashed border-gray-200 dark:border-white/10">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Registration Deadline</span>
                     <div className="flex items-center gap-2">
                        <span className="text-sm">⏰</span>
@@ -242,7 +242,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 pt-2 items-center justify-between border-t border-white/5 pt-6">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 pt-2 items-start sm:items-center justify-between border-t border-white/5 pt-6">
                   <div className="flex items-center gap-4">
                     {(currentUser?.isAdmin || currentUser?.role === 'faculty' || post.user?._id === currentUser?._id) ? (
                       <>
@@ -320,7 +320,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     <div key={gidx} className="p-[2px] rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl">
                       <div className={`rounded-[calc(2rem-2px)] overflow-hidden ${darkMode ? "bg-slate-900/90" : "bg-white"}`}>
                         {entry.type === 'group' && (
-                          <div className={`${darkMode ? "bg-blue-600/20" : "bg-blue-50"} px-6 py-3 border-b border-blue-500/20 flex items-center justify-between`}>
+                          <div className={`${darkMode ? "bg-blue-600/20" : "bg-blue-50"} px-4 sm:px-6 py-3 border-b border-blue-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2`}>
                              <div className="flex items-center gap-3">
                                 <span className="text-xl">🏆</span>
                                 <span className={`text-xs font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-300" : "text-blue-800"}`}>

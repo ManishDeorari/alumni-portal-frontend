@@ -18,7 +18,9 @@ export default function GroupChatWindow({
     isAdmin,
     onReact,
     onViewImage,
-    onDeleteMessage
+    onDeleteMessage,
+    onBack,
+    showBackButton
 }) {
     const { darkMode } = useTheme();
     const messagesEndRef = useRef(null);
@@ -128,8 +130,17 @@ export default function GroupChatWindow({
 
             <div className={`h-full flex flex-col rounded-[14px] relative overflow-hidden ${darkMode ? "bg-gray-900/95 text-white" : "bg-[#FAFAFA]/95 text-gray-900"}`}>
                 {/* Header */}
-                <div className="p-4 flex items-center justify-between relative bg-black/5">
-                    <div className="flex items-center gap-3 cursor-pointer group" onClick={onToggleDetails}>
+                <div className="p-3 sm:p-4 flex items-center justify-between relative bg-black/5">
+                    <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 flex-1" onClick={onToggleDetails}>
+                        {showBackButton && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onBack(); }}
+                                className={`p-2 rounded-full transition-colors flex-shrink-0 md:hidden ${darkMode ? "hover:bg-white/10 text-gray-300" : "hover:bg-gray-200 text-gray-600"}`}
+                                title="Back to groups"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                            </button>
+                        )}
                         <div
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -139,9 +150,9 @@ export default function GroupChatWindow({
                         >
                             <GroupAvatar group={selectedGroup} size={36} />
                         </div>
-                        <div>
-                            <h3 className={`font-black group-hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>{selectedGroup.name}</h3>
-                            <p className={`text-[10px] font-bold truncate max-w-[200px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                        <div className="min-w-0">
+                            <h3 className={`font-black group-hover:text-blue-500 transition-colors truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{selectedGroup.name}</h3>
+                            <p className={`text-[10px] font-bold truncate max-w-[120px] sm:max-w-[200px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                 {selectedGroup.description || "Group Chat"}
                             </p>
                         </div>
@@ -178,7 +189,7 @@ export default function GroupChatWindow({
                                         <Image src={msg.sender?.profilePicture || "/default-profile.jpg"} width={32} height={32} className="object-cover" alt={msg.sender?.name || "User"} />
                                     </div>
                                 )}
-                                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
+                                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[75%]`}>
                                     {!isMe && (
                                         <div className="flex items-center gap-2 mb-1 ml-1">
                                             <span className="text-[10px] font-black uppercase tracking-wider opacity-70">{msg.sender?.name || "Unknown"}</span>
@@ -277,7 +288,7 @@ export default function GroupChatWindow({
                 <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Input Area */}
-                <div className="p-4 bg-black/5">
+                <div className="p-3 sm:p-4 bg-black/5 safe-bottom">
                     {canMessage ? (
                         <form onSubmit={handleSend} className="flex items-center gap-4 relative">
                             <div className="flex items-center gap-1">
@@ -286,8 +297,8 @@ export default function GroupChatWindow({
                                         <FaSmile size={22} />
                                     </button>
                                     {showEmojiPicker && (
-                                        <div className="absolute bottom-full left-0 mb-4 z-[100] shadow-2xl border-2 border-blue-500/20 rounded-2xl">
-                                            <EmojiPicker onEmojiClick={onEmojiClick} theme={darkMode ? 'dark' : 'light'} width={300} height={400} />
+                                        <div className="absolute bottom-full left-0 mb-4 z-[100] shadow-2xl border-2 border-blue-500/20 rounded-2xl" style={{ maxWidth: 'min(300px, 90vw)' }}>
+                                            <EmojiPicker onEmojiClick={onEmojiClick} theme={darkMode ? 'dark' : 'light'} width={Math.min(300, typeof window !== 'undefined' ? window.innerWidth * 0.85 : 300)} height={350} />
                                         </div>
                                     )}
                                 </div>

@@ -128,15 +128,15 @@ const NetworkPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <SidebarComponent />
 
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8 relative z-10">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 sm:space-y-8 relative z-10 pb-24 md:pb-8">
         {/* Header Section */}
         <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
-          <div className={`px-8 py-6 rounded-[calc(1.5rem-2.5px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} flex flex-col md:flex-row justify-between items-center gap-6`}>
+          <div className={`px-4 sm:px-8 py-5 sm:py-6 rounded-[calc(1.5rem-2.5px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6`}>
             <div>
               <h1 className={`text-4xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
               <p className={`text-sm ${darkMode ? 'text-white font-bold' : 'text-slate-600 font-bold'} opacity-75`}>Build your professional circle with alumni</p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4 w-full sm:w-auto">
               <div className="relative p-[1.5px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl group transition-all duration-300 hover:shadow-lg">
                 <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm transition-all backdrop-blur-md ${darkMode ? 'bg-[#0f172a] text-white hover:bg-black' : 'bg-white text-slate-900 hover:bg-gray-50'}`}>
                   My Network
@@ -164,7 +164,7 @@ const NetworkPage = () => {
 
         {/* Search Section */}
         <div className="relative p-[2.5px] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl">
-          <div className={`px-10 py-10 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-8`}>
+          <div className={`px-4 sm:px-10 py-6 sm:py-10 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-6 sm:space-y-8`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-3 relative p-[1.5px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all hover:from-blue-500 hover:to-purple-500">
                 <div className="relative h-full">

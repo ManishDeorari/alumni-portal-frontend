@@ -29,10 +29,10 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed right-0 top-0 h-full w-80 z-[101] p-[2px] bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
+                        className="fixed right-0 top-0 h-full w-full sm:w-80 z-[101] p-[2px] bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
                     >
                         {/* Main Drawer Body */}
-                        <div className={`h-full w-full flex flex-col p-6 shadow-inner ${darkMode ? "bg-black/95 text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
+                        <div className={`h-full w-full flex flex-col p-6 shadow-inner overscroll-none safe-bottom ${darkMode ? "bg-black/95 text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
 
                             {/* Header */}
                             <div className="flex items-center justify-between mb-8">

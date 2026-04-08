@@ -157,7 +157,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
     return (
         <>
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                <div className="relative w-full max-w-xl p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden">
+                <div className="relative w-full max-w-xl p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[95dvh] sm:max-h-[90vh]">
                     <div className={`relative w-full rounded-[calc(2.5rem-2.5px)] overflow-hidden flex flex-col max-h-[90vh] ${darkMode ? "bg-black" : "bg-white"}`}>
                         <div className="p-8 overflow-y-auto custom-scrollbar">
                             <div className="flex justify-between items-center mb-8">

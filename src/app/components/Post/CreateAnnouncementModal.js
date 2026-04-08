@@ -211,7 +211,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className={`p-[2px] rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-4xl my-auto shadow-2xl transition-all`}>
+      <div className={`p-[2px] rounded-2xl sm:rounded-[2.6rem] bg-gradient-to-tr from-blue-500 to-purple-600 w-full max-w-4xl my-auto shadow-2xl transition-all max-h-[95dvh] sm:max-h-[90vh]`}>
         <div className={`relative w-full h-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} rounded-[2.5rem] overflow-hidden`}>
           {/* Header */}
           <div className={`px-8 py-6 border-b ${darkMode ? "border-white/10" : "border-gray-100"} flex items-center justify-between`}>
@@ -382,8 +382,8 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                     </div>
                   
                   <div className={`p-[2px] rounded-[3rem] bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl shadow-blue-500/10`}>
-                    <div className={`p-6 rounded-[calc(3rem-2px)] ${darkMode ? "bg-[#0f172a]" : "bg-white"} min-h-[400px]`}>
-                      <table className="w-full text-left border-separate border-spacing-y-4 table-auto">
+                    <div className={`p-4 sm:p-6 rounded-[calc(3rem-2px)] ${darkMode ? "bg-[#0f172a]" : "bg-white"} min-h-[300px] sm:min-h-[400px] overflow-x-auto`}>
+                      <table className="w-full text-left border-separate border-spacing-y-4 table-auto min-w-[600px]">
                         <thead>
                           <tr className={`text-[11px] font-black uppercase tracking-[0.2em] ${darkMode ? "text-gray-400" : "text-black/80"}`}>
                             <th className="px-3 pb-1 w-[90px]">Type</th>

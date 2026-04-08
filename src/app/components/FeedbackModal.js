@@ -37,15 +37,15 @@ const FeedbackModal = ({ isOpen, onClose, darkMode }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-2 sm:p-4"
                 >
                     <motion.div
                         initial={{ scale: 0.9, y: 20 }}
                         animate={{ scale: 1, y: 0 }}
                         exit={{ scale: 0.9, y: 20 }}
-                        className="relative p-[2px] bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative overflow-hidden"
+                        className="relative p-[2px] bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-2xl sm:rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden max-h-[95dvh] sm:max-h-[90vh]"
                     >
-                        <div className={`relative ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(2.5rem-2px)] p-8 h-full w-full overflow-hidden`}>
+                        <div className={`relative ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1rem-2px)] sm:rounded-[calc(2.5rem-2px)] p-5 sm:p-8 h-full w-full overflow-y-auto`}>
                             {/* Header */}
                             <div className="flex items-center justify-between mb-8 relative z-10">
                                 <div className="flex items-center gap-4">
