@@ -164,9 +164,9 @@ const NetworkPage = () => {
 
         {/* Search Section */}
         <div className="relative p-[2px] sm:p-[2.5px] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-[2.5rem] shadow-2xl">
-          <div className={`px-3 sm:px-10 py-4 sm:py-10 rounded-[calc(1rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-4 sm:space-y-8`}>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="md:col-span-3 relative p-[1.5px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all hover:from-blue-500 hover:to-purple-500">
+          <div className={`px-3 sm:px-10 py-3 sm:py-10 rounded-xl sm:rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-3 sm:space-y-8`}>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-6">
+              <div className="md:col-span-3 relative p-[1.5px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-xl sm:rounded-2xl transition-all hover:from-blue-500 hover:to-purple-500">
                 <div className="relative h-full">
                   <input
                     type="text"
@@ -174,36 +174,36 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-4 rounded-2xl outline-none transition-all font-black text-xs sm:text-base ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
+                    className={`w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-4 rounded-xl sm:rounded-2xl outline-none transition-all font-black text-xs sm:text-base ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
                   />
                   <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white' : 'text-slate-800'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
               </div>
               <button
                 onClick={handleSearch}
-                className="px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] sm:text-[11px] transition-all shadow-xl active:scale-95"
+                className="px-6 sm:px-10 py-2 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl sm:rounded-2xl font-black uppercase tracking-wider sm:tracking-[0.2em] text-[10px] sm:text-[11px] transition-all shadow-xl active:scale-95"
               >
                 Search Alumni
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl transition-all focus-within:from-blue-500 focus-within:to-purple-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6">
+              <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-xl sm:rounded-2xl transition-all focus-within:from-blue-500 focus-within:to-purple-500">
                 <HybridInput
                   value={filters.course}
                   onChange={(val) => setFilters({ ...filters, course: val })}
                   options={COURSE_OPTIONS}
                   placeholder="Course (e.g. BCA)"
                   uppercase={true}
-                  className={`w-full pl-4 pr-10 py-2 sm:py-4 rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-1.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
                 />
               </div>
 
-              <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl transition-all focus-within:from-blue-500 focus-within:to-purple-500">
+              <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-xl sm:rounded-2xl transition-all focus-within:from-blue-500 focus-within:to-purple-500">
                 <select
                   value={filters.year}
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-2 sm:py-[15px] rounded-2xl appearance-none outline-none font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-1.5 sm:py-[15px] rounded-xl sm:rounded-2xl appearance-none outline-none font-black text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
                 >
                   <option value="">Graduation / Passing Year</option>
                   {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}

@@ -147,8 +147,8 @@ export default function MemberSearchModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="relative w-full max-w-xl p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[95dvh] sm:max-h-[90vh]">
-                <div className={`relative w-full rounded-[calc(2.5rem-2.5px)] overflow-hidden flex flex-col max-h-[90vh] ${darkMode ? "bg-black" : "bg-white"}`}>
+            <div className="relative w-full max-w-xl p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[95dvh] sm:max-h-[90vh]">
+                <div className={`relative w-full rounded-xl sm:rounded-[calc(2.5rem-2.5px)] overflow-hidden flex flex-col max-h-[90vh] ${darkMode ? "bg-black" : "bg-white"}`}>
                     
                     {/* Header */}
                     <div className="p-6 border-b dark:border-white/10">
@@ -160,7 +160,7 @@ export default function MemberSearchModal({
                         </div>
 
                         {/* Quick Role Select Buttons */}
-                        <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
                             <button
                                 type="button"
                                 onClick={() => {
@@ -195,8 +195,8 @@ export default function MemberSearchModal({
                         <div className="space-y-4">
                             <div className="grid grid-cols-3 gap-3">
                                 {/* Name/General Query */}
-                                <div className="col-span-2 p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10">
-                                    <div className={`flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] h-full transition-all ${darkMode ? "bg-black" : "bg-white"}`}>
+                                <div className="col-span-2 p-[1.5px] rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-blue-500/10">
+                                    <div className={`flex items-center gap-3 px-3 sm:px-4 py-1.5 sm:py-3 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(1rem-1.5px)] h-full transition-all ${darkMode ? "bg-black" : "bg-white"}`}>
                                         <FaSearch className="text-blue-500" size={14} />
                                         <input
                                             type="text"
@@ -209,11 +209,11 @@ export default function MemberSearchModal({
                                 </div>
 
                                 {/* Role Filter */}
-                                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500">
+                                <div className="relative p-[1.5px] rounded-xl sm:rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500">
                                     <select
                                         value={roleFilter}
                                         onChange={(e) => setRoleFilter(e.target.value)}
-                                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] h-full appearance-none font-black text-[9px] sm:text-[10px] uppercase tracking-wider sm:tracking-widest outline-none cursor-pointer ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
+                                        className={`w-full px-3 sm:px-4 py-1.5 sm:py-3 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(1rem-1.5px)] h-full appearance-none font-black text-[9px] sm:text-[10px] uppercase tracking-wider sm:tracking-widest outline-none cursor-pointer ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
                                     >
                                         <option value="ALL">ALL ROLES</option>
                                         <option value="ALUMNI">ALUMNI</option>
@@ -224,24 +224,24 @@ export default function MemberSearchModal({
                             </div>
 
                             {/* Custom Filters (Course, Year) */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-[1.5px] rounded-2xl bg-gradient-to-r from-blue-500/50 to-purple-500/50">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                                <div className="p-[1.5px] rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/50 to-purple-500/50">
                                     <HybridInput
                                         value={course}
                                         onChange={(val) => setCourse(val)}
                                         options={COURSE_OPTIONS}
                                         placeholder="Course (e.g. B.Tech)"
                                         uppercase={true}
-                                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-[calc(1rem-1.5px)] font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
+                                        className={`w-full px-3 sm:px-4 py-1.5 sm:py-3 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(1rem-1.5px)] font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"}`}
                                     />
                                 </div>
 
-                                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-purple-500/50 to-pink-500/50">
+                                <div className="relative p-[1.5px] rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-500/50 to-pink-500/50">
                                     <select
                                         value={year}
                                         disabled={!course}
                                         onChange={(e) => setYear(e.target.value)}
-                                        className={`w-full px-3 sm:px-4 py-2 sm:py-[11px] rounded-[calc(1rem-1.5px)] appearance-none font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-black text-white focus:bg-slate-900" : "bg-white text-slate-900 focus:bg-slate-50"}`}
+                                        className={`w-full px-3 sm:px-4 py-1.5 sm:py-[11px] rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(1rem-1.5px)] appearance-none font-black text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.1em] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${darkMode ? "bg-black text-white focus:bg-slate-900" : "bg-white text-slate-900 focus:bg-slate-50"}`}
                                     >
                                         <option value="">{course ? "Passing Year" : "Select Course First"}</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}

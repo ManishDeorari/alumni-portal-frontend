@@ -174,9 +174,9 @@ export default function AlumniExport() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             {/* Search & Filters */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
-                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-[calc(1.5rem-2px)] space-y-4 sm:space-y-8`}>
+                <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-xl sm:rounded-[calc(1.5rem-2px)] space-y-3 sm:space-y-8`}>
                     <div className="flex flex-col md:flex-row gap-4">
-                        <div className="relative flex-1 p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
+                        <div className="relative flex-1 p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-xl sm:rounded-2xl">
                             <div className="relative h-full">
                                 <input
                                     type="text"
@@ -184,23 +184,23 @@ export default function AlumniExport() {
                                     value={searchQuery}
                                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
+                                    className={`w-full pl-10 sm:pl-12 pr-4 py-1.5 sm:py-3.5 text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-xl sm:rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
                                 />
                                 <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
                         </div>
                         <button
                             onClick={handleSearch}
-                            className="px-6 sm:px-10 py-2.5 sm:py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm transition-all shadow-lg active:scale-95"
+                            className="px-6 sm:px-10 py-1.5 sm:py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm transition-all shadow-lg active:scale-95"
                         >
                             Search Alumni
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6">
                         <div className="space-y-2 z-[60]">
                             <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Course</label>
-                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
+                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg sm:rounded-xl relative shadow-md">
                                 <HybridInput
                                     value={filters.course}
                                     onChange={(val) => setFilters({ ...filters, course: val })}
@@ -208,17 +208,17 @@ export default function AlumniExport() {
                                     placeholder="All Courses"
                                     uppercase={true}
                                     placement="top"
-                                    className={`w-full px-4 py-2.5 sm:py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black`}
+                                    className={`w-full px-4 py-1.5 sm:py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-lg sm:rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black`}
                                 />
                             </div>
                         </div>
                         <div className="space-y-2 relative">
                             <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"} ml-2 font-black`}>Graduation / Passing Year</label>
-                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
+                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg sm:rounded-xl relative shadow-md">
                                 <select
                                     value={filters.year}
                                     onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                                    className={`w-full px-4 py-2.5 sm:py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
+                                    className={`w-full px-4 py-1.5 sm:py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-lg sm:rounded-[calc(0.75rem-2px)] text-[9px] sm:text-[11px] uppercase tracking-wider sm:tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
                                 >
                                     <option value="">All Years</option>
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
@@ -233,7 +233,7 @@ export default function AlumniExport() {
             {/* Results & Export */}
             {alumni.length > 0 && (
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden mb-10">
-                    <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-[calc(1.5rem-2px)] space-y-4 sm:space-y-6`}>
+                    <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-xl sm:rounded-[calc(1.5rem-2px)] space-y-4 sm:space-y-6`}>
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="h-10 w-2.5 bg-green-500 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.6)]"></div>
