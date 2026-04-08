@@ -302,7 +302,7 @@ export default function AdminDashboardPage() {
       <div className={`p-[2px] rounded-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl shadow-blue-500/10" : "bg-transparent"}`}>
         <button
           onClick={() => setActiveTab(id)}
-          className={`px-6 py-3.5 rounded-[calc(1rem-2px)] transition-all duration-300 font-black text-[10px] uppercase tracking-wider ${isActive
+          className={`px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-[calc(1rem-2px)] transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-wider ${isActive
             ? `${darkMode ? "bg-black text-white" : "bg-white text-blue-600"}`
             : `${darkMode ? "bg-white/5 text-white hover:bg-white/10" : "bg-black/5 text-slate-900 hover:bg-black/10"} border-2 border-transparent`
             }`}
@@ -337,8 +337,8 @@ export default function AdminDashboardPage() {
                   <Shield className="w-6 h-6 text-blue-500" />
                 </div>
                 <div className="text-left">
-                  <h1 className={`text-2xl md:text-3xl font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Admin Panel</h1>
-                  <p className={`${darkMode ? "text-white" : "text-slate-900"} text-xs font-black uppercase tracking-[0.2em] mt-2`}>
+                  <h1 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Admin Panel</h1>
+                  <p className={`${darkMode ? "text-white" : "text-slate-900"} text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] mt-1 sm:mt-2`}>
                     Master Control Center
                   </p>
                 </div>

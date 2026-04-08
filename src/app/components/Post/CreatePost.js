@@ -105,14 +105,14 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
   };
 
   return (
-    <div className={`w-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-8 rounded-[2.5rem] shadow-sm transition-colors duration-500`}>
-      <h2 className={`text-xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-6 flex items-center gap-2`}>
+    <div className={`w-full ${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-[2.5rem] shadow-sm transition-colors duration-500`}>
+      <h2 className={`text-base sm:text-xl font-black ${darkMode ? "text-white" : "text-gray-900"} tracking-tight mb-3 sm:mb-6 flex items-center gap-2`}>
         <span className={`${darkMode ? "bg-blue-900/40" : "bg-blue-50"} p-2 rounded-xl`}>📢</span>
         Create a Post
       </h2>
 
       <div className={`p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900 shadow-none border border-white/10" : "bg-gradient-to-tr from-blue-600 to-purple-700 shadow-[0_20px_60px_rgba(37,99,235,0.2)]"} rounded-[2.6rem] transition-all duration-500`}>
-        <div className={`relative rounded-[2.5rem] p-6 space-y-4 transition-all duration-500 ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
+        <div className={`relative rounded-[2.5rem] p-3 sm:p-6 space-y-3 sm:space-y-4 transition-all duration-500 ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-3">
               <div className="flex-1 space-y-2">
@@ -198,7 +198,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
                   <button
                     type="submit"
                     disabled={loading || !hasContent}
-                    className="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                    className="px-5 sm:px-8 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50"
                   >
                     {loading ? "Posting..." : "Post Now"}
                   </button>

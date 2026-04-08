@@ -12,7 +12,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative w-12 h-12">
+      <div className="relative w-9 h-9 sm:w-12 sm:h-12">
         <Image
           src={profileImg}
           alt="User profile"

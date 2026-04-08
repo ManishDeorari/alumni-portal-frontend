@@ -133,12 +133,12 @@ const NetworkPage = () => {
         <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
           <div className={`px-4 sm:px-8 py-5 sm:py-6 rounded-[calc(1.5rem-2.5px)] ${darkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-slate-900'} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6`}>
             <div>
-              <h1 className={`text-4xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
-              <p className={`text-sm ${darkMode ? 'text-white font-bold' : 'text-slate-600 font-bold'} opacity-75`}>Build your professional circle with alumni</p>
+              <h1 className={`text-2xl sm:text-4xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Network</h1>
+              <p className={`text-xs sm:text-sm ${darkMode ? 'text-white font-bold' : 'text-slate-600 font-bold'} opacity-75`}>Build your professional circle with alumni</p>
             </div>
             <div className="flex flex-wrap gap-3 sm:gap-4 w-full sm:w-auto">
               <div className="relative p-[1.5px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm transition-all backdrop-blur-md ${darkMode ? 'bg-[#0f172a] text-white hover:bg-black' : 'bg-white text-slate-900 hover:bg-gray-50'}`}>
+                <Link href="/dashboard/myconnections" className={`relative flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-black text-xs sm:text-sm transition-all backdrop-blur-md ${darkMode ? 'bg-[#0f172a] text-white hover:bg-black' : 'bg-white text-slate-900 hover:bg-gray-50'}`}>
                   My Network
                   {currentUser?.connections?.length > 0 && (
                     <span className="bg-blue-600 text-white text-[10px] px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.6)] font-black">
@@ -149,7 +149,7 @@ const NetworkPage = () => {
               </div>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="relative px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:from-blue-500 hover:to-purple-500 transition-all shadow-xl flex items-center gap-2 group active:scale-95"
+                className="relative px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] sm:text-xs hover:from-blue-500 hover:to-purple-500 transition-all shadow-xl flex items-center gap-2 group active:scale-95"
               >
                 Requests
                 {currentUser?.pendingRequests?.length > 0 && (
@@ -163,8 +163,8 @@ const NetworkPage = () => {
         </div>
 
         {/* Search Section */}
-        <div className="relative p-[2.5px] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl">
-          <div className={`px-4 sm:px-10 py-6 sm:py-10 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-6 sm:space-y-8`}>
+        <div className="relative p-[2px] sm:p-[2.5px] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-[2.5rem] shadow-2xl">
+          <div className={`px-3 sm:px-10 py-4 sm:py-10 rounded-[calc(1rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black/90' : 'bg-[#FAFAFA]'} space-y-4 sm:space-y-8`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-3 relative p-[1.5px] bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl transition-all hover:from-blue-500 hover:to-purple-500">
                 <div className="relative h-full">
@@ -174,14 +174,14 @@ const NetworkPage = () => {
                     value={searchQuery}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all font-black ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
+                    className={`w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 rounded-2xl outline-none transition-all font-black text-sm sm:text-base ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'} shadow-sm`}
                   />
                   <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${darkMode ? 'text-white' : 'text-slate-800'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
               </div>
               <button
                 onClick={handleSearch}
-                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all shadow-xl active:scale-95"
+                className="px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] sm:text-[11px] transition-all shadow-xl active:scale-95"
               >
                 Search Alumni
               </button>
@@ -195,7 +195,7 @@ const NetworkPage = () => {
                   options={COURSE_OPTIONS}
                   placeholder="Course (e.g. BCA)"
                   uppercase={true}
-                  className={`w-full pl-4 pr-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-3 sm:py-4 rounded-2xl font-black text-[10px] sm:text-[11px] uppercase tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white' : 'bg-white text-black placeholder-black border border-gray-200'}`}
                 />
               </div>
 
@@ -203,7 +203,7 @@ const NetworkPage = () => {
                 <select
                   value={filters.year}
                   onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                  className={`w-full pl-4 pr-10 py-[15px] rounded-2xl appearance-none outline-none font-black text-[11px] uppercase tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
+                  className={`w-full pl-4 pr-10 py-3 sm:py-[15px] rounded-2xl appearance-none outline-none font-black text-[10px] sm:text-[11px] uppercase tracking-[0.2em] cursor-pointer ${darkMode ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'}`}
                 >
                   <option value="">Graduation / Passing Year</option>
                   {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
@@ -224,28 +224,28 @@ const NetworkPage = () => {
           </div>
         ) : alumni.length > 0 && (
           <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden">
-            <div className={`px-8 py-8 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-8`}>
+            <div className={`px-4 sm:px-8 py-4 sm:py-8 rounded-[calc(2.5rem-2.5px)] ${darkMode ? 'bg-black' : 'bg-[#FAFAFA]'} space-y-4 sm:space-y-8`}>
               <div className="flex items-center gap-3">
                 <div className="h-8 w-1.5 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
-                <h2 className={`text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Search Results</h2>
+                <h2 className={`text-lg sm:text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Search Results</h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {alumni.map((user) => (
                   <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-500/50 via-purple-500/50 to-pink-500/50 rounded-2xl group transition-all duration-500 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 shadow-sm hover:shadow-xl">
-                    <div className={`rounded-2xl p-5 flex items-center justify-between gap-4 relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'} transition-colors`}>
-                      <div className="flex items-center gap-4 min-w-0 relative z-10 w-full">
+                    <div className={`rounded-2xl p-3 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'} transition-colors`}>
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 relative z-10 w-full">
                         <div className="relative p-[2px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 shadow-lg">
                           <Image
                             src={user.profilePicture || "/default-profile.jpg"}
                             alt={user.name || "User"}
                             width={64}
                             height={64}
-                            className={`w-14 h-14 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
+                            className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
                           />
                         </div>
                         <div className="min-w-0 flex-1">
                           <Link href={`/profile/${user.publicId || user._id}`}>
-                            <h3 className="font-black text-lg truncate hover:text-blue-500 transition-colors uppercase tracking-tight">{user.name}</h3>
+                            <h3 className="font-black text-sm sm:text-lg truncate hover:text-blue-500 transition-colors uppercase tracking-tight">{user.name}</h3>
                           </Link>
                           {/* Enrollment / Employee ID - Hidden for Main Admin */}
                           {user.role !== "admin" && (

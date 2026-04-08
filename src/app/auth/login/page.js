@@ -221,10 +221,10 @@ function LoginContent() {
           <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
             <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-5 px-5 sm:py-8 sm:px-10 space-y-5 sm:space-y-6 relative overflow-hidden transition-all duration-500`}>
               {view === "LOGIN" && (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2 text-center">
-                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Welcome Back</h2>
-                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Enter your credentials to access your account</p>
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="space-y-1 sm:space-y-2 text-center">
+                    <h2 className={`text-2xl sm:text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Welcome Back</h2>
+                    <p className={`text-xs sm:text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Enter your credentials to access your account</p>
                   </div>
 
                   {error && (
@@ -237,7 +237,7 @@ function LoginContent() {
                     </motion.div>
                   )}
 
-                  <div className="space-y-5">
+                  <div className="space-y-4 sm:space-y-5">
                     <div className="space-y-1.5">
                       <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email or ID</label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
@@ -247,7 +247,7 @@ function LoginContent() {
                           placeholder="example@univ.edu"
                           value={form.identifier}
                           onChange={handleChange}
-                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                       </div>
@@ -271,7 +271,7 @@ function LoginContent() {
                           placeholder="••••••••"
                           value={form.password}
                           onChange={handleChange}
-                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                       </div>
@@ -283,7 +283,7 @@ function LoginContent() {
                     disabled={loading}
                     className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
                   >
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
                       <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
                         {loading ? "Authenticating..." : "Login"}
                       </span>

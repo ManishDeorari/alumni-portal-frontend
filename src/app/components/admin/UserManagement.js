@@ -207,14 +207,14 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         value={searchQuery}
                                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
+                                        className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white" : "bg-white text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
                                     />
                                     <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white" : "text-gray-900"}`} />
                                 </div>
                             </div>
                             <button
                                 onClick={handleSearch}
-                                className="px-10 py-3.5 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black transition-all shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_25px_rgba(37,99,235,0.4)] active:scale-95 flex items-center gap-2 whitespace-nowrap"
+                                className="px-6 sm:px-10 py-2.5 sm:py-3.5 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-xs sm:text-sm transition-all shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_25px_rgba(37,99,235,0.4)] active:scale-95 flex items-center gap-2 whitespace-nowrap"
                             >
                                 <Search className="w-5 h-5" />
                                 Search Users
@@ -222,7 +222,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         </div>
 
                         {/* Filter Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                             <div className="space-y-2 z-[60]">
                                 <label className={`text-[10px] uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"} ml-3 font-black`}>Course</label>
                                 <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl relative shadow-md">
@@ -233,7 +233,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         placeholder="All Courses"
                                         uppercase={true}
                                         placement="top"
-                                        className={`w-full px-5 py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[11px] uppercase tracking-[0.2em] outline-none font-black`}
+                                        className={`w-full px-4 sm:px-5 py-3 sm:py-4 ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[10px] sm:text-[11px] uppercase tracking-[0.2em] outline-none font-black`}
                                     />
                                 </div>
                             </div>
@@ -243,7 +243,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     <select
                                         value={filters.year}
                                         onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-                                        className={`w-full px-5 py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[11px] uppercase tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
+                                        className={`w-full px-4 sm:px-5 py-3 sm:py-[15px] ${darkMode ? "bg-black text-white" : "bg-white text-slate-900 border-gray-200"} rounded-[calc(0.75rem-2px)] text-[10px] sm:text-[11px] uppercase tracking-[0.2em] outline-none font-black appearance-none cursor-pointer`}
                                     >
                                         <option value="">All Years</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}

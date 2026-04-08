@@ -86,16 +86,16 @@ const MyConnectionsContent = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
             <SidebarComponent />
-            <main className="max-w-6xl mx-auto px-4 py-10 space-y-10">
+            <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-10 space-y-4 sm:space-y-10 pb-24 md:pb-8">
                 <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
-                    <div className={`px-8 py-8 rounded-[calc(1.5rem-2.5px)] ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row items-center justify-between gap-8`}>
-                        <div className="flex items-center gap-6">
+                    <div className={`px-4 sm:px-8 py-4 sm:py-8 rounded-[calc(1.5rem-2.5px)] ${darkMode ? 'bg-black text-white' : 'bg-white text-slate-900'} flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-8`}>
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <Link href="/dashboard/network" className={`p-3 rounded-2xl transition-all border ${darkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:scale-105' : 'bg-slate-50 border-gray-200 hover:bg-gray-100 hover:scale-105 text-slate-900 shadow-sm'}`}>
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                             </Link>
                             <div>
-                                <h1 className={`text-4xl font-black tracking-tighter ${darkMode ? 'text-white' : 'text-slate-900'}`}>{ownerName} Network</h1>
-                                <p className={`text-sm font-black uppercase tracking-widest mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{connections.length} Total Connections</p>
+                                <h1 className={`text-2xl sm:text-4xl font-black tracking-tighter ${darkMode ? 'text-white' : 'text-slate-900'}`}>{ownerName} Network</h1>
+                                <p className={`text-xs sm:text-sm font-black uppercase tracking-widest mt-0.5 sm:mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{connections.length} Total Connections</p>
                             </div>
                         </div>
                         <div className="relative w-full md:w-96 p-[1.5px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl focus-within:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all">
@@ -104,7 +104,7 @@ const MyConnectionsContent = () => {
                                 placeholder="Filter connections..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className={`w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all font-black text-xs uppercase tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-white text-slate-900 placeholder-gray-400'}`}
+                                className={`w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 rounded-2xl outline-none transition-all font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] ${darkMode ? 'bg-black text-white placeholder-white/30' : 'bg-white text-slate-900 placeholder-gray-400'}`}
                             />
                             <svg className={`w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 transition-opacity ${darkMode ? 'text-white/40' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
@@ -133,14 +133,14 @@ const MyConnectionsContent = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-20">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 pb-20">
                         {filteredConnections.map((user) => {
                             const isUserConnected = isConnected(user._id);
                             const isSent = requested[user._id];
                             
                             return (
                                 <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-500/40 via-purple-500/40 to-pink-500/40 rounded-3xl group hover:from-blue-500 hover:to-pink-500 transition-all duration-500 shadow-xl overflow-hidden">
-                                    <div className={`p-6 rounded-[calc(1.5rem-1.5px)] flex flex-col items-center text-center transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] hover:bg-black' : 'bg-white hover:bg-slate-50'}`}>
+                                    <div className={`p-3 sm:p-6 rounded-[calc(1.5rem-1.5px)] flex flex-col items-center text-center transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] hover:bg-black' : 'bg-white hover:bg-slate-50'}`}>
                                         
                                         {/* Avatar Section */}
                                         <Link 
@@ -151,7 +151,7 @@ const MyConnectionsContent = () => {
                                                 src={user.profilePicture || "/default-profile.jpg"}
                                                 width={80}
                                                 height={80}
-                                                className={`w-18 h-18 rounded-full object-cover border-2 transition-all ${darkMode ? 'border-slate-800' : 'border-white'}`}
+                                                className={`w-14 h-14 sm:w-18 sm:h-18 rounded-full object-cover border-2 transition-all ${darkMode ? 'border-slate-800' : 'border-white'}`}
                                                 alt={user.name || "User"}
                                             />
                                         </Link>
@@ -159,7 +159,7 @@ const MyConnectionsContent = () => {
                                         {/* Name and ID Section */}
                                         <div className="w-full min-w-0 space-y-1">
                                             <Link href={`/profile/${user.publicId || user._id}`}>
-                                                <h3 className={`font-black tracking-tight truncate transition-colors text-base uppercase ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
+                                                <h3 className={`font-black tracking-tight truncate transition-colors text-xs sm:text-base uppercase ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
                                                     {user.name}
                                                 </h3>
                                             </Link>
@@ -177,7 +177,7 @@ const MyConnectionsContent = () => {
                                         </div>
  
                                         {/* Action Section */}
-                                        <div className="mt-6 w-full">
+                                        <div className="mt-3 sm:mt-6 w-full">
                                             {isUserConnected ? (
                                                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 border border-emerald-500/20 py-3 rounded-2xl bg-emerald-500/5 w-full shadow-inner">
                                                     Connected

@@ -158,8 +158,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
       ref={postRef}
       className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-2 sm:p-4"} rounded-2xl sm:rounded-[3rem] transition-all duration-500`}
     >
-      <div className={`p-[2px] sm:p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.6rem]`}>
-        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.5rem] p-4 sm:p-8 space-y-4 sm:space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+      <div className={`p-[1.5px] sm:p-[2px] sm:p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.6rem]`}>
+        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.5rem] p-3 sm:p-8 space-y-3 sm:space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
           <PostHeader {...{
             post, currentUser, editing, toggleEdit: () => {
               toggleEdit(editKey, (val) => {
@@ -170,7 +170,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           }} />
 
           {post.type === "Event" && post.title && !editing && (
-            <h2 className={`text-2xl font-black mb-2 ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-tight`}>
+            <h2 className={`text-lg sm:text-2xl font-black mb-1 sm:mb-2 ${darkMode ? "text-white" : "text-gray-900"} tracking-tight leading-tight`}>
               {post.title}
             </h2>
           )}
@@ -195,8 +195,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           />
 
           {post.type === "Session" && post.sessionDetails && (
-            <div className={`mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
-              <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-6`}>
+            <div className={`mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
+              <div className={`p-3 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-3 sm:space-y-6`}>
                 <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6`}>
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>College</span>
@@ -222,8 +222,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Event" && (
-            <div className="mt-6 p-[2px] rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
-              <div className={`p-6 rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-6`}>
+            <div className="mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
+              <div className={`p-3 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-3 sm:space-y-6`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Start</span>

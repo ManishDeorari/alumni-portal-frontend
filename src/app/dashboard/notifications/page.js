@@ -221,9 +221,9 @@ export default function NotificationsPage() {
 
       <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-10">
           <div>
-            <h1 className={`text-4xl font-black tracking-tight flex items-center gap-3 text-white`}>
+            <h1 className={`text-2xl sm:text-4xl font-black tracking-tight flex items-center gap-2 sm:gap-3 text-white`}>
               Notifications
               {notifications.filter(n => !n.isRead).length > 0 && (
                 <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full items-center font-bold shadow-lg shadow-blue-500/20">
@@ -231,13 +231,13 @@ export default function NotificationsPage() {
                 </span>
               )}
             </h1>
-            <p className={`mt-2 font-medium text-white/80`}>Keep track of your community interactions</p>
+            <p className={`mt-1 sm:mt-2 text-xs sm:text-base font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
           <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all shadow-sm ${!notifications.some(n => !n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
             <button
               onClick={markAllAsRead}
               disabled={!notifications.some(n => !n.isRead)}
-              className={`flex items-center gap-2 px-6 py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 font-bold backdrop-blur-md ${
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
                 darkMode 
                   ? 'bg-black hover:bg-black/80 text-white' 
                   : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
@@ -305,7 +305,7 @@ export default function NotificationsPage() {
                   <div className={`h-[1px] flex-1 ml-4 ${darkMode ? 'bg-[#FAFAFA]/20' : 'bg-[#FAFAFA]/40'}`}></div>
                 </div>
 
-                <div className="grid gap-4">
+                <div className="grid gap-2 sm:gap-4">
                   <AnimatePresence mode="popLayout">
                     {group.items.map((note) => (
                       <motion.div
@@ -317,7 +317,7 @@ export default function NotificationsPage() {
                         onClick={() => handleNotificationClick(note)}
                         className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-4 p-5 rounded-[calc(1rem-2px)] transition-all ${
+                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-3 sm:p-5 rounded-[calc(1rem-2px)] transition-all ${
                           !note.isRead
                             ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                             : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
@@ -325,8 +325,8 @@ export default function NotificationsPage() {
                           <div className="relative shrink-0">
                             <div className={`p-[2px] rounded-2xl bg-gradient-to-br ${note.type === 'points_earned' ? 'from-purple-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-[0_0_10px_rgba(255,255,255,0.1)] ${!note.isRead ? 'opacity-100' : 'opacity-80 grayscale-[20%]'}`}>
                               {note.type === "points_earned" ? (
-                                <div className={`w-14 h-14 rounded-[0.9rem] flex items-center justify-center ${darkMode ? 'bg-white/10' : 'bg-black/5'}`}>
-                                  <Award className={`w-8 h-8 ${darkMode ? 'text-white' : 'text-slate-900'}`} />
+                                <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-[0.9rem] flex items-center justify-center ${darkMode ? 'bg-white/10' : 'bg-black/5'}`}>
+                                  <Award className={`w-5 h-5 sm:w-8 sm:h-8 ${darkMode ? 'text-white' : 'text-slate-900'}`} />
                                 </div>
                               ) : (
                                 <Image
@@ -334,7 +334,7 @@ export default function NotificationsPage() {
                                   alt={note.sender?.name || "User"}
                                   width={56}
                                   height={56}
-                                  className="w-14 h-14 rounded-[0.9rem] object-cover bg-[#FAFAFA]"
+                                  className="w-10 h-10 sm:w-14 sm:h-14 rounded-[0.9rem] object-cover bg-[#FAFAFA]"
                                 />
                               )}
                             </div>
@@ -344,12 +344,12 @@ export default function NotificationsPage() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start justify-between gap-2 sm:gap-4">
                               <div>
                                 <div className="flex flex-col gap-1">
                                   {note.type === "points_earned" ? (
                                     <>
-                                      <span className="font-black text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">System</span>
+                                      <span className="font-black text-sm sm:text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">System</span>
                                       {(() => {
                                         let msg = note.message;
                                         let cat = "Reward";
@@ -407,8 +407,8 @@ export default function NotificationsPage() {
 
                                         return (
                                           <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${cardGrad} shadow-md`}>
-                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
-                                              <div className={`text-left font-bold text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'}`}>
+                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center w-full rounded-[calc(1rem-1px)] p-3 sm:p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                                              <div className={`text-left font-bold text-xs sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-800'}`}>
                                                 {msg}
                                               </div>
                                               <div className="flex justify-center relative">
@@ -418,7 +418,7 @@ export default function NotificationsPage() {
                                                   </span>
                                                 </div>
                                               </div>
-                                              <div className={`text-right sm:text-right font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-br ${textGrad} bg-clip-text text-transparent drop-shadow-sm`}>
+                                              <div className={`text-right sm:text-right font-black text-base sm:text-2xl tracking-tighter bg-gradient-to-br ${textGrad} bg-clip-text text-transparent drop-shadow-sm`}>
                                                 {isPenalty ? "-" : "+"}{pts} PTS
                                               </div>
                                             </div>
@@ -428,7 +428,7 @@ export default function NotificationsPage() {
                                     </>
                                   ) : (
                                     <>
-                                      <span className="font-black text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                                      <span className="font-black text-sm sm:text-lg tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
                                         {note.sender?.name || "System"}
                                       </span>
                                       {(() => {
@@ -448,8 +448,8 @@ export default function NotificationsPage() {
 
                                         return (
                                           <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${gradient} shadow-md`}>
-                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 items-center w-full rounded-[calc(1rem-1px)] p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
-                                              <div className={`text-left font-black text-sm sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'} sm:col-span-2`}>
+                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center w-full rounded-[calc(1rem-1px)] p-3 sm:p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
+                                              <div className={`text-left font-black text-xs sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'} sm:col-span-2`}>
                                                 {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
                                               </div>
                                               <div className="flex justify-end relative sm:col-span-1">

@@ -119,8 +119,8 @@ export default function SignupPage() {
           <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
             <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-4 px-5 sm:px-8 md:py-5 md:px-10 space-y-3 relative overflow-hidden transition-all duration-500`}>
               <div className="space-y-0.5 text-center">
-                <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Join Global Network</h2>
-                <p className={`text-sm ${darkMode ? "text-white font-bold" : "text-black font-bold"} opacity-70`}>Create account to connect with fellow alumni</p>
+                <h2 className={`text-2xl sm:text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Join Global Network</h2>
+                <p className={`text-xs sm:text-sm ${darkMode ? "text-white font-bold" : "text-black font-bold"} opacity-70`}>Create account to connect with fellow alumni</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -167,7 +167,7 @@ export default function SignupPage() {
                         placeholder="John Doe"
                         value={form.name}
                         onChange={handleChange}
-                        className={`w-full px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
@@ -184,7 +184,7 @@ export default function SignupPage() {
                         placeholder={form.role === "faculty" ? "Ex: Emp-123" : "Ex: 2021001"}
                         value={form.enrollmentNumber}
                         onChange={handleChange}
-                        className={`w-full px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
@@ -199,7 +199,7 @@ export default function SignupPage() {
                         placeholder="john@univ.edu"
                         value={form.email}
                         onChange={handleChange}
-                        className={`w-full px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
@@ -214,7 +214,7 @@ export default function SignupPage() {
                         placeholder="••••••••"
                         value={form.password}
                         onChange={handleChange}
-                        className={`w-full px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
@@ -226,7 +226,7 @@ export default function SignupPage() {
                   disabled={loading}
                   className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
                 >
-                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
                     <span className="text-white font-black text-xs uppercase tracking-widest">
                       {loading ? "Creating Account..." : "Join Portal"}
                     </span>
