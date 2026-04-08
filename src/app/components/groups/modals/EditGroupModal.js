@@ -335,15 +335,15 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                     }).map(member => (
                                         <div key={member._id} className="p-[1.5px] rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 transition-all hover:scale-[1.01] hover:shadow-xl group">
                                             <div className={`p-4 rounded-[calc(1.5rem-1.5px)] flex items-center justify-between transition-all ${darkMode ? "bg-slate-950" : "bg-slate-50"}`}>
-                                                <div className="flex items-center gap-5">
+                                                <div className="flex items-center gap-3 sm:gap-5 min-w-0">
                                                     <div className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-400 shadow-lg">
                                                         <div className="relative w-12 h-12 rounded-[calc(1rem-2.5px)] overflow-hidden bg-slate-800">
                                                             <Image src={member.profilePicture || "/default-profile.jpg"} width={48} height={48} className="object-cover" alt={member.name} />
                                                         </div>
                                                     </div>
-                                                    <div className="flex flex-col">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className={`text-[15px] font-black tracking-tight ${darkMode ? "text-white" : "text-slate-900"}`}>{member.name}</span>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <div className="flex items-center gap-2 min-w-0">
+                                                            <span className={`text-[13px] sm:text-[15px] font-black tracking-tight truncate ${darkMode ? "text-white" : "text-slate-900"}`}>{member.name}</span>
                                                             <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
                                                                 member.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 
                                                                 member.role === 'faculty' ? 'bg-purple-500/20 text-purple-500' : 
@@ -352,7 +352,7 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
                                                                 {member.role || 'alumni'}
                                                             </span>
                                                         </div>
-                                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mt-1 ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+                                                        <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] mt-1 truncate ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
                                                             {member.role === 'faculty' ? member.employeeId : (member.enrollmentNumber || "Alumni")}
                                                         </span>
                                                     </div>
