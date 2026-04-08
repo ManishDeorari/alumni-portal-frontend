@@ -394,6 +394,7 @@ export default function NotificationsPage() {
                                           else if (lowerMsg.includes("like")) cat = "Like";
                                           else if (lowerMsg.includes("comment")) cat = "Comment";
                                           else if (lowerMsg.includes("network") || lowerMsg.includes("connect")) cat = "Network";
+                                          else if (lowerMsg.includes("login") || lowerMsg.includes("daily")) cat = "Login";
                                           else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Alumni Participation";
                                           else cat = "Reward";
                                         }

@@ -117,12 +117,12 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                             const msg = parts[1] || "Points Awarded";
                                                             const pts = parts[3] || "0";
                                                             const cat = (parts[2] || "Other").replace(/([A-Z])/g, ' $1').trim();
-                                                            return `${msg} +${pts} PTS (${cat})`;
+                                                            return `${msg} +${pts} PTS`;
                                                         })() : note.message?.startsWith("MANUAL_PENALTY::") ? (() => {
                                                             const parts = note.message.split("::");
                                                             const msg = parts[1] || "Points Deducted";
                                                             const pts = parts[3] || "0";
-                                                            return `${msg} -${pts} PTS (Penalty)`;
+                                                            return `${msg} -${pts} PTS`;
                                                         })() : note.type === "points_earned" ? (() => {
                                                             let msg = note.message;
                                                             let pts = "10";
@@ -139,9 +139,10 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                             else if (lowerMsg.includes("like")) cat = "Like";
                                                             else if (lowerMsg.includes("comment")) cat = "Comment";
                                                             else if (lowerMsg.includes("network") || lowerMsg.includes("connect")) cat = "Network";
+                                                            else if (lowerMsg.includes("login") || lowerMsg.includes("daily")) cat = "Login";
                                                             else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Alumni Participation";
 
-                                                            return `${msg} +${pts} PTS (${cat})`;
+                                                            return `${msg} +${pts} PTS`;
                                                         })() : note.message}
                                                     </span>
                                                 </p>
