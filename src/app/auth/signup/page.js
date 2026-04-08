@@ -25,46 +25,59 @@ export default function SignupPage() {
     setError("");
     setLoading(true);
 
-    try {
-      // Prepare body according to role
-      const body =
-        form.role === "faculty"
-          ? {
-            name: form.name,
-            email: form.email,
-            password: form.password,
-            role: "faculty",
-            employeeId: form.enrollmentNumber, // mapping faculty field to employeeId
-          }
-          : {
-            name: form.name,
-            email: form.email,
-            password: form.password,
-            role: "alumni",
-            enrollmentNumber: form.enrollmentNumber,
-          };
+    // Prepare body according to role
+    const body =
+      form.role === "faculty"
+        ? {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          role: "faculty",
+          employeeId: form.enrollmentNumber, // mapping faculty field to employeeId
+        }
+        : {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          role: "alumni",
+          enrollmentNumber: form.enrollmentNumber,
+        };
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      console.log("🌐 Connecting to API:", apiUrl);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-      const res = await fetch(
-        `${apiUrl}/api/auth/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+    const attemptSignup = async (retryCount = 0) => {
+      try {
+        const res = await fetch(
+          `${apiUrl}/api/auth/signup`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Signup failed");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Signup failed");
 
-      setLoading(false);
-      setShowSuccess(true);
-    } catch (err) {
-      setError(err.message || "Something went wrong");
-      setLoading(false); // Only stop loading if there was an error
-    }
+        setLoading(false);
+        setShowSuccess(true);
+      } catch (err) {
+        // ✅ If network error (cold start / server sleeping), retry once automatically
+        const isNetworkError = err.name === "TypeError" && err.message.includes("fetch");
+        if (isNetworkError && retryCount < 1) {
+          console.warn("⚠️ Server may be waking up. Retrying in 3s...");
+          setError("Server is waking up... retrying automatically.");
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          return attemptSignup(retryCount + 1);
+        }
+
+        setError(err.message || "Something went wrong");
+        setLoading(false);
+      }
+    };
+
+    await attemptSignup();
   };
+
 
   const [darkMode, setDarkMode] = useState(false);
 

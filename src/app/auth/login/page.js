@@ -67,56 +67,70 @@ function LoginContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    console.log("🌐 Connecting to API:", apiUrl);
 
-    try {
-      const res = await fetch(
-        `${apiUrl}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            identifier: form.identifier,
-            password: form.password
-          }),
-        });
+    const attemptLogin = async (retryCount = 0) => {
+      try {
+        const res = await fetch(
+          `${apiUrl}/api/auth/login`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              identifier: form.identifier,
+              password: form.password
+            }),
+          });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Invalid credentials");
-      }
-
-      // ✅ Save token and role
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
-        localStorage.setItem("userId", data.userId);
-        if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
-
-        // ✅ Notify other components (like NotificationContext) that auth has changed
-        window.dispatchEvent(new Event("local-auth-change"));
-
-        toast.success("✅ Login Successful!");
-
-        // ✅ Redirect based on role
-        if (data.role === "admin") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/dashboard");
+        if (!res.ok) {
+          throw new Error(data.message || "Invalid credentials");
         }
-      } else {
-        throw new Error("Token not received");
+
+        // ✅ Save token and role
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.role);
+          localStorage.setItem("userId", data.userId);
+          if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
+
+          // ✅ Notify other components (like NotificationContext) that auth has changed
+          window.dispatchEvent(new Event("local-auth-change"));
+
+          toast.success("✅ Login Successful!");
+
+          // ✅ Redirect based on role
+          if (data.role === "admin") {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/dashboard");
+          }
+        } else {
+          throw new Error("Token not received");
+        }
+      } catch (err) {
+        // ✅ If network error (cold start / server sleeping), retry once automatically
+        const isNetworkError = err.name === "TypeError" && err.message.includes("fetch");
+        if (isNetworkError && retryCount < 1) {
+          console.warn("⚠️ Server may be waking up. Retrying in 3s...");
+          setError("Server is waking up... retrying automatically.");
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          return attemptLogin(retryCount + 1);
+        }
+
+        console.error("Login Error:", err);
+        setError(err.message || "Something went wrong");
+        toast.error(err.message || "Login failed");
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Login Error:", err);
-      setError(err.message || "Something went wrong");
-      toast.error(err.message || "Login failed");
-      setLoading(false); // Only stop loading if there was an error
-    }
+    };
+
+    await attemptLogin();
   };
+
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
