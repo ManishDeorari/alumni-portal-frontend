@@ -327,11 +327,11 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
       <SidebarComponent />
 
-      <main className="max-w-6xl mx-auto px-4 py-12 relative z-10 space-y-8">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10 space-y-4 sm:space-y-8 pb-24 md:pb-12">
         {/* Header & Tabs */}
         <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
-          <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
-            <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
+          <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-6 md:p-8 rounded-[calc(1.5rem-1px)] relative overflow-hidden animate-in fade-in duration-700`}>
+            <div className="flex flex-col xl:flex-row items-center justify-between gap-4 sm:gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border-2 border-blue-400/30 shadow-2xl">
                   <Shield className="w-6 h-6 text-blue-500" />
@@ -344,8 +344,8 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[1.6rem] shadow-lg">
-              <nav className={`flex items-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem] overflow-x-auto no-scrollbar`}>
+              <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[1.6rem] shadow-lg w-full xl:w-auto">
+              <nav className={`flex items-center gap-1 ${darkMode ? "bg-black" : "bg-white"} p-1 rounded-[1.5rem] overflow-x-auto no-scrollbar w-full`}>
                   <TabButton id="pending" label="Pending" />
                   {user?.isMainAdmin && <TabButton id="users" label="Users" />}
                   {user?.isMainAdmin && <TabButton id="admins" label="Admins" />}

@@ -104,15 +104,15 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                         ) : (
                             requests.map((user) => (
                                 <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-2xl group transition-all duration-500 hover:from-blue-400 hover:to-purple-400">
-                                    <div className={`flex items-center justify-between gap-4 p-4 rounded-2xl transition-all relative overflow-hidden ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'}`}>
+                                    <div className={`flex items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl transition-all relative overflow-hidden ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'}`}>
                                         <div className="flex items-center gap-4 min-w-0 z-10">
-                                            <div className="relative p-[1.5px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shadow-md">
+                                            <div className="relative p-[1.5px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shadow-md shrink-0">
                                                 <Image
                                                     src={user.profilePicture || "/default-profile.jpg"}
                                                     alt={user.name}
                                                     width={56}
                                                     height={56}
-                                                    className={`w-12 h-12 rounded-full object-cover border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
+                                                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover aspect-square border-2 ${darkMode ? 'border-slate-800' : 'border-white'}`}
                                                 />
                                             </div>
                                             <div className="min-w-0">
@@ -138,13 +138,13 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                                                         onClick={() => handleAction(user._id, "accept")}
                                                         className="relative group/abtn p-[1px] bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg overflow-hidden transition-all active:scale-90"
                                                     >
-                                                        <div className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1px)]">
+                                                        <div className="px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1px)]">
                                                             Accept
                                                         </div>
                                                     </button>
                                                     <button
                                                         onClick={() => handleAction(user._id, "reject")}
-                                                        className="px-5 py-2.5 bg-red-500/10 border-2 border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                                                        className="px-3 sm:px-5 py-2 sm:py-2.5 bg-red-500/10 border-2 border-red-500/30 text-red-500 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500 hover:text-white transition-all active:scale-90"
                                                     >
                                                         Reject
                                                     </button>
@@ -154,7 +154,7 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                                                     onClick={() => handleAction(user._id, "cancel")}
                                                     className="relative group/cbtn p-[1.5px] bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg overflow-hidden transition-all active:scale-90 shadow-lg shadow-orange-500/20"
                                                 >
-                                                    <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1.5px)]">
+                                                    <div className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1.5px)]">
                                                         Cancel
                                                     </div>
                                                 </button>

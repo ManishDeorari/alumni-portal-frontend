@@ -137,7 +137,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         <div className="max-w-4xl mx-auto mt-3 p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)]">
             <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden h-full`}>
                 {/* 🔷 Banner */}
-                <div className={`relative w-full h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+                <div className={`relative w-full h-28 sm:h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <ProfileBanner
                         image={profile.bannerImage}
                         onUpload={onRefresh}
@@ -147,7 +147,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                 </div>
 
                 {/* 🔷 Profile Info Block */}
-                <div className="relative px-6 pb-6 -mt-16 flex flex-col items-center">
+                <div className="relative px-4 sm:px-6 pb-4 sm:pb-6 -mt-12 sm:-mt-16 flex flex-col items-center">
                     {/* Avatar - Centered */}
                     <div className="relative z-10">
                         <ProfileAvatar
@@ -161,7 +161,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     {/* Name + Edit */}
                     <div className="flex flex-col items-center w-full mt-2 text-center">
                         <div className="flex items-center justify-center gap-2 w-full">
-                            <h2 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
+                            <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
                             {!isPublicView && (
                                 <button
                                     onClick={() => setShowEditModal(true)}
@@ -228,7 +228,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     )}
 
                     {/* Contact row - 2 Rows with Gradient Borders */}
-                    <div className="w-full mt-8 space-y-4">
+                    <div className="w-full mt-5 sm:mt-8 space-y-3 sm:space-y-4">
                         {/* Level 1: Basics (Email & Address) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="p-[2.5px] bg-gradient-to-tr from-blue-600/40 to-purple-600/40 rounded-2xl shadow-lg">
@@ -254,10 +254,10 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {/* Phone */}
                             <div className="p-[2.5px] bg-gradient-to-tr from-green-600/40 to-teal-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800 hover:bg-green-900/10' : 'bg-[#FAFAFA] hover:bg-green-50/10'}`}>
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800 hover:bg-green-900/10' : 'bg-[#FAFAFA] hover:bg-green-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-base font-black ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{profile.phone || "N/A"}</span>
+                                        <span className={`text-sm sm:text-base font-black ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{profile.phone || "N/A"}</span>
                                         {profile.phone && (
                                             <button onClick={() => copyToClipboard(profile.phone, "phone")} className="text-green-300 hover:text-green-600">
                                                 {copied === "phone" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
@@ -269,7 +269,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
                             {/* WhatsApp */}
                             <div className="p-[2.5px] bg-gradient-to-tr from-emerald-600/40 to-green-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-emerald-900/10' : 'bg-[#FAFAFA] hover:bg-emerald-50/10'}`}>
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-emerald-900/10' : 'bg-[#FAFAFA] hover:bg-emerald-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>WhatsApp Direct</label>
                                     {profile.whatsapp ? (
                                         <a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`}>{profile.whatsapp}</a>
@@ -279,7 +279,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
 
                             {/* LinkedIn */}
                             <div className="p-[2.5px] bg-gradient-to-tr from-indigo-600/40 to-blue-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-indigo-900/10' : 'bg-[#FAFAFA] hover:bg-indigo-50/10'}`}>
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-indigo-900/10' : 'bg-[#FAFAFA] hover:bg-indigo-50/10'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Professional LinkedIn</label>
                                     {profile.linkedin ? (
                                         <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline italic ${darkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>Connect Now →</a>
@@ -289,7 +289,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         </div>
                     </div>
 
-                    <div className="w-[calc(100%+3rem)] -mx-6 mt-6 flex flex-col items-center">
+                    <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] -mx-4 sm:-mx-6 mt-4 sm:mt-6 flex flex-col items-center">
                         {/* Gradient Divider */}
                         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent mb-2"></div>
                         <div className="w-full px-6">

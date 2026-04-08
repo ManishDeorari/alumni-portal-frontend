@@ -172,18 +172,18 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
             >
                 {/* Advanced Search Header (Copied from Export Section) */}
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden">
-                    <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-8 rounded-[calc(1.5rem-1px)] space-y-8`}>
+                    <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-[calc(1.5rem-1px)] space-y-4 sm:space-y-8`}>
                         {/* Status Bar Section (As Requested: Counters) */}
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-white/10 font-black uppercase tracking-widest text-lg">
-                            <div className="flex items-center gap-8">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-white/10 font-black uppercase tracking-widest text-sm sm:text-lg">
+                            <div className="flex items-center gap-4 sm:gap-8">
                                 <div className="text-left">
                                     <p className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-[11px]`}>Total Members</p>
-                                    <p className={`text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{users.length}</p>
+                                    <p className={`text-3xl sm:text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{users.length}</p>
                                 </div>
                                 <div className={`w-[2px] h-12 ${darkMode ? "bg-white/20" : "bg-gray-300"}`}></div>
                                 <div className="text-left">
                                     <p className={`${darkMode ? "text-purple-500" : "text-purple-600"} text-[11px]`}>In Current View</p>
-                                    <p className={`text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{displayedUsers.length}</p>
+                                    <p className={`text-3xl sm:text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{displayedUsers.length}</p>
                                 </div>
                             </div>
                             

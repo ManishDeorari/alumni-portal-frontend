@@ -68,8 +68,8 @@ export default function PendingUsers({
   const Card = ({ title, users, badgeColor, actions, children }) => (
     <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden mb-10 transition-all hover:shadow-blue-500/10">
       <div className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(1.5rem-2px)] overflow-hidden`}>
-        <div className="flex flex-col sm:flex-row items-center justify-between px-8 py-6 relative">
-          <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-xl flex items-center gap-3`}>
+        <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-3 sm:py-6 relative">
+          <h3 className={`font-extrabold ${darkMode ? "text-white" : "text-slate-900"} text-base sm:text-xl flex items-center gap-2 sm:gap-3`}>
             {title}
             <span className={`text-[11px] px-3 py-1 rounded-full font-black uppercase tracking-tighter ${badgeColor}`}>
               {users.length}
@@ -103,7 +103,7 @@ export default function PendingUsers({
         className="space-y-8"
       >
         <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] shadow-2xl overflow-hidden">
-          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-8 rounded-[calc(2rem-2px)] relative overflow-hidden backdrop-blur-xl`}>
+          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-8 rounded-[calc(2rem-2px)] relative overflow-hidden backdrop-blur-xl`}>
             <div className="relative flex-1 max-w-md p-[2px] bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl">
               <div className="relative h-full">
                 <input
@@ -111,7 +111,7 @@ export default function PendingUsers({
                   placeholder="Search by name, email, ID…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3.5 ${darkMode ? "bg-black text-white placeholder-white" : "bg-[#FAFAFA] text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
+                  className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white" : "bg-[#FAFAFA] text-black placeholder-slate-400"} rounded-[calc(1rem-2px)] outline-none transition-all font-bold`}
                 />
                 <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-white" : "text-gray-900"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </div>
@@ -139,14 +139,14 @@ export default function PendingUsers({
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-approve", role: "alumni" })}
-                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
+                      className="px-4 sm:px-6 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs sm:text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
                     >
                       Approve ({selected.length})
                     </button>
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-delete", role: "alumni" })}
-                      className="px-6 py-2.5 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-sm font-black border border-red-500 transition-all disabled:opacity-30"
+                      className="px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-xs sm:text-sm font-black border border-red-500 transition-all disabled:opacity-30"
                     >
                       Reject
                     </button>
@@ -174,14 +174,14 @@ export default function PendingUsers({
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-approve", role: "faculty" })}
-                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
+                      className="px-4 sm:px-6 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl text-xs sm:text-sm font-black transition-all shadow-lg active:scale-95 disabled:opacity-30"
                     >
                       Approve ({selected.length})
                     </button>
                     <button
                       disabled={selected.length === 0}
                       onClick={() => setConfirm({ type: "bulk-delete", role: "faculty" })}
-                      className="px-6 py-2.5 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-sm font-black border border-red-500 transition-all disabled:opacity-30"
+                      className="px-4 sm:px-6 py-2 sm:py-2.5 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-xs sm:text-sm font-black border border-red-500 transition-all disabled:opacity-30"
                     >
                       Reject
                     </button>
@@ -287,7 +287,7 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
           key={u._id} 
           className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
         >
-          <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-5 flex items-center gap-4`}>
+          <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-3 sm:p-5 flex flex-wrap items-center gap-2 sm:gap-4`}>
             {/* Checkbox */}
             <div className="w-12 flex items-center justify-center">
               <input
@@ -300,11 +300,11 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
 
             {/* Profile */}
             <div className="flex-1 flex items-center gap-5 min-w-0">
-              <div className={`w-12 h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-blue-600/20 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100"} border-2 border-blue-500/30 flex items-center justify-center text-blue-500 font-black text-lg`}>
+              <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-blue-600/20 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100"} border-2 border-blue-500/30 flex items-center justify-center text-blue-500 font-black text-sm sm:text-lg`}>
                 {u.name.charAt(0)}
               </div>
               <div className="min-w-0">
-                <p className={`font-black text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
+                <p className={`font-black text-sm sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
                 <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-slate-600"} truncate`}>{u.email}</p>
               </div>
             </div>
@@ -317,7 +317,7 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
             </div>
 
             {/* Actions */}
-            <div className="w-48 flex items-center justify-end gap-3 flex-shrink-0 ml-auto">
+            <div className="w-auto sm:w-48 flex items-center justify-end gap-2 sm:gap-3 flex-shrink-0 ml-auto">
               <button
                 onClick={() => onApprove(u)}
                 className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl transition-all shadow-xl active:scale-90"

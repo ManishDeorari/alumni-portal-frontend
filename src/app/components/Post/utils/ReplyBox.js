@@ -23,12 +23,12 @@ export default function ReplyBox({ parentId, onSubmit, darkMode = false }) {
   };
 
   return (
-    <div className="relative flex gap-2 mt-2 items-start w-full">
+    <div className="relative flex gap-1.5 sm:gap-2 mt-2 items-start w-full">
       <input
         value={replyText}
         onChange={(e) => setReplyText(e.target.value)}
         placeholder="Write a reply..."
-        className={`flex-grow border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-black bg-[#FAFAFA] text-black"} rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-blue-500`}
+        className={`flex-grow min-w-0 border ${darkMode ? "border-white/10 bg-slate-700 text-white" : "border-black bg-[#FAFAFA] text-black"} rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-blue-500`}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -45,7 +45,7 @@ export default function ReplyBox({ parentId, onSubmit, darkMode = false }) {
       <button
         onClick={handleSend}
         disabled={sending || !replyText.trim()}
-        className="text-sm text-blue-600 font-semibold disabled:opacity-50"
+        className="text-xs sm:text-sm text-blue-600 font-semibold disabled:opacity-50 flex-shrink-0 whitespace-nowrap"
       >
         {sending ? "Sending..." : "Send"}
       </button>
