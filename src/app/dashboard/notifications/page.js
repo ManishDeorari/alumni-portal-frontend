@@ -219,7 +219,7 @@ export default function NotificationsPage() {
     <div className={`min-h-screen pb-24 md:pb-20 bg-gradient-to-br from-blue-600 to-purple-700`}>
       <SidebarComponent />
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-10">
           <div>
@@ -317,7 +317,7 @@ export default function NotificationsPage() {
                         onClick={() => handleNotificationClick(note)}
                         className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:p-4 rounded-[calc(1rem-2px)] transition-all ${
+                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${
                           !note.isRead
                             ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                             : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
