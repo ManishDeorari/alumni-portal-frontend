@@ -295,7 +295,7 @@ export default function GroupChatWindow({
                 <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Input Area */}
-                <div className="p-3 sm:p-5 pb-10 sm:pb-12 bg-black/5 safe-bottom">
+                <div className="p-3 sm:p-5 pb-16 sm:pb-24 bg-black/5 safe-bottom">
                     {canMessage ? (
                         <form onSubmit={handleSend} className="flex items-center gap-4 relative">
                             <div className="flex items-center gap-1">
