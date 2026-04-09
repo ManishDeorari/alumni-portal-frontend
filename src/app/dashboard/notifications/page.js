@@ -55,6 +55,7 @@ export default function NotificationsPage() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showPostModal, setShowPostModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [notFoundError, setNotFoundError] = useState(null);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -95,6 +96,17 @@ export default function NotificationsPage() {
 
     fetchUserAndNotes();
   }, [API_URL, refreshNotifications]);
+
+  // ✅ Scroll listener for Back to Top
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleNotificationClick = async (note) => {
     if (!note.isRead) {
@@ -644,6 +656,22 @@ export default function NotificationsPage() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-24 md:bottom-12 right-6 md:right-12 z-[999] p-[2px] rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-2xl group active:scale-90 transition-transform"
+          >
+            <div className={`w-12 h-12 md:w-14 md:h-14 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-900" : "bg-white"} flex items-center justify-center transition-colors group-hover:bg-transparent`}>
+               <span className={`text-2xl md:text-3xl transition-transform group-hover:-translate-y-1 ${darkMode ? "text-white" : "text-blue-600"} group-hover:text-white`}>↑</span>
+            </div>
+          </motion.button>
         )}
       </AnimatePresence>
     </div>
