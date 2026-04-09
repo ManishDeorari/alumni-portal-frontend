@@ -54,6 +54,7 @@ export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState("ALL");
   const [selectedPost, setSelectedPost] = useState(null);
   const [showPostModal, setShowPostModal] = useState(false);
+  const [showClearModal, setShowClearModal] = useState(false);
   const [notFoundError, setNotFoundError] = useState(null);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -256,8 +257,8 @@ export default function NotificationsPage() {
             <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-red-500 to-pink-600 transition-all shadow-sm ${!notifications.some(n => n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
               <button
                 onClick={() => {
-                  if (window.confirm("Are you sure you want to clear all read notifications? This action cannot be undone.")) {
-                    clearReadNotifications();
+                  if (notifications.some(n => n.isRead)) {
+                    setShowClearModal(true);
                   }
                 }}
                 disabled={!notifications.some(n => n.isRead)}
@@ -556,6 +557,60 @@ export default function NotificationsPage() {
                     transparentBackground={true}
                   />
                 )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm Clear Modal */}
+      <AnimatePresence>
+        {showClearModal && (
+          <div className="fixed inset-0 z-[150] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className={`p-[3px] rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(239,68,68,0.3)] max-w-sm w-full bg-gradient-to-tr from-red-600 via-pink-600 to-red-600`}
+            >
+              <div className={`p-8 sm:p-10 rounded-[calc(2.5rem-3px)] flex flex-col items-center text-center relative overflow-hidden ${darkMode ? 'bg-[#0A0A0B]' : 'bg-white'}`}>
+                {/* Decorative background pulse */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 blur-[50px] rounded-full animate-pulse"></div>
+                
+                <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-2xl relative z-10 ${darkMode ? 'bg-red-500/10 text-red-500' : 'bg-red-50 text-red-600'}`}>
+                  <Trash2 className="w-10 h-10" />
+                  <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-3xl -z-10"></div>
+                </div>
+
+                <h3 className={`text-2xl sm:text-3xl font-black mb-4 tracking-tighter relative z-10 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  Clear All Read?
+                </h3>
+                
+                <p className={`text-sm sm:text-base font-bold mb-10 leading-relaxed relative z-10 ${darkMode ? 'text-gray-400' : 'text-slate-500'}`}>
+                  This will <span className="text-red-500 font-black">permanently delete</span> all read notifications from your history. This action cannot be undone.
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 w-full relative z-10">
+                  <button
+                    onClick={() => setShowClearModal(false)}
+                    className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 border-2 ${
+                      darkMode 
+                        ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+                        : 'bg-gray-50 border-gray-100 text-slate-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                        clearReadNotifications();
+                        setShowClearModal(false);
+                    }}
+                    className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 text-white bg-gradient-to-r from-red-600 to-pink-600 shadow-[0_10px_20px_-5px_rgba(239,68,68,0.4)]`}
+                  >
+                    Clear All
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>

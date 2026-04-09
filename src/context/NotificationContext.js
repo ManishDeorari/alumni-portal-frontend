@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import socket from "@/utils/socket";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import { ShieldAlert, X, MessageSquare } from "lucide-react";
+import { ShieldAlert, X, MessageSquare, UserPlus, Users, Bell, Award } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -212,7 +212,6 @@ export  const NotificationProvider = ({ children }) => {
       const handleNewNotification = (notification) => {
         let isNew = false;
         setNotifications(prev => {
-          // Prevent duplicates
           if (prev.some(n => n?._id === notification?._id)) return prev;
           isNew = true;
           return [{ ...notification, isRead: false }, ...prev];
@@ -222,83 +221,166 @@ export  const NotificationProvider = ({ children }) => {
           setUnreadCount(prev => prev + 1);
           setShakeNotification(true);
           setTimeout(() => setShakeNotification(false), 1000);
-        }
-        
-        if (notification.type === "connect_request") {
-          setPendingRequestsCount(prev => prev + 1);
-        } else if (notification.type === "admin_notice" || notification.type === "feedback") {
-          // 🚀 SHOW PREMIUM POPUP FOR ADMIN NOTICES & FEEDBACK
-          const isFeedback = notification.type === "feedback";
-          
-          toast.custom((t) => (
-            <motion.div
-              initial={{ opacity: 0, x: 50, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className={`${t.visible ? 'block' : 'hidden'} max-w-sm w-full p-[2px] bg-gradient-to-r ${isFeedback ? "from-emerald-500 via-teal-500 to-cyan-500" : "from-[#3b82f6] via-[#a855f7] to-[#6366f1]"} rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto`}
-            >
-              <div className={`p-5 ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] flex flex-col gap-4 overflow-hidden relative`}>
-                {/* Decorative subtle background glow */}
-                <div className={`absolute -top-10 -right-10 w-32 h-32 ${isFeedback ? (darkMode ? "bg-emerald-600/20" : "bg-emerald-100/50") : (darkMode ? "bg-purple-600/20" : "bg-purple-100/50")} blur-[60px] rounded-full`}></div>
 
-                <div className="flex items-start z-10">
-                  <div className="flex-shrink-0 pt-0.5">
-                    <div className={`p-[2.5px] rounded-2xl bg-gradient-to-br ${isFeedback ? "from-emerald-500 to-cyan-500" : "from-blue-500 via-purple-500 to-indigo-500"} shadow-lg`}>
-                      <Image
-                        className="h-11 w-11 rounded-[0.9rem] object-cover"
-                        src={notification.sender?.profilePicture || "/default-profile.jpg"}
-                        alt={notification.sender?.name || "User"}
-                        width={44}
-                        height={44}
-                      />
+          // 🚀 UNIVERSAL PREMIUM TOAST
+          toast.custom((t) => {
+            const type = notification.type;
+            let theme = {
+              gradient: "from-blue-500 via-purple-500 to-indigo-500",
+              icon: <ShieldAlert className="w-3.5 h-3.5" />,
+              label: "Notification",
+              accent: "text-blue-400",
+              bgAccent: "bg-blue-500/20"
+            };
+
+            if (type === "feedback") {
+              theme = {
+                gradient: "from-emerald-500 via-teal-500 to-cyan-500",
+                icon: <MessageSquare className="w-3.5 h-3.5" />,
+                label: "User Feedback",
+                accent: "text-emerald-400",
+                bgAccent: "bg-emerald-500/20"
+              };
+            } else if (type === "promotion" || type === "demotion" || type === "account_approved") {
+              theme = {
+                gradient: "from-purple-600 via-indigo-600 to-blue-600",
+                icon: <ShieldAlert className="w-3.5 h-3.5" />,
+                label: type === "account_approved" ? "Account Approved" : (type === "promotion" ? "Role Promoted" : "Role Demoted"),
+                accent: "text-indigo-400",
+                bgAccent: "bg-indigo-500/20"
+              };
+            } else if (type === "connect_request") {
+              theme = {
+                gradient: "from-blue-400 to-blue-600",
+                icon: <UserPlus className="w-3.5 h-3.5 text-blue-400" />,
+                label: "Network",
+                accent: "text-blue-400",
+                bgAccent: "bg-blue-500/10"
+              };
+            } else if (type === "group_joined" || type === "group_added") {
+              theme = {
+                gradient: "from-amber-400 to-orange-500",
+                icon: <Users className="w-3.5 h-3.5" />,
+                label: "Group",
+                accent: "text-amber-400",
+                bgAccent: "bg-amber-500/20"
+              };
+            } else if (type.includes("post") || type.includes("comment") || type.includes("like")) {
+              theme = {
+                gradient: "from-pink-500 to-rose-600",
+                icon: <MessageSquare className="w-3.5 h-3.5" />,
+                label: "Interaction",
+                accent: "text-pink-400",
+                bgAccent: "bg-pink-500/20"
+              };
+            } else if (type === "points_earned") {
+              theme = {
+                gradient: "from-yellow-400 via-amber-500 to-yellow-600",
+                icon: <Award className="w-3.5 h-3.5" />,
+                label: "Points Earning",
+                accent: "text-yellow-400",
+                bgAccent: "bg-yellow-500/20"
+              };
+            }
+
+            return (
+              <motion.div
+                initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className={`${t.visible ? 'block' : 'hidden'} max-w-sm w-full p-[2px] bg-gradient-to-r ${theme.gradient} rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto`}
+              >
+                <div className={`p-5 ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] flex flex-col gap-4 overflow-hidden relative`}>
+                  <div className={`absolute -top-10 -right-10 w-32 h-32 ${theme.bgAccent} blur-[60px] rounded-full`}></div>
+
+                  <div className="flex items-start z-10">
+                    <div className="flex-shrink-0 pt-0.5">
+                      <div className={`p-[2.5px] rounded-2xl bg-gradient-to-br ${theme.gradient} shadow-lg`}>
+                        <Image
+                          className="h-11 w-11 rounded-[0.9rem] object-cover"
+                          src={notification.sender?.profilePicture || "/default-profile.jpg"}
+                          alt={notification.sender?.name || "User"}
+                          width={44}
+                          height={44}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="ml-4 flex-1 pr-6">
-                    <div className="flex items-center gap-2 mb-1.5">
-                       <div className={`${darkMode ? (isFeedback ? "bg-emerald-500/20" : "bg-blue-500/20") : (isFeedback ? "bg-emerald-100" : "bg-blue-100")} p-1.5 rounded-xl`}>
-                        {isFeedback ? (
-                          <MessageSquare className={`w-3.5 h-3.5 ${darkMode ? "text-emerald-400" : "text-emerald-600"}`} />
-                        ) : (
-                          <ShieldAlert className={`w-3.5 h-3.5 ${darkMode ? "text-blue-400" : "text-blue-600"}`} />
-                        )}
-                       </div>
-                       <p className={`text-[10px] font-black ${darkMode ? (isFeedback ? "text-emerald-400" : "text-blue-400") : (isFeedback ? "text-emerald-600" : "text-blue-600")} uppercase tracking-[0.25em]`}>
-                         {isFeedback ? "User Feedback" : "Official Notice"}
-                       </p>
+                    <div className="ml-4 flex-1 pr-6">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className={`${darkMode ? theme.bgAccent : "bg-gray-100"} p-1.5 rounded-xl`}>
+                          {theme.icon}
+                        </div>
+                        <p className={`text-[10px] font-black ${darkMode ? theme.accent : "text-slate-600"} uppercase tracking-[0.25em]`}>
+                          {theme.label}
+                        </p>
+                      </div>
+                      <p className={`text-[15px] font-black ${darkMode ? "text-white" : "text-black"} leading-none mb-1`}>
+                        {notification.sender?.name || "System"}
+                      </p>
+                      <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-slate-600"} line-clamp-3 italic leading-relaxed`}>
+                        &quot;{notification.message}&quot;
+                      </p>
                     </div>
-                    <p className={`text-[15px] font-black ${darkMode ? "text-white" : "text-black"} leading-none mb-1`}>
-                      {notification.sender?.name || (isFeedback ? "Anonymous User" : "Management")}
-                    </p>
-                    <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-slate-600"} line-clamp-3 italic leading-relaxed`}>
-                      &quot;{notification.message}&quot;
-                    </p>
+                    <button 
+                      onClick={() => toast.dismiss(t.id)}
+                      className={`p-1.5 rounded-xl ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-black"} transition-all`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => toast.dismiss(t.id)}
-                    className={`p-1.5 rounded-xl ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-black"} transition-all`}
+
+                  <button
+                    onClick={() => {
+                      toast.dismiss(t.id);
+                      window.location.href = "/dashboard/notifications";
+                    }}
+                    className={`z-10 w-full py-4 rounded-2xl bg-gradient-to-r ${theme.gradient} text-white text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:brightness-110 active:scale-95 shadow-xl`}
                   >
-                    <X className="w-4 h-4" />
+                    View in Dashboard
                   </button>
                 </div>
-
-                <button
-                  onClick={() => {
-                    toast.dismiss(t.id);
-                    window.location.href = isFeedback ? "/dashboard/admin?tab=export" : "/dashboard/notifications";
-                  }}
-                  className={`z-10 w-full py-4 rounded-2xl bg-gradient-to-r ${isFeedback ? "from-emerald-500 to-cyan-500 shadow-emerald-500/30" : "from-[#3b82f6] via-[#a855f7] to-[#6366f1] shadow-blue-500/30"} text-white text-[11px] font-black uppercase tracking-[0.25em] transition-all hover:brightness-110 active:scale-95 shadow-xl`}
-                >
-                  {isFeedback ? "View All Feedback" : "View in Notice Board"}
-                </button>
-              </div>
-            </motion.div>
-          ), { duration: 6000 });
+              </motion.div>
+            );
+          }, { duration: 6000 });
         }
       };
 
       const handleNewPost = () => setNewPostsCount(prev => prev + 1);
       const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
-      const handleNewSignupRequest = () => setAdminSignupRequestsCount(prev => prev + 1);
+      const handleNewSignupRequest = (notification) => {
+        setAdminSignupRequestsCount(prev => prev + 1);
+        
+        // 🚀 SHOW TOAST FOR NEW SIGNUP (For Admins)
+        toast.custom((t) => (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className={`p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-2xl pointer-events-auto`}
+            >
+              <div className={`px-5 py-3 rounded-[calc(1rem-2px)] flex items-center gap-4 ${darkMode ? 'bg-black' : 'bg-white'}`}>
+                <div className={`p-2 rounded-xl bg-blue-500/10 text-blue-500`}>
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className={`text-[10px] font-black uppercase tracking-widest text-blue-500 mb-0.5`}>New Signup Request</p>
+                  <p className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    {notification.name || "A new user"} (<span className="capitalize">{notification.role}</span>)
+                  </p>
+                </div>
+                <button 
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    window.location.href = "/dashboard/admin";
+                  }}
+                  className="p-2 ml-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold text-xs"
+                >
+                  Review
+                </button>
+              </div>
+            </motion.div>
+        ));
+      };
 
       const handlePointsUpdated = (data) => {
         const { awardedPoints, reason } = data;
