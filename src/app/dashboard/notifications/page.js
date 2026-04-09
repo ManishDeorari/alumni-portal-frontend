@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const TABS = [
-  { id: "ALL", label: "All", icon: <Layers className="w-4 h-4" /> },
+  { id: "ALL", label: "All1", icon: <Layers className="w-4 h-4" /> },
   { id: "POST", label: "Posts", icon: <MessageSquare className="w-4 h-4" /> },
   { id: "GROUP", label: "Groups", icon: <Users className="w-4 h-4" /> },
   { id: "NETWORK", label: "Network", icon: <UserPlus className="w-4 h-4" /> },
@@ -41,14 +41,14 @@ import { useNotifications } from "@/context/NotificationContext";
 
 export default function NotificationsPage() {
   const { darkMode } = useTheme();
-  const { 
-    notifications, 
-    markAsRead, 
+  const {
+    notifications,
+    markAsRead,
     markAllAsRead,
     clearReadNotifications,
-    refreshNotifications 
+    refreshNotifications
   } = useNotifications();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ALL");
@@ -84,7 +84,7 @@ export default function NotificationsPage() {
           setUser(userData);
           localStorage.setItem("user", JSON.stringify(userData)); // Sync cache
         }
-        
+
         // Notification context manages fetching notifications; we just trigger a refresh
         refreshNotifications();
       } catch (err) {
@@ -117,15 +117,15 @@ export default function NotificationsPage() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_URL}/api/user/${note.sender?._id || note.sender}`, {
-           headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
-           router.push(`/profile/${note.sender?._id || note.sender}`);
+          router.push(`/profile/${note.sender?._id || note.sender}`);
         } else {
-           setNotFoundError("User");
+          setNotFoundError("User");
         }
       } catch (err) {
-         setNotFoundError("User");
+        setNotFoundError("User");
       }
     } else if (note.type === "group_joined" || note.type === "group_added") {
       router.push("/dashboard/groups");
@@ -248,17 +248,16 @@ export default function NotificationsPage() {
             </h1>
             <p className={`mt-1 sm:mt-2 text-xs sm:text-base font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
-          
+
           <div className="flex flex-row items-center gap-3">
             <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all shadow-sm ${!notifications.some(n => !n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
               <button
                 onClick={markAllAsRead}
                 disabled={!notifications.some(n => !n.isRead)}
-                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
-                  darkMode 
-                    ? 'bg-black hover:bg-black/80 text-white' 
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${darkMode
+                    ? 'bg-black hover:bg-black/80 text-white'
                     : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
-                } disabled:cursor-not-allowed active:scale-95`}
+                  } disabled:cursor-not-allowed active:scale-95`}
               >
                 <CheckCheck className="w-5 h-5 text-blue-500" />
                 <span className="hidden xs:inline">Mark all read</span>
@@ -274,11 +273,10 @@ export default function NotificationsPage() {
                   }
                 }}
                 disabled={!notifications.some(n => n.isRead)}
-                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
-                  darkMode 
-                    ? 'bg-black hover:bg-black/80 text-red-500' 
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${darkMode
+                    ? 'bg-black hover:bg-black/80 text-red-500'
                     : 'bg-white hover:bg-red-50 text-red-600'
-                } disabled:cursor-not-allowed active:scale-95`}
+                  } disabled:cursor-not-allowed active:scale-95`}
               >
                 <Trash2 className="w-5 h-5" />
                 <span className="hidden xs:inline">Clear Read</span>
@@ -356,11 +354,10 @@ export default function NotificationsPage() {
                         onClick={() => handleNotificationClick(note)}
                         className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${
-                          !note.isRead
+                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${!note.isRead
                             ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                             : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
-                        } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
+                          } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
                           <div className="relative shrink-0">
                             <div className={`p-[2px] rounded-2xl bg-gradient-to-br ${note.type === 'points_earned' ? 'from-purple-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-[0_0_10px_rgba(255,255,255,0.1)] ${!note.isRead ? 'opacity-100' : 'opacity-80 grayscale-[20%]'}`}>
                               {note.type === "points_earned" ? (
@@ -413,16 +410,16 @@ export default function NotificationsPage() {
                                         } else {
                                           const match = note.message?.match(/\+?(\d+)\s*(?:PTS|pts|points|Points)/i);
                                           if (match) {
-                                              pts = match[1];
-                                              msg = note.message.replace(match[0], '').trim() || "Points Earned";
+                                            pts = match[1];
+                                            msg = note.message.replace(match[0], '').trim() || "Points Earned";
                                           } else {
-                                              const matchEnd = note.message?.match(/(\d+)$/);
-                                              if (matchEnd) {
-                                                pts = matchEnd[1];
-                                                msg = note.message.replace(matchEnd[0], '').trim();
-                                              } else {
-                                                pts = "10";
-                                              }
+                                            const matchEnd = note.message?.match(/(\d+)$/);
+                                            if (matchEnd) {
+                                              pts = matchEnd[1];
+                                              msg = note.message.replace(matchEnd[0], '').trim();
+                                            } else {
+                                              pts = "10";
+                                            }
                                           }
                                         }
 
@@ -440,7 +437,7 @@ export default function NotificationsPage() {
 
                                         const cardGrad = isPenalty ? "from-red-600 via-orange-500 to-red-600" : "from-purple-500 via-blue-500 to-purple-500";
                                         const textGrad = isPenalty ? "from-red-500 to-orange-500" : "from-purple-500 to-blue-500";
-                                        const tagTheme = isPenalty 
+                                        const tagTheme = isPenalty
                                           ? (darkMode ? 'bg-black text-red-400' : 'bg-white text-red-700')
                                           : (darkMode ? 'bg-black text-blue-400' : 'bg-white text-purple-700');
 
@@ -481,23 +478,23 @@ export default function NotificationsPage() {
                                         else if (typeStr.includes("connect")) cat = "Network";
                                         else if (typeStr.includes("notice")) cat = "Announcement";
 
-                                        const gradient = note.type === "feedback" 
-                                          ? "from-indigo-600 via-blue-600 to-indigo-600" 
+                                        const gradient = note.type === "feedback"
+                                          ? "from-indigo-600 via-blue-600 to-indigo-600"
                                           : "from-blue-500 via-purple-500 to-pink-500";
 
                                         return (
                                           <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${gradient} shadow-md w-full`}>
                                             <div className={`w-full rounded-[calc(1rem-1px)] p-3 sm:p-5 ${darkMode ? 'bg-[#121212]' : 'bg-white'} border ${darkMode ? 'border-white/5' : 'border-black/5'}`}>
-                                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                 <p className={`flex-1 text-xs sm:text-base font-bold leading-relaxed ${darkMode ? 'text-white/90' : 'text-slate-800'}`}>
-                                                    {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
-                                                 </p>
-                                                 <div className={`shrink-0 p-[1px] rounded-full bg-gradient-to-r ${note.type === 'feedback' ? 'from-indigo-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-sm self-end sm:self-center`}>
-                                                   <span className={`block font-extrabold uppercase tracking-widest text-[9px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-indigo-700'}`}>
-                                                     {cat}
-                                                   </span>
-                                                 </div>
-                                               </div>
+                                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                <p className={`flex-1 text-xs sm:text-base font-bold leading-relaxed ${darkMode ? 'text-white/90' : 'text-slate-800'}`}>
+                                                  {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
+                                                </p>
+                                                <div className={`shrink-0 p-[1px] rounded-full bg-gradient-to-r ${note.type === 'feedback' ? 'from-indigo-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-sm self-end sm:self-center`}>
+                                                  <span className={`block font-extrabold uppercase tracking-widest text-[9px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-indigo-700'}`}>
+                                                    {cat}
+                                                  </span>
+                                                </div>
+                                              </div>
                                             </div>
                                           </div>
 
@@ -588,7 +585,7 @@ export default function NotificationsPage() {
               <div className={`p-8 sm:p-10 rounded-[calc(2.5rem-3px)] flex flex-col items-center text-center relative overflow-hidden ${darkMode ? 'bg-[#0A0A0B]' : 'bg-white'}`}>
                 {/* Decorative background pulse */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 blur-[50px] rounded-full animate-pulse"></div>
-                
+
                 <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-2xl relative z-10 ${darkMode ? 'bg-red-500/10 text-red-500' : 'bg-red-50 text-red-600'}`}>
                   <Trash2 className="w-10 h-10" />
                   <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-3xl -z-10"></div>
@@ -597,7 +594,7 @@ export default function NotificationsPage() {
                 <h3 className={`text-2xl sm:text-3xl font-black mb-4 tracking-tighter relative z-10 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                   Clear All Read?
                 </h3>
-                
+
                 <p className={`text-sm sm:text-base font-bold mb-10 leading-relaxed relative z-10 ${darkMode ? 'text-gray-400' : 'text-slate-500'}`}>
                   This will <span className="text-red-500 font-black">permanently delete</span> all read notifications from your history. This action cannot be undone.
                 </p>
@@ -605,18 +602,17 @@ export default function NotificationsPage() {
                 <div className="grid grid-cols-2 gap-4 w-full relative z-10">
                   <button
                     onClick={() => setShowClearModal(false)}
-                    className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 border-2 ${
-                      darkMode 
-                        ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+                    className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 border-2 ${darkMode
+                        ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
                         : 'bg-gray-50 border-gray-100 text-slate-600 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => {
-                        clearReadNotifications();
-                        setShowClearModal(false);
+                      clearReadNotifications();
+                      setShowClearModal(false);
                     }}
                     className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 text-white bg-gradient-to-r from-red-600 to-pink-600 shadow-[0_10px_20px_-5px_rgba(239,68,68,0.4)]`}
                   >
@@ -669,7 +665,7 @@ export default function NotificationsPage() {
             className="fixed bottom-24 md:bottom-12 right-6 md:right-12 z-[999] p-[2px] rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-2xl group active:scale-90 transition-transform"
           >
             <div className={`w-12 h-12 md:w-14 md:h-14 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-900" : "bg-white"} flex items-center justify-center transition-colors group-hover:bg-transparent`}>
-               <span className={`text-2xl md:text-3xl transition-transform group-hover:-translate-y-1 ${darkMode ? "text-white" : "text-blue-600"} group-hover:text-white`}>↑</span>
+              <span className={`text-2xl md:text-3xl transition-transform group-hover:-translate-y-1 ${darkMode ? "text-white" : "text-blue-600"} group-hover:text-white`}>↑</span>
             </div>
           </motion.button>
         )}
