@@ -14,7 +14,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
     const [isAllAlumni, setIsAllAlumni] = useState(false);
     const [isAllFaculty, setIsAllFaculty] = useState(false);
     const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(false);
-    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(true);
+    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState({ x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(null);
@@ -104,7 +104,7 @@ export default function CreateGroupModal({ isOpen, onClose, onCreate }) {
         setProfileImage(null);
         setImagePreview(null);
         setAllowFacultyMessaging(false);
-        setAllowAlumniMessaging(true);
+        setAllowAlumniMessaging(false);
         setSelectedMemberIds([]);
         setUploading(false);
     };
