@@ -236,8 +236,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   <div className="sm:col-span-2 flex flex-col pt-4 border-t border-dashed border-gray-200 dark:border-white/10">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-red-400/60" : "text-red-600/60"}`}>Registration Deadline</span>
                     <div className="flex items-center gap-2">
-                       <span className="text-sm">⏰</span>
-                       <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.registrationCloseDate).toLocaleString()}</span>
+                      <span className="text-sm">⏰</span>
+                      <span className={`text-sm font-black ${darkMode ? "text-white" : "text-gray-900"}`}>{new Date(post.registrationCloseDate).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -254,15 +254,15 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                         </button>
                         {post.showRegistrationInsights && (
                           <div className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-300 ${darkMode ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]" : "bg-blue-50 border-blue-100 shadow-sm"}`}>
-                             <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-600 text-xs shadow-lg transform -rotate-3">
-                                👥
-                             </div>
-                             <div className="flex flex-col">
-                                <span className={`text-[8px] font-black uppercase tracking-[0.3em] leading-tight ${darkMode ? "text-blue-400" : "text-blue-600"} opacity-70`}>Live Insight</span>
-                                <span className={`text-[11px] font-black uppercase tracking-widest leading-tight ${darkMode ? "text-white" : "text-slate-900"}`}>
-                                  Registered: <span className={darkMode ? "text-blue-400" : "text-blue-600"}>{post.registrationCount || 0}</span>
-                                </span>
-                             </div>
+                            <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-600 text-xs shadow-lg transform -rotate-3">
+                              👥
+                            </div>
+                            <div className="flex flex-col">
+                              <span className={`text-[8px] font-black uppercase tracking-[0.3em] leading-tight ${darkMode ? "text-blue-400" : "text-blue-600"} opacity-70`}>Live Insight</span>
+                              <span className={`text-[11px] font-black uppercase tracking-widest leading-tight ${darkMode ? "text-white" : "text-slate-900"}`}>
+                                Registered: <span className={darkMode ? "text-blue-400" : "text-blue-600"}>{post.registrationCount || 0}</span>
+                              </span>
+                            </div>
                           </div>
                         )}
                       </>
@@ -301,10 +301,10 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                       if (existing) {
                         existing.members.push(current);
                       } else {
-                        acc.push({ 
-                          groupId: current.groupId, 
-                          groupName: current.groupName, 
-                          members: [current], 
+                        acc.push({
+                          groupId: current.groupId,
+                          groupName: current.groupName,
+                          members: [current],
                           type: 'group',
                           rank: current.rank,
                           points: current.points
@@ -321,70 +321,70 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                       <div className={`rounded-[calc(2rem-2px)] overflow-hidden ${darkMode ? "bg-slate-900/90" : "bg-white"}`}>
                         {entry.type === 'group' && (
                           <div className={`${darkMode ? "bg-blue-600/20" : "bg-blue-50"} px-4 sm:px-6 py-3 border-b border-blue-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2`}>
-                             <div className="flex items-center gap-3">
-                                <span className="text-xl">🏆</span>
-                                <span className={`text-xs font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-300" : "text-blue-800"}`}>
-                                  {entry.groupName || "Team Achievement"}
-                                </span>
-                             </div>
-                             <div className="flex items-center gap-3">
-                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"}`}>
-                                  Rank: {entry.rank}
-                                </span>
-                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>
-                                  +{entry.points} PTS
-                                </span>
-                             </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl">🏆</span>
+                              <span className={`text-xs font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-300" : "text-blue-800"}`}>
+                                {entry.groupName || "Team Achievement"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"}`}>
+                                Rank: {entry.rank}
+                              </span>
+                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>
+                                +{entry.points} PTS
+                              </span>
+                            </div>
                           </div>
                         )}
-                        
+
                         <div className="divide-y divide-white/5">
                           {(entry.type === 'group' ? entry.members : [entry]).map((member, midx) => (
                             <div key={midx} className={`p-4 flex items-center justify-between gap-4 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
-                               <div className="flex items-center gap-4 flex-1 min-w-0">
-                                  <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0">
-                                    <img 
-                                      src={member.profilePicture || member.userId?.profilePicture || "/default-profile.jpg"} 
-                                      alt={member.name} 
-                                      className="w-10 h-10 rounded-full object-cover border-2 border-white/10" 
-                                      onError={(e) => { e.target.src = "/default-profile.jpg"; }}
-                                    />
+                              <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0">
+                                  <img
+                                    src={member.profilePicture || member.userId?.profilePicture || "/default-profile.jpg"}
+                                    alt={member.name}
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-white/10"
+                                    onError={(e) => { e.target.src = "/default-profile.jpg"; }}
+                                  />
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    {member.userId?.publicId ? (
+                                      <Link href={`/profile/${member.userId.publicId}`} className={`font-black text-sm truncate hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>
+                                        {member.name}
+                                      </Link>
+                                    ) : (
+                                      <span className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{member.name}</span>
+                                    )}
+                                    {member.userId && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">MATCHED</span>}
                                   </div>
-                                  <div className="flex flex-col min-w-0">
-                                     <div className="flex items-center gap-2">
-                                        {member.userId?.publicId ? (
-                                          <Link href={`/profile/${member.userId.publicId}`} className={`font-black text-sm truncate hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>
-                                            {member.name}
-                                          </Link>
-                                        ) : (
-                                          <span className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{member.name}</span>
-                                        )}
-                                        {member.userId && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">MATCHED</span>}
-                                     </div>
-                                     <p className={`text-[9px] font-bold opacity-60 font-mono tracking-tighter ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
-                                       {member.uniqueId || "ID Undefined"}
-                                     </p>
-                                  </div>
-                               </div>
+                                  <p className={`text-[9px] font-bold opacity-60 font-mono tracking-tighter ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                    {member.uniqueId || "ID Undefined"}
+                                  </p>
+                                </div>
+                              </div>
 
-                               {entry.type === 'individual' && (
-                                  <div className="flex items-center gap-3">
-                                     <div className="flex flex-col items-end">
-                                        <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Rank</span>
-                                        <span className={`text-sm font-black ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{entry.rank}</span>
-                                     </div>
-                                     <div className="flex flex-col items-end border-l border-white/10 pl-3">
-                                        <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Points</span>
-                                        <span className={`px-2 py-0.5 rounded-md text-xs font-black ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>+{entry.points}</span>
-                                     </div>
+                              {entry.type === 'individual' && (
+                                <div className="flex items-center gap-3">
+                                  <div className="flex flex-col items-end">
+                                    <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Rank</span>
+                                    <span className={`text-sm font-black ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{entry.rank}</span>
                                   </div>
-                               )}
-                               
-                               {entry.type === 'group' && (
-                                  <span className={`text-[8px] font-black uppercase tracking-widest opacity-30 ${darkMode ? "text-white" : "text-black"}`}>
-                                    {midx === 0 ? "Captain" : "Member"}
-                                  </span>
-                                )}
+                                  <div className="flex flex-col items-end border-l border-white/10 pl-3">
+                                    <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Points</span>
+                                    <span className={`px-2 py-0.5 rounded-md text-xs font-black ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>+{entry.points}</span>
+                                  </div>
+                                </div>
+                              )}
+
+                              {entry.type === 'group' && (
+                                <span className={`text-[8px] font-black uppercase tracking-widest opacity-30 ${darkMode ? "text-white" : "text-black"}`}>
+                                  {midx === 0 ? "Captain" : "Member"}
+                                </span>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -601,13 +601,13 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
           {/* Confirmation Modal */}
           <ConfirmationModal
-             isOpen={showDeleteConfirm}
-             onClose={() => setShowDeleteConfirm(false)}
-             onConfirm={handleDelete}
-             title={post.type === "Event" ? "Delete Event?" : (post.type === "Announcement" ? "Delete Announcement?" : "Delete Post?")}
-             message={`Are you sure you want to delete this ${post.type?.toLowerCase() || 'post'}? This action cannot be undone and all comments will be lost.`}
-             confirmText="Delete Now"
-             darkMode={darkMode}
+            isOpen={showDeleteConfirm}
+            onClose={() => setShowDeleteConfirm(false)}
+            onConfirm={handleDelete}
+            title={post.type === "Event" ? "Delete Event?" : (post.type === "Announcement" ? "Delete Announcement?" : "Delete Post?")}
+            message={`Are you sure you want to delete this ${post.type?.toLowerCase() || 'post'}? This action cannot be undone and all comments will be lost.`}
+            confirmText="Delete Now"
+            darkMode={darkMode}
           />
         </div>
       </div>

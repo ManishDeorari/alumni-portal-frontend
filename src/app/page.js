@@ -10,7 +10,13 @@ import { useTheme } from "@/context/ThemeContext";
 
 const sectionVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 50 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: "easeOut" },
+    willChange: "opacity, transform"
+  },
 };
 
 const SectionWrapper = ({ title, subtitle, icon: Icon, children, id, darkMode }) => (
@@ -19,8 +25,8 @@ const SectionWrapper = ({ title, subtitle, icon: Icon, children, id, darkMode })
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
-      className="w-full max-w-5xl"
+      viewport={{ once: true, margin: "-10%" }}
+      className="w-full max-w-5xl scroll-mt-24"
     >
       <div className="text-center mb-12">
         {Icon && (
@@ -74,11 +80,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className={`relative min-h-screen overflow-x-hidden transition-colors duration-500 selection:bg-blue-500/30 bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-950 text-white`}>
+    <div className={`relative min-h-screen overflow-x-hidden transition-colors duration-500 selection:bg-blue-500/30 bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-950 text-white scroll-smooth`}>
       {/* 🔮 Dynamic Background Orbs */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className={`absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-blue-400/20`}></div>
-        <div className={`absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-purple-400/20`} style={{ animationDelay: '2s' }}></div>
+        <div className={`absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-blue-400/20`} style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
+        <div className={`absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-purple-400/20`} style={{ animationDelay: '2s', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
       </div>
 
       {/* 🚀 Sticky Navigation */}
