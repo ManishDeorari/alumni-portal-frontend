@@ -317,7 +317,7 @@ export default function NotificationsPage() {
                         onClick={() => handleNotificationClick(note)}
                         className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-3 sm:p-5 rounded-[calc(1rem-2px)] transition-all ${
+                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:p-5 rounded-[calc(1rem-2px)] transition-all ${
                           !note.isRead
                             ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                             : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
@@ -447,20 +447,21 @@ export default function NotificationsPage() {
                                           : "from-blue-500 via-purple-500 to-pink-500";
 
                                         return (
-                                          <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${gradient} shadow-md`}>
-                                            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center w-full rounded-[calc(1rem-1px)] p-3 sm:p-4 ${darkMode ? 'bg-[#121212]' : 'bg-white'}`}>
-                                              <div className={`text-left font-black text-xs sm:text-base leading-tight ${darkMode ? 'text-white' : 'text-slate-900'} sm:col-span-2`}>
-                                                {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
-                                              </div>
-                                              <div className="flex justify-end relative sm:col-span-1">
-                                                <div className={`p-[1px] rounded-full bg-gradient-to-r ${note.type === 'feedback' ? 'from-indigo-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-sm`}>
-                                                  <span className={`block font-extrabold uppercase tracking-widest text-[9px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-indigo-700'}`}>
-                                                    {cat}
-                                                  </span>
-                                                </div>
-                                              </div>
+                                          <div className={`relative p-[2px] mt-2 rounded-2xl bg-gradient-to-r ${gradient} shadow-md w-full`}>
+                                            <div className={`w-full rounded-[calc(1rem-1px)] p-3 sm:p-5 ${darkMode ? 'bg-[#121212]' : 'bg-white'} border ${darkMode ? 'border-white/5' : 'border-black/5'}`}>
+                                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                 <p className={`flex-1 text-xs sm:text-base font-bold leading-relaxed ${darkMode ? 'text-white/90' : 'text-slate-800'}`}>
+                                                    {note.message ? note.message.charAt(0).toUpperCase() + note.message.slice(1) : ""}
+                                                 </p>
+                                                 <div className={`shrink-0 p-[1px] rounded-full bg-gradient-to-r ${note.type === 'feedback' ? 'from-indigo-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-sm self-end sm:self-center`}>
+                                                   <span className={`block font-extrabold uppercase tracking-widest text-[9px] px-4 py-1.5 rounded-full whitespace-nowrap ${darkMode ? 'bg-black text-blue-400' : 'bg-white text-indigo-700'}`}>
+                                                     {cat}
+                                                   </span>
+                                                 </div>
+                                               </div>
                                             </div>
                                           </div>
+
                                         );
                                       })()}
                                     </>

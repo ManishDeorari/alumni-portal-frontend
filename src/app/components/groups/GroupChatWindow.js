@@ -185,8 +185,15 @@ export default function GroupChatWindow({
                         return (
                             <div key={msg._id || index} className={`flex items-start gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                                 {!isMe && (
-                                    <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 shadow-sm mt-1">
-                                        <Image src={msg.sender?.profilePicture || "/default-profile.jpg"} width={32} height={32} className="object-cover" alt={msg.sender?.name || "User"} />
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-lg sm:rounded-xl overflow-hidden border-2 border-white/20 shadow-sm mt-1 bg-gray-200">
+                                        <Image 
+                                            src={msg.sender?.profilePicture || "/default-profile.jpg"} 
+                                            width={32} 
+                                            height={32} 
+                                            className="object-cover aspect-square" 
+                                            alt={msg.sender?.name || "User"} 
+                                            onError={(e) => { e.target.src = "/default-profile.jpg"; }}
+                                        />
                                     </div>
                                 )}
                                 <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[75%]`}>
@@ -288,7 +295,7 @@ export default function GroupChatWindow({
                 <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Input Area */}
-                <div className="p-3 sm:p-5 pb-6 sm:pb-8 bg-black/5 safe-bottom">
+                <div className="p-3 sm:p-5 pb-10 sm:pb-12 bg-black/5 safe-bottom">
                     {canMessage ? (
                         <form onSubmit={handleSend} className="flex items-center gap-4 relative">
                             <div className="flex items-center gap-1">

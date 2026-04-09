@@ -347,6 +347,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                       src={member.profilePicture || member.userId?.profilePicture || "/default-profile.jpg"} 
                                       alt={member.name} 
                                       className="w-10 h-10 rounded-full object-cover border-2 border-white/10" 
+                                      onError={(e) => { e.target.src = "/default-profile.jpg"; }}
                                     />
                                   </div>
                                   <div className="flex flex-col min-w-0">
