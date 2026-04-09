@@ -295,9 +295,9 @@ export default function GroupChatWindow({
                 <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
                 {/* Input Area */}
-                <div className="p-3 sm:p-5 pb-16 sm:pb-24 bg-black/5">
+                <div className="p-3 sm:p-5 pb-16 sm:pb-24 bg-black/5 safe-bottom">
                     {canMessage ? (
-                        <form onSubmit={handleSend} className="flex items-center gap-4 relative mb-4 sm:mb-6 transform -translate-y-2">
+                        <form onSubmit={handleSend} className="flex items-center gap-4 relative mb-6 sm:mb-8">
                             <div className="flex items-center gap-1">
                                 <div className="relative" ref={emojiPickerRef}>
                                     <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className={`p-2.5 rounded-2xl transition-all ${darkMode ? "text-gray-400 hover:bg-[#FAFAFA]/10" : "text-gray-500 hover:bg-gray-100"}`}>
@@ -314,7 +314,7 @@ export default function GroupChatWindow({
                                 </button>
                                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                             </div>
- 
+
                             <div className="flex-1 relative p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl focus-within:scale-[1.01] transition-all">
                                 <input
                                     type="text"
@@ -333,7 +333,7 @@ export default function GroupChatWindow({
                             </button>
                         </form>
                     ) : (
-                        <div className="py-4 px-6 text-center bg-red-500/10 rounded-2xl border-2 border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.2em] shadow-lg animate-pulse mb-6 transform -translate-y-4">
+                        <div className="py-4 px-6 text-center bg-red-500/10 rounded-2xl border-2 border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.2em] shadow-lg animate-pulse mb-6 sm:mb-8">
                             Messaging is currently disabled for this group
                         </div>
                     )}
