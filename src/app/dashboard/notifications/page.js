@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const TABS = [
-  { id: "ALL", label: "All1", icon: <Layers className="w-4 h-4" /> },
+  { id: "ALL", label: "All", icon: <Layers className="w-4 h-4" /> },
   { id: "POST", label: "Posts", icon: <MessageSquare className="w-4 h-4" /> },
   { id: "GROUP", label: "Groups", icon: <Users className="w-4 h-4" /> },
   { id: "NETWORK", label: "Network", icon: <UserPlus className="w-4 h-4" /> },
@@ -255,8 +255,8 @@ export default function NotificationsPage() {
                 onClick={markAllAsRead}
                 disabled={!notifications.some(n => !n.isRead)}
                 className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${darkMode
-                    ? 'bg-black hover:bg-black/80 text-white'
-                    : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
+                  ? 'bg-black hover:bg-black/80 text-white'
+                  : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
                   } disabled:cursor-not-allowed active:scale-95`}
               >
                 <CheckCheck className="w-5 h-5 text-blue-500" />
@@ -274,8 +274,8 @@ export default function NotificationsPage() {
                 }}
                 disabled={!notifications.some(n => n.isRead)}
                 className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${darkMode
-                    ? 'bg-black hover:bg-black/80 text-red-500'
-                    : 'bg-white hover:bg-red-50 text-red-600'
+                  ? 'bg-black hover:bg-black/80 text-red-500'
+                  : 'bg-white hover:bg-red-50 text-red-600'
                   } disabled:cursor-not-allowed active:scale-95`}
               >
                 <Trash2 className="w-5 h-5" />
@@ -355,8 +355,8 @@ export default function NotificationsPage() {
                         className={`relative p-[2px] bg-gradient-to-r ${note.type === 'points_earned' ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
                         <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${!note.isRead
-                            ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
-                            : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
+                          ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
+                          : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
                           } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
                           <div className="relative shrink-0">
                             <div className={`p-[2px] rounded-2xl bg-gradient-to-br ${note.type === 'points_earned' ? 'from-purple-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-[0_0_10px_rgba(255,255,255,0.1)] ${!note.isRead ? 'opacity-100' : 'opacity-80 grayscale-[20%]'}`}>
@@ -603,8 +603,8 @@ export default function NotificationsPage() {
                   <button
                     onClick={() => setShowClearModal(false)}
                     className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all hover:scale-[1.02] active:scale-95 border-2 ${darkMode
-                        ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
-                        : 'bg-gray-50 border-gray-100 text-slate-600 hover:bg-gray-100'
+                      ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                      : 'bg-gray-50 border-gray-100 text-slate-600 hover:bg-gray-100'
                       }`}
                   >
                     Cancel
