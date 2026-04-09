@@ -12,8 +12,8 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
     const { darkMode } = useTheme();
     const [name, setName] = useState(group?.name || "");
     const [description, setDescription] = useState(group?.description || "");
-    const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(group?.allowFacultyMessaging ?? true);
-    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(group?.allowAlumniMessaging ?? true);
+    const [allowFacultyMessaging, setAllowFacultyMessaging] = useState(group?.allowFacultyMessaging ?? false);
+    const [allowAlumniMessaging, setAllowAlumniMessaging] = useState(group?.allowAlumniMessaging ?? false);
     const [profileImage, setProfileImage] = useState(null);
     const [profileImageSettings, setProfileImageSettings] = useState(group?.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
     const [imagePreview, setImagePreview] = useState(group?.profileImage || "/default-group.jpg");
@@ -31,8 +31,8 @@ export default function EditGroupModal({ isOpen, onClose, onUpdate, group, onRem
         if (group) {
             setName(group.name || "");
             setDescription(group.description || "");
-            setAllowFacultyMessaging(group.allowFacultyMessaging ?? true);
-            setAllowAlumniMessaging(group.allowAlumniMessaging ?? true);
+            setAllowFacultyMessaging(group.allowFacultyMessaging ?? false);
+            setAllowAlumniMessaging(group.allowAlumniMessaging ?? false);
             setImagePreview(group.profileImage || "/default-group.jpg");
             setProfileImageSettings(group.profileImageSettings || { x: 0, y: 0, zoom: 1, width: 100, height: 100 });
         }

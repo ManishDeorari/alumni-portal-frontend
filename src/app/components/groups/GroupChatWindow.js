@@ -121,8 +121,17 @@ export default function GroupChatWindow({
         );
     }
 
-    const isRestrictedRole = currentUser?.role === "faculty" || currentUser?.role === "alumni";
-    const canMessage = isAdmin || !isRestrictedRole || selectedGroup.allowFacultyMessaging;
+    const isFaculty = currentUser?.role === "faculty";
+    const isAlumni = currentUser?.role === "alumni" || currentUser?.role === "user";
+    
+    let canMessage = isAdmin; // Admins always message
+    if (!isAdmin) {
+        if (isFaculty) {
+            canMessage = selectedGroup.allowFacultyMessaging;
+        } else if (isAlumni) {
+            canMessage = selectedGroup.allowAlumniMessaging;
+        }
+    }
 
     return (
         <div className="w-full relative p-[2px] rounded-2xl shadow-2xl overflow-hidden h-full">

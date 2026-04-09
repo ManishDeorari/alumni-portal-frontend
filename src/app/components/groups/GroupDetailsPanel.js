@@ -163,7 +163,14 @@ export default function GroupDetailsPanel({
                                         <div className="grid grid-cols-3 gap-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                             {mediaList.map((msg) => (
                                                 <div key={msg._id} className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer border border-white/5 shadow-sm">
-                                                    <Image src={msg.mediaUrl} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt="Shared Media" />
+                                                    <Image 
+                                                        src={msg.mediaUrl} 
+                                                        fill 
+                                                        sizes="(max-width: 768px) 33vw, 120px"
+                                                        className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                                                        alt="Shared Media" 
+                                                        loading="lazy"
+                                                    />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                                         {isAdmin && (
                                                             <button 
