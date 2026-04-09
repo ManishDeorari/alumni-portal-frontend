@@ -130,6 +130,26 @@ export  const NotificationProvider = ({ children }) => {
     }
   }, [API_URL]);
 
+  const clearReadNotifications = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/notifications/clear-read`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        setNotifications(prev => prev.filter(n => !n.isRead));
+        toast.success("Read notifications cleared");
+      }
+    } catch (err) {
+      console.error("Failed to clear read notifications:", err);
+      toast.error("Failed to clear notifications");
+    }
+  }, [API_URL]);
+
   const handleDailyLoginPoints = useCallback((awardedPoints) => {
     toast.custom((t) => (
       <motion.div
@@ -382,6 +402,7 @@ export  const NotificationProvider = ({ children }) => {
     markSectionAsSeen,
     markAsRead,
     markAllAsRead,
+    clearReadNotifications,
     handleDailyLoginPoints, // Exported for direct triggering from API responses
     refreshNotifications: () => {
         const token = localStorage.getItem("token");

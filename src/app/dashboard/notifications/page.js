@@ -22,7 +22,8 @@ import {
   ChevronRight,
   X,
   Users,
-  Award
+  Award,
+  Trash2
 } from "lucide-react";
 
 const TABS = [
@@ -44,6 +45,7 @@ export default function NotificationsPage() {
     notifications, 
     markAsRead, 
     markAllAsRead,
+    clearReadNotifications,
     refreshNotifications 
   } = useNotifications();
   
@@ -233,19 +235,43 @@ export default function NotificationsPage() {
             </h1>
             <p className={`mt-1 sm:mt-2 text-xs sm:text-base font-medium text-white/80`}>Keep track of your community interactions</p>
           </div>
-          <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all shadow-sm ${!notifications.some(n => !n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
-            <button
-              onClick={markAllAsRead}
-              disabled={!notifications.some(n => !n.isRead)}
-              className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
-                darkMode 
-                  ? 'bg-black hover:bg-black/80 text-white' 
-                  : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
-              } disabled:cursor-not-allowed active:scale-95`}
-            >
-              <CheckCheck className="w-5 h-5 text-blue-500" />
-              Mark all read
-            </button>
+          
+          <div className="flex flex-row items-center gap-3">
+            <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all shadow-sm ${!notifications.some(n => !n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
+              <button
+                onClick={markAllAsRead}
+                disabled={!notifications.some(n => !n.isRead)}
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
+                  darkMode 
+                    ? 'bg-black hover:bg-black/80 text-white' 
+                    : 'bg-white hover:bg-gray-50 text-slate-700 hover:text-blue-600'
+                } disabled:cursor-not-allowed active:scale-95`}
+              >
+                <CheckCheck className="w-5 h-5 text-blue-500" />
+                <span className="hidden xs:inline">Mark all read</span>
+                <span className="xs:hidden">All Read</span>
+              </button>
+            </div>
+
+            <div className={`relative p-[2px] rounded-xl bg-gradient-to-r from-red-500 to-pink-600 transition-all shadow-sm ${!notifications.some(n => n.isRead) ? 'opacity-30 cursor-not-allowed' : ''}`}>
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to clear all read notifications? This action cannot be undone.")) {
+                    clearReadNotifications();
+                  }
+                }}
+                disabled={!notifications.some(n => n.isRead)}
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 w-full h-full rounded-[calc(0.75rem-2px)] transition-all duration-300 text-xs sm:text-sm font-bold backdrop-blur-md ${
+                  darkMode 
+                    ? 'bg-black hover:bg-black/80 text-red-500' 
+                    : 'bg-white hover:bg-red-50 text-red-600'
+                } disabled:cursor-not-allowed active:scale-95`}
+              >
+                <Trash2 className="w-5 h-5" />
+                <span className="hidden xs:inline">Clear Read</span>
+                <span className="xs:hidden">Clear</span>
+              </button>
+            </div>
           </div>
         </div>
 
