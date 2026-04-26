@@ -204,18 +204,18 @@ function LoginContent() {
   const [darkMode, setDarkMode] = useState(true);
 
   return (
-    <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative overflow-hidden px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode}>
+    <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode}>
       <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-      <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
+      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[500px] lg:pl-16 mt-8 sm:mt-12 lg:mt-0 mb-8"
+          className="w-full lg:w-1/2 max-w-[450px] lg:pl-16 mt-8 sm:mt-12 lg:mt-0 mb-8"
         >
           <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl relative">
             <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2.5rem-2.5px)] py-5 px-5 sm:py-8 sm:px-10 space-y-5 sm:space-y-6 relative overflow-hidden transition-all duration-500`}>
@@ -479,25 +479,27 @@ function LoginContent() {
         </div>
       </div>
 
-      {/* Theme Toggle Button - Fixed at absolute bottom right of page */}
+      {/* Theme Toggle Button Fixed at bottom right corner of page */}
       <div className="fixed bottom-6 right-6 z-[100]">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-[#FAFAFA]/10 border-white/20 text-yellow-400 hover:bg-[#FAFAFA]/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
-          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-        >
-          {darkMode ? (
-            <div className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
-              <span className="text-[10px] uppercase tracking-widest font-black">Light Mode</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-              <span className="text-[10px] uppercase tracking-widest font-black text-[#0f172a]">Dark Mode</span>
-            </div>
-          )}
-        </button>
+        <div className="p-[2px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`px-5 py-3 rounded-full backdrop-blur-2xl transition-all duration-500 flex items-center gap-3 ${darkMode ? "bg-black/80 text-yellow-400" : "bg-white/90 text-blue-600"}`}
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {darkMode ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin-slow"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
+                <span className="text-[10px] uppercase tracking-widest font-black">Light Mode</span>
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+                <span className="text-[10px] uppercase tracking-widest font-black">Dark Mode</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </TubesBackground>
   );

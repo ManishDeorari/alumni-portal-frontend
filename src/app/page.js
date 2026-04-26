@@ -27,7 +27,7 @@ const SectionWrapper = ({ title, subtitle, icon: Icon, children, id, darkMode })
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-10%" }}
-      className="w-full max-w-5xl scroll-mt-24"
+      className="w-full max-w-4xl scroll-mt-24"
     >
       <div className="text-center mb-12">
         {Icon && (
@@ -81,7 +81,7 @@ export default function HomePage() {
   };
 
   return (
-    <TubesBackground className={`relative min-h-screen overflow-x-hidden transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} darkMode={darkMode}>
+    <TubesBackground className={`relative min-h-screen transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} darkMode={darkMode}>
       {/* 🔮 Dynamic Background Orbs */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className={`absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-blue-400/20`} style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
@@ -90,7 +90,7 @@ export default function HomePage() {
 
       {/* 🚀 Sticky Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-4 bg-black/60 border-white/5 shadow-2xl backdrop-blur-xl border-b" : "py-6 bg-transparent"}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-white">
+        <div className="max-w-6xl mx-auto px-6 flex justify-between items-center text-white" >
           <div className="flex items-center gap-3 group cursor-pointer">
             <div className="p-[1.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl group-hover:scale-110 transition-all shadow-lg shadow-blue-500/20">
               <div className="bg-black p-2 rounded-[calc(0.75rem-1.5px)]">
@@ -135,7 +135,7 @@ export default function HomePage() {
              ALUMNI<br/>
              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent italic">PORTAL</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-bold uppercase tracking-[0.1em] leading-relaxed mb-12 text-white/60">
+          <p className="max-w-xl mx-auto text-lg md:text-2xl font-bold uppercase tracking-[0.1em] leading-relaxed mb-12 text-white/60" >
             The next generation professional ecosystem<br/>for university graduates worldwide.
           </p>
           
@@ -211,7 +211,7 @@ export default function HomePage() {
       </SectionWrapper>
 
       <SectionWrapper id="testimonials" title="Stories" subtitle="Voices of Impact" icon={FaQuoteLeft} darkMode={darkMode}>
-        <div className="max-w-3xl mx-auto text-center space-y-10 py-10">
+        <div className="max-w-2xl mx-auto text-center space-y-10 py-10">
            <FaQuoteLeft size={60} className="text-blue-500 opacity-20 mx-auto" />
            <p className={`text-2xl md:text-4xl font-black leading-tight italic ${darkMode ? "text-white/90" : "text-slate-900"}`}>
              "Authentic connections are the foundation of any great career. This portal makes it effortless."
@@ -231,7 +231,7 @@ export default function HomePage() {
       </SectionWrapper>
 
       <SectionWrapper id="contact" title="Connect" subtitle="Reach Out" icon={Mail} darkMode={darkMode}>
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-xl mx-auto text-center">
            <p className={`mb-12 font-bold uppercase tracking-widest text-xs italic ${darkMode ? "text-white/40" : "text-slate-500"}`}>
              Have questions about registration or events?
            </p>
@@ -257,7 +257,7 @@ export default function HomePage() {
       </SectionWrapper>
 
       <footer className={`py-20 border-t transition-colors duration-700 ${darkMode ? "bg-black text-white border-white/5" : "bg-slate-50 text-slate-900 border-slate-200"}`}>
-        <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row justify-between items-center gap-16 text-center lg:text-left">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col lg:flex-row justify-between items-center gap-16 text-center lg:text-left" >
           <div className="space-y-8">
             <div>
                <h1 className="text-4xl font-black italic tracking-tighter uppercase mb-4">ALUMNI PORTAL</h1>
@@ -284,13 +284,16 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <div className="fixed bottom-8 right-8 z-[100] flex flex-col gap-4">
-          <button
-              onClick={toggleDarkMode}
-              className={`p-5 rounded-[2rem] backdrop-blur-xl shadow-4xl border-2 transition-all duration-700 hover:scale-110 active:scale-90 ${darkMode ? "bg-white/10 border-white/20 text-yellow-400" : "bg-slate-950/10 border-slate-950/20 text-slate-950 hover:bg-slate-950 hover:text-white"}`}
-          >
-              {darkMode ? <Sun size={24} /> : <Moon size={24} />}
-          </button>
+      <div className="fixed bottom-8 right-8 z-[100]">
+          <div className="p-[2px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group">
+            <button
+                onClick={toggleDarkMode}
+                className={`p-5 rounded-[calc(2rem-2px)] backdrop-blur-2xl transition-all duration-500 flex items-center justify-center ${darkMode ? "bg-black/80 text-yellow-400" : "bg-white/90 text-blue-600"}`}
+                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+                {darkMode ? <Sun size={24} className="animate-spin-slow" /> : <Moon size={24} className="animate-pulse" />}
+            </button>
+          </div>
       </div>
     </TubesBackground>
   );
