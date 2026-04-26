@@ -369,7 +369,7 @@ export function TubesBackground({
         <div className="fixed inset-0 w-screen h-[100dvh] z-[2] pointer-events-none bg-black/30" />
       )}
 
-      <div className="relative z-10 w-full">{children}</div>
+      <div className="relative z-10 w-full overflow-x-hidden">{children}</div>
 
       <style>{`
         @keyframes gradientShift {

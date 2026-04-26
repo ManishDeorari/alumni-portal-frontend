@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
 import TubesBackground from "../../components/TubesBackground";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function LoginPage() {
   return (
@@ -201,7 +202,7 @@ function LoginContent() {
     }
   };
 
-  const [darkMode, setDarkMode] = useState(true);
+  const { darkMode, toggleDarkMode } = useTheme();
 
   return (
     <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode}>
@@ -483,7 +484,7 @@ function LoginContent() {
       <div className="fixed bottom-6 right-6 z-[100]">
         <div className="p-[2px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group">
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleDarkMode}
             className={`px-5 py-3 rounded-full backdrop-blur-2xl transition-all duration-500 flex items-center gap-3 ${darkMode ? "bg-black/80 text-yellow-400" : "bg-white/90 text-blue-600"}`}
             title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
