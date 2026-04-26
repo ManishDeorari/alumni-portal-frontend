@@ -15,6 +15,7 @@ import GroupMembersModal from "../../components/groups/modals/GroupMembersModal"
 import GroupMediaModal from "../../components/groups/modals/GroupMediaModal";
 import ImageViewerModal from "../../components/groups/modals/ImageViewerModal";
 import { toast } from "react-hot-toast";
+import { GooeyGradientBackground } from "../../components/GooeyGradientBackground";
 
 export default function GroupsPage() {
     const { darkMode } = useTheme();
@@ -353,7 +354,7 @@ export default function GroupsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-700 relative text-white overflow-hidden">
+        <GooeyGradientBackground className="min-h-screen relative text-white overflow-hidden" darkMode={darkMode}>
             <SidebarComponent />
 
             <main className="p-2 sm:p-4 max-w-[1200px] mx-auto h-[calc(100dvh-64px)] flex flex-col justify-center pb-20 md:pb-4">
@@ -490,6 +491,6 @@ export default function GroupsPage() {
                 onClose={() => setShowImageViewer(false)}
                 imageUrl={viewerImageUrl}
             />
-        </div>
+        </GooeyGradientBackground>
     );
 }

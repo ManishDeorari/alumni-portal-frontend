@@ -25,6 +25,8 @@ import {
   Award,
   Trash2
 } from "lucide-react";
+import { useNotifications } from "@/context/NotificationContext";
+import { GooeyGradientBackground } from "../../components/GooeyGradientBackground";
 
 const TABS = [
   { id: "ALL", label: "All", icon: <Layers className="w-4 h-4" /> },
@@ -36,8 +38,6 @@ const TABS = [
   { id: "NOTICE", label: "Notice", icon: <ShieldAlert className="w-4 h-4" /> },
   { id: "FEEDBACK", label: "Feedback", icon: <MessageSquare className="w-4 h-4" /> },
 ];
-
-import { useNotifications } from "@/context/NotificationContext";
 
 export default function NotificationsPage() {
   const { darkMode } = useTheme();
@@ -231,7 +231,7 @@ export default function NotificationsPage() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className={`min-h-screen pb-24 md:pb-20 bg-gradient-to-br from-blue-600 to-purple-700`}>
+    <GooeyGradientBackground className="min-h-screen pb-24 md:pb-20" darkMode={darkMode}>
       <SidebarComponent />
 
       <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10">
@@ -670,9 +670,6 @@ export default function NotificationsPage() {
           </motion.button>
         )}
       </AnimatePresence>
-    </div>
+    </GooeyGradientBackground>
   );
 }
-
-// X is now imported from lucide-react
-

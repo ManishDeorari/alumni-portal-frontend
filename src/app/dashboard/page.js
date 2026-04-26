@@ -3,15 +3,15 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
-import AdminSidebar from "../components/AdminSidebar"; // <-- Admin sidebar
+import AdminSidebar from "../components/AdminSidebar"; 
 import CreatePost from "../components/Post/CreatePost";
 import PostCard from "../components/Post/PostCard";
 import { motion, AnimatePresence } from "framer-motion";
 import socket from "../../utils/socket";
-
 import PointsScenario from "../components/dashboard/PointsScenario";
 import { useTheme } from "@/context/ThemeContext";
 import { useNotifications } from "@/context/NotificationContext";
+import { GooeyGradientBackground } from "../components/GooeyGradientBackground";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -202,7 +202,7 @@ export default function DashboardPage() {
   const SidebarComponent = user.isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 bg-gradient-to-b from-blue-600 to-purple-700 text-white relative`}>
+    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
       <SidebarComponent />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-24 md:pb-8">
@@ -345,6 +345,6 @@ export default function DashboardPage() {
           </motion.button>
         )}
       </AnimatePresence>
-    </div>
+    </GooeyGradientBackground>
   );
 }

@@ -12,6 +12,7 @@ import RequestsModal from "../../components/network/RequestsModal";
 import { useTheme } from "@/context/ThemeContext";
 import HybridInput from "../../components/ui/HybridInput";
 import socket from "@/utils/socket";
+import { GooeyGradientBackground } from "../../components/GooeyGradientBackground";
 
 const COURSE_OPTIONS = ["B.Tech", "M.Tech", "MBA", "BCA", "MCA"];
 const currentYearForDropdown = new Date().getFullYear();
@@ -125,7 +126,7 @@ const NetworkPage = () => {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
       <SidebarComponent />
 
       <main className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 sm:space-y-8 relative z-10 pb-24 md:pb-8">
@@ -352,7 +353,7 @@ const NetworkPage = () => {
         onClose={() => setIsModalOpen(false)}
         onActionComplete={fetchData}
       />
-    </div>
+    </GooeyGradientBackground>
   );
 };
 

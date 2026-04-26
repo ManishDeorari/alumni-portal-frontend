@@ -7,6 +7,7 @@ import { Mail, ArrowRight, ShieldCheck, ChevronDown, Monitor, Moon, Sun, User } 
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
+import TubesBackground from "./components/TubesBackground";
 
 const sectionVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 50 },
@@ -80,7 +81,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className={`relative min-h-screen overflow-x-hidden transition-colors duration-500 selection:bg-blue-500/30 bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-950 text-white scroll-smooth`}>
+    <TubesBackground className={`relative min-h-screen overflow-x-hidden transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} darkMode={darkMode}>
       {/* 🔮 Dynamic Background Orbs */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className={`absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-blue-400/20`} style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
@@ -291,6 +292,6 @@ export default function HomePage() {
               {darkMode ? <Sun size={24} /> : <Moon size={24} />}
           </button>
       </div>
-    </div>
+    </TubesBackground>
   );
 }

@@ -16,6 +16,7 @@ import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import AuthGuard from "../components/AuthGuard";
 import { useNotifications } from "@/context/NotificationContext";
+import { GooeyGradientBackground } from "../components/GooeyGradientBackground";
 
 function ProfileContent() {
   const router = useRouter();
@@ -139,7 +140,7 @@ function ProfileContent() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
       <SidebarComponent />
 
       {/* 🔷 Top-Left Back Button (Fixed) */}
@@ -174,7 +175,7 @@ function ProfileContent() {
         <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
       </div>
-    </div>
+    </GooeyGradientBackground>
   );
 }
 

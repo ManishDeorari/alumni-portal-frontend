@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getMyConnections, getUserConnections, sendConnectionRequest } from "@/api/connect";
 import { useTheme } from "@/context/ThemeContext";
 import { useSearchParams } from "next/navigation";
+import { GooeyGradientBackground } from "../../components/GooeyGradientBackground";
 
 const MyConnectionsContent = () => {
     const { darkMode } = useTheme();
@@ -84,7 +85,7 @@ const MyConnectionsContent = () => {
     const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+        <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
             <SidebarComponent />
             <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-10 space-y-4 sm:space-y-10 pb-24 md:pb-8">
                 <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl overflow-hidden">
@@ -94,7 +95,7 @@ const MyConnectionsContent = () => {
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                             </Link>
                             <div>
-                                <h1 className={`text-2xl sm:text-4xl font-black tracking-tighter ${darkMode ? 'text-white' : 'text-slate-900'}`}>{ownerName} Network</h1>
+                                <h1 className={`text-2xl sm:text-4xl font-black tracking-tighter uppercase italic ${darkMode ? 'text-white' : 'text-slate-900'}`}>{ownerName} Network</h1>
                                 <p className={`text-xs sm:text-sm font-black uppercase tracking-widest mt-0.5 sm:mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{connections.length} Total Connections</p>
                             </div>
                         </div>
@@ -118,11 +119,11 @@ const MyConnectionsContent = () => {
                     </div>
                 ) : filteredConnections.length === 0 ? (
                     <div className="relative p-[2.5px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-[3rem]">
-                        <div className={`text-center py-24 rounded-[calc(3rem-2.5px)] border border-white/5 backdrop-blur-md ${darkMode ? 'bg-black/50' : 'bg-white shadow-xl'}`}>
+                        <div className={`text-center py-24 rounded-[calc(3rem-2.5px)] border border-white/5 backdrop-blur-md ${darkMode ? 'bg-black/50 text-white' : 'bg-white shadow-xl text-slate-900'}`}>
                             <div className={`p-6 w-fit mx-auto rounded-full mb-8 ${darkMode ? 'bg-white/5 shadow-inner' : 'bg-blue-50'}`}>
                                 <svg className={`w-12 h-12 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                             </div>
-                            <p className={`${darkMode ? 'text-white' : 'text-slate-900'} font-black text-lg mb-8 uppercase tracking-widest`}>
+                            <p className={`font-black text-lg mb-8 uppercase tracking-widest`}>
                                 {searchQuery ? "No matching connections" : "The network is quiet"}
                             </p>
                             <Link href="/dashboard/network" className="relative p-[1.5px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl inline-block group hover:scale-105 transition-transform active:scale-95">
@@ -202,13 +203,13 @@ const MyConnectionsContent = () => {
                     </div>
                 )}
             </main>
-        </div>
+        </GooeyGradientBackground>
     );
 };
 
 const MyConnectionsPage = () => (
     <Suspense fallback={
-        <div className="min-h-screen bg-[#121213] flex items-center justify-center">
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center">
             <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
         </div>
     }>

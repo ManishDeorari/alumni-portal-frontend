@@ -6,6 +6,7 @@ import PostCard from "../../components/Post/PostCard";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+import { GooeyGradientBackground } from "../../components/GooeyGradientBackground";
 
 export default function MyPostsPage() {
   const router = useRouter();
@@ -88,16 +89,16 @@ export default function MyPostsPage() {
   };
 
   if (initializing) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-        <p className="font-bold tracking-widest text-xs uppercase">Loading your posts...</p>
+        <div className="w-12 h-12 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
+        <p className="font-black tracking-widest text-[10px] uppercase opacity-50">Loading your posts...</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 text-white relative">
+    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
       <Sidebar />
 
       {/* 🔷 Left-most Back Button */}
@@ -114,7 +115,7 @@ export default function MyPostsPage() {
           <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950' : 'bg-[#FAFAFA]'}`}>
             <div className="flex items-center gap-4">
               <div className="h-10 w-2 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
-              <h1 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>MY POSTS</h1>
+              <h1 className={`text-3xl font-black tracking-tight uppercase italic ${darkMode ? 'text-white' : 'text-slate-900'}`}>MY POSTS</h1>
             </div>
           </div>
         </div>
@@ -152,12 +153,11 @@ export default function MyPostsPage() {
           </div>
         ) : (
           <div className={`py-24 text-center rounded-[3rem] border border-white/10 backdrop-blur-md ${darkMode ? 'bg-slate-950/50' : 'bg-[#FAFAFA]/10'}`}>
-            <h2 className="text-2xl font-black text-white/80">You haven&apos;t created any posts yet.</h2>
+            <h2 className="text-2xl font-black text-white/80 uppercase tracking-widest">You haven&apos;t created any posts yet.</h2>
             <p className="text-white/60 mt-3 font-medium">Your future thoughts and shared experiences will appear here.</p>
           </div>
         )}
       </div>
-    </div>
+    </GooeyGradientBackground>
   );
 }
-
