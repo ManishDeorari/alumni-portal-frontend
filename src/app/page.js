@@ -8,6 +8,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
 import TubesBackground from "./components/TubesBackground";
+import ThemeToggle from "./components/ui/ThemeToggle";
 
 const sectionVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 50 },
@@ -82,12 +83,6 @@ export default function HomePage() {
 
   return (
     <TubesBackground className={`relative min-h-screen transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} darkMode={darkMode}>
-      {/* 🔮 Dynamic Background Orbs */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className={`absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-blue-400/20`} style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
-        <div className={`absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-pulse bg-purple-400/20`} style={{ animationDelay: '2s', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}></div>
-      </div>
-
       {/* 🚀 Sticky Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-4 bg-black/60 border-white/5 shadow-2xl backdrop-blur-xl border-b" : "py-6 bg-transparent"}`}>
         <div className="max-w-6xl mx-auto px-6 flex justify-between items-center text-white" >
@@ -284,17 +279,7 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <div className="fixed bottom-8 right-8 z-[100]">
-          <div className="p-[2px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group">
-            <button
-                onClick={toggleDarkMode}
-                className={`p-5 rounded-[calc(2rem-2px)] backdrop-blur-2xl transition-all duration-500 flex items-center justify-center ${darkMode ? "bg-black/80 text-yellow-400" : "bg-white/90 text-blue-600"}`}
-                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-                {darkMode ? <Sun size={24} className="animate-spin-slow" /> : <Moon size={24} className="animate-pulse" />}
-            </button>
-          </div>
-      </div>
+      <ThemeToggle />
     </TubesBackground>
   );
 }

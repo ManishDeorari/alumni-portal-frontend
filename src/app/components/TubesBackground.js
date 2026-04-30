@@ -34,6 +34,13 @@ export function TubesBackground({
   const canvasRef  = useRef(null);
   const tubesRef   = useRef(null);
   const [webglFailed, setWebglFailed] = useState(false);
+  const [baseRatio, setBaseRatio] = useState(1);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setBaseRatio(window.devicePixelRatio || 1);
+    }
+  }, []);
 
   const colorSchemes = {
     dark: {
@@ -239,7 +246,7 @@ export function TubesBackground({
       }
     };
 
-    let mobileRenderer, mobileRafId;
+    let mobileRenderer, mobileCamera, mobileRafId;
     const initMobileThreeJS = () => {
       const canvas = canvasRef.current;
       mobileRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
@@ -247,7 +254,7 @@ export function TubesBackground({
       mobileRenderer.setSize(window.innerWidth, window.innerHeight);
 
       const mobileScene = new THREE.Scene();
-      const mobileCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+      mobileCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
       mobileCamera.position.z = 10;
 
       const currentTheme = darkMode ? colorSchemes.dark : colorSchemes.light;
@@ -319,7 +326,33 @@ export function TubesBackground({
       animate();
     };
 
+    const handleResize = () => {
+      if (!mounted) return;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const currentRatio = window.devicePixelRatio || 1;
+      const zoomFactor = currentRatio / (baseRatio || 1);
+
+      if (mobileRenderer) {
+        mobileRenderer.setSize(width, height);
+        mobileRenderer.setPixelRatio(currentRatio);
+        if (mobileCamera) {
+          mobileCamera.aspect = width / height;
+          // Compensate for browser zoom to keep visual size constant
+          mobileCamera.zoom = 1 / zoomFactor;
+          mobileCamera.updateProjectionMatrix();
+        }
+      }
+
+      // Brute-force check for library resize method
+      if (tubesRef.current && typeof tubesRef.current.resize === "function") {
+        tubesRef.current.resize();
+      }
+    };
+
     initTubes();
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
       mounted = false;
@@ -333,6 +366,7 @@ export function TubesBackground({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup",   onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
+      window.removeEventListener("resize",      handleResize);
     };
   }, [tubeCount, idleDelay]);
 
@@ -346,7 +380,7 @@ export function TubesBackground({
   };
 
   return (
-    <div className={`w-full ${className || ""}`} onClick={handleClick}>
+    <div className={`w-full ${className || ""} ${darkMode ? "bg-slate-950" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
       {webglFailed ? (
         <div
           className="fixed inset-0 z-0 w-screen h-[100dvh]"
