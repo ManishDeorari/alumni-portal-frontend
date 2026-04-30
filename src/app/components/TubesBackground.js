@@ -27,7 +27,7 @@ export function TubesBackground({
   className,
   enableClickInteraction = true,
   overlay = true,
-  tubeCount = 5,
+  tubeCount = 3,
   idleDelay = 2000,
   darkMode = true,
 }) {
@@ -250,7 +250,7 @@ export function TubesBackground({
     const initMobileThreeJS = () => {
       const canvas = canvasRef.current;
       mobileRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-      mobileRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      mobileRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       mobileRenderer.setSize(window.innerWidth, window.innerHeight);
 
       const mobileScene = new THREE.Scene();
@@ -330,8 +330,8 @@ export function TubesBackground({
       if (!mounted) return;
       const width = window.innerWidth;
       const height = window.innerHeight;
-      const currentRatio = window.devicePixelRatio || 1;
-      const zoomFactor = currentRatio / (baseRatio || 1);
+      const currentRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const zoomFactor = (window.devicePixelRatio || 1) / (baseRatio || 1);
 
       if (mobileRenderer) {
         mobileRenderer.setSize(width, height);
