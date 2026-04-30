@@ -9,6 +9,7 @@ import SettingsDrawer from "./SettingsDrawer";
 import NotificationPreview from "./NotificationPreview";
 import { useNotifications } from "@/context/NotificationContext";
 import { AnimatePresence } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Sidebar() {
   const { 
@@ -21,6 +22,7 @@ export default function Sidebar() {
     shakeNotification,
     markSectionAsSeen
   } = useNotifications();
+  const { darkMode } = useTheme();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
