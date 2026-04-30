@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { X, User, Lock, LogIn, ArrowLeft, UserPlus } from "lucide-react";
 import { GooeyGradientBackground } from "./GooeyGradientBackground";
 import { useTheme } from "@/context/ThemeContext";
+import ThemeToggle from "./ui/ThemeToggle";
 
 const LoginPopup = () => {
     const router = useRouter();
@@ -76,15 +77,15 @@ const LoginPopup = () => {
     };
 
     return (
-        <GooeyGradientBackground className="fixed inset-0 z-[9999] flex items-center justify-start pt-8 md:pt-12 px-4 transition-colors duration-500" darkMode={darkMode}>
+        <GooeyGradientBackground className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/40 backdrop-blur-xl px-4 pt-4 md:pt-8 transition-colors duration-500 no-scrollbar" darkMode={darkMode}>
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="w-full max-w-[400px] z-10 mx-auto"
+                className="w-full max-w-[400px] z-10 mx-auto pb-8"
             >
                 {/* Header outside card */}
-                <div className="text-center mb-6 pt-0">
+                <div className="text-center mb-4 pt-0">
                     <h1 className="text-4xl font-black text-white tracking-tight drop-shadow-lg">
                         Alumni Portal
                     </h1>
@@ -211,20 +212,7 @@ const LoginPopup = () => {
                     </div>
                 </div>
 
-                {/* Theme Toggle Button Fixed at bottom right of page */}
-                <div className="fixed bottom-6 right-6 z-[100]">
-                    <button
-                        onClick={toggleDarkMode}
-                        className={`p-4 rounded-full backdrop-blur-md shadow-2xl border-2 transition-all duration-500 ${darkMode ? "bg-[#FAFAFA]/10 border-white/20 text-yellow-400 hover:bg-[#FAFAFA]/20" : "bg-[#0f172a]/10 border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/20"} hover:scale-110 active:scale-90`}
-                        title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                    >
-                        {darkMode ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-                        )}
-                    </button>
-                </div>
+                <ThemeToggle bottomOffset={64} />
             </motion.div>
         </GooeyGradientBackground>
     );

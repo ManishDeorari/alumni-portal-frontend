@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ bottomOffset = 32, rightOffset = 32 }) {
   const { darkMode, toggleDarkMode } = useTheme();
   const [zoom, setZoom] = useState(1);
   const [baseRatio, setBaseRatio] = useState(1);
@@ -35,8 +35,8 @@ export default function ThemeToggle() {
     <div 
       className="fixed z-[100] transition-all duration-300 ease-out"
       style={{ 
-        bottom: `${32 * scale}px`, 
-        right: `${32 * scale}px`,
+        bottom: `${bottomOffset * scale}px`, 
+        right: `${rightOffset * scale}px`,
         transform: `scale(${scale})`,
         transformOrigin: "bottom right"
       }}
