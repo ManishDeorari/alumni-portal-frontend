@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTimes, FaLock } from "react-icons/fa";
+import { FaTimes, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -10,6 +10,9 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
         newPassword: "",
         confirmPassword: "",
     });
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -72,7 +75,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="relative p-[2px] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden"
                     >
-                        <div className={`relative ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-6 sm:p-8 no-scrollbar max-h-[90dvh] overflow-y-auto`}>
+                        <div className={`relative ${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem-2px)] p-5 sm:p-7 no-scrollbar max-h-[85dvh] overflow-y-auto`}>
                             {/* Decorative Glows */}
                             {darkMode && (
                                 <>
@@ -88,12 +91,12 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                                 <FaTimes size={18} />
                             </button>
 
-                            <div className="flex flex-col items-center mb-10">
-                                <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-500/20 transform -rotate-3">
+                            <div className="flex flex-col items-center mb-6">
+                                <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20 transform -rotate-3">
                                     <FaLock className="text-white" size={26} />
                                 </div>
                                 <h2 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} tracking-tight`}>Reset Password</h2>
-                                <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-2.5 ${darkMode ? "text-blue-400/80" : "text-blue-600/80"}`}>
+                                <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-2 ${darkMode ? "text-blue-400/80" : "text-blue-600/80"}`}>
                                     Account Security
                                 </p>
                             </div>
@@ -112,52 +115,73 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
                                 </motion.div>
                             )}
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Current Password */}
                                 <div className="space-y-2">
-                                    <label className={`text-sm font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white/40" : "text-slate-500"}`}>Current Password</label>
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white" : "text-slate-900"}`}>Current Password</label>
                                     <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all duration-300">
                                         <input
-                                            type="password"
+                                            type={showOldPassword ? "text" : "password"}
                                             name="oldPassword"
                                             value={formData.oldPassword}
                                             onChange={handleChange}
                                             placeholder="••••••••"
-                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 py-3.5 focus:outline-none font-bold text-sm`}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 pr-12 py-3.5 focus:outline-none font-bold text-sm`}
                                             required
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowOldPassword(!showOldPassword)}
+                                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                                        >
+                                            {showOldPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                                        </button>
                                     </div>
                                 </div>
 
                                 {/* New Password */}
                                 <div className="space-y-2">
-                                    <label className={`text-sm font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white/40" : "text-slate-500"}`}>New Password</label>
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white" : "text-slate-900"}`}>New Password</label>
                                     <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all duration-300">
                                         <input
-                                            type="password"
+                                            type={showNewPassword ? "text" : "password"}
                                             name="newPassword"
                                             value={formData.newPassword}
                                             onChange={handleChange}
                                             placeholder="••••••••"
-                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 py-3.5 focus:outline-none font-bold text-sm`}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 pr-12 py-3.5 focus:outline-none font-bold text-sm`}
                                             required
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                                        >
+                                            {showNewPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                                        </button>
                                     </div>
                                 </div>
 
                                 {/* Confirm Password */}
                                 <div className="space-y-2">
-                                    <label className={`text-sm font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white/40" : "text-slate-500"}`}>Confirm Password</label>
+                                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 ${darkMode ? "text-white" : "text-slate-900"}`}>Confirm Password</label>
                                     <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all duration-300">
                                         <input
-                                            type="password"
+                                            type={showConfirmPassword ? "text" : "password"}
                                             name="confirmPassword"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                             placeholder="••••••••"
-                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 py-3.5 focus:outline-none font-bold text-sm`}
+                                            className={`w-full ${darkMode ? "bg-black text-white" : "bg-white text-slate-900"} rounded-[calc(1rem-1.5px)] px-5 pr-12 py-3.5 focus:outline-none font-bold text-sm`}
                                             required
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                                        >
+                                            {showConfirmPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                                        </button>
                                     </div>
                                 </div>
 

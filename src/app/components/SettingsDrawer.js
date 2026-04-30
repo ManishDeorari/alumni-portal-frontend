@@ -53,7 +53,7 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                             {/* Options List */}
                             <div className="flex-1 space-y-4 overflow-y-auto pr-2 min-h-0 drawer-scrollbar">
                                 {/* Theme Section Label */}
-                                <p className={`text-sm font-black uppercase tracking-wider mb-2 ${darkMode ? "text-white/40" : "text-slate-500"}`}>
+                                <p className={`text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? "text-white" : "text-slate-900"}`}>
                                     Appearance
                                 </p>
 
@@ -75,7 +75,7 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                                     </button>
                                 </div>
 
-                                <p className={`text-sm font-black uppercase tracking-wider mb-2 mt-6 ${darkMode ? "text-white/40" : "text-slate-500"}`}>
+                                <p className={`text-xs font-black uppercase tracking-wider mb-2 mt-6 ${darkMode ? "text-white" : "text-slate-900"}`}>
                                     Account Security
                                 </p>
 
@@ -96,7 +96,7 @@ const SettingsDrawer = ({ isOpen, onClose, onResetPassword, onSignout }) => {
                                 </div>
 
                                 <div className={`pt-6 mt-6 border-t ${darkMode ? "border-white/10" : "border-gray-100"} space-y-4`}>
-                                    <p className={`text-sm font-black uppercase tracking-wider mb-2 ${darkMode ? "text-white/40" : "text-slate-500"}`}>
+                                    <p className={`text-xs font-black uppercase tracking-wider mb-2 ${darkMode ? "text-white" : "text-slate-900"}`}>
                                         Support & Feedback
                                     </p>
                                     

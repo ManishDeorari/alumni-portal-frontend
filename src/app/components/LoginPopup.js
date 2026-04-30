@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { X, User, Lock, LogIn, ArrowLeft, UserPlus } from "lucide-react";
+import { X, User, Lock, LogIn, ArrowLeft, UserPlus, Eye, EyeOff } from "lucide-react";
 import { GooeyGradientBackground } from "./GooeyGradientBackground";
 import { useTheme } from "@/context/ThemeContext";
 import ThemeToggle from "./ui/ThemeToggle";
@@ -14,6 +14,7 @@ const LoginPopup = () => {
     const [form, setForm] = useState({ identifier: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const { darkMode, toggleDarkMode } = useTheme();
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -142,16 +143,23 @@ const LoginPopup = () => {
                                 <label className={`text-[8.5px] uppercase tracking-[0.2em] ${darkMode ? "text-gray-400" : "text-slate-500"} ml-4 font-black flex items-center gap-1.5`}>
                                     <Lock className="w-3 h-3 text-purple-500" /> Password
                                 </label>
-                                <div className="p-[1.5px] bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all">
+                                <div className="p-[1.5px] bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 rounded-2xl focus-within:from-blue-500 focus-within:via-purple-500 focus-within:to-pink-500 transition-all relative">
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         name="password"
                                         placeholder="••••••••"
                                         value={form.password}
                                         onChange={handleChange}
-                                        className={`w-full px-5 py-2.5 ${darkMode ? "bg-[#0f172a] text-white placeholder-white/20" : "bg-white text-gray-900 placeholder-gray-400"} rounded-[calc(1rem-1.5px)] outline-none transition-all text-xs font-bold`}
+                                        className={`w-full px-5 pr-12 py-2.5 ${darkMode ? "bg-[#0f172a] text-white placeholder-white/20" : "bg-white text-gray-900 placeholder-gray-400"} rounded-[calc(1rem-1.5px)] outline-none transition-all text-xs font-bold`}
                                         required
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className={`absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                 </div>
                             </div>
 
