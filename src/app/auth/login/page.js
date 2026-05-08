@@ -206,7 +206,14 @@ function LoginContent() {
     }
   };
 
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { darkMode: globalDarkMode, toggleDarkMode } = useTheme();
+  const [isAndroid, setIsAndroid] = useState(false);
+
+  React.useEffect(() => {
+    setIsAndroid(/Android/i.test(navigator.userAgent));
+  }, []);
+
+  const darkMode = isAndroid ? true : globalDarkMode;
 
   return (
     <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode}>
@@ -494,7 +501,7 @@ function LoginContent() {
         </div>
       </div>
 
-      <ThemeToggle />
+      <ThemeToggle hidden={isAndroid} />
     </TubesBackground>
   );
 }

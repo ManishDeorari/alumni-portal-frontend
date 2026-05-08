@@ -103,7 +103,14 @@ export default function SignupPage() {
     await attemptSignup();
   };
 
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { darkMode: globalDarkMode, toggleDarkMode } = useTheme();
+  const [isAndroid, setIsAndroid] = useState(false);
+
+  React.useEffect(() => {
+    setIsAndroid(/Android/i.test(navigator.userAgent));
+  }, []);
+
+  const darkMode = isAndroid ? true : globalDarkMode;
 
   return (
     <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 pb-32 sm:pb-0 transition-colors duration-500`} darkMode={darkMode}>
@@ -306,7 +313,7 @@ export default function SignupPage() {
         </div>
       </div>
 
-      <ThemeToggle />
+      <ThemeToggle hidden={isAndroid} />
 
       {/* Success Modal */}
       <AnimatePresence>
