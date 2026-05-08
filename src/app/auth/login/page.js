@@ -227,7 +227,7 @@ function LoginContent() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[310px] sm:max-w-[420px] lg:max-w-[420px] lg:ml-0 mt-6 sm:mt-12 lg:mt-0 mb-8 mx-auto lg:mx-0"
+          className="w-full lg:w-1/2 max-w-[310px] sm:max-w-[420px] lg:max-w-[420px] lg:ml-12 mt-6 sm:mt-12 lg:mt-0 mb-8 mx-auto lg:mx-0"
         >
           <div className="p-[2px] sm:p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl relative">
             <div className={`${darkMode ? "bg-[#0f172a]/95 text-white" : "bg-[#FAFAFA] text-gray-900"} backdrop-blur-2xl rounded-[calc(2rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] py-4 px-5 sm:py-6 sm:px-8 space-y-4 sm:space-y-5 relative overflow-hidden transition-all duration-500`}>
@@ -481,13 +481,13 @@ function LoginContent() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="w-full lg:w-1/2 text-center lg:text-right hidden lg:block"
+          className="w-full lg:w-1/2 text-center lg:text-right hidden lg:block lg:pt-20"
         >
           <h1 className="text-9xl xl:text-[10rem] font-black text-white tracking-tighter drop-shadow-2xl leading-[0.85] opacity-90">
             Alumni Portal
           </h1>
           <p className="text-white/80 mt-6 font-medium text-xl xl:text-2xl max-w-[600px] ml-auto">
-            Reconnect with your roots. Network with professionals. Grow your future together.
+            Build lifelong connections, share opportunities, and keep the university spirit alive.
           </p>
           <div className="mt-8 flex justify-end gap-4">
             <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
@@ -497,7 +497,7 @@ function LoginContent() {
         </motion.div>
 
         {/* Mobile Header (Shows above form on small screens) */}
-        <div className="lg:hidden text-center mb-0 order-first">
+        <div className="lg:hidden text-center mb-4 order-first pt-10 sm:pt-14">
           <h1 className="text-5xl font-black text-white tracking-tight drop-shadow-lg">
             Alumni Portal
           </h1>
