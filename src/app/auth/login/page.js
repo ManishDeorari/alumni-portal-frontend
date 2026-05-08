@@ -35,7 +35,7 @@ function LoginContent() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(true);
 
   React.useEffect(() => {
     setIsAndroid(/android/i.test(navigator.userAgent));
@@ -214,7 +214,12 @@ function LoginContent() {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode} alwaysDark={isAndroid}>
+    <TubesBackground 
+      className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} 
+      darkMode={darkMode} 
+      alwaysDark={true}
+      tubeCount={10}
+    >
       <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
       <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div

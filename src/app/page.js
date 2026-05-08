@@ -59,7 +59,7 @@ export default function HomePage() {
   const [scrolled, setScrolled] = useState(false);
   const [email, setEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(true);
 
   useEffect(() => {
     setIsAndroid(/android/i.test(navigator.userAgent));
@@ -84,7 +84,13 @@ export default function HomePage() {
   };
 
   return (
-    <TubesBackground className={`relative min-h-screen transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} darkMode={darkMode} alwaysDark={isAndroid}>
+    <TubesBackground 
+      className={`relative min-h-screen transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} 
+      darkMode={darkMode} 
+      alwaysDark={true}
+      tubeCount={5}
+      idleDelay={3000}
+    >
       {/* 🚀 Sticky Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-4 bg-transparent border-white/10 shadow-2xl backdrop-blur-md border-b" : "py-6 bg-transparent"}`}>
         <div className="max-w-6xl mx-auto px-6 flex justify-between items-center text-white" >
