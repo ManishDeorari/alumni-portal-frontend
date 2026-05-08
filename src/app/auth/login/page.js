@@ -35,6 +35,11 @@ function LoginContent() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+
+  React.useEffect(() => {
+    setIsAndroid(/android/i.test(navigator.userAgent));
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -206,17 +211,10 @@ function LoginContent() {
     }
   };
 
-  const { darkMode: globalDarkMode, toggleDarkMode } = useTheme();
-  const [isAndroid, setIsAndroid] = useState(false);
-
-  React.useEffect(() => {
-    setIsAndroid(/Android/i.test(navigator.userAgent));
-  }, []);
-
-  const darkMode = isAndroid ? true : globalDarkMode;
+  const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode}>
+    <TubesBackground className={`min-h-screen flex flex-col lg:flex-row items-center justify-center relative px-4 sm:px-8 transition-colors duration-500`} darkMode={darkMode} alwaysDark={isAndroid}>
       <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
       <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div
@@ -501,7 +499,7 @@ function LoginContent() {
         </div>
       </div>
 
-      <ThemeToggle hidden={isAndroid} />
+      <ThemeToggle />
     </TubesBackground>
   );
 }
