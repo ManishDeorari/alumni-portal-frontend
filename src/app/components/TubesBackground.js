@@ -42,8 +42,6 @@ export function TubesBackground({
     setMounted(true);
     if (typeof window !== "undefined") {
       setBaseRatio(window.devicePixelRatio || 1);
-      // Ensure THREE is globally available for some CDN versions of threejs-components
-      window.THREE = THREE;
     }
   }, []);
 
@@ -51,12 +49,12 @@ export function TubesBackground({
     dark: {
       tubes: ["#6366f1", "#a855f7", "#ec4899"],
       lights: ["#818cf8", "#c084fc", "#f472b6", "#60a5fa"],
-      intensity: 400, // Increased for better visibility
+      intensity: 300,
     },
     light: {
       tubes: ["#3b82f6", "#8b5cf6", "#d946ef"],
       lights: ["#dbeafe", "#f3e8ff", "#fae8ff", "#eff6ff"],
-      intensity: 200,
+      intensity: 150,
     }
   };
 
@@ -71,7 +69,7 @@ export function TubesBackground({
   }, [darkMode, alwaysDark]);
 
   useEffect(() => {
-    let mountedLocal = true;
+    let mounted = true;
     if (!supportsWebGL()) {
       setWebglFailed(true);
       return;
@@ -80,14 +78,14 @@ export function TubesBackground({
     let curX = window.innerWidth / 2;
     let curY = window.innerHeight / 2;
     let lastDispX = -1, lastDispY = -1;
-    let tgtX = curX + 1; 
+    let tgtX = curX + 1; // Slight offset to ensure first move is registered
     let tgtY = curY + 1;
-    let lastActivity = 0; 
+    let lastActivity = 0; // Force idle wandering to start immediately
     let isPointerDown = false;
     let rafId;
 
     const fireMove = (x, y) => {
-      if (!mountedLocal) return;
+      if (!mounted) return;
       if (Math.abs(x - lastDispX) < 0.5 && Math.abs(y - lastDispY) < 0.5) return;
       
       const eventData = {
@@ -98,6 +96,7 @@ export function TubesBackground({
         view: window
       };
       
+      // Dispatch PointerEvent and MouseEvent to window, document, body and canvas
       const types = window.PointerEvent ? ["pointermove", "mousemove"] : ["mousemove"];
       types.forEach((type) => {
         const EventClass = type === "pointermove" ? PointerEvent : MouseEvent;
@@ -108,6 +107,7 @@ export function TubesBackground({
         if (canvasRef.current) canvasRef.current.dispatchEvent(new EventClass(type, eventData));
       });
 
+      // Dispatch TouchEvent for mobile-specific listeners
       try {
         const touch = new Touch({
           identifier: 0,
@@ -126,8 +126,11 @@ export function TubesBackground({
         document.dispatchEvent(touchEvent);
         if (document.body) document.body.dispatchEvent(touchEvent);
         if (canvasRef.current) canvasRef.current.dispatchEvent(touchEvent);
-      } catch (e) {}
+      } catch (e) {
+        // Ignore if Touch API isn't fully supported
+      }
 
+      // Try brute-force mutation on the library object itself if it exposes a cursor or mouse property
       try {
         if (tubesRef.current) {
           if (tubesRef.current.cursor) { tubesRef.current.cursor.x = x; tubesRef.current.cursor.y = y; }
@@ -159,12 +162,14 @@ export function TubesBackground({
 
     const idleLoop = () => {
       rafId = requestAnimationFrame(idleLoop);
+      // On touch devices, we don't pause for pointer down, only for active scrolling
       const shouldPause = isTouchDevice ? isScrolling : (isPointerDown || isScrolling);
       if (shouldPause) return;
 
       const idle = isTouchDevice || (Date.now() - lastActivity > idleDelay);
       if (!idle) return;
 
+      // Smoother, slightly faster wandering for touch devices
       const speed = isTouchDevice ? 0.015 : 0.01;
       curX = lerp(curX, tgtX, speed);
       curY = lerp(curY, tgtY, speed);
@@ -173,6 +178,7 @@ export function TubesBackground({
       fireMove(curX, curY);
     };
 
+    // ── Unified Pointer Events (Mobile & Desktop) ───────────────────────────
     const handlePointerAction = (e) => {
       if (!e.isTrusted) return;
       lastActivity = Date.now();
@@ -195,10 +201,60 @@ export function TubesBackground({
       lastActivity = Date.now();
     };
 
+    window.addEventListener("scroll",      onScroll,      { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup",   onPointerUp,   { passive: true });
+    window.addEventListener("pointercancel", onPointerUp, { passive: true });
+
+    const initTubes = async () => {
+      if (!canvasRef.current) return;
+      
+      if (isTouchDevice) {
+        initMobileThreeJS();
+        return;
+      }
+
+      // Small delay for mobile stability before heavy WebGL init
+      await new Promise(r => setTimeout(r, 200));
+      if (!mounted) return;
+
+      try {
+        const module = await import(/* webpackIgnore: true */ "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js");
+        const TubesCursor = module.default;
+        if (!mounted) return;
+
+        const effectiveDarkMode = alwaysDark || darkMode;
+        const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
+        
+        // Increase intensity for mobile visibility
+        const intensity = isTouchDevice ? (currentTheme.intensity * 1.5) : currentTheme.intensity;
+
+        const app = TubesCursor(canvasRef.current, {
+          tubes: {
+            count: tubeCount,
+            radius: 0.015,
+            thickness: 0.005,
+            colors: currentTheme.tubes,
+            lights: { intensity: intensity, colors: currentTheme.lights },
+          },
+        });
+        tubesRef.current = app;
+
+        if (mounted) {
+          const prime = () => fireMove(window.innerWidth / 2, window.innerHeight / 2);
+          prime(); setTimeout(prime, 100); setTimeout(prime, 500);
+          rafId = requestAnimationFrame(idleLoop);
+        }
+      } catch {
+        if (mounted) setWebglFailed(true);
+      }
+    };
+
     let mobileRenderer, mobileCamera, mobileRafId;
 
     const handleResize = () => {
-      if (!mountedLocal) return;
+      if (!mounted) return;
       const width = window.innerWidth;
       const height = window.innerHeight;
       const currentRatio = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -209,11 +265,13 @@ export function TubesBackground({
         mobileRenderer.setPixelRatio(currentRatio);
         if (mobileCamera) {
           mobileCamera.aspect = width / height;
+          // Compensate for browser zoom
           mobileCamera.zoom = 1 / zoomFactor;
           mobileCamera.updateProjectionMatrix();
         }
       }
       
+      // Force library resize if on desktop
       try {
         if (tubesRef.current?.resize) {
           tubesRef.current.resize();
@@ -223,7 +281,6 @@ export function TubesBackground({
 
     const initMobileThreeJS = () => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
       mobileRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
       mobileRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       mobileRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -235,6 +292,7 @@ export function TubesBackground({
       const effectiveDarkMode = alwaysDark || darkMode;
       const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
       
+      // Create glowing particles that drift
       const geometry = new THREE.BufferGeometry();
       const particleCount = 150;
       const positions = new Float32Array(particleCount * 3);
@@ -263,6 +321,7 @@ export function TubesBackground({
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
+      // Simple glowing material
       const material = new THREE.PointsMaterial({
           size: 0.2,
           vertexColors: true,
@@ -275,7 +334,7 @@ export function TubesBackground({
       mobileScene.add(mobileParticles);
 
       const animate = () => {
-          if (!mountedLocal) return;
+          if (!mounted) return;
           mobileRafId = requestAnimationFrame(animate);
           
           const posAttr = mobileParticles.geometry.attributes.position;
@@ -284,6 +343,7 @@ export function TubesBackground({
               posAttr.array[i*3+1] += velocities[i].y;
               posAttr.array[i*3+2] += velocities[i].z;
 
+              // Bounds check
               if (Math.abs(posAttr.array[i*3]) > 15) velocities[i].x *= -1;
               if (Math.abs(posAttr.array[i*3+1]) > 15) velocities[i].y *= -1;
               if (posAttr.array[i*3+2] > 5 || posAttr.array[i*3+2] < -15) velocities[i].z *= -1;
@@ -299,62 +359,11 @@ export function TubesBackground({
       animate();
     };
 
-    const initTubes = async () => {
-      if (!canvasRef.current) return;
-      
-      // Removed forced touch device check for laptops that report maxTouchPoints > 0
-      // Only use mobile fallback if the screen is actually small (likely a phone/tablet)
-      const isSmallScreen = window.innerWidth < 768;
-      if (isTouchDevice && isSmallScreen) {
-        initMobileThreeJS();
-        return;
-      }
-
-      await new Promise(r => setTimeout(r, 200));
-      if (!mountedLocal) return;
-
-      try {
-        const module = await import(/* webpackIgnore: true */ "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js");
-        const TubesCursor = module.default;
-        if (!mountedLocal) return;
-
-        const effectiveDarkMode = alwaysDark || darkMode;
-        const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
-        
-        const intensity = isTouchDevice ? (currentTheme.intensity * 1.5) : currentTheme.intensity;
-
-        const app = TubesCursor(canvasRef.current, {
-          tubes: {
-            count: tubeCount,
-            radius: 0.02, // Increased radius
-            thickness: 0.006, // Increased thickness
-            colors: currentTheme.tubes,
-            lights: { intensity: intensity, colors: currentTheme.lights },
-          },
-        });
-        tubesRef.current = app;
-
-        if (mountedLocal) {
-          const prime = () => fireMove(window.innerWidth / 2, window.innerHeight / 2);
-          prime(); setTimeout(prime, 100); setTimeout(prime, 500);
-          rafId = requestAnimationFrame(idleLoop);
-        }
-      } catch {
-        if (mountedLocal) setWebglFailed(true);
-      }
-    };
-
     window.addEventListener("resize",         handleResize);
     initTubes();
 
-    window.addEventListener("scroll",      onScroll,      { passive: true });
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerup",   onPointerUp,   { passive: true });
-    window.addEventListener("pointercancel", onPointerUp, { passive: true });
-
     return () => {
-      mountedLocal = false;
+      mounted = false;
       window.removeEventListener("resize",      handleResize);
       cancelAnimationFrame(rafId);
       if (mobileRafId) cancelAnimationFrame(mobileRafId);
@@ -378,11 +387,11 @@ export function TubesBackground({
     } catch { /* ignore */ }
   };
 
-  const isInitialDark = alwaysDark || darkMode;
-  const effectiveBgDark = !mounted ? isInitialDark : (alwaysDark || darkMode);
+    const isInitialDark = alwaysDark || darkMode;
+    const effectiveBgDark = !mounted ? isInitialDark : (alwaysDark || darkMode);
 
-  return (
-    <div className={`w-full relative min-h-screen ${className || ""} ${effectiveBgDark ? "bg-[#020617]" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
+    return (
+    <div className={`w-full ${className || ""} ${effectiveBgDark ? "bg-slate-950" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
       {webglFailed ? (
         <div
           className="fixed inset-0 z-0 w-screen h-[100dvh]"
@@ -393,6 +402,7 @@ export function TubesBackground({
           }}
         />
       ) : (
+        /* Detached z-index and forced viewport binding for mobile reliability */
         <canvas
           ref={canvasRef}
           className="fixed inset-0 w-screen h-[100dvh] block z-[1]"
@@ -401,7 +411,7 @@ export function TubesBackground({
       )}
 
       {overlay && (
-        <div className="fixed inset-0 w-screen h-[100dvh] z-[2] pointer-events-none bg-black/20" /> // Reduced overlay opacity
+        <div className="fixed inset-0 w-screen h-[100dvh] z-[2] pointer-events-none bg-black/30" />
       )}
 
       <div className="relative z-10 w-full overflow-x-hidden">{children}</div>
