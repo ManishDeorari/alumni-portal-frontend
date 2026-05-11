@@ -7,7 +7,7 @@ import { Mail, ArrowRight, ShieldCheck, ChevronDown, Monitor, Moon, Sun, User } 
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
-import TubesBackground from "./components/TubesBackground";
+import { TubesBackground } from "./components/TubesBackground";
 import ThemeToggle from "./components/ui/ThemeToggle";
 
 const sectionVariants = {
@@ -85,7 +85,7 @@ export default function HomePage() {
 
   return (
     <TubesBackground 
-      className={`relative min-h-screen transition-colors duration-500 selection:bg-blue-500/30 text-white scroll-smooth`} 
+      className="text-white" 
       darkMode={darkMode} 
       alwaysDark={true}
       tubeCount={5}

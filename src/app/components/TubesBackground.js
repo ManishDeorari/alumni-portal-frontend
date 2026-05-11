@@ -69,7 +69,7 @@ export function TubesBackground({
   }, [darkMode, alwaysDark]);
 
   useEffect(() => {
-    let mounted = true;
+    let mountedLocal = true;
     if (!supportsWebGL()) {
       setWebglFailed(true);
       return;
@@ -78,14 +78,14 @@ export function TubesBackground({
     let curX = window.innerWidth / 2;
     let curY = window.innerHeight / 2;
     let lastDispX = -1, lastDispY = -1;
-    let tgtX = curX + 1; // Slight offset to ensure first move is registered
+    let tgtX = curX + 1; 
     let tgtY = curY + 1;
-    let lastActivity = 0; // Force idle wandering to start immediately
+    let lastActivity = 0; 
     let isPointerDown = false;
     let rafId;
 
     const fireMove = (x, y) => {
-      if (!mounted) return;
+      if (!mountedLocal) return;
       if (Math.abs(x - lastDispX) < 0.5 && Math.abs(y - lastDispY) < 0.5) return;
       
       const eventData = {
@@ -96,7 +96,6 @@ export function TubesBackground({
         view: window
       };
       
-      // Dispatch PointerEvent and MouseEvent to window, document, body and canvas
       const types = window.PointerEvent ? ["pointermove", "mousemove"] : ["mousemove"];
       types.forEach((type) => {
         const EventClass = type === "pointermove" ? PointerEvent : MouseEvent;
@@ -107,7 +106,6 @@ export function TubesBackground({
         if (canvasRef.current) canvasRef.current.dispatchEvent(new EventClass(type, eventData));
       });
 
-      // Dispatch TouchEvent for mobile-specific listeners
       try {
         const touch = new Touch({
           identifier: 0,
@@ -126,11 +124,8 @@ export function TubesBackground({
         document.dispatchEvent(touchEvent);
         if (document.body) document.body.dispatchEvent(touchEvent);
         if (canvasRef.current) canvasRef.current.dispatchEvent(touchEvent);
-      } catch (e) {
-        // Ignore if Touch API isn't fully supported
-      }
+      } catch (e) {}
 
-      // Try brute-force mutation on the library object itself if it exposes a cursor or mouse property
       try {
         if (tubesRef.current) {
           if (tubesRef.current.cursor) { tubesRef.current.cursor.x = x; tubesRef.current.cursor.y = y; }
@@ -162,14 +157,12 @@ export function TubesBackground({
 
     const idleLoop = () => {
       rafId = requestAnimationFrame(idleLoop);
-      // On touch devices, we don't pause for pointer down, only for active scrolling
       const shouldPause = isTouchDevice ? isScrolling : (isPointerDown || isScrolling);
       if (shouldPause) return;
 
       const idle = isTouchDevice || (Date.now() - lastActivity > idleDelay);
       if (!idle) return;
 
-      // Smoother, slightly faster wandering for touch devices
       const speed = isTouchDevice ? 0.015 : 0.01;
       curX = lerp(curX, tgtX, speed);
       curY = lerp(curY, tgtY, speed);
@@ -178,7 +171,6 @@ export function TubesBackground({
       fireMove(curX, curY);
     };
 
-    // ── Unified Pointer Events (Mobile & Desktop) ───────────────────────────
     const handlePointerAction = (e) => {
       if (!e.isTrusted) return;
       lastActivity = Date.now();
@@ -201,59 +193,35 @@ export function TubesBackground({
       lastActivity = Date.now();
     };
 
-    window.addEventListener("scroll",      onScroll,      { passive: true });
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerup",   onPointerUp,   { passive: true });
-    window.addEventListener("pointercancel", onPointerUp, { passive: true });
+    let mobileRenderer, mobileCamera, mobileRafId;
 
-    const initTubes = async () => {
-      if (!canvasRef.current) return;
-      
-      if (isTouchDevice) {
-        initMobileThreeJS();
-        return;
-      }
+    const handleResize = () => {
+      if (!mountedLocal) return;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const currentRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const zoomFactor = (window.devicePixelRatio || 1) / (baseRatio || 1);
 
-      // Small delay for mobile stability before heavy WebGL init
-      await new Promise(r => setTimeout(r, 200));
-      if (!mounted) return;
-
-      try {
-        const module = await import(/* webpackIgnore: true */ "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js");
-        const TubesCursor = module.default;
-        if (!mounted) return;
-
-        const effectiveDarkMode = alwaysDark || darkMode;
-        const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
-        
-        // Increase intensity for mobile visibility
-        const intensity = isTouchDevice ? (currentTheme.intensity * 1.5) : currentTheme.intensity;
-
-        const app = TubesCursor(canvasRef.current, {
-          tubes: {
-            count: tubeCount,
-            radius: 0.015,
-            thickness: 0.005,
-            colors: currentTheme.tubes,
-            lights: { intensity: intensity, colors: currentTheme.lights },
-          },
-        });
-        tubesRef.current = app;
-
-        if (mounted) {
-          const prime = () => fireMove(window.innerWidth / 2, window.innerHeight / 2);
-          prime(); setTimeout(prime, 100); setTimeout(prime, 500);
-          rafId = requestAnimationFrame(idleLoop);
+      if (mobileRenderer) {
+        mobileRenderer.setSize(width, height);
+        mobileRenderer.setPixelRatio(currentRatio);
+        if (mobileCamera) {
+          mobileCamera.aspect = width / height;
+          mobileCamera.zoom = 1 / zoomFactor;
+          mobileCamera.updateProjectionMatrix();
         }
-      } catch {
-        if (mounted) setWebglFailed(true);
       }
+      
+      try {
+        if (tubesRef.current?.resize) {
+          tubesRef.current.resize();
+        }
+      } catch (e) {}
     };
 
-    let mobileRenderer, mobileCamera, mobileRafId;
     const initMobileThreeJS = () => {
       const canvas = canvasRef.current;
+      if (!canvas) return;
       mobileRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
       mobileRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       mobileRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -265,7 +233,6 @@ export function TubesBackground({
       const effectiveDarkMode = alwaysDark || darkMode;
       const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
       
-      // Create glowing particles that drift
       const geometry = new THREE.BufferGeometry();
       const particleCount = 150;
       const positions = new Float32Array(particleCount * 3);
@@ -294,7 +261,6 @@ export function TubesBackground({
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-      // Simple glowing material
       const material = new THREE.PointsMaterial({
           size: 0.2,
           vertexColors: true,
@@ -307,7 +273,7 @@ export function TubesBackground({
       mobileScene.add(mobileParticles);
 
       const animate = () => {
-          if (!mounted) return;
+          if (!mountedLocal) return;
           mobileRafId = requestAnimationFrame(animate);
           
           const posAttr = mobileParticles.geometry.attributes.position;
@@ -316,7 +282,6 @@ export function TubesBackground({
               posAttr.array[i*3+1] += velocities[i].y;
               posAttr.array[i*3+2] += velocities[i].z;
 
-              // Bounds check
               if (Math.abs(posAttr.array[i*3]) > 15) velocities[i].x *= -1;
               if (Math.abs(posAttr.array[i*3+1]) > 15) velocities[i].y *= -1;
               if (posAttr.array[i*3+2] > 5 || posAttr.array[i*3+2] < -15) velocities[i].z *= -1;
@@ -332,36 +297,60 @@ export function TubesBackground({
       animate();
     };
 
-    const handleResize = () => {
-      if (!mounted) return;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const currentRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-      const zoomFactor = (window.devicePixelRatio || 1) / (baseRatio || 1);
-
-      if (mobileRenderer) {
-        mobileRenderer.setSize(width, height);
-        mobileRenderer.setPixelRatio(currentRatio);
-        if (mobileCamera) {
-          mobileCamera.aspect = width / height;
-          // Compensate for browser zoom to keep visual size constant
-          mobileCamera.zoom = 1 / zoomFactor;
-          mobileCamera.updateProjectionMatrix();
-        }
+    const initTubes = async () => {
+      if (!canvasRef.current) return;
+      
+      if (isTouchDevice) {
+        initMobileThreeJS();
+        return;
       }
 
-      // Brute-force check for library resize method
-      if (tubesRef.current && typeof tubesRef.current.resize === "function") {
-        tubesRef.current.resize();
+      await new Promise(r => setTimeout(r, 200));
+      if (!mountedLocal) return;
+
+      try {
+        const module = await import(/* webpackIgnore: true */ "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js");
+        const TubesCursor = module.default;
+        if (!mountedLocal) return;
+
+        const effectiveDarkMode = alwaysDark || darkMode;
+        const currentTheme = effectiveDarkMode ? colorSchemes.dark : colorSchemes.light;
+        
+        const intensity = isTouchDevice ? (currentTheme.intensity * 1.5) : currentTheme.intensity;
+
+        const app = TubesCursor(canvasRef.current, {
+          tubes: {
+            count: tubeCount,
+            radius: 0.015,
+            thickness: 0.005,
+            colors: currentTheme.tubes,
+            lights: { intensity: intensity, colors: currentTheme.lights },
+          },
+        });
+        tubesRef.current = app;
+
+        if (mountedLocal) {
+          const prime = () => fireMove(window.innerWidth / 2, window.innerHeight / 2);
+          prime(); setTimeout(prime, 100); setTimeout(prime, 500);
+          rafId = requestAnimationFrame(idleLoop);
+        }
+      } catch {
+        if (mountedLocal) setWebglFailed(true);
       }
     };
 
+    window.addEventListener("resize",         handleResize);
     initTubes();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll",      onScroll,      { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup",   onPointerUp,   { passive: true });
+    window.addEventListener("pointercancel", onPointerUp, { passive: true });
 
     return () => {
-      mounted = false;
+      mountedLocal = false;
+      window.removeEventListener("resize",      handleResize);
       cancelAnimationFrame(rafId);
       if (mobileRafId) cancelAnimationFrame(mobileRafId);
       if (mobileRenderer) {
@@ -372,7 +361,6 @@ export function TubesBackground({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup",   onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
-      window.removeEventListener("resize",      handleResize);
     };
   }, [tubeCount, idleDelay]);
 
@@ -385,10 +373,10 @@ export function TubesBackground({
     } catch { /* ignore */ }
   };
 
-    const isInitialDark = alwaysDark || darkMode;
-    const effectiveBgDark = !mounted ? isInitialDark : (alwaysDark || darkMode);
+  const isInitialDark = alwaysDark || darkMode;
+  const effectiveBgDark = !mounted ? isInitialDark : (alwaysDark || darkMode);
 
-    return (
+  return (
     <div className={`w-full ${className || ""} ${effectiveBgDark ? "bg-slate-950" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
       {webglFailed ? (
         <div
@@ -400,7 +388,6 @@ export function TubesBackground({
           }}
         />
       ) : (
-        /* Detached z-index and forced viewport binding for mobile reliability */
         <canvas
           ref={canvasRef}
           className="fixed inset-0 w-screen h-[100dvh] block z-[1]"
