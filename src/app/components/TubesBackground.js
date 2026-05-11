@@ -42,6 +42,8 @@ export function TubesBackground({
     setMounted(true);
     if (typeof window !== "undefined") {
       setBaseRatio(window.devicePixelRatio || 1);
+      // Ensure THREE is globally available for some CDN versions of threejs-components
+      window.THREE = THREE;
     }
   }, []);
 
@@ -49,12 +51,12 @@ export function TubesBackground({
     dark: {
       tubes: ["#6366f1", "#a855f7", "#ec4899"],
       lights: ["#818cf8", "#c084fc", "#f472b6", "#60a5fa"],
-      intensity: 300,
+      intensity: 400, // Increased for better visibility
     },
     light: {
       tubes: ["#3b82f6", "#8b5cf6", "#d946ef"],
       lights: ["#dbeafe", "#f3e8ff", "#fae8ff", "#eff6ff"],
-      intensity: 150,
+      intensity: 200,
     }
   };
 
@@ -300,7 +302,10 @@ export function TubesBackground({
     const initTubes = async () => {
       if (!canvasRef.current) return;
       
-      if (isTouchDevice) {
+      // Removed forced touch device check for laptops that report maxTouchPoints > 0
+      // Only use mobile fallback if the screen is actually small (likely a phone/tablet)
+      const isSmallScreen = window.innerWidth < 768;
+      if (isTouchDevice && isSmallScreen) {
         initMobileThreeJS();
         return;
       }
@@ -321,8 +326,8 @@ export function TubesBackground({
         const app = TubesCursor(canvasRef.current, {
           tubes: {
             count: tubeCount,
-            radius: 0.015,
-            thickness: 0.005,
+            radius: 0.02, // Increased radius
+            thickness: 0.006, // Increased thickness
             colors: currentTheme.tubes,
             lights: { intensity: intensity, colors: currentTheme.lights },
           },
@@ -377,7 +382,7 @@ export function TubesBackground({
   const effectiveBgDark = !mounted ? isInitialDark : (alwaysDark || darkMode);
 
   return (
-    <div className={`w-full ${className || ""} ${effectiveBgDark ? "bg-slate-950" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
+    <div className={`w-full relative min-h-screen ${className || ""} ${effectiveBgDark ? "bg-[#020617]" : "bg-white"} transition-colors duration-500`} onClick={handleClick}>
       {webglFailed ? (
         <div
           className="fixed inset-0 z-0 w-screen h-[100dvh]"
@@ -396,7 +401,7 @@ export function TubesBackground({
       )}
 
       {overlay && (
-        <div className="fixed inset-0 w-screen h-[100dvh] z-[2] pointer-events-none bg-black/30" />
+        <div className="fixed inset-0 w-screen h-[100dvh] z-[2] pointer-events-none bg-black/20" /> // Reduced overlay opacity
       )}
 
       <div className="relative z-10 w-full overflow-x-hidden">{children}</div>
