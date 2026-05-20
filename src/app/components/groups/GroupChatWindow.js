@@ -66,10 +66,10 @@ export default function GroupChatWindow({
         if (e) e.preventDefault();
         if (!newMessage.trim() && !selectedFile) return;
 
+        setUploading(true);
         let mediaData = { mediaUrl: null, mediaPublicId: null, type: "text" };
 
         if (selectedFile) {
-            setUploading(true);
             try {
                 const formData = new FormData();
                 formData.append("file", selectedFile);
@@ -95,11 +95,11 @@ export default function GroupChatWindow({
             }
         }
 
-        onSendMessage(newMessage, mediaData);
+        await onSendMessage(newMessage, mediaData);
         setNewMessage("");
         setMediaPreview(null);
         setSelectedFile(null);
-        setUploading(false);
+        setTimeout(() => setUploading(false), 1000);
     };
 
     const onEmojiClick = (emojiData) => {

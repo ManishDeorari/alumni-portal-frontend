@@ -98,7 +98,7 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
             console.error(error);
             toast.error("Error updating job preferences");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

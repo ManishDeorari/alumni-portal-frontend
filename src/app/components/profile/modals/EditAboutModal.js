@@ -34,7 +34,7 @@ export default function EditAboutModal({ isOpen, onClose, currentBio, onSave }) 
             console.error(error);
             toast.error("Error updating bio");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

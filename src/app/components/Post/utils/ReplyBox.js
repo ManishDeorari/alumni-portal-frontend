@@ -18,7 +18,7 @@ export default function ReplyBox({ parentId, onSubmit, darkMode = false }) {
     } catch (err) {
       console.error("Reply submit failed:", err);
     } finally {
-      setSending(false);
+      setTimeout(() => setSending(false), 1000);
     }
   };
 

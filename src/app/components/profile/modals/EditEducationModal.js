@@ -233,7 +233,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
             console.error(error);
             toast.error("Error updating education");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

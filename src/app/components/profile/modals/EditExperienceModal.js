@@ -194,7 +194,7 @@ export default function EditExperienceModal({ isOpen, onClose, currentExperience
             console.error(error);
             toast.error("Error updating experience");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

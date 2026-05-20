@@ -10,7 +10,7 @@ import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostReactions from "./PostReactions";
 import getEmojiFromUnified from "../utils/getEmojiFromUnified";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import EventRegistrationModal from "../EventRegistrationModal";
 import AdminRegistrationsModal from "../AdminRegistrationsModal";
 import { approvePointsRequest } from "../../../../api/dashboard";
@@ -61,6 +61,7 @@ export default function PostModal({
   darkMode = false,
   setPosts, // Add setPosts to update state after registration
   handleReactToComment, // Add handleReactToComment
+  handlePinComment,
   hideInteractions = false // New prop to hide interactive elements
 }) {
   const [showCommentsState, setShowCommentsState] = useState(true);
@@ -71,6 +72,21 @@ export default function PostModal({
   const isSelf = post.user?._id === currentUser?._id;
   const isRestricted = !isSelf && currentUser?.role !== 'admin';
   const editKey = `draft-${post._id}`;
+
+  // Sort comments: Pinned comments first (newest to oldest), then unpinned comments (newest to oldest)
+  const sortedComments = useMemo(() => {
+    if (!post.comments) return [];
+    
+    const pinned = [];
+    const unpinned = [];
+    
+    [...post.comments].reverse().forEach(c => {
+      if (c.isPinned) pinned.push(c);
+      else unpinned.push(c);
+    });
+    
+    return [...pinned, ...unpinned];
+  }, [post.comments]);
 
   if (!showModal) return null;
 
@@ -409,7 +425,7 @@ export default function PostModal({
                     </h3>
 
                     <div className="space-y-4">
-                      {(post.comments || []).slice().reverse().map((c) => (
+                      {sortedComments.map((c) => (
                         <CommentCard
                           key={c._id}
                           comment={c}
@@ -423,6 +439,8 @@ export default function PostModal({
                           onDeleteReply={handleDeleteReply}
                           onReactToReply={handleReactToReply}
                           onReactToComment={handleReactToComment}
+                          isPostOwner={isSelf}
+                          onPinComment={handlePinComment}
                           darkMode={darkMode}
                         />
                       ))}

@@ -20,6 +20,7 @@ const MyConnectionsContent = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [ownerName, setOwnerName] = useState("My");
     const [requested, setRequested] = useState({});
+    const [connectingIds, setConnectingIds] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,11 +61,15 @@ const MyConnectionsContent = () => {
     }, [userIdInParam]);
 
     const handleConnect = async (toUserId) => {
+        if (connectingIds[toUserId]) return;
+        setConnectingIds(prev => ({ ...prev, [toUserId]: true }));
         try {
             await sendConnectionRequest(toUserId);
             setRequested(prev => ({ ...prev, [toUserId]: true }));
         } catch (err) {
             console.error("Connect error:", err);
+        } finally {
+            setTimeout(() => setConnectingIds(prev => ({ ...prev, [toUserId]: false })), 1000);
         }
     };
 
@@ -190,9 +195,10 @@ const MyConnectionsContent = () => {
                                             ) : (
                                                 <button 
                                                     onClick={() => handleConnect(user._id)}
-                                                    className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:from-blue-500 hover:to-purple-500 transition-all shadow-lg active:scale-95"
+                                                    disabled={connectingIds[user._id]}
+                                                    className={`w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:from-blue-500 hover:to-purple-500 transition-all shadow-lg ${connectingIds[user._id] ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
                                                 >
-                                                    Connect
+                                                    {connectingIds[user._id] ? "Wait" : "Connect"}
                                                 </button>
                                             )}
                                         </div>

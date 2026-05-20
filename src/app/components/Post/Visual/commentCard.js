@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "./ConfirmationModal";
+import { FaEllipsisH, FaThumbtack } from "react-icons/fa";
 
 export default function CommentCard({
   comment,
@@ -23,6 +24,8 @@ export default function CommentCard({
   onDeleteReply,
   onReactToReply,
   onReactToComment,
+  isPostOwner = false,
+  onPinComment,
   darkMode = false
 }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -36,6 +39,20 @@ export default function CommentCard({
   const [showAbove, setShowAbove] = useState(true);
   const [pickerStyle, setPickerStyle] = useState({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef(null);
+
+  useEffect(() => {
+    if (showOptions) {
+      const handleClickOutside = (e) => {
+        if (optionsRef.current && !optionsRef.current.contains(e.target)) {
+          setShowOptions(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showOptions]);
 
   const commentRef = useRef(null);
   const reactButtonRef = useRef(null);
@@ -138,8 +155,13 @@ export default function CommentCard({
     <div className={`p-[1.5px] rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg ${isReply ? "ml-4 scale-[0.98] origin-top-left opacity-95 transition-opacity" : "mt-2"}`}>
       <div
         ref={commentRef}
-        className={`relative p-3 rounded-[calc(1rem-1.5px)] transition-all duration-300 ${isOwn ? (darkMode ? "bg-slate-800/90" : "bg-blue-50/50") : (darkMode ? "bg-slate-900" : "bg-white")} ${justPosted ? "ring-2 ring-blue-400" : ""}`}
+        className={`relative p-3 rounded-[calc(1rem-1.5px)] transition-all duration-300 ${isOwn ? (darkMode ? "bg-slate-800/90" : "bg-blue-50/50") : (darkMode ? "bg-slate-900" : "bg-white")} ${justPosted ? "ring-2 ring-blue-400" : ""} ${comment.isPinned ? "border-l-4 border-orange-500 shadow-md" : ""}`}
       >
+        {comment.isPinned && (
+          <div className="absolute -top-2 right-4 bg-gradient-to-r from-orange-400 to-red-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1 z-10">
+            <FaThumbtack className="w-2 h-2" /> Pinned
+          </div>
+        )}
         <div className="flex justify-between items-start">
           <div className="flex gap-3 w-full">
             <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex-shrink-0 w-8 h-8 shadow-sm">
@@ -198,61 +220,98 @@ export default function CommentCard({
               </div>
             </div>
 
-            {(isOwn || currentUser?.role === 'admin' || currentUser?.isMainAdmin) && (
-              <div className="flex items-center gap-2 ml-2">
-                {editing ? (
-                  isOwn && (
-                    <>
-                      <button
-                        className="text-[9px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
-                        onClick={() => {
-                          if (isReply) {
-                            onEditReply(comment.parentId, comment._id, editText);
-                          } else {
-                            onEdit(comment._id, editText);
-                          }
-                          setEditing(false);
-                          setShowEmoji(false);
-                        }}
+            <div className="flex items-center gap-2 ml-2">
+              {(isOwn || currentUser?.role === 'admin' || currentUser?.isMainAdmin || isPostOwner) && (
+                <div className="relative" ref={optionsRef}>
+                  <button
+                    onClick={() => setShowOptions(!showOptions)}
+                    className={`p-1.5 rounded-full transition-colors flex items-center justify-center opacity-100 ${darkMode ? "text-gray-100 bg-white/10 hover:bg-white/20" : "text-gray-800 bg-gray-200/80 hover:bg-gray-300"}`}
+                  >
+                    <FaEllipsisH className="w-3.5 h-3.5" />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showOptions && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        className={`absolute right-0 top-full mt-1 w-36 rounded-xl overflow-hidden shadow-2xl border z-50 ${darkMode ? "bg-slate-800/95 border-white/10 backdrop-blur-md" : "bg-white/95 border-gray-100 backdrop-blur-md"}`}
                       >
-                        Save
-                      </button>
-                      <button
-                        className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-400 transition-colors"
-                        onClick={() => {
-                          setEditing(false);
-                          setEditText(comment.text);
-                          setShowEmoji(false);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )
-                ) : (
-                  <>
-                    {isOwn && (
-                      <button
-                        className="text-[9px] font-black uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
-                        onClick={() => {
-                          setEditText(comment.text);
-                          setEditing(true);
-                        }}
-                      >
-                        Edit
-                      </button>
+                        {editing ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                if (isReply) {
+                                  onEditReply(comment.parentId, comment._id, editText);
+                                } else {
+                                  onEdit(comment._id, editText);
+                                }
+                                setEditing(false);
+                                setShowEmoji(false);
+                                setShowOptions(false);
+                              }}
+                              className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-blue-400 hover:bg-white/5" : "text-blue-600 hover:bg-gray-50"}`}
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditing(false);
+                                setEditText(comment.text);
+                                setShowEmoji(false);
+                                setShowOptions(false);
+                              }}
+                              className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-gray-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-50"}`}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            {isPostOwner && !isReply && (
+                              <button
+                                onClick={() => {
+                                  if (onPinComment) onPinComment(comment._id);
+                                  setShowOptions(false);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-colors ${darkMode ? "text-orange-400 hover:bg-white/5" : "text-orange-500 hover:bg-gray-50"}`}
+                              >
+                                <FaThumbtack /> {comment.isPinned ? "Unpin" : "Pin"}
+                              </button>
+                            )}
+                            {isOwn && (
+                              <button
+                                onClick={() => {
+                                  setEditText(comment.text);
+                                  setEditing(true);
+                                  setShowOptions(false);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-green-400 hover:bg-white/5" : "text-green-600 hover:bg-gray-50"}`}
+                              >
+                                Edit
+                              </button>
+                            )}
+                            {(isOwn || isPostOwner || currentUser?.role === 'admin' || currentUser?.isMainAdmin) && (
+                              <button
+                                onClick={() => {
+                                  setShowDeleteConfirm(true);
+                                  setShowOptions(false);
+                                }}
+                                disabled={deleting}
+                                className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-red-400 hover:bg-white/5" : "text-red-600 hover:bg-gray-50"} disabled:opacity-50`}
+                              >
+                                {deleting ? "Wait..." : "Delete"}
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </motion.div>
                     )}
-                    <button
-                      onClick={() => setShowDeleteConfirm(true)}
-                      disabled={deleting}
-                      className="text-[9px] font-black uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
-                    >
-                      {deleting ? "Wait" : "Delete"}
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -400,6 +459,8 @@ export default function CommentCard({
                   onDeleteReply={onDeleteReply}
                   onReactToReply={onReactToReply}
                   onReactToComment={onReactToComment}
+                  isPostOwner={isPostOwner}
+                  onPinComment={onPinComment}
                   darkMode={darkMode}
                 />
               ))}

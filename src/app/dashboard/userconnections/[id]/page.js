@@ -15,6 +15,7 @@ const UserConnectionsPage = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [requested, setRequested] = useState({});
+    const [connectingIds, setConnectingIds] = useState({});
 
     // ⚡ OPTIMISTIC HYDRATION
     useEffect(() => {
@@ -52,11 +53,15 @@ const UserConnectionsPage = () => {
 
     const handleConnect = async (toUserId) => {
         if (currentUser && toUserId === currentUser._id) return;
+        if (connectingIds[toUserId]) return;
+        setConnectingIds(prev => ({ ...prev, [toUserId]: true }));
         try {
             await sendConnectionRequest(toUserId);
             setRequested((prev) => ({ ...prev, [toUserId]: true }));
         } catch (err) {
             console.error("Connect error:", err);
+        } finally {
+            setTimeout(() => setConnectingIds(prev => ({ ...prev, [toUserId]: false })), 1000);
         }
     };
 
@@ -131,13 +136,13 @@ const UserConnectionsPage = () => {
                                         ) : (
                                             <button
                                                 onClick={() => handleConnect(user._id)}
-                                                disabled={requested[user._id]}
-                                                className={`px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-95 ${requested[user._id]
-                                                    ? "bg-[#FAFAFA]/5 text-white/30 cursor-not-allowed border border-white/5"
+                                                disabled={requested[user._id] || connectingIds[user._id]}
+                                                className={`px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-95 ${requested[user._id] || connectingIds[user._id]
+                                                    ? "bg-gray-400 text-white/50 cursor-not-allowed"
                                                     : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/20 shadow-lg"
                                                     }`}
                                             >
-                                                {requested[user._id] ? "Pending" : "Connect"}
+                                                {requested[user._id] ? "Pending" : connectingIds[user._id] ? "Wait" : "Connect"}
                                             </button>
                                         )}
                                     </div>

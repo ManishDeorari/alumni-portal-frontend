@@ -16,6 +16,7 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
     const [activeTab, setActiveTab] = useState("received"); // 'received' or 'sent'
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [processingIds, setProcessingIds] = useState({});
 
     const fetchRequests = useCallback(async () => {
         setLoading(true);
@@ -39,6 +40,8 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
     }, [isOpen, activeTab, fetchRequests]);
 
     const handleAction = async (userId, action) => {
+        if (processingIds[userId]) return;
+        setProcessingIds(prev => ({ ...prev, [userId]: true }));
         try {
             if (action === "accept") await acceptConnectionRequest(userId);
             else if (action === "reject") await rejectConnectionRequest(userId);
@@ -49,6 +52,10 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
             if (onActionComplete) onActionComplete();
         } catch (err) {
             alert(err.message);
+        } finally {
+            setTimeout(() => {
+                setProcessingIds(prev => ({ ...prev, [userId]: false }));
+            }, 1000);
         }
     };
 
@@ -136,26 +143,29 @@ const RequestsModal = ({ isOpen, onClose, onActionComplete }) => {
                                                 <>
                                                     <button
                                                         onClick={() => handleAction(user._id, "accept")}
-                                                        className="relative group/abtn p-[1px] bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg overflow-hidden transition-all active:scale-90"
+                                                        disabled={processingIds[user._id]}
+                                                        className={`relative group/abtn p-[1px] rounded-lg overflow-hidden transition-all shadow-lg ${processingIds[user._id] ? 'bg-gray-400 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-green-500 to-emerald-600 active:scale-90 shadow-green-500/20'}`}
                                                     >
-                                                        <div className="px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1px)]">
-                                                            Accept
+                                                        <div className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-[calc(0.5rem-1px)] text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${processingIds[user._id] ? 'bg-gray-400' : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500'}`}>
+                                                            {processingIds[user._id] ? "..." : "Accept"}
                                                         </div>
                                                     </button>
                                                     <button
                                                         onClick={() => handleAction(user._id, "reject")}
-                                                        className="px-3 sm:px-5 py-2 sm:py-2.5 bg-red-500/10 border-2 border-red-500/30 text-red-500 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                                                        disabled={processingIds[user._id]}
+                                                        className={`px-3 sm:px-5 py-2 sm:py-2.5 border-2 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${processingIds[user._id] ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed opacity-50' : 'bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white active:scale-90'}`}
                                                     >
-                                                        Reject
+                                                        {processingIds[user._id] ? "..." : "Reject"}
                                                     </button>
                                                 </>
                                             ) : (
                                                 <button
                                                     onClick={() => handleAction(user._id, "cancel")}
-                                                    className="relative group/cbtn p-[1.5px] bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg overflow-hidden transition-all active:scale-90 shadow-lg shadow-orange-500/20"
+                                                    disabled={processingIds[user._id]}
+                                                    className={`relative group/cbtn p-[1.5px] rounded-lg overflow-hidden transition-all shadow-lg ${processingIds[user._id] ? 'bg-gray-400 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-amber-500 to-orange-600 active:scale-90 shadow-orange-500/20'}`}
                                                 >
-                                                    <div className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-[calc(0.5rem-1.5px)]">
-                                                        Cancel
+                                                    <div className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-[calc(0.5rem-1.5px)] text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${processingIds[user._id] ? 'bg-gray-400' : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500'}`}>
+                                                        {processingIds[user._id] ? "..." : "Cancel"}
                                                     </div>
                                                 </button>
                                             )}

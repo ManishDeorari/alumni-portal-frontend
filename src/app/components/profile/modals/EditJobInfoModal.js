@@ -65,7 +65,7 @@ export default function EditJobInfoModal({ isOpen, onClose, currentProfile, onSa
             console.error(error);
             toast.error("Error updating job info");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

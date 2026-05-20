@@ -148,7 +148,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
             console.error(error);
             toast.error("Error updating profile details");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

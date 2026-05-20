@@ -76,7 +76,7 @@ export default function EditWorkProfileModal({ isOpen, onClose, currentWorkProfi
             console.error(error);
             toast.error("Error updating work profile");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 1000);
         }
     };
 

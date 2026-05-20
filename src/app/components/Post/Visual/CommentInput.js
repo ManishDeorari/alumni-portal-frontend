@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import EmojiPickerToggle from "../utils/EmojiPickerToggle";
 import socket from "../../../../utils/socket";
 
@@ -11,6 +11,7 @@ export default function CommentInput({
   darkMode = false
 }) {
   const inputRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleEmojiClick = (emojiObject) => {
     setComment((prev) => prev + (emojiObject.native || emojiObject.emoji));
@@ -32,12 +33,16 @@ export default function CommentInput({
           type="text"
           value={comment}
           onChange={(e) => handleTyping(e.target.value)}
-          onKeyDown={(e) => {
+          onKeyDown={async (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              onSubmit();
+              if (isSubmitting || !comment.trim()) return;
+              setIsSubmitting(true);
+              await onSubmit();
+              setTimeout(() => setIsSubmitting(false), 1000);
             }
           }}
+          disabled={isSubmitting}
           placeholder="Write a comment..."
           className={`flex-1 min-w-0 border ${darkMode ? "border-white/20 bg-slate-800 text-white" : "border-black bg-[#FAFAFA] text-gray-900"} rounded-full px-3 sm:px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
           ref={inputRef}
@@ -52,10 +57,16 @@ export default function CommentInput({
         />
 
         <button
-          onClick={onSubmit}
-          className="bg-blue-500 text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-full hover:bg-blue-600 flex-shrink-0 whitespace-nowrap"
+          onClick={async () => {
+            if (isSubmitting || !comment.trim()) return;
+            setIsSubmitting(true);
+            await onSubmit();
+            setTimeout(() => setIsSubmitting(false), 1000);
+          }}
+          disabled={isSubmitting}
+          className={`${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} text-white text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-full flex-shrink-0 whitespace-nowrap transition-colors`}
         >
-          Post
+          {isSubmitting ? "..." : "Post"}
         </button>
       </div>
     </div>

@@ -31,6 +31,7 @@ export  const NotificationProvider = ({ children }) => {
   
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
   const userRef = useRef(null);
+  const recentToastsRef = useRef(new Map());
 
   const fetchNotifications = useCallback(async (token) => {
     try {
@@ -222,9 +223,25 @@ export  const NotificationProvider = ({ children }) => {
           setShakeNotification(true);
           setTimeout(() => setShakeNotification(false), 1000);
 
+          // Filtering and Deduplication for live popup Toasts
+          const now = Date.now();
+          const type = notification.type;
+          
+          const allowedToastTypes = ["points_earned", "points_requested", "feedback", "notice", "admin_notice", "announcement"];
+          if (!allowedToastTypes.includes(type)) {
+            return; // Skip toast, but still add to notifications list
+          }
+
+          if (recentToastsRef.current.has(type)) {
+            const lastTime = recentToastsRef.current.get(type);
+            if (now - lastTime < 2000) {
+              return; // Skip duplicate toast within 2 seconds
+            }
+          }
+          recentToastsRef.current.set(type, now);
+
           // 🚀 UNIVERSAL PREMIUM TOAST
           toast.custom((t) => {
-            const type = notification.type;
             let theme = {
               gradient: "from-blue-500 via-purple-500 to-indigo-500",
               icon: <ShieldAlert className="w-3.5 h-3.5" />,
@@ -273,13 +290,21 @@ export  const NotificationProvider = ({ children }) => {
                 accent: "text-pink-400",
                 bgAccent: "bg-pink-500/20"
               };
-            } else if (type === "points_earned") {
+            } else if (type === "points_earned" || type === "points_requested") {
               theme = {
                 gradient: "from-yellow-400 via-amber-500 to-yellow-600",
                 icon: <Award className="w-3.5 h-3.5" />,
-                label: "Points Earning",
+                label: type === "points_requested" ? "Points Request" : "Points Earning",
                 accent: "text-yellow-400",
                 bgAccent: "bg-yellow-500/20"
+              };
+            } else if (type === "notice" || type === "admin_notice" || type === "announcement") {
+              theme = {
+                gradient: "from-red-500 via-orange-500 to-yellow-500",
+                icon: <Bell className="w-3.5 h-3.5" />,
+                label: "Important Notice",
+                accent: "text-red-400",
+                bgAccent: "bg-red-500/20"
               };
             }
 

@@ -1,11 +1,28 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { FaEllipsisH } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import ImageViewerModal from "../../profile/ImageViewerModal";
 import Link from "next/link";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, darkMode = false, hideActions = false }) {
   const [showViewer, setShowViewer] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef(null);
+
+  useEffect(() => {
+    if (showOptions) {
+      const handleClickOutside = (e) => {
+        if (optionsRef.current && !optionsRef.current.contains(e.target)) {
+          setShowOptions(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showOptions]);
+
   const profileImg = post.user?.profilePicture || "/default-profile.jpg";
   const isSelf = post.user?._id === currentUser?._id;
   const isRestricted = !isSelf && currentUser?.role !== 'admin';
@@ -68,16 +85,62 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
       </div>
 
       {!hideActions && (
-        <div className="ml-auto flex gap-2">
-          {((post.user?._id || post.user) === (currentUser?._id || currentUser)) && (
-            <button onClick={toggleEdit} className={`${darkMode ? "text-blue-400" : "text-blue-600"} text-sm hover:underline font-bold`}>
-              {editing ? "Cancel" : "Edit"}
-            </button>
-          )}
+        <div className="ml-auto flex items-center gap-2">
           {(((post.user?._id || post.user) === (currentUser?._id || currentUser)) || currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin) && (
-            <button onClick={handleDelete} className={`${darkMode ? "text-red-400" : "text-red-600"} text-sm hover:underline font-bold`}>
-              Delete
-            </button>
+            <div className="relative" ref={optionsRef}>
+              <button
+                onClick={() => setShowOptions(!showOptions)}
+                className={`p-2 rounded-full transition-colors flex items-center justify-center opacity-100 ${darkMode ? "text-gray-100 bg-white/10 hover:bg-white/20" : "text-gray-800 bg-gray-200/80 hover:bg-gray-300"}`}
+              >
+                <FaEllipsisH className="w-4 h-4" />
+              </button>
+              
+              <AnimatePresence>
+                {showOptions && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    className={`absolute right-0 top-full mt-2 w-40 rounded-xl overflow-hidden shadow-2xl border z-50 ${darkMode ? "bg-slate-800/95 border-white/10 backdrop-blur-md" : "bg-white/95 border-gray-100 backdrop-blur-md"}`}
+                  >
+                    {editing ? (
+                      <button
+                        onClick={() => {
+                          toggleEdit();
+                          setShowOptions(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-blue-400 hover:bg-white/5" : "text-blue-600 hover:bg-gray-50"}`}
+                      >
+                        Cancel Edit
+                      </button>
+                    ) : (
+                      <>
+                        {((post.user?._id || post.user) === (currentUser?._id || currentUser)) && (
+                          <button
+                            onClick={() => {
+                              toggleEdit();
+                              setShowOptions(false);
+                            }}
+                            className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-green-400 hover:bg-white/5" : "text-green-600 hover:bg-gray-50"}`}
+                          >
+                            Edit Post
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            handleDelete();
+                            setShowOptions(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-red-400 hover:bg-white/5" : "text-red-600 hover:bg-gray-50"}`}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </div>
       )}

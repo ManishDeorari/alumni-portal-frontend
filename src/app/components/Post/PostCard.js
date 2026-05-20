@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -111,6 +111,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
     handleDeleteReply,
     handleReactToReply,
     handleReactToComment,
+    handlePinComment,
   } = useCommentActions({
     post,
     comment,
@@ -151,6 +152,21 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
   const isMyPost = post.user?._id === currentUser._id;
   const isRestricted = !isMyPost && currentUser?.role !== 'admin';
+
+  // Sort comments: Pinned comments first (newest to oldest), then unpinned comments (newest to oldest)
+  const sortedComments = useMemo(() => {
+    if (!post.comments) return [];
+    
+    const pinned = [];
+    const unpinned = [];
+    
+    [...post.comments].reverse().forEach(c => {
+      if (c.isPinned) pinned.push(c);
+      else unpinned.push(c);
+    });
+    
+    return [...pinned, ...unpinned];
+  }, [post.comments]);
 
   // ✅ Everything's clean and ready for the `return` section now.
   return (
@@ -466,9 +482,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
           {showComments && (
             <div className="pt-2 space-y-3">
-              {(post.comments || [])
-                .slice()
-                .reverse()
+              {sortedComments
                 .slice(0, visibleComments)
                 .map((c) => (
                   <CommentCard
@@ -484,6 +498,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     onDeleteReply={handleDeleteReply}
                     onReactToReply={handleReactToReply}
                     onReactToComment={handleReactToComment}
+                    isPostOwner={isMyPost}
+                    onPinComment={handlePinComment}
                     darkMode={darkMode}
                   />
                 ))}
@@ -549,7 +565,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   setStartIndex,
                   darkMode,
                   setPosts,
-                  handleReactToComment
+                  handleReactToComment,
+                  isPostOwner: isMyPost,
+                  handlePinComment
                 }}
               />
             )}

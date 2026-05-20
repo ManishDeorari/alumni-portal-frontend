@@ -23,6 +23,7 @@ const NetworkPage = () => {
   const [alumni, setAlumni] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [requested, setRequested] = useState({});
+  const [connectingIds, setConnectingIds] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [searched, setSearched] = useState(false);
   const [suggestions, setSuggestions] = useState({});
@@ -81,11 +82,15 @@ const NetworkPage = () => {
   }, [fetchData]);
 
   const handleConnect = async (toUserId) => {
+    if (connectingIds[toUserId]) return;
+    setConnectingIds((prev) => ({ ...prev, [toUserId]: true }));
     try {
       await sendConnectionRequest(toUserId);
       setRequested((prev) => ({ ...prev, [toUserId]: true }));
     } catch (err) {
       console.error("Connect error:", err);
+    } finally {
+      setTimeout(() => setConnectingIds((prev) => ({ ...prev, [toUserId]: false })), 1000);
     }
   };
 
@@ -269,10 +274,13 @@ const NetworkPage = () => {
                         ) : (
                           <button 
                             onClick={() => handleConnect(user._id)} 
-                            className="relative group/btn p-[1.5px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+                            disabled={connectingIds[user._id]}
+                            className={`relative group/btn p-[1.5px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden transition-all shadow-lg shadow-blue-500/20 ${connectingIds[user._id] ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
                           >
                             <div className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover/btn:from-blue-500 group-hover/btn:to-purple-500 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center transition-all">
-                              <span className="text-white text-[10px] font-black uppercase tracking-widest">Connect</span>
+                              <span className="text-white text-[10px] font-black uppercase tracking-widest">
+                                {connectingIds[user._id] ? "Wait" : "Connect"}
+                              </span>
                             </div>
                           </button>
                         )}
@@ -327,12 +335,12 @@ const NetworkPage = () => {
                           <div className="w-full pt-2">
                              <button
                                onClick={() => handleConnect(user._id)}
-                               disabled={requested[user._id]}
-                               className={`w-full relative group/btn p-[1.5px] rounded-xl overflow-hidden transition-all active:scale-95 shadow-md ${requested[user._id] ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-blue-600 to-purple-600'}`}
+                               disabled={requested[user._id] || connectingIds[user._id]}
+                               className={`w-full relative group/btn p-[1.5px] rounded-xl overflow-hidden transition-all shadow-md ${requested[user._id] || connectingIds[user._id] ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-blue-600 to-purple-600 active:scale-95'}`}
                              >
-                               <div className={`${requested[user._id] ? 'bg-gray-100 text-gray-400' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white'} py-2.5 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center transition-all`}>
+                               <div className={`${requested[user._id] || connectingIds[user._id] ? 'bg-gray-100 text-gray-400' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white'} py-2.5 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center transition-all`}>
                                  <span className="text-[10px] font-black uppercase tracking-widest">
-                                   {requested[user._id] ? "Pending" : "Connect"}
+                                   {requested[user._id] ? "Pending" : connectingIds[user._id] ? "Wait" : "Connect"}
                                  </span>
                                </div>
                              </button>
