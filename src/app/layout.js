@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
         <Toaster
           position="top-center"
           containerStyle={{
-            top: 75,
+            top: 15,
             left: 0,
             right: 0,
             paddingLeft: "env(safe-area-inset-left, 0px)",

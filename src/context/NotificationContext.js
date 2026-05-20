@@ -201,16 +201,37 @@ export  const NotificationProvider = ({ children }) => {
       fetchNotifications(token);
       fetchCounts(token);
       
-      if (socket.connected) {
-        socket.emit("join", user._id);
-      }
+      const joinRoomId = user._id || user.id || localStorage.getItem("userId");
       
       const handleSocketConnect = () => {
-        socket.emit("join", user._id);
+        socket.emit("join", joinRoomId);
       };
+      
       socket.on("connect", handleSocketConnect);
       
-      const handleNewNotification = (notification) => {
+      // Always tell socket to join right away. If it's connected, it sends immediately.
+      // If it's disconnected or connecting, socket.io will queue it until it's connected.
+      socket.emit("join", joinRoomId);
+
+      if (!socket.connected) {
+        socket.connect();
+      }
+      
+      const processIncomingNotification = (notification) => {
+        if (!notification) return;
+
+        // Deduplication: 2 seconds window
+        const dedupKey = notification._id || `${notification.type}_${notification.message}`;
+        const now = Date.now();
+        if (recentToastsRef.current.has(dedupKey)) {
+          const lastTime = recentToastsRef.current.get(dedupKey);
+          if (now - lastTime < 2000) {
+            console.log("Ignored duplicate notification within 2s:", dedupKey);
+            return;
+          }
+        }
+        recentToastsRef.current.set(dedupKey, now);
+
         let isNew = false;
         setNotifications(prev => {
           if (prev.some(n => n?._id === notification?._id)) return prev;
@@ -223,22 +244,12 @@ export  const NotificationProvider = ({ children }) => {
           setShakeNotification(true);
           setTimeout(() => setShakeNotification(false), 1000);
 
-          // Filtering and Deduplication for live popup Toasts
-          const now = Date.now();
           const type = notification.type;
           
           const allowedToastTypes = ["points_earned", "points_requested", "feedback", "notice", "admin_notice", "announcement"];
           if (!allowedToastTypes.includes(type)) {
             return; // Skip toast, but still add to notifications list
           }
-
-          if (recentToastsRef.current.has(type)) {
-            const lastTime = recentToastsRef.current.get(type);
-            if (now - lastTime < 2000) {
-              return; // Skip duplicate toast within 2 seconds
-            }
-          }
-          recentToastsRef.current.set(type, now);
 
           // 🚀 UNIVERSAL PREMIUM TOAST
           toast.custom((t) => {
@@ -444,32 +455,8 @@ export  const NotificationProvider = ({ children }) => {
         if (token) fetchCounts(token);
       };
 
-      const handleLiveNotification = (notification) => {
-        if (!notification) return;
-        let isNew = false;
-        setNotifications(prev => {
-          if (prev.some(n => n?._id === notification?._id)) return prev;
-          isNew = true;
-          return [{ ...notification, isRead: false }, ...prev];
-        });
-        
-        if (isNew) {
-          setUnreadCount(prev => prev + 1);
-          setShakeNotification(true);
-          setTimeout(() => setShakeNotification(false), 1000);
-        }
-      };
-
-      const handleForceLogout = () => {
-        console.warn("🔐 Account deleted by admin. Forcing logout...");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        // Use window.location for a hard reset of all states
-        window.location.href = "/auth/login?reason=deleted";
-      };
-
-      socket.on("newNotification", handleNewNotification);
-      socket.on("liveNotification", handleLiveNotification);
+      socket.on("newNotification", processIncomingNotification);
+      socket.on("liveNotification", processIncomingNotification);
       socket.on("newPost", handleNewPost);
       socket.on("receiveGroupMessage", handleNewGroupMessage);
       socket.on("newSignupRequest", handleNewSignupRequest);
@@ -478,8 +465,8 @@ export  const NotificationProvider = ({ children }) => {
 
       return () => {
         socket.off("connect", handleSocketConnect);
-        socket.off("newNotification", handleNewNotification);
-        socket.off("liveNotification", handleLiveNotification);
+        socket.off("newNotification", processIncomingNotification);
+        socket.off("liveNotification", processIncomingNotification);
         socket.off("newPost", handleNewPost);
         socket.off("receiveGroupMessage", handleNewGroupMessage);
         socket.off("newSignupRequest", handleNewSignupRequest);
@@ -495,6 +482,9 @@ export  const NotificationProvider = ({ children }) => {
       setNewPostsCount(0);
       setAdminSignupRequestsCount(0);
       userRef.current = null;
+      if (socket.connected) {
+        socket.disconnect();
+      }
     }
   }, [fetchNotifications, fetchCounts, authTrigger, darkMode]);
 
