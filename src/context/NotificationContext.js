@@ -455,6 +455,13 @@ export  const NotificationProvider = ({ children }) => {
         if (token) fetchCounts(token);
       };
 
+      const handleForceLogout = () => {
+        console.warn("🔐 Account deleted by admin. Forcing logout...");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/auth/login?reason=deleted";
+      };
+
       socket.on("newNotification", processIncomingNotification);
       socket.on("liveNotification", processIncomingNotification);
       socket.on("newPost", handleNewPost);
