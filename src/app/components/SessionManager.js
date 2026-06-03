@@ -47,9 +47,8 @@ export default function SessionManager() {
         style: { background: "#1e293b", color: "#f87171", border: "1px solid #f8717133" },
       });
     }
-
-    router.push("/auth/login");
-  }, [router]);
+    // Do NOT router.push("/auth/login") — that overrides the LoginPopup shown by ClientRouteProtection
+  }, []);
 
   // Reset activity timer on user interaction
   const resetActivity = useCallback(() => {

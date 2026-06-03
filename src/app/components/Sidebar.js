@@ -87,7 +87,7 @@ export default function Sidebar() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("local-auth-change"));
-    router.push("/auth/login");
+    // Do NOT router.push("/auth/login") — that overrides the LoginPopup
   };
 
   return (
