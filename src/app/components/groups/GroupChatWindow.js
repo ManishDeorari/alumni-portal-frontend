@@ -364,25 +364,6 @@ export default function GroupChatWindow({
                         </div>
                     </div>
                 )}
-                {documentPreviewName && (
-                    <div className="p-4 bg-black/10 backdrop-blur-md border-t dark:border-white/5 animate-in slide-in-from-bottom-4 duration-300">
-                        <div className="relative inline-flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-2xl border-2 border-blue-500/30 shadow-2xl">
-                            <span className="text-3xl">📄</span>
-                            <span className="font-bold truncate max-w-[200px] text-gray-900 dark:text-white">{documentPreviewName}</span>
-                            <button
-                                onClick={() => { setSelectedDocument(null); setDocumentPreviewName(""); }}
-                                className="absolute -top-2 -right-2 p-1.5 bg-red-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform"
-                            >
-                                <FaTimes size={12} />
-                            </button>
-                            {uploading && (
-                                <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center">
-                                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
 
                 <div className="h-[1.5px] w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-sm opacity-60" />
 
