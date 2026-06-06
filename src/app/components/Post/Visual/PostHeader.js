@@ -98,11 +98,13 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
               <AnimatePresence>
                 {showOptions && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.95, y: -5 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                    className={`absolute right-0 top-full mt-2 w-40 rounded-xl overflow-hidden shadow-2xl border z-50 ${darkMode ? "bg-slate-800/95 border-white/10 backdrop-blur-md" : "bg-white/95 border-gray-100 backdrop-blur-md"}`}
+                    exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 z-50 p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
                   >
+                    <div className={`w-40 rounded-[10px] backdrop-blur-md p-1 flex flex-col h-full ${darkMode ? "bg-slate-900/95 text-white" : "bg-white/95 text-gray-800"}`}>
                     {editing ? (
                       <button
                         onClick={() => {
@@ -137,7 +139,8 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
                         </button>
                       </>
                     )}
-                  </motion.div>
+                    </div>
+              </motion.div>
                 )}
               </AnimatePresence>
             </div>
