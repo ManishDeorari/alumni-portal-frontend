@@ -25,8 +25,9 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
   }, [showOptions]);
 
   const profileImg = post.user?.profilePicture || "/default-profile.jpg";
-  const isSelf = post.user?._id === currentUser?._id;
-  const isRestricted = !isSelf && currentUser?.role !== 'admin';
+  const isOwn = currentUser && (currentUser._id === post.userId?._id || currentUser.id === post.userId?._id);
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
+  const isRestricted = !isOwn && !isAdmin;
 
   return (
     <div className="flex items-center gap-3">
@@ -159,3 +160,4 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
     </div>
   );
 }
+

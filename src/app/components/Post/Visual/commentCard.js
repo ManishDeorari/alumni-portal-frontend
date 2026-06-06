@@ -109,8 +109,9 @@ export default function CommentCard({
   // ✅ Safety check: early return if basic data is missing
   if (!comment || !currentUser || !comment.user) return null;
 
-  const isOwn = comment.user._id === currentUser._id;
-  const isRestricted = !isOwn && currentUser?.role !== 'admin';
+  const isOwn = currentUser && (currentUser._id === comment.userId?._id || currentUser.id === comment.userId?._id);
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
+  const isRestricted = !isOwn && !isAdmin;
 
   const toggleReaction = async (emoji) => {
     if (isReply && onReactToReply) {
@@ -502,3 +503,4 @@ export default function CommentCard({
     </div>
   );
 }
+
