@@ -23,7 +23,7 @@ export default function ProfileBanner({ image, onUpload, userId, isPublicView })
           src={getOptimizedImageUrl(bannerImg)}
           alt="Banner"
           fill
-          className={`object-cover cursor-pointer ${isRestricted ? 'select-none' : ''}`}
+          className={`object-cover cursor-pointer ${isRestricted ? 'select-none pointer-events-none' : ''}`}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
           onClick={() => setShowViewer(true)}
