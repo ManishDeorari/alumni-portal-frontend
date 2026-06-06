@@ -5,6 +5,8 @@ import { FaPaperPlane, FaSmile, FaInfoCircle, FaUserPlus, FaUsers, FaImage, FaTi
 import { useTheme } from "@/context/ThemeContext";
 import EmojiPicker from 'emoji-picker-react';
 import { toast } from "react-hot-toast";
+import { IoCloseOutline } from "react-icons/io5";
+import { getCloudinaryDownloadUrl, getOptimizedImageUrl } from "../../utils/cloudinaryHelper";
 import GroupAvatar from "./GroupAvatar";
 
 export default function GroupChatWindow({
@@ -242,19 +244,28 @@ export default function GroupChatWindow({
                 <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-chat-pattern">
                     {messages.map((msg, index) => {
                         const isMe = String(msg.sender?._id || msg.sender?.id || msg.sender) === String(currentUser?._id || currentUser?.id);
+                        const isRestricted = !isMe && currentUser?.role !== 'admin';
 
                         return (
                             <div key={msg._id || index} className={`flex items-start gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                                 {!isMe && (
-                                    <div className="flex-shrink-0 w-8 h-8 rounded-lg sm:rounded-xl overflow-hidden border-2 border-white/20 shadow-sm mt-1 bg-gray-200">
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-lg sm:rounded-xl overflow-hidden border-2 border-white/20 shadow-sm mt-1 bg-gray-200 relative">
                                         <Image 
-                                            src={msg.sender?.profilePicture || "/default-profile.jpg"} 
+                                            src={getOptimizedImageUrl(msg.sender?.profilePicture || "/default-profile.jpg")} 
                                             width={32} 
                                             height={32} 
-                                            className="object-cover aspect-square" 
+                                            className={`object-cover aspect-square ${isRestricted ? "select-none" : ""}`} 
                                             alt={msg.sender?.name || "User"} 
                                             onError={(e) => { e.target.src = "/default-profile.jpg"; }}
+                                            onContextMenu={(e) => isRestricted && e.preventDefault()}
+                                            onDragStart={(e) => isRestricted && e.preventDefault()}
                                         />
+                                        {isRestricted && (
+                                            <div 
+                                                className="absolute inset-0 z-10 cursor-pointer"
+                                                onContextMenu={(e) => e.preventDefault()}
+                                            />
+                                        )}
                                     </div>
                                 )}
                                 <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[75%]`}>
@@ -284,7 +295,7 @@ export default function GroupChatWindow({
 
                                                 {msg.type === "document" && msg.mediaUrl && (
                                                     <a
-                                                        href={msg.mediaUrl}
+                                                        href={getCloudinaryDownloadUrl(msg.mediaUrl, msg.fileName)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="flex items-center gap-3 p-3 m-2 rounded-xl bg-black/10 hover:bg-black/20 transition-colors"
