@@ -126,9 +126,12 @@ export const createPost = async (contentOrData, image, video, type = "Regular", 
 };
 
 // ================== ANNOUNCEMENTS ==================
-export const createAnnouncement = async (announcementData, images = [], video = null) => {
+export const createAnnouncement = async (announcementData, images = [], video = null, documents = []) => {
   let imageObjects = [];
   let videoObject = null;
+  let documentObjects = [];
+
+  const RAW_UPLOAD_URL = process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL?.replace('/image/upload', '/raw/upload') || "https://api.cloudinary.com/v1_1/djw8l0wxn/raw/upload";
 
   // 1. Upload Images
   if (images && images.length > 0) {
@@ -136,7 +139,7 @@ export const createAnnouncement = async (announcementData, images = [], video = 
       const imageData = new FormData();
       imageData.append("file", img);
       imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-      imageData.append("folder", "alumni/announcements/images");
+      imageData.append("folder", "student/announcements/images");
 
       const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_IMAGE_UPLOAD_URL, {
         method: "POST",
@@ -154,7 +157,7 @@ export const createAnnouncement = async (announcementData, images = [], video = 
     const videoData = new FormData();
     videoData.append("file", video);
     videoData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-    videoData.append("folder", "alumni/announcements/videos");
+    videoData.append("folder", "student/announcements/videos");
     const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_VIDEO_UPLOAD_URL, {
       method: "POST",
       body: videoData,
@@ -162,6 +165,30 @@ export const createAnnouncement = async (announcementData, images = [], video = 
     const uploadJson = await uploadRes.json();
     if (uploadRes.ok) {
       videoObject = { url: uploadJson.secure_url, public_id: uploadJson.public_id };
+    }
+  }
+
+  // 3. Upload Documents
+  if (documents && documents.length > 0) {
+    for (let doc of documents) {
+      const docData = new FormData();
+      docData.append("file", doc);
+      docData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      docData.append("folder", "student/announcements/documents");
+
+      const uploadRes = await fetch(RAW_UPLOAD_URL, {
+        method: "POST",
+        body: docData,
+      });
+      const uploadJson = await uploadRes.json();
+      if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
+        documentObjects.push({
+          url: uploadJson.secure_url,
+          public_id: uploadJson.public_id,
+          original_filename: doc.name,
+          format: doc.name.split('.').pop(),
+        });
+      }
     }
   }
 
@@ -175,6 +202,7 @@ export const createAnnouncement = async (announcementData, images = [], video = 
       ...announcementData, 
       images: imageObjects, 
       video: videoObject,
+      documents: documentObjects,
       type: "Announcement" 
     }),
   });
