@@ -250,6 +250,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.startDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "startDate")); }}
                   className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
+                  style={{ colorScheme: darkMode ? "dark" : "light" }}
                 />
               </div>
             </div>
@@ -263,6 +264,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.startTime}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "startTime")); }}
                   className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
+                  style={{ colorScheme: darkMode ? "dark" : "light" }}
                 />
               </div>
             </div>
@@ -276,6 +278,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.registrationCloseDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "registrationCloseDate")); }}
                   className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
+                  style={{ colorScheme: darkMode ? "dark" : "light" }}
                 />
               </div>
             </div>
@@ -289,6 +292,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   value={formData.endDate}
                   onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "endDate")); }}
                   className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
+                  style={{ colorScheme: darkMode ? "dark" : "light" }}
                 />
               </div>
             </div>
