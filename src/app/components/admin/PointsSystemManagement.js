@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
-import PointsRequestsList from "./PointsRequestsList";
 import UserSearchInput from "../Post/utils/UserSearchInput";
 
 const getApiUrl = () => {
@@ -214,11 +213,6 @@ export default function PointsSystemManagement({ user }) {
 
     return (
         <div className="space-y-12 pb-20 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
-            {/* Section 1: Points Requests - Now handled as two separate cards inside the component */}
-            <PointsRequestsList darkMode={darkMode} user={user} />
-
-            {/* Separator */}
-            <div className={`h-[2px] w-full bg-gradient-to-r from-transparent ${darkMode ? "via-white/10" : "via-slate-200"} to-transparent`} />
             {/* Settings Section */}
             <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-500">
                 <section className={`${darkMode ? "bg-black" : "bg-[#FAFAFA]"} p-4 sm:p-10 rounded-[calc(2.5rem-2px)] relative overflow-hidden group`}>
