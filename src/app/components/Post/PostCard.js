@@ -15,6 +15,7 @@ import CommentInput from "./Visual/CommentInput";
 const CommentCard = dynamic(() => import("./Visual/commentCard"), { ssr: false });
 import EventRegistrationModal from "./EventRegistrationModal";
 import AdminRegistrationsModal from "./AdminRegistrationsModal";
+import CreateEventRepostModal from "./CreateEventRepostModal";
 import ReactionModal from "./Visual/ReactionModal";
 import FullImageViewer from "./utils/FullImageViewer";
 import ConfirmationModal from "./Visual/ConfirmationModal";
@@ -52,6 +53,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   // Event specific states
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const textareaRef = useRef(null);
@@ -287,7 +289,14 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                       )
                     ) : (
                       currentUser?.role === 'alumni' && (
-                        Date.now() < new Date(post.registrationCloseDate) ? (
+                        post.eventType === "no_registration" ? (
+                          <button
+                            onClick={() => setShowRepostModal(true)}
+                            className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:shadow-green-500/25 active:scale-95 transition-all hover:-translate-y-0.5 flex items-center gap-2"
+                          >
+                            <span className="text-sm">🏆</span> Claim Event Points
+                          </button>
+                        ) : Date.now() < new Date(post.registrationCloseDate) ? (
                           <button
                             onClick={() => setShowRegistrationModal(true)}
                             className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 ${post.isRegistered ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105"}`}
@@ -609,7 +618,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
             />
           )}
 
-          {showRegistrationModal && (
+          {showRegistrationModal && post.eventType !== "no_registration" && (
             <EventRegistrationModal
               event={post}
               isOpen={showRegistrationModal}
@@ -625,6 +634,17 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                   ));
                 }
               }}
+            />
+          )}
+
+          {post.eventType === "no_registration" && (
+            <CreateEventRepostModal 
+              isOpen={showRepostModal}
+              onClose={() => setShowRepostModal(false)}
+              event={post}
+              currentUser={currentUser}
+              darkMode={darkMode}
+              setPosts={setPosts}
             />
           )}
 
