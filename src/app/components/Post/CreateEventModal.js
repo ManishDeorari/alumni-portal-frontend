@@ -347,7 +347,8 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
            </div>
           </div>
 
-          {/* Settings */}
+          {/* Event Settings */}
+          {formData.eventType === "online_registration" && (
           <div className="space-y-4">
             <h3 className={`text-sm font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"}`}>Event Settings</h3>
             <div className="flex flex-col gap-4">
@@ -361,6 +362,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
               </label>
             </div>
           </div>
+          )}
 
           {/* Post Button */}
           <button
