@@ -219,6 +219,28 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
               </div>
             </div>
 
+
+          </div>
+
+          {/* Description */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("description") ? "text-red-500" : ""}`}>Description</label>
+              <EmojiPickerToggle onEmojiSelect={handleEmojiSelect} icon="😀" darkMode={darkMode} />
+            </div>
+            <div className={getErrorClass("description")}>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "description")); }}
+                rows="4"
+                placeholder="Describe your event..."
+                className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none resize-none`}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-6">
             <div className="space-y-2">
               <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("startDate") ? "text-red-500" : ""}`}>Start Date</label>
               <div className={getErrorClass("startDate")}>
@@ -269,24 +291,6 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
                   className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none`}
                 />
               </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className={`text-xs font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-black"} ${errors.includes("description") ? "text-red-500" : ""}`}>Description</label>
-              <EmojiPickerToggle onEmojiSelect={handleEmojiSelect} icon="😀" darkMode={darkMode} />
-            </div>
-            <div className={getErrorClass("description")}>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={(e) => { handleInputChange(e); setErrors(prev => prev.filter(err => err !== "description")); }}
-                rows="4"
-                placeholder="Describe your event..."
-                className={`w-full p-4 rounded-[14px] ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-black"} outline-none border-none resize-none`}
-              />
             </div>
           </div>
 
