@@ -257,7 +257,12 @@ function Table({
   type,
 }) {
   const { darkMode } = useTheme();
+  const [displayLimit, setDisplayLimit] = useState(20);
+
   if (users.length === 0) return null;
+
+  const handleShowMore = () => setDisplayLimit(prev => prev + 20);
+  const handleShowLess = () => setDisplayLimit(20);
 
   return (
     <div className="space-y-4">
@@ -277,7 +282,7 @@ function Table({
       </div>
 
       {/* User Card Rows */}
-      {users.map((u) => (
+      {users.slice(0, displayLimit).map((u) => (
         <div 
           key={u._id} 
           className="relative p-[1.5px] sm:p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
@@ -345,6 +350,23 @@ function Table({
           </div>
         </div>
       ))}
+      <div className="flex flex-col items-center justify-center gap-4 pt-4 pb-2">
+        {users.length > displayLimit ? (
+            <button
+                onClick={handleShowMore}
+                className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
+            >
+                Show More
+            </button>
+        ) : users.length > 20 ? (
+            <button
+                onClick={handleShowLess}
+                className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-red-900/30 hover:bg-red-900/50 border border-red-500/30 text-red-400' : 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600'}`}
+            >
+                Show Less
+            </button>
+        ) : null}
+      </div>
     </div>
   );
 }

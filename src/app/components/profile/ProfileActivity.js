@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import SectionCard from "./SectionCard";
 import PostCard from "@/app/components/Post/PostCard";
-import { MessageSquare, Heart, CornerUpRight, Activity, Paperclip } from "lucide-react";
+import { Activity } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function ProfileActivity({ profile, setProfile, isPublicView }) {
     const { darkMode } = useTheme();
+    const displayLimit = 3;
+
     // Only show user's posts
     const myPosts = (profile.posts || [])
         .filter(p => p && p._id)
@@ -22,7 +24,7 @@ export default function ProfileActivity({ profile, setProfile, isPublicView }) {
                     </div>
                 ) : (
                     <>
-                        {myPosts.slice(0, 3).map((item, idx) => (
+                        {myPosts.slice(0, displayLimit).map((item, idx) => (
                             <PostCard
                                 key={`${item._id}-${idx}`}
                                 post={item}
@@ -40,20 +42,19 @@ export default function ProfileActivity({ profile, setProfile, isPublicView }) {
                             />
                         ))}
 
-                        {myPosts.length > 3 && (
-                            <div className="pt-2 text-center">
+                        <div className="flex flex-col items-center justify-center gap-4 pt-6">
+                            {myPosts.length > displayLimit && (
                                 <Link
                                     href="/dashboard/myposts"
-                                    className={`inline-flex items-center gap-2 text-sm font-bold transition px-6 py-2.5 rounded-full border hover:shadow-md active:scale-95 ${darkMode ? 'bg-blue-900/20 text-blue-400 border-blue-900/40 hover:bg-blue-900/30' : 'bg-blue-50/50 text-blue-600 border-blue-100 hover:text-blue-800'}`}
+                                    className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
                                 >
-                                    Show all my Posts
+                                    Show All Posts
                                 </Link>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </>
                 )}
             </div>
         </SectionCard>
     );
 }
-

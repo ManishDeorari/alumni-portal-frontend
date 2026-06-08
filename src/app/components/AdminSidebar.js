@@ -62,8 +62,7 @@ export default function AdminSidebar() {
   const handleSignout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.dispatchEvent(new Event("local-auth-change"));
-    // Do NOT router.push("/auth/login") — that overrides the LoginPopup
+    router.push("/auth/login");
   };
 
   return (

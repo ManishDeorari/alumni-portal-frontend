@@ -34,6 +34,21 @@ const NetworkPage = () => {
     industry: ""
   });
 
+  const [displayLimit, setDisplayLimit] = useState(8);
+  const handleShowMore = () => setDisplayLimit(prev => prev + 8);
+  const handleShowLess = () => setDisplayLimit(8);
+
+  const [suggestionLimits, setSuggestionLimits] = useState({
+    randomRecommendations: 8,
+    facultyAndAdmin: 8,
+    relatedPeople: 8
+  });
+
+  const handleShowMoreSugg = (id) => setSuggestionLimits(prev => ({...prev, [id]: prev[id] + 8}));
+  const handleShowLessSugg = (id) => setSuggestionLimits(prev => ({...prev, [id]: 8}));
+
+  const [actionLoading, setActionLoading] = useState(false);
+
   // ⚡ OPTIMISTIC HYDRATION
   useEffect(() => {
     const cachedUser = localStorage.getItem("user");
@@ -102,6 +117,7 @@ const NetworkPage = () => {
     }
     setAlumni([]); // Clear previous results immediately
     setSearched(true); // Track that a search was performed
+    setDisplayLimit(8);
 
     const token = localStorage.getItem("token");
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -236,7 +252,7 @@ const NetworkPage = () => {
                 <h2 className={`text-lg sm:text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Search Results</h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {alumni.map((user) => (
+                {alumni.slice(0, displayLimit).map((user) => (
                   <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-500/50 via-purple-500/50 to-pink-500/50 rounded-2xl group transition-all duration-500 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 shadow-sm hover:shadow-xl">
                     <div className={`rounded-2xl p-3 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900'} transition-colors`}>
                       <div className="flex items-center gap-3 sm:gap-4 min-w-0 relative z-10 w-full">
@@ -289,6 +305,27 @@ const NetworkPage = () => {
                   </div>
                 ))}
               </div>
+
+              <div className="flex flex-col items-center justify-center gap-4 py-8">
+                {alumni.length > displayLimit ? (
+                    <button
+                        onClick={handleShowMore}
+                        className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
+                    >
+                        Show More
+                    </button>
+                ) : alumni.length > 8 ? (
+                    <>
+                        <button
+                            onClick={handleShowLess}
+                            className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-red-900/30 hover:bg-red-900/50 border border-red-500/30 text-red-400' : 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600'}`}
+                        >
+                            Show Less
+                        </button>
+                        <p className="text-center font-bold uppercase tracking-widest text-[10px] italic opacity-50">No more alumni to show</p>
+                    </>
+                ) : null}
+              </div>
             </div>
           </div>
         )}
@@ -308,7 +345,7 @@ const NetworkPage = () => {
                     <h2 className={`text-lg sm:text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{section.icon} {section.title}</h2>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                    {section.data.map((user) => (
+                    {section.data.slice(0, suggestionLimits[section.id]).map((user) => (
                       <div key={user._id} className="relative p-[1.5px] bg-gradient-to-br from-blue-400/50 via-purple-400/50 to-pink-400/50 rounded-2xl h-full group transition-all duration-500 hover:from-blue-500 hover:to-pink-500 hover:shadow-xl">
                         <div className={`rounded-2xl flex flex-col items-center text-center p-3 sm:p-6 space-y-2 sm:space-y-4 transition-all relative overflow-hidden h-full ${darkMode ? 'bg-[#0f172a] text-white' : 'bg-white text-slate-900 border'}`}>
                           <div className="relative p-[2px] bg-gradient-to-br from-blue-400 to-purple-400 rounded-full shrink-0 shadow-lg group-hover:scale-105 transition-transform">
@@ -335,12 +372,12 @@ const NetworkPage = () => {
                           <div className="w-full pt-2">
                              <button
                                onClick={() => handleConnect(user._id)}
-                               disabled={requested[user._id] || connectingIds[user._id]}
-                               className={`w-full relative group/btn p-[1.5px] rounded-xl overflow-hidden transition-all shadow-md ${requested[user._id] || connectingIds[user._id] ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-blue-600 to-purple-600 active:scale-95'}`}
+                               disabled={requested[user._id] || actionLoading}
+                               className={`w-full relative group/btn p-[1.5px] rounded-xl overflow-hidden transition-all active:scale-95 shadow-md ${(requested[user._id] || actionLoading) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-blue-600 to-purple-600'}`}
                              >
-                               <div className={`${requested[user._id] || connectingIds[user._id] ? 'bg-gray-100 text-gray-400' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white'} py-2.5 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center transition-all`}>
+                               <div className={`${(requested[user._id] || actionLoading) ? 'bg-gray-100 text-gray-400' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white'} py-2.5 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center transition-all`}>
                                  <span className="text-[10px] font-black uppercase tracking-widest">
-                                   {requested[user._id] ? "Pending" : connectingIds[user._id] ? "Wait" : "Connect"}
+                                   {requested[user._id] ? "Pending" : "Connect"}
                                  </span>
                                </div>
                              </button>
@@ -348,6 +385,27 @@ const NetworkPage = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                  
+                  <div className="flex flex-col items-center justify-center gap-4 py-8">
+                    {section.data.length > suggestionLimits[section.id] ? (
+                        <button
+                            onClick={() => handleShowMoreSugg(section.id)}
+                            className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
+                        >
+                            Show More
+                        </button>
+                    ) : section.data.length > 8 ? (
+                        <>
+                            <button
+                                onClick={() => handleShowLessSugg(section.id)}
+                                className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-red-900/30 hover:bg-red-900/50 border border-red-500/30 text-red-400' : 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600'}`}
+                            >
+                                Show Less
+                            </button>
+                            <p className="text-center font-bold uppercase tracking-widest text-[10px] italic opacity-50">No more recommendations to show</p>
+                        </>
+                    ) : null}
                   </div>
                 </div>
               </div>
