@@ -6,7 +6,7 @@ import { getOptimizedImageUrl } from "../../../utils/cloudinaryHelper";
 import Image from "next/image";
 import ImageViewerModal from "../../profile/ImageViewerModal";
 import Link from "next/link";
-import { GamificationBadge } from "../../../utils/gamification";
+import { GamificationBadge } from "../../../../utils/gamification";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, darkMode = false, hideActions = false }) {
   const [showViewer, setShowViewer] = useState(false);
