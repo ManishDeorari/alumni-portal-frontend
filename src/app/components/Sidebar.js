@@ -10,6 +10,7 @@ import NotificationPreview from "./NotificationPreview";
 import { useNotifications } from "@/context/NotificationContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getGamificationTier } from "@/utils/gamification";
+import { AnimatePresence } from "framer-motion";
 
 export default function Sidebar() {
   const { 
