@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, token }) {
+export default function GlobalSearchModal({ isOpen, onClose, onPostSelect, darkMode = false, token }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState({ users: [], posts: [], events: [] });
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +18,19 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
       setResults({ users: [], posts: [], events: [] });
     }
   }, [isOpen]);
+
+  const handleOpenPost = async (postId) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts/${postId}`);
+      if (res.ok) {
+        const data = await res.json();
+        onPostSelect(data);
+        onClose(); // Automatically close search modal so post modal is fully visible
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -47,7 +60,7 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
 
   if (!isOpen) return null;
 
-  const hasResults = results.users.length > 0 || results.posts.length > 0 || results.events.length > 0;
+  const hasResults = results.users.length > 0;
 
   return (
     <div className="fixed inset-0 z-[999999] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -56,19 +69,20 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: -20 }}
         onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border ${darkMode ? "bg-slate-900 border-white/10 text-white" : "bg-white border-gray-200 text-gray-900"}`}
+        className="w-full max-w-2xl rounded-[1.5rem] shadow-2xl p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative"
       >
-        <div className={`p-4 border-b flex items-center gap-3 ${darkMode ? "border-white/10" : "border-gray-100"}`}>
-          <span className="text-xl opacity-60">🔍</span>
+        <div className={`w-full h-full rounded-[calc(1.5rem-2px)] overflow-hidden ${darkMode ? "bg-[#121213] text-white" : "bg-[#FAFAFA] text-gray-900"}`}>
+          <div className={`p-4 border-b flex items-center gap-3 ${darkMode ? "border-white/10" : "border-black/5"}`}>
+          <span className="text-xl">🔍</span>
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search users, posts, events..."
-            className={`w-full bg-transparent border-none outline-none text-lg ${darkMode ? "placeholder-gray-500" : "placeholder-gray-400"}`}
+            placeholder="Search users..."
+            className={`w-full bg-transparent border-none outline-none text-lg font-bold ${darkMode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-500"}`}
           />
-          <button onClick={onClose} className="text-xs font-black uppercase tracking-widest px-2 py-1 rounded bg-black/5 hover:bg-black/10">ESC</button>
+          <button onClick={onClose} className={`text-xl font-black rounded-full w-8 h-8 flex items-center justify-center transition-colors ${darkMode ? "hover:bg-white/10 text-white" : "hover:bg-black/5 text-black"}`}>×</button>
         </div>
 
         <div className="max-h-[60vh] overflow-y-auto p-2">
@@ -82,10 +96,10 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
             <div className="space-y-4 p-2">
               {results.users.length > 0 && (
                 <div>
-                  <h3 className={`text-xs font-black uppercase tracking-widest mb-2 px-2 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>Users</h3>
+                  <h3 className={`text-xs font-black uppercase tracking-widest mb-2 px-2 ${darkMode ? "text-white" : "text-black"}`}>Users</h3>
                   <div className="space-y-1">
                     {results.users.map(user => (
-                      <Link href={`/profile/${user._id}`} key={user._id} onClick={onClose} className={`flex items-center gap-3 p-2 rounded-xl transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-black/5"}`}>
+                      <Link href={`/profile/${user.publicId || user._id}`} key={user._id} onClick={onClose} className={`flex items-center gap-3 p-2 rounded-xl transition-colors ${darkMode ? "hover:bg-white/10" : "hover:bg-black/5"}`}>
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 relative shrink-0">
                           {user.profilePicture ? (
                              <Image src={user.profilePicture} alt="Profile" fill className="object-cover" />
@@ -94,37 +108,9 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-bold">{user.name}</p>
-                          <p className={`text-[10px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{user.role} • {user.enrollmentNumber}</p>
+                          <p className={`text-sm font-bold ${darkMode ? "text-white" : "text-black"}`}>{user.name}</p>
+                          <p className={`text-[10px] ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{user.role} • {user.enrollmentNumber}</p>
                         </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {results.events.length > 0 && (
-                <div>
-                  <h3 className={`text-xs font-black uppercase tracking-widest mb-2 px-2 pt-2 border-t ${darkMode ? "text-gray-500 border-white/5" : "text-gray-400 border-gray-100"}`}>Events</h3>
-                  <div className="space-y-1">
-                    {results.events.map(event => (
-                      <Link href={`/events/${event._id}`} key={event._id} onClick={onClose} className={`block p-3 rounded-xl transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-black/5"}`}>
-                        <p className="text-sm font-bold truncate">📅 {event.title}</p>
-                        <p className={`text-xs truncate ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{event.location} • By {event.createdBy?.name}</p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {results.posts.length > 0 && (
-                <div>
-                  <h3 className={`text-xs font-black uppercase tracking-widest mb-2 px-2 pt-2 border-t ${darkMode ? "text-gray-500 border-white/5" : "text-gray-400 border-gray-100"}`}>Posts</h3>
-                  <div className="space-y-1">
-                    {results.posts.map(post => (
-                      <Link href={`/dashboard`} key={post._id} onClick={onClose} className={`block p-3 rounded-xl transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-black/5"}`}>
-                        {post.title && <p className="text-sm font-bold truncate">{post.title}</p>}
-                        <p className={`text-xs line-clamp-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{post.content}</p>
                       </Link>
                     ))}
                   </div>
@@ -132,6 +118,7 @@ export default function GlobalSearchModal({ isOpen, onClose, darkMode = false, t
               )}
             </div>
           )}
+        </div>
         </div>
       </motion.div>
     </div>

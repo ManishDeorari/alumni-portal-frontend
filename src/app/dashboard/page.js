@@ -196,9 +196,13 @@ export default function DashboardPage() {
     setPendingPosts([]);
   };
 
-  const filteredPosts = activeTab === "my"
+  const filteredPosts = [...(activeTab === "my"
     ? posts.filter(p => p.user?._id === user?._id)
-    : posts;
+    : posts)].sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0;
+    });
 
   if (loading) return "Loading...";
   if (!user) return "User not found or unauthorized.";
@@ -209,17 +213,17 @@ export default function DashboardPage() {
     <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
       <SidebarComponent />
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-24 md:pb-8">
-        <div className="flex flex-col xl:flex-row gap-6 items-start">
+      <main className="w-full mx-auto px-4 lg:px-8 py-4 sm:py-8 pb-24 md:pb-8">
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch justify-center">
           {/* Left Column: Points Scenario */}
-          <aside className="hidden xl:block xl:w-[280px] order-2 xl:order-1 relative shrink-0 xl:sticky xl:top-24 z-40">
-            <div>
+          <div className="hidden lg:block lg:w-[calc(25vw-2rem)] order-2 lg:order-1 shrink-0 z-40">
+            <aside className="lg:fixed lg:top-24 lg:left-8 w-full lg:w-[calc(25vw-2rem)] h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
               <PointsScenario darkMode={darkMode} user={user} />
-            </div>
-          </aside>
+            </aside>
+          </div>
 
           {/* Center Column: Feed */}
-          <div className="flex-1 space-y-4 sm:space-y-8 order-1 xl:order-2 w-full max-w-2xl mx-auto">
+          <div className="flex-1 lg:flex-none w-full lg:w-[calc(50vw-3rem)] space-y-4 sm:space-y-8 order-1 lg:order-2 mx-auto">
             <div className="p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl md:rounded-[2.5rem] shadow-xl overflow-hidden">
               <section className={`${darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]"} p-3 sm:p-4 md:p-6 rounded-[calc(1.875rem-2.5px)] md:rounded-[calc(2.5rem-2.5px)] relative overflow-hidden group transition-colors duration-500`}>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 md:gap-6">
@@ -279,22 +283,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {activeTab === "Announcement" && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }} 
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex flex-col md:flex-row items-center justify-center gap-4 p-4 rounded-3xl ${darkMode ? "bg-[#121213] border-white/10" : "bg-white/50 border-white/20"} border backdrop-blur-sm`}
-              >
-                <div className="flex gap-2">
-                  <button onClick={() => setAnnouncementSubtype("all")} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${announcementSubtype === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600 dark:bg-white/10 dark:text-gray-400"}`}>All Announcements</button>
-                  <button onClick={() => setAnnouncementSubtype("winner")} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${announcementSubtype === "winner" ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-600 dark:bg-white/10 dark:text-gray-400"}`}>Winner Announcements</button>
-                </div>
-                <div className="relative flex-1 max-w-md w-full">
-                  <input type="text" placeholder="Search winners by name..." value={announcementSearch} onChange={(e) => setAnnouncementSearch(e.target.value)} className={`w-full pl-10 pr-4 py-2 rounded-2xl text-xs font-bold border-none outline-none ${darkMode ? "bg-black/40 text-white" : "bg-white text-gray-900"}`} />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
-                </div>
-              </motion.div>
-            )}
+
 
             <AnimatePresence>
               {pendingPosts.length > 0 && (
@@ -348,11 +337,11 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Column: Top Earners */}
-          <aside className="hidden xl:block xl:w-[280px] order-3 relative shrink-0 xl:sticky xl:top-24 z-40">
-            <div>
+          <div className="hidden lg:block lg:w-[calc(25vw-2rem)] order-3 shrink-0 z-40">
+            <aside className="lg:fixed lg:top-24 lg:right-8 w-full lg:w-[calc(25vw-2rem)] h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
               <TopEarnersWidget darkMode={darkMode} />
-            </div>
-          </aside>
+            </aside>
+          </div>
         </div>
       </main>
 

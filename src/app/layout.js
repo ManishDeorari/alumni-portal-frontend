@@ -23,8 +23,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Alumni Portal",
-  description: "Connect with your alumni network",
+  title: "GEHU Alumni Portal",
+  description: "The next generation professional ecosystem for university graduates worldwide. Connect, Network, and Grow.",
+  openGraph: {
+    title: "GEHU Alumni Portal",
+    description: "The next generation professional ecosystem for university graduates worldwide. Connect, Network, and Grow.",
+    siteName: "Graphic ERA Alumni Portal",
+    locale: "en_US",
+    type: "website",
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
