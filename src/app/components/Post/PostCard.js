@@ -65,8 +65,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   // 🔌 Socket typing updates
   usePostSocket(post._id, currentUser, setSomeoneTyping, setPosts);
 
+  const postRef = useRef(null);
   // 📦 Centralize all effects
-  const postRef = usePostEffects({
+  usePostEffects({
     post,
     currentUser,
     setEditContent,
@@ -126,6 +127,43 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
     setShowCommentEmoji
   });
 
+  const handlePinPost = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts/${post._id}/pin`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPosts((prevPosts) => prevPosts.map((p) => p._id === post._id ? { ...p, isPinned: data.isPinned } : p));
+      }
+    } catch (err) {
+      console.error("Error pinning post:", err);
+    }
+  };
+
+  const handleTipPost = async (amount) => {
+    try {
+      if (!token) return;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts/${post._id}/tip`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ amount })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        import("react-hot-toast").then((mod) => mod.default.success(`🎉 Sent ${amount} points to ${post.user?.name || "the author"}!`));
+      } else {
+        import("react-hot-toast").then((mod) => mod.default.error(data.message || "Failed to tip points"));
+      }
+    } catch (err) {
+      import("react-hot-toast").then((mod) => mod.default.error("Error tipping post"));
+    }
+  };
+
   const openImage = (i) => {
     setStartIndex(i);
     setShowViewer(true);
@@ -147,6 +185,35 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   const userReacted = (emoji) => {
     const users = post.reactions?.[emoji];
     return Array.isArray(users) ? users.includes(currentUser._id) : false;
+  };
+
+  useEffect(() => {
+    if (!postRef.current || !post._id || !currentUser?._id) return;
+    
+    // Check if we already viewed it
+    if (post.viewedBy && post.viewedBy.includes(currentUser._id)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          triggerView(post._id);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(postRef.current);
+    return () => observer.disconnect();
+  }, [post._id, currentUser?._id, post.viewedBy]);
+
+  const triggerView = async (postId) => {
+    try {
+      if (!token) return;
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/posts/${postId}/view`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch(err) {}
   };
 
   const handleLoadMore = () => {
@@ -176,17 +243,22 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-2 sm:p-4"} rounded-2xl sm:rounded-[3rem] transition-all duration-500`}
+      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-1.5 sm:p-2"} rounded-2xl sm:rounded-[2.5rem] transition-all duration-500`}
     >
-      <div className={`p-[1.5px] sm:p-[2px] sm:p-[2.5px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.6rem]`}>
-        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.5rem] p-3 sm:p-8 space-y-3 sm:space-y-6 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+      <div className={`p-[1.5px] sm:p-[2px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.4rem]`}>
+        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.3rem] p-3 sm:p-4 space-y-2 sm:space-y-3 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+          {post.isPinned && (
+            <div className={`flex items-center gap-1.5 mb-1 text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+              <span>📌</span> Pinned by Admin
+            </div>
+          )}
           <PostHeader {...{
             post, currentUser, editing, toggleEdit: () => {
               toggleEdit(editKey, (val) => {
                 setEditContent(val);
                 setEditTitle(post.title || "");
               }, editing, post.content);
-            }, handleDelete: triggerDelete, darkMode, hideActions
+            }, handleDelete: triggerDelete, handlePinPost, handleTipPost, darkMode, hideActions
           }} />
 
           {post.type === "Event" && post.title && !editing && (
@@ -216,8 +288,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           />
 
           {post.type === "Session" && post.sessionDetails && (
-            <div className={`mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
-              <div className={`p-3 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-3 sm:space-y-6`}>
+            <div className={`mt-2 sm:mt-4 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-orange-500/80 to-red-600/80" : "from-orange-400 to-red-500"} shadow-xl overflow-hidden`}>
+              <div className={`p-3 sm:p-4 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} space-y-2 sm:space-y-4`}>
                 <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6`}>
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-orange-400/60" : "text-orange-600/60"}`}>College</span>
@@ -243,8 +315,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "EventRepost" && post.eventRepostDetails && (
-            <div className={`mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-green-500/80 to-emerald-600/80" : "from-green-400 to-emerald-500"} shadow-xl overflow-hidden relative group/repost`}>
-              <div className={`p-4 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-4`}>
+            <div className={`mt-2 sm:mt-4 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-green-500/80 to-emerald-600/80" : "from-green-400 to-emerald-500"} shadow-xl overflow-hidden relative group/repost`}>
+              <div className={`p-3 sm:p-4 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-3`}>
                 <div className="flex justify-between items-start border-b border-dashed border-gray-200 dark:border-white/10 pb-4">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${darkMode ? "text-green-400/80" : "text-green-600/80"} flex items-center gap-2`}>
@@ -305,8 +377,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Event" && (
-            <div className="mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
-              <div className={`p-3 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-3 sm:space-y-6`}>
+            <div className="mt-2 sm:mt-4 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
+              <div className={`p-3 sm:p-4 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-2 sm:space-y-4`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Start</span>
@@ -383,8 +455,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Announcement" && (post.announcementDetails?.originalEventId || post.announcementDetails?.eventName) && (
-            <div className={`mt-3 sm:mt-6 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-blue-500/80 to-purple-600/80" : "from-blue-400 to-purple-500"} shadow-xl overflow-hidden relative`}>
-              <div className={`p-4 sm:p-6 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-4`}>
+            <div className={`mt-2 sm:mt-4 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-blue-500/80 to-purple-600/80" : "from-blue-400 to-purple-500"} shadow-xl overflow-hidden relative`}>
+              <div className={`p-3 sm:p-4 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-3`}>
                 <div className="flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${darkMode ? "text-blue-400/80" : "text-blue-600/80"} flex items-center gap-2`}>
@@ -417,11 +489,11 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Announcement" && post.announcementDetails?.isWinnerAnnouncement && (
-            <div className={`mt-6 p-6 rounded-[2.5rem] border ${darkMode ? "bg-blue-500/5 border-blue-500/20" : "bg-blue-50 border-blue-100"}`}>
-              <h3 className={`text-xl font-black mb-4 flex items-center gap-2 ${darkMode ? "text-blue-300" : "text-blue-700"}`}>
+            <div className={`mt-4 p-4 rounded-[2rem] border ${darkMode ? "bg-blue-500/5 border-blue-500/20" : "bg-blue-50 border-blue-100"}`}>
+              <h3 className={`text-lg font-black mb-3 flex items-center gap-2 ${darkMode ? "text-blue-300" : "text-blue-700"}`}>
                 <span>🏆</span> Event Winners
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {(() => {
                   const groupedWinners = post.announcementDetails.winners.reduce((acc, current) => {
                     if (current.groupId) {
@@ -448,7 +520,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                     <div key={gidx} className="p-[2px] rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl">
                       <div className={`rounded-[calc(2rem-2px)] overflow-hidden ${darkMode ? "bg-slate-900/90" : "bg-white"}`}>
                         {entry.type === 'group' && (
-                          <div className={`${darkMode ? "bg-blue-600/20" : "bg-blue-50"} px-4 sm:px-6 py-3 border-b border-blue-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2`}>
+                          <div className={`${darkMode ? "bg-blue-600/20" : "bg-blue-50"} px-3 sm:px-4 py-2 border-b border-blue-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2`}>
                             <div className="flex items-center gap-3">
                               <span className="text-xl">🏆</span>
                               <span className={`text-xs font-black uppercase tracking-[0.2em] ${darkMode ? "text-blue-300" : "text-blue-800"}`}>
@@ -468,7 +540,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
                         <div className="divide-y divide-white/5">
                           {(entry.type === 'group' ? entry.members : [entry]).map((member, midx) => (
-                            <div key={midx} className={`p-4 flex items-center justify-between gap-4 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
+                            <div key={midx} className={`p-3 flex items-center justify-between gap-3 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
                               <div className="flex items-center gap-4 flex-1 min-w-0">
                                   <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0 relative">
                                     {(() => {

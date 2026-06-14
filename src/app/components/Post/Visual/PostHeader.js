@@ -8,7 +8,7 @@ import ImageViewerModal from "../../profile/ImageViewerModal";
 import Link from "next/link";
 import { GamificationBadge } from "../../../../utils/gamification";
 
-export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, darkMode = false, hideActions = false }) {
+export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, handlePinPost, handleTipPost, darkMode = false, hideActions = false }) {
   const [showViewer, setShowViewer] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const optionsRef = useRef(null);
@@ -26,13 +26,13 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
   }, [showOptions]);
 
   const profileImg = post.user?.profilePicture || "/default-profile.jpg";
-  const isOwn = currentUser && (currentUser._id === post.userId?._id || currentUser.id === post.userId?._id);
+  const isOwn = currentUser && (currentUser._id === (post.user?._id || post.user) || currentUser.id === (post.user?._id || post.user));
   const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
   const isRestricted = !isOwn && !isAdmin;
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative w-9 h-9 sm:w-12 sm:h-12">
+      <div className="relative w-8 h-8 sm:w-10 sm:h-10">
         <Image
           src={getOptimizedImageUrl(profileImg)}
           alt="User profile"
@@ -72,7 +72,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
           )}
           <GamificationBadge points={post.user?.points?.total} />
           {isOwn && (
-            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold flex-shrink-0 ${darkMode ? "bg-blue-600/30 text-blue-300 border border-blue-500/30" : "bg-blue-100 text-blue-600"}`}>
+            <span className={`text-[10px] px-1.5 py-[1px] rounded-full font-bold flex-shrink-0 ${darkMode ? "bg-blue-600/30 text-blue-300 border border-blue-500/30" : "bg-blue-100 text-blue-600"}`}>
               You
             </span>
           )}
@@ -90,11 +90,10 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
 
       {!hideActions && (
         <div className="ml-auto flex items-center gap-2">
-          {(((post.user?._id || post.user) === (currentUser?._id || currentUser)) || currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin) && (
             <div className="relative" ref={optionsRef}>
               <button
                 onClick={() => setShowOptions(!showOptions)}
-                className={`p-2 rounded-full transition-colors flex items-center justify-center opacity-100 ${darkMode ? "text-gray-100 bg-white/10 hover:bg-white/20" : "text-gray-800 bg-gray-200/80 hover:bg-gray-300"}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-md ${darkMode ? "text-white bg-white/15 hover:bg-white/25 border border-white/20" : "text-black bg-black/10 hover:bg-black/15 border border-black/15"}`}
               >
                 <FaEllipsisH className="w-4 h-4" />
               </button>
@@ -109,6 +108,28 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
                     className="absolute right-0 mt-2 z-50 p-[2px] rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
                   >
                     <div className={`w-40 rounded-[10px] backdrop-blur-md p-1 flex flex-col h-full ${darkMode ? "bg-slate-900/95 text-white" : "bg-white/95 text-gray-800"}`}>
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          handlePinPost && handlePinPost();
+                          setShowOptions(false);
+                        }}
+                        className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-colors ${darkMode ? "hover:bg-white/10 text-blue-400" : "hover:bg-black/5 text-blue-600"}`}
+                      >
+                        <span>📌</span> {post.isPinned ? "Unpin Post" : "Pin Post"}
+                      </button>
+                    )}
+                    {!isOwn && (
+                      <button
+                        onClick={() => {
+                          handleTipPost && handleTipPost(10);
+                          setShowOptions(false);
+                        }}
+                        className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-colors ${darkMode ? "hover:bg-white/10 text-yellow-400" : "hover:bg-black/5 text-yellow-600"}`}
+                      >
+                        <span>🎁</span> Tip 10 Points
+                      </button>
+                    )}
                     {editing ? (
                       <button
                         onClick={() => {
@@ -148,10 +169,8 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
                 )}
               </AnimatePresence>
             </div>
-          )}
-        </div>
+          </div>
       )}
-
       {showViewer && (
         <ImageViewerModal
           imageUrl={profileImg}
