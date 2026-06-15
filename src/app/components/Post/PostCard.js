@@ -579,27 +579,12 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3 text-left">
                                       <div className="flex flex-col">
-                                         <span className={`text-[8px] font-black uppercase tracking-widest opacity-40 ${darkMode ? "text-white" : "text-black"}`}>Enrollment No.</span>
+                                         <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Enrollment No.</span>
                                          <span className={`text-[10px] font-bold font-mono tracking-tighter ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
                                            {member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}
                                          </span>
                                       </div>
-                                      {(member.userId?.course || member.course) && (
-                                        <div className="flex flex-col border-l border-white/10 pl-3">
-                                           <span className={`text-[8px] font-black uppercase tracking-widest opacity-40 ${darkMode ? "text-white" : "text-black"}`}>Course</span>
-                                           <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
-                                             {member.userId?.course || member.course}
-                                           </span>
-                                        </div>
-                                      )}
-                                      {(member.userId?.semester || member.semester) && (
-                                        <div className="flex flex-col border-l border-white/10 pl-3">
-                                           <span className={`text-[8px] font-black uppercase tracking-widest opacity-40 ${darkMode ? "text-white" : "text-black"}`}>Semester</span>
-                                           <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
-                                             {member.userId?.semester || member.semester}
-                                           </span>
-                                        </div>
-                                      )}
+
                                     </div>
                                   </div>
                                 </div>
@@ -607,11 +592,11 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                               {entry.type === 'individual' && (
                                 <div className="flex items-center gap-3">
                                   <div className="flex flex-col items-end">
-                                    <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Rank</span>
+                                    <span className={`text-[8px] font-black uppercase opacity-100 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Rank</span>
                                     <span className={`text-sm font-black ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{entry.rank}</span>
                                   </div>
                                   <div className="flex flex-col items-end border-l border-white/10 pl-3">
-                                    <span className={`text-[8px] font-black uppercase opacity-40 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Points</span>
+                                    <span className={`text-[8px] font-black uppercase opacity-100 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Points</span>
                                     <span className={`px-2 py-0.5 rounded-md text-xs font-black ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>+{entry.points}</span>
                                   </div>
                                 </div>

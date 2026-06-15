@@ -36,8 +36,6 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
     enrollmentNumber: true,
     email: true,
     phoneNumber: true,
-    course: true,
-    courseYear: true,
     branchName: true,
     currentCompany: true,
     currentCity: true,

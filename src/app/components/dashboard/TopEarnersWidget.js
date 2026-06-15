@@ -52,14 +52,13 @@ export default function TopEarnersWidget({ darkMode }) {
           {topEarners.map((user, index) => {
             const tier = getGamificationTier(user.points?.total || 0);
             return (
-              <div key={user._id} className="p-[1.5px] bg-gradient-to-tr from-yellow-400 via-orange-500 to-red-500 rounded-[17px] shadow-sm hover:shadow-md transition-all group shrink-0">
-                <div className={`flex items-center py-2 px-3 rounded-2xl transition-all h-full ${darkMode ? 'bg-[#1a1a1c] hover:bg-[#222225]' : 'bg-white hover:bg-orange-50/50'}`}>
-                  <div className="relative shrink-0 mr-3">
+              <div key={user._id} className="p-[1.5px] bg-gradient-to-tr from-yellow-400 via-orange-500 to-red-500 rounded-[17px] shadow-sm hover:shadow-md transition-all group shrink-0 flex-none h-[60px]">
+                <div className={`flex items-center px-3 rounded-[15.5px] transition-all h-full ${darkMode ? 'bg-[#1a1a1c] hover:bg-[#222225]' : 'bg-white hover:bg-orange-50/50'}`}>
+                  <div className="relative shrink-0 mr-3 w-10 h-10 min-w-[40px] min-h-[40px]">
                     <Image 
                       src={user.profilePicture || "/default-profile.jpg"} 
                       alt={user.name} 
-                      width={40} 
-                      height={40} 
+                      fill
                       className={`rounded-full object-cover border-2 ${index === 0 ? 'border-yellow-400' : index === 1 ? 'border-gray-300' : index === 2 ? 'border-amber-600' : 'border-transparent'}`}
                     />
                     {index === 0 && (
