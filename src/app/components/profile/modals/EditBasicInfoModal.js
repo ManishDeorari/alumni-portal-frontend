@@ -223,6 +223,46 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                         {errors.phone && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.phone}</p>}
                     </div>
 
+                    {/* WhatsApp */}
+                    <div>
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Number
+                        </label>
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.whatsapp ? 'from-red-500 to-red-600' : ''}`}>
+                            <input
+                                type="text"
+                                name="whatsapp"
+                                value={formData.whatsapp}
+                                onChange={handleChange}
+                                placeholder="Ex: 919876543210"
+                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                            />
+                        </div>
+                        {errors.whatsapp && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.whatsapp}</p>}
+                        <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'} ml-1`}>* Enter digits only, including country code (e.g. 91...)</p>
+                    </div>
+
+                    {/* LinkedIn */}
+                    <div>
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-blue-500' : 'text-blue-700'}`}>
+                            <Linkedin className="w-3.5 h-3.5" /> LinkedIn URL
+                        </label>
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.linkedin ? 'from-red-500 to-red-600' : ''}`}>
+                            <div className={`relative flex items-center rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
+                                <Globe className="absolute left-3 text-gray-400 w-3.5 h-3.5" />
+                                <input
+                                    type="text"
+                                    name="linkedin"
+                                    value={formData.linkedin}
+                                    onChange={handleChange}
+                                    placeholder="https://linkedin.com/in/username"
+                                    className={`w-full pl-9 p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                                />
+                            </div>
+                        </div>
+                        {errors.linkedin && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.linkedin}</p>}
+                    </div>
+
                     {/* Address Dropdowns */}
                     <div>
                         <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
@@ -276,46 +316,6 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                                 </select>
                             </div>
                         </div>
-                    </div>
-
-                    {/* WhatsApp */}
-                    <div>
-                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Number
-                        </label>
-                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.whatsapp ? 'from-red-500 to-red-600' : ''}`}>
-                            <input
-                                type="text"
-                                name="whatsapp"
-                                value={formData.whatsapp}
-                                onChange={handleChange}
-                                placeholder="Ex: 919876543210"
-                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
-                            />
-                        </div>
-                        {errors.whatsapp && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.whatsapp}</p>}
-                        <p className={`text-[10px] mt-1 italic ${darkMode ? 'text-slate-500' : 'text-gray-500'} ml-1`}>* Enter digits only, including country code (e.g. 91...)</p>
-                    </div>
-
-                    {/* LinkedIn */}
-                    <div>
-                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-blue-500' : 'text-blue-700'}`}>
-                            <Linkedin className="w-3.5 h-3.5" /> LinkedIn URL
-                        </label>
-                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.linkedin ? 'from-red-500 to-red-600' : ''}`}>
-                            <div className={`relative flex items-center rounded-[calc(0.75rem-2px)] ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
-                                <Globe className="absolute left-3 text-gray-400 w-3.5 h-3.5" />
-                                <input
-                                    type="text"
-                                    name="linkedin"
-                                    value={formData.linkedin}
-                                    onChange={handleChange}
-                                    placeholder="https://linkedin.com/in/username"
-                                    className={`w-full pl-9 p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
-                                />
-                            </div>
-                        </div>
-                        {errors.linkedin && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.linkedin}</p>}
                     </div>
                 </div>
 
