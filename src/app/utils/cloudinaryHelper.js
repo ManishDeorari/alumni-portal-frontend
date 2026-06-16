@@ -32,50 +32,39 @@ export const getOptimizedImageUrl = (url) => {
  * and hides the raw Cloudinary URL.
  */
 export const downloadFileSilently = async (url, originalName) => {
-  try {
-    // If it's a Cloudinary URL, ensure it's HTTPS
-    const secureUrl = url.replace('http://', 'https://');
-    const isCloudinary = secureUrl.includes("res.cloudinary.com");
-    
-    let fetchUrl = secureUrl;
-    let headers = {};
-
-    if (isCloudinary) {
-      fetchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/files/proxy?url=${encodeURIComponent(secureUrl)}&name=${encodeURIComponent(originalName || "document")}`;
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-    }
-    
-    // Fetch the file as a Blob
-    const response = await fetch(fetchUrl, { headers });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const blob = await response.blob();
-    
-    // Create a local object URL
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    // Trigger download
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = originalName || "download";
-    document.body.appendChild(a);
-    a.click();
-    
-    // Clean up
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
-  } catch (error) {
-    console.error("Download failed, falling back to new tab:", error);
-    // Fallback: open in new tab if fetch fails due to CORS or other errors
+  if (!url) return;
+  
+  if (!url.includes("res.cloudinary.com")) {
     const a = document.createElement("a");
     a.href = url;
-    a.download = originalName || "download";
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    return;
+  }
+
+  try {
+    const secureUrl = url.replace('http://', 'https://');
+    const isCloudinary = secureUrl.includes("res.cloudinary.com");
+    
+    // For Cloudinary files (like images/videos), we can force a native download using fl_attachment
+    if (isCloudinary) {
+      const directDownloadUrl = getCloudinaryDownloadUrl(secureUrl, originalName);
+      const a = document.createElement("a");
+      a.href = directDownloadUrl;
+      // Appending to body and clicking triggers the download natively
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+    
+    // For non-Cloudinary files, just open in a new tab and let the browser handle it
+    window.open(secureUrl, "_blank");
+  } catch (error) {
+    console.error("Silent download failed, falling back to new tab:", error);
+    window.open(url, "_blank");
   }
 };

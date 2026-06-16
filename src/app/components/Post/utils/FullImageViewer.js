@@ -120,7 +120,7 @@ export default function FullImageViewer({ images, startIndex, onClose, isRestric
           <button
             onClick={(e) => {
               e.stopPropagation();
-              downloadFileSilently(images[currentIndex], `media-${currentIndex}`);
+              downloadFileSilently(images[currentIndex], `image_preview_${currentIndex + 1}.jpg`);
             }}
             className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:scale-110 active:scale-95"
             title="Download"

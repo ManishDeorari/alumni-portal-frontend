@@ -94,7 +94,7 @@ export default function ImageViewerModal({ imageUrl, onClose, isRestricted }) {
         <div className="w-[1px] h-8 bg-[#FAFAFA]/20 mx-1" />
         {!isRestricted && (
           <button
-            onClick={() => downloadFileSilently(imageUrl, "profile-image.jpg")}
+            onClick={() => downloadFileSilently(imageUrl, "image_preview.jpg")}
             className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:scale-110 active:scale-95"
             title="Download"
           >

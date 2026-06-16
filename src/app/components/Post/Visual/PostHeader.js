@@ -30,6 +30,9 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
   const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
   const isRestricted = !isOwn && !isAdmin;
 
+  const canEdit = (post.user?._id || post.user) === (currentUser?._id || currentUser);
+  const canDelete = canEdit || currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
+
   return (
     <div className="flex items-center gap-3">
       <div className="relative w-10 h-10 sm:w-12 sm:h-12">
@@ -88,7 +91,7 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
         <p className={`text-xs font-semibold ${darkMode ? "text-gray-400" : "text-gray-500"} mt-0.5 truncate`}>{new Date(post.createdAt).toLocaleString()}</p>
       </div>
 
-      {!hideActions && (
+      {!hideActions && (isAdmin || canEdit || canDelete) && (
         <div className="ml-auto flex items-center gap-2">
             <div className="relative" ref={optionsRef}>
               <button
@@ -120,39 +123,27 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
                       </button>
                     )}
 
-                    {editing ? (
+                    {canEdit && (
                       <button
                         onClick={() => {
                           toggleEdit();
                           setShowOptions(false);
                         }}
-                        className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-blue-400 hover:bg-white/5" : "text-blue-600 hover:bg-gray-50"}`}
+                        className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-colors ${darkMode ? "hover:bg-white/10 text-white" : "hover:bg-black/5 text-gray-800"}`}
                       >
-                        Cancel Edit
+                        <span>✏️</span> {editing ? "Cancel Edit" : "Edit Post"}
                       </button>
-                    ) : (
-                      <>
-                        {((post.user?._id || post.user) === (currentUser?._id || currentUser)) && (
-                          <button
-                            onClick={() => {
-                              toggleEdit();
-                              setShowOptions(false);
-                            }}
-                            className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-green-400 hover:bg-white/5" : "text-green-600 hover:bg-gray-50"}`}
-                          >
-                            Edit Post
-                          </button>
-                        )}
-                        <button
-                          onClick={() => {
-                            handleDelete();
-                            setShowOptions(false);
-                          }}
-                          className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors ${darkMode ? "text-red-400 hover:bg-white/5" : "text-red-600 hover:bg-gray-50"}`}
-                        >
-                          Delete
-                        </button>
-                      </>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => {
+                          handleDelete();
+                          setShowOptions(false);
+                        }}
+                        className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-left text-red-500 hover:bg-red-500/10 transition-colors"
+                      >
+                        <span>🗑️</span> Delete Post
+                      </button>
                     )}
                     </div>
               </motion.div>
