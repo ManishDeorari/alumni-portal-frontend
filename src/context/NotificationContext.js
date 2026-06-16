@@ -225,9 +225,17 @@ export  const NotificationProvider = ({ children }) => {
 
           const type = notification.type;
           
-          const allowedToastTypes = ["feedback", "notice", "admin_notice", "announcement"];
+          const allowedToastTypes = ["feedback", "notice", "admin_notice", "announcement", "points_earned"];
           if (!allowedToastTypes.includes(type)) {
             return; // Skip toast, but still add to notifications list
+          }
+
+          // Prevent popup spam for micro point earnings (likes, comments, etc)
+          if (type === "points_earned") {
+            const msg = notification.message || "";
+            if (msg.includes("Like") || msg.includes("Comment") || msg.includes("Reply") || msg.includes("creating a post")) {
+              return;
+            }
           }
 
           // 🚀 UNIVERSAL PREMIUM TOAST
