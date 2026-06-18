@@ -6,6 +6,7 @@ import CommentCard from "./commentCard";
 import PostMedia from "./PostMedia";
 import CommentInput from "./CommentInput";
 import Link from "next/link";
+import UserAvatar from "../../ui/UserAvatar";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostReactions from "./PostReactions";
@@ -71,6 +72,7 @@ export default function PostModal({
   const [showOriginalEventModal, setShowOriginalEventModal] = useState(false);
   
   const isOwn = currentUser && (currentUser._id === post.userId?._id || currentUser.id === post.userId?._id);
+  const isSelf = currentUser && (currentUser._id === post.userId?._id || currentUser.id === post.userId?._id);
   const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
   const isRestricted = !isOwn && !isAdmin;
   const editKey = `draft-${post._id}`;
@@ -382,11 +384,15 @@ export default function PostModal({
                               <div key={midx} className={`p-4 flex items-center justify-between gap-4 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
                                  <div className="flex items-center gap-4 flex-1 min-w-0">
                                     <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0">
-                                      <img 
-                                        src={member.profilePicture || member.userId?.profilePicture || "/default-profile.jpg"} 
-                                        alt={member.name} 
-                                        className="w-10 h-10 rounded-full object-cover border-2 border-white/10" 
-                                      />
+                                       <UserAvatar 
+                                         user={member.userId || member}
+                                         src={member.profilePicture || member.userId?.profilePicture}
+                                         alt={member.name} 
+                                         width={40}
+                                         height={40}
+                                         wrapperClassName="w-10 h-10 rounded-full border-2 border-white/10"
+                                         className="object-cover w-full h-full"
+                                       />
                                     </div>
                                     <div className="flex flex-col min-w-0">
                                        <div className="flex items-center gap-2">
@@ -403,9 +409,25 @@ export default function PostModal({
                                          <div className="flex flex-col">
                                            <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Enrollment No.</span>
                                            <span className={`text-[10px] font-bold font-mono tracking-tighter ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
-                                             {member.userId?.enrollmentNumber || member.enrollmentNumber || member.uniqueId || "-"}
+                                             {member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}
                                            </span>
                                          </div>
+                                         {(member.userId?.course || member.course) && (
+                                           <div className="flex flex-col border-l border-white/10 pl-3">
+                                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Course</span>
+                                             <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                               {member.userId?.course || member.course}
+                                             </span>
+                                           </div>
+                                         )}
+                                         {(member.userId?.semester || member.semester) && (
+                                           <div className="flex flex-col border-l border-white/10 pl-3">
+                                             <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Semester</span>
+                                             <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                               {member.userId?.semester || member.semester}
+                                             </span>
+                                           </div>
+                                         )}
                                        </div>
                                     </div>
                                  </div>

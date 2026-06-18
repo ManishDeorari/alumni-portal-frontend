@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import UserAvatar from "./ui/UserAvatar";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import PointsDistributionModal from "./profile/PointsDistributionModal";
@@ -98,12 +99,14 @@ export default function Leaderboard() {
                           }`}>
                           {index + 1}
                         </div>
-                        <Image
+                        <UserAvatar
+                          user={user}
                           src={user.profilePicture || "/default-profile.jpg"}
                           alt={user.name}
                           width={48}
                           height={48}
-                          className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl object-cover border-2 border-white/10 bg-gray-800 shadow-2xl group-hover:scale-110 transition-transform duration-500"
+                          wrapperClassName="w-9 h-9 sm:w-12 sm:h-12"
+                          className="w-full h-full rounded-xl object-cover border-2 border-white/10 bg-gray-800 shadow-2xl group-hover:scale-110 transition-transform duration-500"
                         />
                         <div className="min-w-0">
                           <Link

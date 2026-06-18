@@ -14,6 +14,8 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
         phone: "", // Will store the full phone number from PhoneInput
         whatsapp: "",
         linkedin: "",
+        secondaryEmail: "",
+        universityRollNumber: "",
     });
 
     // Address structure
@@ -31,6 +33,8 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                 phone: currentProfile.phone || "",
                 whatsapp: currentProfile.whatsapp || "",
                 linkedin: currentProfile.linkedin || "",
+                secondaryEmail: currentProfile.secondaryEmail || "",
+                universityRollNumber: currentProfile.universityRollNumber || "",
             });
 
             // Parse existing address (expected format: "City, State, Country")
@@ -141,6 +145,7 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
             if (!res.ok) throw new Error("Failed to update profile info");
 
             const updatedUser = await res.json();
+            localStorage.setItem("user", JSON.stringify(updatedUser));
             onSave(updatedUser);
             toast.success("Profile details updated successfully!");
             onClose();
@@ -188,6 +193,40 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                             />
                         </div>
                         {errors.name && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{errors.name}</p>}
+                    </div>
+
+                    {/* Secondary Email */}
+                    <div>
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>
+                            <Globe className="w-3.5 h-3.5" /> Secondary Email
+                        </label>
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm ${errors.secondaryEmail ? 'from-red-500 to-red-600' : ''}`}>
+                            <input
+                                type="email"
+                                name="secondaryEmail"
+                                value={formData.secondaryEmail}
+                                onChange={handleChange}
+                                placeholder="Backup Email Address"
+                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                            />
+                        </div>
+                    </div>
+
+                    {/* University Roll Number */}
+                    <div>
+                        <label className={`block text-xs font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5 ${darkMode ? 'text-fuchsia-400' : 'text-fuchsia-600'}`}>
+                            <User className="w-3.5 h-3.5" /> Univ Roll Number
+                        </label>
+                        <div className={`p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm`}>
+                            <input
+                                type="text"
+                                name="universityRollNumber"
+                                value={formData.universityRollNumber}
+                                onChange={handleChange}
+                                placeholder="Ex: 2001011..."
+                                className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] outline-none transition ${darkMode ? 'bg-[#121213] text-white' : 'bg-white text-gray-900'}`}
+                            />
+                        </div>
                     </div>
 
                     {/* Phone */}

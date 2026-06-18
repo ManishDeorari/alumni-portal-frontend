@@ -226,6 +226,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
             if (!res.ok) throw new Error("Failed to update education");
 
             const updatedUser = await res.json();
+            localStorage.setItem("user", JSON.stringify(updatedUser));
             onSave(updatedUser);
             toast.success("Education details updated!");
             onClose();

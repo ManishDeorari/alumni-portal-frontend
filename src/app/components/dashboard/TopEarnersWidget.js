@@ -82,6 +82,14 @@ export default function TopEarnersWidget({ darkMode }) {
                       <span className={`text-[8px] font-black tracking-widest uppercase truncate ${darkMode ? tier.colorClassDark : tier.colorClassLight}`}>
                         {tier.name}
                       </span>
+                      {(user.course || user.semester) && (
+                        <>
+                          <span className={`text-[8px] font-black ${darkMode ? "text-gray-500" : "text-gray-400"}`}>•</span>
+                          <span className={`text-[8px] font-black tracking-widest uppercase truncate ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {user.course} {user.semester}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

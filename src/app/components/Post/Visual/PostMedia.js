@@ -21,6 +21,9 @@ export default function PostMedia({ post, setSelectedImage, currentUser, darkMod
 
   const isRestricted = post.user?._id !== currentUser?._id && currentUser?.role !== 'admin';
 
+  const singleImageSrc = post.image ? post.image : null;
+  const videoSrc = post.video?.url ? post.video.url : null;
+
   return (
     <div className="mt-2">
       {/* Multiple Images */}
@@ -39,7 +42,7 @@ export default function PostMedia({ post, setSelectedImage, currentUser, darkMod
           className={`relative max-h-96 w-full flex justify-center border ${darkMode ? "border-white/10" : "border-gray-200"} rounded-lg overflow-hidden cursor-pointer group`}
         >
           <Image
-            src={post.image}
+            src={singleImageSrc}
             alt="post"
             width={800}
             height={400}
@@ -67,7 +70,7 @@ export default function PostMedia({ post, setSelectedImage, currentUser, darkMod
             className={`rounded-lg w-full max-h-96 border ${darkMode ? "border-white/10" : "border-gray-200"} ${isRestricted ? 'select-none' : ''}`}
             controlsList="nodownload"
           >
-            <source src={post.video.url} type="video/mp4" />
+            <source src={videoSrc} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <button

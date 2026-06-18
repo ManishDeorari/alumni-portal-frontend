@@ -3,9 +3,10 @@ import { useState } from "react";
 import ProfileEditorModal from "./Avatar/ProfileEditorModal";
 import ImageViewerModal from "./ImageViewerModal"; // import here
 import Image from "next/image";
+import UserAvatar from "../ui/UserAvatar";
 import { getOptimizedImageUrl } from "../../utils/cloudinaryHelper";
 
-export default function ProfileAvatar({ image, onUpload, userId, isPublicView }) {
+export default function ProfileAvatar({ user, image, onUpload, userId, isPublicView }) {
   const [showEditor, setShowEditor] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
 
@@ -26,16 +27,19 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
   return (
     <div className="relative group">
       <div className="p-[3px] bg-gradient-to-tr from-blue-600 via-purple-500 to-pink-500 rounded-full shadow-2xl transition-transform duration-300 group-hover:scale-105">
-        <Image
+        <UserAvatar
+          user={user}
           src={getOptimizedImageUrl(profileImg)}
           alt="Profile"
           width={160}
           height={160}
           priority={true}
+          wrapperClassName="w-40 h-40"
+          unoptimized={profileImg === "/default-profile.jpg"}
           onClick={() => setShowViewer(true)} // open full view
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
-          className={`rounded-full object-cover w-40 h-40 cursor-pointer ${isRestricted ? 'select-none pointer-events-none [-webkit-touch-callout:none]' : ''}`}
+          className={`rounded-full object-cover w-full h-full cursor-pointer ${isRestricted ? 'select-none pointer-events-none [-webkit-touch-callout:none]' : ''}`}
         />
         {isRestricted && (
           <div 
@@ -49,7 +53,7 @@ export default function ProfileAvatar({ image, onUpload, userId, isPublicView })
       {!isPublicView && (
         <button
           onClick={() => setShowEditor(true)}
-          className="absolute bottom-1 right-1 bg-[#FAFAFA] p-1 rounded-full shadow cursor-pointer"
+          className="absolute bottom-1 left-1 z-30 bg-[#FAFAFA] p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
           title="Edit photo"
         >
           <Camera size={18} className="text-gray-700" />

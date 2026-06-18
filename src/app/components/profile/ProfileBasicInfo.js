@@ -22,6 +22,8 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         const missing = [];
         if (!profile.profilePicture || profile.profilePicture.includes("default-profile.jpg")) missing.push("Profile Picture");
         if (!profile.bannerImage || profile.bannerImage.includes("default_banner.jpg")) missing.push("Banner Image");
+        if (!profile.secondaryEmail || profile.secondaryEmail === "") missing.push("Secondary Email");
+        if (!profile.universityRollNumber || profile.universityRollNumber === "") missing.push("University Roll Number");
         if (!profile.phone || profile.phone === "Not provided" || profile.phone === "") missing.push("Phone Number");
         if (!profile.address || profile.address === "Not set" || profile.address === "") missing.push("Address");
         if (!profile.whatsapp || profile.whatsapp === "Not linked" || profile.whatsapp === "") missing.push("WhatsApp");
@@ -151,6 +153,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     {/* Avatar - Centered */}
                     <div className="relative z-10">
                         <ProfileAvatar
+                            user={profile}
                             image={profile.profilePicture}
                             onUpload={onRefresh}
                             userId={profile._id}

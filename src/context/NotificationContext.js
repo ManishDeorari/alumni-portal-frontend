@@ -225,7 +225,7 @@ export  const NotificationProvider = ({ children }) => {
 
           const type = notification.type;
           
-          const allowedToastTypes = ["feedback", "notice", "admin_notice", "announcement", "points_earned"];
+          const allowedToastTypes = ["feedback", "notice", "admin_notice", "announcement", "points_earned", "points_deducted"];
           if (!allowedToastTypes.includes(type)) {
             return; // Skip toast, but still add to notifications list
           }
@@ -288,13 +288,21 @@ export  const NotificationProvider = ({ children }) => {
                 accent: "text-pink-400",
                 bgAccent: "bg-pink-500/20"
               };
-            } else if (type === "points_earned" || type === "points_requested") {
+            } else if (type === "points_earned") {
               theme = {
                 gradient: "from-yellow-400 via-amber-500 to-yellow-600",
                 icon: <Award className="w-3.5 h-3.5" />,
-                label: type === "points_requested" ? "Points Request" : "Points Earning",
+                label: "Points Earning",
                 accent: "text-yellow-400",
                 bgAccent: "bg-yellow-500/20"
+              };
+            } else if (type === "points_deducted") {
+              theme = {
+                gradient: "from-red-500 via-rose-600 to-red-700",
+                icon: <Award className="w-3.5 h-3.5" />,
+                label: "Points Deduction",
+                accent: "text-red-400",
+                bgAccent: "bg-red-500/20"
               };
             } else if (type === "notice" || type === "admin_notice" || type === "announcement") {
               theme = {

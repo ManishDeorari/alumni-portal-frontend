@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { getCloudinaryDownloadUrl, downloadFileSilently } from "../../../utils/cloudinaryHelper";
+import { downloadFileSilently } from "../../../utils/cloudinaryHelper";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, ZoomOut, Maximize, Download, ChevronLeft, ChevronRight } from "lucide-react";
 
