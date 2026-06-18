@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { fetchPendingPointsRequests, approvePointsRequest } from "../../../api/dashboard";
 import toast from "react-hot-toast";
-import PostModal from "../Post/Visual/PostModal";
+import SmartPostModal from "../Post/SmartPostModal";
+import socket from "@/utils/socket";
 
 const PointsRequestsList = ({ darkMode = false, user }) => {
   const [requests, setRequests] = useState([]);
@@ -15,6 +16,27 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
   const [eventLimit, setEventLimit] = useState(10);
   const [sessionLimit, setSessionLimit] = useState(10);
   const [repostLimit, setRepostLimit] = useState(10);
+
+  // ⚡ Live socket updates for pending requests
+  useEffect(() => {
+    if (!socket) return;
+    const handlePostDeleted = ({ postId }) => {
+      setRequests(prev => prev.filter(r => r._id !== postId));
+    };
+    const handlePostUpdated = (updated) => {
+      setRequests(prev => prev.map(r => r._id === updated._id ? { ...r, ...updated } : r));
+    };
+    socket.on("postDeleted", handlePostDeleted);
+    socket.on("postUpdated", handlePostUpdated);
+    socket.on("postReacted", handlePostUpdated);
+    socket.on("updatePost", handlePostUpdated);
+    return () => {
+      socket.off("postDeleted", handlePostDeleted);
+      socket.off("postUpdated", handlePostUpdated);
+      socket.off("postReacted", handlePostUpdated);
+      socket.off("updatePost", handlePostUpdated);
+    };
+  }, []);
 
   useEffect(() => {
     loadRequests();
@@ -473,20 +495,13 @@ const PointsRequestsList = ({ darkMode = false, user }) => {
       </div>
 
       {showPostModal && selectedPost && (
-        <PostModal
+        <SmartPostModal
           showModal={showPostModal}
           setShowModal={setShowPostModal}
           post={selectedPost}
           currentUser={user}
           darkMode={darkMode}
-          hideInteractions={true}
-          // No-op handlers just in case, though hidden
-          handleReact={() => {}}
-          getReactionCount={() => 0}
-          userReacted={() => false}
-          handleComment={() => {}}
-          handleDelete={() => {}}
-          toggleEdit={() => {}}
+          onPostUpdate={loadRequests}
         />
       )}
     </div>
