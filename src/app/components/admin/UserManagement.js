@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 import HybridInput from "../ui/HybridInput";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 import UserAvatar from "../ui/UserAvatar";
+import ImageViewerModal from "../profile/ImageViewerModal";
 import { toast } from "react-hot-toast";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -28,6 +29,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
     const [messageModal, setMessageModal] = useState(null); // { userIds: [], names: "" }
     const [messageText, setMessageText] = useState("");
     const [isSendingMessage, setIsSendingMessage] = useState(false);
+    const [viewerImage, setViewerImage] = useState(null);
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     const [displayLimit, setDisplayLimit] = useState(20);
@@ -322,7 +324,8 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
 
                                         {/* Profile */}
                                         <div className="flex-1 flex items-center gap-3 sm:gap-5 min-w-0">
-                                            <div className="relative shrink-0 flex items-center justify-center">
+                                            <div className="relative shrink-0 flex items-center justify-center w-12 h-12 aspect-square">
+                                                <div className={`absolute -inset-1 rounded-full blur-[2px] opacity-20 ${u.isAdmin ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
                                                 {u.profilePicture ? (
                                                     <UserAvatar
                                                         user={u}
@@ -330,11 +333,12 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                                         alt={u.name}
                                                         width={48}
                                                         height={48}
-                                                        wrapperClassName="w-9 h-9 sm:w-12 sm:h-12 rounded-full"
-                                                        className={`w-full h-full rounded-full object-cover border-2 ${darkMode ? "border-white/10" : "border-gray-200"}`}
+                                                        wrapperClassName="w-12 h-12 rounded-full relative z-10 shrink-0 aspect-square"
+                                                        className={`w-full h-full rounded-full object-cover aspect-square border-2 ${darkMode ? "border-white/10" : "border-white"}`}
+                                                        onClick={(e) => { e.stopPropagation(); setViewerImage(u.profilePicture); }}
                                                     />
                                                 ) : (
-                                                    <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-sm sm:text-lg`}>
+                                                    <div className={`w-12 h-12 rounded-full relative z-10 shrink-0 aspect-square ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-lg`}>
                                                         {u.name.charAt(0)}
                                                     </div>
                                                 )}
@@ -620,6 +624,14 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                     </motion.div>
                 )}
             </AnimatePresence>
+            {/* Image Viewer */}
+            {viewerImage && (
+                <ImageViewerModal
+                    imageUrl={viewerImage}
+                    onClose={() => setViewerImage(null)}
+                    isRestricted={false}
+                />
+            )}
         </div>
     );
 }

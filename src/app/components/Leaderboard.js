@@ -5,6 +5,7 @@ import UserAvatar from "./ui/UserAvatar";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import PointsDistributionModal from "./profile/PointsDistributionModal";
+import ImageViewerModal from "./profile/ImageViewerModal";
 import { useTheme } from "@/context/ThemeContext";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -17,6 +18,22 @@ export default function Leaderboard() {
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewerImage, setViewerImage] = useState(null);
+  const [viewerOwnerId, setViewerOwnerId] = useState(null);
+
+  let isAdmin = false;
+  let currentUserId = null;
+  if (typeof window !== "undefined") {
+    try {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const u = JSON.parse(userStr);
+        isAdmin = u.role === "admin" || u.isAdmin === true || u.isMainAdmin === true || u.email === "manishdeorari377@gmail.com";
+        currentUserId = u._id;
+      }
+    } catch (e) {}
+  }
+  const isRestricted = !isAdmin && String(viewerOwnerId) !== String(currentUserId);
 
   const token = localStorage.getItem("token");
 
@@ -106,7 +123,12 @@ export default function Leaderboard() {
                           width={48}
                           height={48}
                           wrapperClassName="w-9 h-9 sm:w-12 sm:h-12"
-                          className="w-full h-full rounded-full object-cover border-2 border-white/10 bg-gray-800 shadow-2xl group-hover:scale-110 transition-transform duration-500"
+                          className="w-full h-full rounded-full object-cover border-2 border-white/10 bg-gray-800 shadow-2xl group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setViewerImage(user.profilePicture || "/default-profile.jpg");
+                            setViewerOwnerId(user._id);
+                          }}
                         />
                         <div className="min-w-0">
                           <Link
@@ -203,6 +225,14 @@ export default function Leaderboard() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           user={selectedUser}
+        />
+      )}
+
+      {viewerImage && (
+        <ImageViewerModal
+          imageUrl={viewerImage}
+          onClose={() => { setViewerImage(null); setViewerOwnerId(null); }}
+          isRestricted={isRestricted}
         />
       )}
     </motion.div>

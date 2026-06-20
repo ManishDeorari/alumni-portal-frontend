@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, MessageSquare, UserPlus, Eye, ShieldAlert, Bell, ChevronRight } from "lucide-react";
+import { Clock, MessageSquare, UserPlus, Eye, ShieldAlert, Bell, ChevronRight, Award } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const getNotificationIcon = (type, darkMode) => {
@@ -77,7 +77,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                         {latestNotifications.length > 0 ? (
                             latestNotifications.map((note) => {
                                 const unread = isNoteUnread(note);
-                                const isPenalty = note.message?.startsWith("MANUAL_PENALTY::");
+                                const isPenalty = note.type === "silent_points_deducted" || note.message?.startsWith("MANUAL_PENALTY::");
 
                                 return (
                                     <motion.div
@@ -112,8 +112,8 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className={`text-[11px] leading-[1.4] ${darkMode ? "text-white" : "text-slate-900"}`}>
-                                                    <span className={`font-black uppercase tracking-tight ${unread && !darkMode ? (isPenalty ? "text-red-600" : "text-blue-600") : ""}`}>
-                                                        {note.type === "points_earned" ? (isPenalty ? "Moderator" : "System") : (note.sender?.name || (typeof note.sender === "string" ? "User" : "System"))}
+                                                    <span className="font-black text-sm tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent truncate max-w-[120px]">
+                                                        {(note.type === "points_earned" || note.type === "silent_points_deducted") ? (isPenalty ? "Moderator" : "System") : (note.sender?.name || (typeof note.sender === "string" ? "User" : "System"))}
                                                     </span>{" "}
                                                     <span className={`font-medium ${unread ? "opacity-100" : "opacity-60"}`}>
                                                         {note.message?.startsWith("MANUAL_AWARD::") ? (() => {
@@ -127,26 +127,24 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                             const msg = parts[1] || "Points Deducted";
                                                             const pts = parts[3] || "0";
                                                             return `${msg} -${pts} PTS`;
-                                                        })() : note.type === "points_earned" ? (() => {
+                                                        })() : (note.type === "points_earned" || note.type === "silent_points_deducted") ? (() => {
                                                             let msg = note.message;
-                                                            let pts = "10";
-                                                            let cat = "Reward";
-
+                                                            let pts = "0";
                                                             const match = note.message?.match(/\+?(\d+)\s*(?:PTS|pts|points|Points)/i);
                                                             if (match) {
                                                                 pts = match[1];
-                                                                msg = note.message.replace(match[0], '').trim() || "Points Earned";
+                                                                msg = note.message.replace(match[0], '').trim() || "Points Update";
                                                             }
-
                                                             const lowerMsg = msg?.toLowerCase() || "";
+                                                            let cat = "Reward";
                                                             if (lowerMsg.includes("post")) cat = "Post";
                                                             else if (lowerMsg.includes("like")) cat = "Like";
                                                             else if (lowerMsg.includes("comment")) cat = "Comment";
                                                             else if (lowerMsg.includes("network") || lowerMsg.includes("connect")) cat = "Network";
                                                             else if (lowerMsg.includes("login") || lowerMsg.includes("daily")) cat = "Login";
-                                                            else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Alumni Participation";
+                                                            else if (lowerMsg.includes("announcement") || lowerMsg.includes("announce") || lowerMsg.includes("earned") || lowerMsg.includes("first")) cat = "Student Participation";
 
-                                                            return `${msg} +${pts} PTS`;
+                                                            return `${msg} ${isPenalty ? '-' : '+'}${pts} PTS`;
                                                         })() : note.message}
                                                     </span>
                                                 </p>

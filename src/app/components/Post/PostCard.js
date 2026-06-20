@@ -541,7 +541,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
 
                         <div className="divide-y divide-white/5">
                           {(entry.type === 'group' ? entry.members : [entry]).map((member, midx) => (
-                            <div key={midx} className={`p-3 flex items-center justify-between gap-3 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
+                            <div key={midx} className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
                               <div className="flex items-center gap-4 flex-1 min-w-0">
                                   <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0 relative">
                                     {(() => {
@@ -571,24 +571,24 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                     <div className="flex items-center gap-2 mb-1">
                                       {member.userId?.publicId ? (
                                         <Link href={`/profile/${member.userId.publicId}`} className={`font-black text-sm truncate hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>
-                                          {member.name}
+                                          {member.userId?.name || member.name || "User"}
                                         </Link>
                                       ) : (
-                                        <span className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{member.name}</span>
+                                        <span className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{member.userId?.name || member.name || "User"}</span>
                                       )}
                                       {member.userId && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">MATCHED</span>}
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3 text-left">
                                       <div className="flex flex-col">
                                          <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Enrollment No.</span>
-                                         <span className={`text-[10px] font-bold font-mono tracking-tighter ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                         <span className={`text-[10px] font-black font-mono tracking-tighter ${darkMode ? "text-white" : "text-black"}`}>
                                            {member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}
                                          </span>
                                       </div>
                                       {(member.userId?.course || member.course) && (
                                         <div className="flex flex-col border-l border-white/10 pl-3">
                                           <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Course</span>
-                                          <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                          <span className={`text-[10px] font-black ${darkMode ? "text-white" : "text-black"}`}>
                                             {member.userId?.course || member.course}
                                           </span>
                                         </div>
@@ -596,7 +596,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                       {(member.userId?.semester || member.semester) && (
                                         <div className="flex flex-col border-l border-white/10 pl-3">
                                           <span className={`text-[8px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>Semester</span>
-                                          <span className={`text-[10px] font-bold ${darkMode ? "text-blue-200" : "text-blue-600"}`}>
+                                          <span className={`text-[10px] font-black ${darkMode ? "text-white" : "text-black"}`}>
                                             {member.userId?.semester || member.semester}
                                           </span>
                                         </div>
@@ -606,12 +606,12 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                 </div>
 
                               {entry.type === 'individual' && (
-                                <div className="flex items-center gap-3">
-                                  <div className="flex flex-col items-end">
+                                <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-end pl-[56px] sm:pl-0 mt-1 sm:mt-0 pt-2 sm:pt-0 border-t border-black/5 dark:border-white/5 sm:border-t-0">
+                                  <div className="flex flex-col items-start sm:items-end">
                                     <span className={`text-[8px] font-black uppercase opacity-100 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Rank</span>
                                     <span className={`text-sm font-black ${darkMode ? "text-blue-300" : "text-blue-700"}`}>{entry.rank}</span>
                                   </div>
-                                  <div className="flex flex-col items-end border-l border-white/10 pl-3">
+                                  <div className="flex flex-col items-start sm:items-end border-l border-black/10 dark:border-white/10 pl-3">
                                     <span className={`text-[8px] font-black uppercase opacity-100 mb-0.5 ${darkMode ? "text-white" : "text-black"}`}>Points</span>
                                     <span className={`px-2 py-0.5 rounded-md text-xs font-black ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>+{entry.points}</span>
                                   </div>
