@@ -374,9 +374,9 @@ function LoginContent() {
                     </motion.div>
                   )}
 
-                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4 sm:space-y-5 flex flex-col justify-center">
+                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3 sm:space-y-5 flex flex-col justify-center">
                     <div className="space-y-1.5">
-                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email or Enrollment No.</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email or Enrollment No.</label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                         <input
                           type="text"
@@ -384,7 +384,7 @@ function LoginContent() {
                           placeholder="example@gehu.ac.in or PV-H209001"
                           value={form.identifier}
                           onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                       </div>
@@ -392,11 +392,11 @@ function LoginContent() {
 
                     <div className="space-y-1.5">
                       <div className="flex justify-between items-center ml-4 mr-2">
-                        <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password</label>
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password</label>
                         <button
                           type="button"
                           onClick={() => setView("FORGOT_EMAIL")}
-                          className="text-[10px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-extrabold transition-colors border-b-2 border-transparent hover:border-blue-400"
+                          className="text-[9px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-extrabold transition-colors border-b-2 border-transparent hover:border-blue-400"
                         >
                           Forgot?
                         </button>
@@ -408,7 +408,7 @@ function LoginContent() {
                           placeholder="••••••••"
                           value={form.password}
                           onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 pr-12 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                         <button
@@ -468,7 +468,7 @@ function LoginContent() {
                         <div className={`w-5 h-5 rounded-full border-2 transition-all ${darkMode ? "border-white/20 peer-checked:border-blue-500" : "border-gray-300 peer-checked:border-blue-600"}`}></div>
                         <div className={`absolute inset-1 rounded-full scale-0 peer-checked:scale-100 transition-transform ${darkMode ? "bg-blue-500" : "bg-blue-600"}`}></div>
                       </div>
-                      <span className={`text-[10px] uppercase tracking-widest font-black transition-colors ${signupForm.role === r ? (darkMode ? "text-blue-400" : "text-blue-600") : (darkMode ? "text-white" : "text-black")}`}>
+                      <span className={`text-[9px] uppercase tracking-widest font-black transition-colors ${signupForm.role === r ? (darkMode ? "text-blue-400" : "text-blue-600") : (darkMode ? "text-white" : "text-black")}`}>
                         {r}
                       </span>
                     </label>
@@ -476,7 +476,7 @@ function LoginContent() {
                 </div>
 
                 <form onSubmit={handleSignupSubmit} className="flex-1 flex flex-col min-h-0 space-y-4">
-                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3">
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -489,7 +489,7 @@ function LoginContent() {
 
                 <div className="space-y-1.5">
                   <div className="space-y-0.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name</label>
+                    <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name</label>
                     <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                       <input
                         type="text"
@@ -497,14 +497,14 @@ function LoginContent() {
                         placeholder="John Doe"
                         value={signupForm.name}
                         onChange={handleSignupChange}
-                        className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-0.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>
+                    <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>
                       {signupForm.role === "faculty" ? "Employee ID" : "Enrollment No."}
                     </label>
                     <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
@@ -514,7 +514,7 @@ function LoginContent() {
                         placeholder={signupForm.role === "faculty" ? "Ex: Emp-123" : "Ex: PV-H209001"}
                         value={signupForm.enrollmentNumber}
                         onChange={handleSignupChange}
-                        className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
@@ -526,7 +526,7 @@ function LoginContent() {
                   </div>
 
                   <div className="space-y-0.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                    <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
                     <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                       <input
                         type="email"
@@ -534,14 +534,14 @@ function LoginContent() {
                         placeholder="john@univ.edu"
                         value={signupForm.email}
                         onChange={handleSignupChange}
-                        className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-0.5">
-                    <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password</label>
+                    <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password</label>
                     <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
                       <input
                         type={showPassword ? "text" : "password"}
@@ -549,7 +549,7 @@ function LoginContent() {
                         placeholder="••••••••"
                         value={signupForm.password}
                         onChange={handleSignupChange}
-                        className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        className={`w-full px-4 sm:px-6 pr-12 py-2.5 sm:py-3 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                         required
                       />
                       <button
@@ -596,7 +596,7 @@ function LoginContent() {
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                         <input
                           type="email"
@@ -625,7 +625,7 @@ function LoginContent() {
                     <button
                       type="button"
                       onClick={() => setView("LOGIN")}
-                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
+                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
                     >
                       Return to Login
                     </button>
@@ -642,7 +642,7 @@ function LoginContent() {
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                         <input
                           type="text"
@@ -656,7 +656,7 @@ function LoginContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>New Password</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>New Password</label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
                         <input
                           type={showNewPassword ? "text" : "password"}
@@ -680,12 +680,12 @@ function LoginContent() {
 
                   <div className="text-center">
                     {timer > 0 ? (
-                      <p className={`text-[10px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Code expires in <span className="text-blue-500">{timer}s</span></p>
+                      <p className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Code expires in <span className="text-blue-500">{timer}s</span></p>
                     ) : (
                       <button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="text-[10px] uppercase tracking-widest text-red-500 font-black hover:underline underline-offset-4"
+                        className="text-[9px] uppercase tracking-widest text-red-500 font-black hover:underline underline-offset-4"
                       >
                         Code Expired. Resend?
                       </button>
@@ -707,7 +707,7 @@ function LoginContent() {
                     <button
                       type="button"
                       onClick={() => setView("LOGIN")}
-                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[10px] uppercase tracking-widest font-black transition-colors`}
+                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
                     >
                       Cancel
                     </button>
