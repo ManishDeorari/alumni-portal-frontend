@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaTimes, FaUsers, FaSearch, FaTrash, FaChevronRight, FaImage, FaDownload } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { downloadFileSilently } from "../../utils/cloudinaryHelper";
+import GroupAvatar from "./GroupAvatar";
 
 export default function GroupDetailsPanel({ 
     isOpen, 
@@ -50,11 +51,10 @@ export default function GroupDetailsPanel({
                     {/* Group Info Section */}
                     <div className="p-8 flex flex-col items-center text-center">
                         <div className="relative w-32 h-32 rounded-[2.5rem] overflow-hidden border-4 border-blue-500/20 shadow-2xl mb-6 group">
-                             <Image 
-                                 src={group.profileImage || "/default-group.jpg"} 
-                                 fill 
-                                 className="object-cover transition-transform duration-500 group-hover:scale-110" 
-                                 alt={group.name} 
+                             <GroupAvatar 
+                                 group={group} 
+                                 size={128} 
+                                 className="w-full h-full rounded-[2.5rem] transition-transform duration-500 group-hover:scale-110" 
                              />
                         </div>
                         <h3 className="text-2xl font-black tracking-tight mb-2">{group.name}</h3>
