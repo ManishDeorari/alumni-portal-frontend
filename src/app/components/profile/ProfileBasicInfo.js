@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Copy, Edit, UserPlus, Check, Award } from "lucide-react";
+import { Copy, Pencil, UserPlus, Check, Award, QrCode, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileBanner from "./ProfileBanner";
 import ProfileStats from "./ProfileStats";
 import EditBasicInfoModal from "./modals/EditBasicInfoModal";
+import QrCodeModal from "./modals/QrCodeModal";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView }) {
     const { darkMode } = useTheme();
     const [copied, setCopied] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showQrModal, setShowQrModal] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState(null); // null, 'connected', 'pending', 'none'
     const [loading, setLoading] = useState(false);
 
@@ -22,8 +24,6 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         const missing = [];
         if (!profile.profilePicture || profile.profilePicture.includes("default-profile.jpg")) missing.push("Profile Picture");
         if (!profile.bannerImage || profile.bannerImage.includes("default_banner.jpg")) missing.push("Banner Image");
-        if (!profile.secondaryEmail || profile.secondaryEmail === "") missing.push("Secondary Email");
-        if (!profile.universityRollNumber || profile.universityRollNumber === "") missing.push("University Roll Number");
         if (!profile.phone || profile.phone === "Not provided" || profile.phone === "") missing.push("Phone Number");
         if (!profile.address || profile.address === "Not set" || profile.address === "") missing.push("Address");
         if (!profile.whatsapp || profile.whatsapp === "Not linked" || profile.whatsapp === "") missing.push("WhatsApp");
@@ -139,7 +139,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         <div className="max-w-4xl mx-auto mt-3 p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)]">
             <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden h-full`}>
                 {/* 🔷 Banner */}
-                <div className={`relative w-full h-28 sm:h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+                <div className={`relative w-full h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <ProfileBanner
                         image={profile.bannerImage}
                         onUpload={onRefresh}
@@ -149,11 +149,10 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                 </div>
 
                 {/* 🔷 Profile Info Block */}
-                <div className="relative px-4 sm:px-6 pb-4 sm:pb-6 -mt-12 sm:-mt-16 flex flex-col items-center">
+                <div className="relative px-6 pb-6 -mt-16 flex flex-col items-center">
                     {/* Avatar - Centered */}
                     <div className="relative z-10">
                         <ProfileAvatar
-                            user={profile}
                             image={profile.profilePicture}
                             onUpload={onRefresh}
                             userId={profile._id}
@@ -164,16 +163,33 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     {/* Name + Edit */}
                     <div className="flex flex-col items-center w-full mt-2 text-center">
                         <div className="flex items-center justify-center gap-2 w-full">
-                            <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
-                            {!isPublicView && (
-                                <button
-                                    onClick={() => setShowEditModal(true)}
-                                    className={`p-1.5 shadow-sm border rounded-full transition-all ${darkMode ? 'bg-slate-800 text-white border-white/10 hover:bg-slate-700' : 'bg-[#FAFAFA] text-gray-900 border-gray-200 hover:bg-gray-50'}`}
-                                    title="Edit Profile"
-                                >
-                                    <Edit className="w-5 h-5" />
-                                </button>
-                            )}
+                            <h2 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
+                            {/* Action Icons - Top Right */}
+                            <div className="absolute top-[8.5rem] sm:top-20 right-2 sm:right-4 z-20 flex items-center gap-2">
+                                {/* QR Code Button - Available to everyone */}
+                                <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
+                                    <button
+                                        onClick={() => setShowQrModal(true)}
+                                        className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
+                                        title="Show QR Code"
+                                    >
+                                        <QrCode className="w-5 h-5 sm:w-5 sm:h-5" />
+                                    </button>
+                                </div>
+                                
+                                {/* Edit Profile Icon - Only for owner */}
+                                {!isPublicView && (
+                                    <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
+                                        <button
+                                            onClick={() => setShowEditModal(true)}
+                                            className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
+                                            title="Edit Profile"
+                                        >
+                                            <Edit2 className="w-5 h-5 sm:w-5 sm:h-5" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <p className="mt-1 flex items-center justify-center gap-2 w-full">
@@ -191,7 +207,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         </p>
                         {profile.publicId && (
                             <div className={`mt-1 text-sm font-semibold tracking-wide flex items-center justify-center gap-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                <span className={`select-all px-2 py-0.5 rounded-md transition-all cursor-text ${darkMode ? 'bg-[#121213]/50 text-white/70 border border-white/5' : 'bg-[#FAFAFA]/70 text-gray-700 border border-black/5'}`}>
+                                <span className={`select-all px-2 py-0.5 rounded-md transition-all cursor-text ${darkMode ? 'bg-[#121213]/50 text-white/70 border border-white/5' : 'bg-[#FAFAFA]/70 text-black border border-black/5'}`}>
                                     @{profile.publicId}
                                 </span>
                                 <button 
@@ -205,50 +221,74 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         )}
                     </div>
 
-                    {/* Missing Fields Alert for Points */}
-                    {missingFields && (
-                        <div className="w-full mt-6 p-[2.5px] bg-gradient-to-tr from-yellow-500 to-amber-600 rounded-2xl shadow-[0_10px_30px_rgba(245,158,11,0.25)]">
-                            <div className={`p-4 rounded-[calc(1rem-2.5px)] ${darkMode ? 'bg-[#121213]/90 text-yellow-100' : 'bg-yellow-50 text-yellow-900'} backdrop-blur-md`}>
-                                <h3 className="text-sm font-black uppercase tracking-wider mb-3 flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
+                    {/* Profile Completion Tracker Bar */}
+                    {(!isPublicView && profile.role === "alumni" && !profile.profileCompletionAwarded) && (
+                        <div className="w-full mt-6 p-[2.5px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg hover:scale-[1.01] transition-transform duration-300">
+                            <div className={`p-5 rounded-[calc(1rem-2.5px)] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className={`text-sm font-black uppercase tracking-widest flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                         <Award className="w-5 h-5 text-yellow-500" />
-                                        Complete Profile for Points
+                                        Profile Completion
+                                    </h3>
+                                    <span className={`text-sm font-black ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                        {missingFields ? Math.round(((8 - missingFields.length) / 8) * 100) : 100}%
                                     </span>
-                                    <span className="text-[10px] bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-3 py-1 rounded-full font-black tracking-widest">
-                                        {missingFields.length} Tasks Left
-                                    </span>
-                                </h3>
-                                <ul className="text-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 font-medium">
-                                    {missingFields.map((field, idx) => (
-                                        <li key={idx} className="flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"></span>
-                                            <span className="opacity-90 leading-tight">{field}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                </div>
+                                
+                                {/* Progress Bar */}
+                                <div className={`w-full h-3 rounded-full overflow-hidden mt-3 mb-4 shadow-inner ${darkMode ? 'bg-slate-800' : 'bg-gray-200'}`}>
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transition-all duration-1000 ease-out relative"
+                                        style={{ width: `${missingFields ? Math.round(((8 - missingFields.length) / 8) * 100) : 100}%` }}
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 w-full h-full animate-pulse"></div>
+                                    </div>
+                                </div>
+
+                                {missingFields && missingFields.length > 0 ? (
+                                    <div className="mt-4">
+                                        <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                            {missingFields.length} Tasks Remaining for Points:
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {missingFields.map((field, idx) => (
+                                                <div key={idx} className="p-[1.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md shadow-sm">
+                                                    <span className={`block text-[10px] font-black tracking-widest px-2.5 py-1 rounded-[calc(0.375rem-1.5px)] ${darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}>
+                                                        {field}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="mt-4 flex items-center gap-2 text-green-500">
+                                        <Check className="w-4 h-4" />
+                                        <span className="text-xs font-bold uppercase tracking-widest">Profile 100% Complete!</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
 
                     {/* Contact row - 2 Rows with Gradient Borders */}
-                    <div className="w-full mt-5 sm:mt-8 space-y-3 sm:space-y-4">
+                    <div className="w-full mt-8 space-y-4">
                         {/* Level 1: Basics (Email & Address) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="p-[2.5px] bg-gradient-to-tr from-blue-600/40 to-purple-600/40 rounded-2xl shadow-lg">
+                            <div className="p-[2.5px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
                                 <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Primary Email</label>
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-sm font-bold truncate lowercase ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.email}</span>
+                                        <span className={`text-sm font-bold truncate lowercase ${darkMode ? 'text-white' : 'text-black'}`}>{profile.email}</span>
                                         <button onClick={() => copyToClipboard(profile.email, "email")} className="text-blue-300 hover:text-blue-600">
                                             {copied === "email" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-[2.5px] bg-gradient-to-tr from-orange-600/40 to-red-600/40 rounded-2xl shadow-lg">
+                            <div className="p-[2.5px] bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl shadow-lg transition-all duration-300 w-full hover:scale-[1.02] hover:shadow-xl group">
                                 <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Resident Address</label>
-                                    <span className={`text-sm font-bold leading-tight ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>{profile.address || "Not set"}</span>
+                                    <span className={`text-sm font-bold leading-tight ${darkMode ? 'text-white' : 'text-black'}`}>{profile.address || "Not set"}</span>
                                 </div>
                             </div>
                         </div>
@@ -256,11 +296,11 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         {/* Level 2: Connect Icons (Phone, WhatsApp, LinkedIn) */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {/* Phone */}
-                            <div className="p-[2.5px] bg-gradient-to-tr from-green-600/40 to-teal-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800 hover:bg-green-900/10' : 'bg-[#FAFAFA] hover:bg-green-50/10'}`}>
+                            <div className="p-[2.5px] bg-gradient-to-tr from-green-500 to-teal-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-sm sm:text-base font-black ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{profile.phone || "N/A"}</span>
+                                        <span className={`text-base font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.phone || "N/A"}</span>
                                         {profile.phone && (
                                             <button onClick={() => copyToClipboard(profile.phone, "phone")} className="text-green-300 hover:text-green-600">
                                                 {copied === "phone" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
@@ -271,8 +311,8 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             </div>
 
                             {/* WhatsApp */}
-                            <div className="p-[2.5px] bg-gradient-to-tr from-emerald-600/40 to-green-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-emerald-900/10' : 'bg-[#FAFAFA] hover:bg-emerald-50/10'}`}>
+                            <div className="p-[2.5px] bg-gradient-to-tr from-emerald-500 to-green-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>WhatsApp Direct</label>
                                     {profile.whatsapp ? (
                                         <a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`}>{profile.whatsapp}</a>
@@ -281,8 +321,8 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             </div>
 
                             {/* LinkedIn */}
-                            <div className="p-[2.5px] bg-gradient-to-tr from-indigo-600/40 to-blue-600/40 rounded-2xl shadow-lg">
-                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all cursor-pointer ${darkMode ? 'bg-slate-800 hover:bg-indigo-900/10' : 'bg-[#FAFAFA] hover:bg-indigo-50/10'}`}>
+                            <div className="p-[2.5px] bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Professional LinkedIn</label>
                                     {profile.linkedin ? (
                                         <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline italic ${darkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>Connect Now →</a>
@@ -292,9 +332,43 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         </div>
                     </div>
 
-                    <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] -mx-4 sm:-mx-6 mt-4 sm:mt-6 flex flex-col items-center">
+                    <div className="w-[calc(100%+3rem)] -mx-6 mt-6 flex flex-col items-center">
                         {/* Gradient Divider */}
                         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent mb-2"></div>
+                        
+                        {/* Mutual Connections Block */}
+                        {isPublicView && profile.mutualConnections?.length > 0 && (
+                            <div className="w-full px-6 mb-4">
+                                <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-md hover:scale-[1.02] hover:shadow-lg transition-all duration-300">
+                                    <div className={`p-4 rounded-[calc(0.75rem-2.5px)] flex items-center justify-between ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex -space-x-3">
+                                                {profile.mutualConnections.slice(0, 3).map((conn, idx) => (
+                                                    <div key={conn._id} className={`w-10 h-10 rounded-full border-2 ${darkMode ? 'border-[#121213] bg-slate-700' : 'border-[#FAFAFA] bg-gray-200'} overflow-hidden relative z-[${3 - idx}]`}>
+                                                        <img src={conn.profilePicture || "/default-profile.jpg"} alt={conn.name} className="w-full h-full object-cover" />
+                                                    </div>
+                                                ))}
+                                                {profile.mutualConnections.length > 3 && (
+                                                    <div className={`w-10 h-10 rounded-full border-2 ${darkMode ? 'border-[#121213] bg-slate-700 text-white' : 'border-[#FAFAFA] bg-gray-200 text-black'} flex items-center justify-center text-xs font-bold z-0`}>
+                                                        +{profile.mutualConnections.length - 3}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className={`font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>
+                                                    {profile.mutualConnections.length} Mutual Connection{profile.mutualConnections.length > 1 ? 's' : ''}
+                                                </p>
+                                                <p className={`text-xs ${darkMode ? 'text-white' : 'text-black'}`}>
+                                                    You both know {profile.mutualConnections.slice(0, 2).map(c => c.name?.split(' ')[0]).join(' and ')}
+                                                    {profile.mutualConnections.length > 2 ? ' and others' : ''}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="w-full px-6">
                             <ProfileStats profile={profile} isPublicView={isPublicView} />
                         </div>
@@ -308,7 +382,16 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     currentProfile={profile}
                     onSave={handleProfileUpdate}
                 />
+
+                {/* QR Code Modal */}
+                <QrCodeModal
+                    isOpen={showQrModal}
+                    onClose={() => setShowQrModal(false)}
+                    publicId={profile.publicId}
+                    name={profile.name}
+                />
             </div>
         </div>
     );
 }
+

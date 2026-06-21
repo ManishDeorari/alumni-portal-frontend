@@ -5,12 +5,15 @@ import Sidebar from "../components/Sidebar";
 import AdminSidebar from "../components/AdminSidebar";
 import ProfileAbout from "../components/profile/ProfileAbout";
 import ProfileExperience from "../components/profile/ProfileExperience";
+import ProfileSkills from "../components/profile/ProfileSkills";
 import ProfileEducation from "../components/profile/ProfileEducation";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileEventParticipation from "../components/profile/ProfileEventParticipation";
 import ProfileWorkProfile from "../components/profile/ProfileWorkProfile";
 import ProfileJobPreference from "../components/profile/ProfileJobPreference";
 import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
+import ProfileActivityHeatmap from "../components/profile/ProfileActivityHeatmap";
+import ProfileFeatured from "../components/profile/ProfileFeatured";
 
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -84,7 +87,9 @@ function ProfileContent() {
         : `${API_URL}/api/user/myposts`;
 
       const activityEndpoint = `${API_URL}/api/user/activity`;
-      const eventsEndpoint = `${API_URL}/api/user/${targetId}/events`;
+      const eventsEndpoint = viewingOther 
+        ? `${API_URL}/api/user/${targetId}/events`
+        : `${API_URL}/api/user/me/events`;
 
       // ⚡ PARALLEL FETCH: Load everything at once instead of one-by-one
       const [resProfile, resPosts, resActivity, resEvents] = await Promise.all([
@@ -145,11 +150,11 @@ function ProfileContent() {
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
 
   return (
-    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
+    <GooeyGradientBackground className="min-h-screen text-white profile-mobile-scale" darkMode={darkMode}>
       <SidebarComponent />
 
       {/* 🔷 Top Profile Section */}
-      <div className="max-w-4xl mx-auto px-4 pt-6">
+      <div className="max-w-4xl mx-auto px-1 sm:px-4 lg:px-8 pt-6">
         {isPublicView && (
             <div className="flex items-center gap-4 mb-4">
                 <button
@@ -168,14 +173,25 @@ function ProfileContent() {
             onRefresh={fetchProfile}
             isPublicView={isPublicView}
           />
+
+            {/* Activity Heatmap */}
+            <div className="mt-8">
+              <ProfileActivityHeatmap profile={profile} />
+            </div>
+          <ProfileFeatured 
+            user={profile} 
+            isPublicView={isPublicView} 
+            onUpdate={setProfile} 
+          />
         </div>
       </div>
 
       {/* 🔽 Rest Sections */}
-      <div className="max-w-4xl mx-auto mt-6 space-y-6 pb-10">
+      <div className="max-w-4xl mx-auto px-1 sm:px-4 lg:px-8 mt-6 sm:mt-10 mb-20 space-y-8 pb-32">
         <ProfileAbout profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileEducation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        <ProfileSkills profile={profile} setProfile={setProfile} isPublicView={isPublicView} currentUserId={user?._id} />
         {!isPublicView && <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />}
         {(profile.role === "student" || profile.role === "alumni") && (
           <ProfileEventParticipation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />

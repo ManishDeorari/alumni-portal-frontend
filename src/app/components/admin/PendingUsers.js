@@ -305,7 +305,7 @@ function Table({ users, selected, toggleUser, toggleSelectAll, onApprove, onDele
             {/* Profile */}
             <div className="flex-1 flex items-center gap-5 min-w-0">
               <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-blue-600/20 shadow-[0_0_15px_rgba(37,99,235,0.2)]" : "bg-blue-100"} border-2 border-blue-500/30 flex items-center justify-center text-blue-500 font-black text-sm sm:text-lg`}>
-                {u.name.charAt(0)}
+                <img src="/default-profile.jpg" className="w-full h-full rounded-full object-cover" alt="Default" />
               </div>
               <div className="min-w-0">
                 <p className={`font-black text-sm sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>

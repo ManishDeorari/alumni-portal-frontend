@@ -25,7 +25,7 @@ export default function ProfileEducation({ profile, setProfile, isPublicView }) 
             >
                 <div className="space-y-8">
                     {profile.education?.map((edu, idx) => (
-                        <div key={idx} className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_10px_30px_rgba(37,99,235,0.2)] group w-full mb-6">
+                        <div key={idx} className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_10px_30px_rgba(37,99,235,0.2)] group w-full mb-6 transition-all duration-300 hover:scale-[1.02] hover:z-20 relative">
                             <div className={`p-5 rounded-[calc(2.5rem-2.5px)] flex gap-4 transition duration-300 ${darkMode ? 'bg-[#121213] hover:bg-slate-900' : 'bg-[#FAFAFA] hover:bg-white'}`}>
                                 {/* Institution Icon */}
                                 <div className="flex-shrink-0">
@@ -43,8 +43,18 @@ export default function ProfileEducation({ profile, setProfile, isPublicView }) 
                                         </h3>
                                         <p className={`text-sm font-black mt-1 ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
                                             {edu.degree}
-                                            {edu.fieldOfStudy && ` · ${edu.fieldOfStudy}`}
+                                            {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}
                                         </p>
+                                        {edu.course && (
+                                            <div className={`text-[11px] font-black mt-1 uppercase tracking-widest ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                Course: <span className={`normal-case tracking-normal ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{edu.course}</span>
+                                            </div>
+                                        )}
+                                        {edu.branch && (
+                                            <div className={`text-[11px] font-black mt-0.5 uppercase tracking-widest ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                Branch: <span className={`normal-case tracking-normal ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>{edu.branch}</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>

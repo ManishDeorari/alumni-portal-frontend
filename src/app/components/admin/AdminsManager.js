@@ -301,9 +301,9 @@ function Table({
 
             {/* Profile */}
             <div className="flex-1 flex items-center gap-3 sm:gap-5 min-w-0">
-              <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${darkMode ? "bg-purple-600/20 shadow-[0_0_15px_rgba(147,51,234,0.2)]" : "bg-purple-100"} border-2 border-purple-500/30 flex items-center justify-center text-purple-500 font-black text-sm sm:text-lg`}>
-                {u.name.charAt(0)}
-              </div>
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 ${darkMode ? "bg-purple-500/20 text-purple-300" : "bg-purple-100 text-purple-700"} border-2 border-purple-500/30 flex items-center justify-center font-black text-sm sm:text-lg overflow-hidden`}>
+                          <img src={u.profilePicture || "/default-profile.jpg"} className="w-full h-full rounded-full object-cover" alt="Profile" />
+                        </div>
               <div className="min-w-0">
                 <p className={`font-black text-xs sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
                 <p className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider sm:tracking-widest ${darkMode ? "text-purple-400" : "text-slate-600"} truncate`}>{u.email}</p>

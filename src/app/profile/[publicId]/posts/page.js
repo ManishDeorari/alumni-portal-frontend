@@ -29,7 +29,16 @@ function PostsContent() {
             if (!token || !publicId) return;
 
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            const res = await fetch(`${API_URL}/api/posts?userId=${publicId}&limit=50&type=all`, {
+            const userStr = localStorage.getItem("user");
+            let currentUser = null;
+            if (userStr) currentUser = JSON.parse(userStr);
+
+            const viewingOther = !!(publicId && currentUser && publicId !== currentUser._id && publicId !== currentUser.publicId);
+            const postsEndpoint = viewingOther
+                ? `${API_URL}/api/posts?userId=${publicId}&limit=50&type=all`
+                : `${API_URL}/api/user/myposts`;
+
+            const res = await fetch(postsEndpoint, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -69,7 +78,7 @@ function PostsContent() {
     }
 
     return (
-        <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${darkMode ? "bg-[#0A0A0A] text-white" : "bg-[#f8f9fa] text-gray-900"}`}>
+        <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 profile-mobile-scale ${darkMode ? "bg-[#0A0A0A] text-white" : "bg-[#f8f9fa] text-gray-900"}`}>
             <GooeyGradientBackground />
             
 
@@ -80,7 +89,7 @@ function PostsContent() {
                 <div className="flex-1 flex flex-col h-screen overflow-hidden">
                     {/* Header - Transparent */}
                     <div className="shrink-0 z-20 bg-transparent border-none">
-                        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+                        <div className="max-w-4xl mx-auto w-full px-1 sm:px-4 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
 
                             <div className="flex items-center gap-4">
                                 <div>
@@ -95,7 +104,7 @@ function PostsContent() {
 
                     {/* Content Scroll Area */}
                     <div className="flex-1 overflow-y-auto custom-scrollbar pb-20">
-                        <div className="max-w-4xl mx-auto w-full px-2 sm:px-6 mt-2 mb-8 flex flex-col sm:flex-row items-center gap-4">
+                        <div className="max-w-4xl mx-auto w-full px-1 sm:px-4 lg:px-8 mt-2 mb-8 flex flex-col sm:flex-row items-center gap-4">
                             <button
                                 onClick={() => router.back()}
                                 className={`p-3 rounded-full transition-all active:scale-95 shadow-md flex items-center justify-center shrink-0 ${darkMode ? "bg-black hover:bg-gray-900 text-white shadow-white/5 border border-gray-800" : "bg-white hover:bg-gray-50 text-black shadow-black/5 border border-gray-200"}`}
@@ -137,7 +146,7 @@ function PostsContent() {
                             </div>
                         </div>
 
-                        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-3xl mx-auto w-full px-1 sm:px-4 lg:px-8">
                             {filteredPosts.length === 0 ? (
                                 <div className={`py-20 text-center rounded-3xl border-2 border-dashed ${darkMode ? "bg-slate-800/30 border-white/10" : "bg-gray-50/50 border-gray-200"}`}>
                                     <Activity className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 ${darkMode ? "text-gray-600" : "text-gray-300"}`} />

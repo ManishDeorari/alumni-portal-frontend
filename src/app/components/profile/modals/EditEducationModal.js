@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X, Trash2, Plus, Save, GraduationCap, Calendar, BookOpen, School, Award, Users, ChevronDown, ChevronRight, CheckCircle2, Circle } from "lucide-react";
+import { X, Trash2, Plus, Save, GraduationCap, Calendar, BookOpen, School, Award, Users, ChevronDown, ChevronRight, CheckCircle2, Circle, Info } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import HybridInput from "../../ui/HybridInput";
 import LoadingOverlay from "@/app/components/ui/LoadingOverlay";
@@ -241,7 +241,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
     return (
         <>
         <LoadingOverlay isVisible={loading} />
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 animate-fadeIn">
+        <div className="fixed inset-0 h-[100dvh] w-full bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 md:p-4 animate-fadeIn">
             <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)] w-full max-w-3xl">
                 <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(1rem-2.5px)] sm:rounded-[calc(2.5rem-2.5px)] w-full shadow-2xl overflow-hidden max-h-[95dvh] sm:max-h-[90vh] flex flex-col`}>
                 {/* Header */}
@@ -255,6 +255,17 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                 </div>
 
                 <div className={`p-4 md:p-6 space-y-8 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-gray-50/30'}`}>
+                    {/* Guide Text */}
+                    <div className="p-[2px] bg-gradient-to-tr from-purple-500 via-pink-500 to-red-500 rounded-xl mb-6">
+                        <div className={`p-4 rounded-[calc(0.75rem-2px)] flex items-start gap-3 ${darkMode ? 'bg-[#121213] text-purple-300' : 'bg-purple-50 text-purple-800'}`}>
+                            <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                            <div className="text-sm leading-relaxed">
+                                <p className="font-bold mb-0.5">Education Guidelines</p>
+                                <p>You must fill out at least the 4 mandatory levels (High School, Intermediate, Undergrad, Postgrad) if applicable. For each level, ensure you provide the School/College, Degree, Course, and Dates.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <p className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>* Indicates required</p>
 
                     <datalist id="degree-list-final">
@@ -546,11 +557,7 @@ export default function EditEducationModal({ isOpen, onClose, currentEducation, 
                 <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                     <button 
                         onClick={onClose} 
-                        className={`px-6 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${
-                            darkMode 
-                                ? "border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5" 
-                                : "border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                        }`}
+                        className={`px-6 py-2.5 border-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${darkMode ? "border-white text-white hover:bg-white/10" : "border-black text-black hover:bg-gray-100"}`}
                     >
                         Cancel
                     </button>

@@ -10,6 +10,7 @@ export default function BannerImageCropper({ imageSrc, onComplete }) {
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedAreaPct, setCroppedAreaPct] = useState(null);
 
   // Store original image for reset
   const originalImageRef = useRef(null);
@@ -20,7 +21,8 @@ export default function BannerImageCropper({ imageSrc, onComplete }) {
     }
   }, [imageSrc]);
 
-  const onCropComplete = useCallback((_, croppedPixels) => {
+  const onCropComplete = useCallback((croppedArea, croppedPixels) => {
+    setCroppedAreaPct(croppedArea);
     setCroppedAreaPixels(croppedPixels);
   }, []);
 
@@ -34,11 +36,27 @@ export default function BannerImageCropper({ imageSrc, onComplete }) {
   };
 
   const handleFixPosition = async () => {
-    if (!croppedAreaPixels) return;
+    if (!croppedAreaPixels || !croppedAreaPct) return;
     try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
+      const focalX = croppedAreaPixels.x + croppedAreaPixels.width / 2;
+      const focalY = croppedAreaPixels.y + croppedAreaPixels.height / 2;
+      
+      const pctX = croppedAreaPct.x + croppedAreaPct.width / 2;
+      const pctY = croppedAreaPct.y + croppedAreaPct.height / 2;
+      
       if (onComplete) {
-        onComplete(croppedImage);
+        onComplete(null, { 
+          x: focalX, 
+          y: focalY, 
+          pctX, 
+          pctY,
+          cropX: croppedAreaPixels.x,
+          cropY: croppedAreaPixels.y,
+          cropW: croppedAreaPixels.width,
+          cropH: croppedAreaPixels.height,
+          cropPctW: croppedAreaPct.width,
+          cropPctH: croppedAreaPct.height
+        });
       }
     } catch (e) {
       console.error("Fix position error:", e);
@@ -52,7 +70,7 @@ export default function BannerImageCropper({ imageSrc, onComplete }) {
     >
       {/* Cropper area */}
       <div className="p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-md w-full mb-2">
-        <div className="relative w-full h-[300px] bg-black/90 rounded-[calc(1rem-2.5px)] overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-[220px] bg-black/90 rounded-[calc(1rem-2.5px)] overflow-hidden flex items-center justify-center">
           <Cropper
             image={imageSrc}
             crop={crop}
@@ -122,9 +140,9 @@ export default function BannerImageCropper({ imageSrc, onComplete }) {
         className={`px-4 py-3 rounded-lg font-black uppercase tracking-widest text-xs mt-6 w-full shadow-sm transition-colors ${
             darkMode ? 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/40' : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
-        title="Apply current crop and save"
+        title="Set focus point and save"
       >
-        Fix Position
+        Set Focus Point
       </button>
     </div>
   );

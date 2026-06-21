@@ -137,7 +137,7 @@ function EventsContent() {
     }, []);
 
     const handleViewEvent = (event) => {
-        if (event.isEventRepostPost) {
+        if (event.type === "EventRepost" || event.isEventRepostPost) {
             setSelectedPost(event);
             setShowPostModal(true);
             return;
@@ -173,10 +173,10 @@ function EventsContent() {
     const { participatedEvents, wonEvents } = eventsData;
 
     return (
-        <GooeyGradientBackground className="min-h-screen text-white" darkMode={darkMode}>
+        <GooeyGradientBackground className="min-h-screen text-white profile-mobile-scale" darkMode={darkMode}>
             <SidebarComponent />
 
-            <div className="max-w-4xl mx-auto py-12 px-4">
+            <div className="max-w-4xl mx-auto py-12 px-1 sm:px-4 lg:px-8">
                 <div className="flex flex-col sm:flex-row items-center gap-4 mb-10">
                     <button
                         onClick={() => router.back()}
@@ -228,7 +228,7 @@ function EventsContent() {
                             <div className={`py-12 text-center rounded-2xl border-2 border-dashed ${darkMode ? 'bg-slate-800/30 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
                                 <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                                 <h3 className="text-xl font-bold mb-2">No Participated Events</h3>
-                                <p className="text-sm opacity-80">This user hasn't participated in any events yet.</p>
+                                <p className="text-sm opacity-80">This user hasn&apos;t participated in any events yet.</p>
                             </div>
                         ) : (
                             <div className="relative p-[2px] bg-gradient-to-tr from-blue-400/60 to-purple-500/60 rounded-[1.5rem]">
@@ -291,7 +291,7 @@ function EventsContent() {
                             <div className={`py-12 text-center rounded-2xl border-2 border-dashed ${darkMode ? 'bg-slate-800/30 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
                                 <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
                                 <h3 className="text-xl font-bold mb-2">No Won Events</h3>
-                                <p className="text-sm opacity-80">This user hasn't won any events yet.</p>
+                                <p className="text-sm opacity-80">This user hasn&apos;t won any events yet.</p>
                             </div>
                         ) : (
                             <div className="relative p-[2px] bg-gradient-to-tr from-yellow-400/60 to-amber-500/60 rounded-[1.5rem]">

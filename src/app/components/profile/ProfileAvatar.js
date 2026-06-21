@@ -4,9 +4,11 @@ import ProfileEditorModal from "./Avatar/ProfileEditorModal";
 import ImageViewerModal from "./ImageViewerModal"; // import here
 import Image from "next/image";
 import UserAvatar from "../ui/UserAvatar";
-import { getOptimizedImageUrl } from "../../utils/cloudinaryHelper";
+import { getOptimizedImageUrl, getFocalImageUrl } from "../../utils/cloudinaryHelper";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function ProfileAvatar({ user, image, onUpload, userId, isPublicView }) {
+  const { darkMode } = useTheme();
   const [showEditor, setShowEditor] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
 
@@ -29,7 +31,7 @@ export default function ProfileAvatar({ user, image, onUpload, userId, isPublicV
       <div className="p-[3px] bg-gradient-to-tr from-blue-600 via-purple-500 to-pink-500 rounded-full shadow-2xl transition-transform duration-300 group-hover:scale-105 flex items-center justify-center aspect-square w-fit h-fit">
         <UserAvatar
           user={user}
-          src={getOptimizedImageUrl(profileImg)}
+          src={getFocalImageUrl(profileImg, 400, 400, user?.profileImageFocus)}
           alt="Profile"
           width={160}
           height={160}
@@ -51,20 +53,34 @@ export default function ProfileAvatar({ user, image, onUpload, userId, isPublicV
       </div>
 
       {!isPublicView && (
-        <button
-          onClick={() => setShowEditor(true)}
-          className="absolute z-30 bg-[#FAFAFA] p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
-          style={{ bottom: '2%', left: '2%' }}
-          title="Edit photo"
+        <div 
+          className="absolute z-30 p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center"
+          style={{ 
+            width: '28%', 
+            height: '28%', 
+            minWidth: '1.2rem', 
+            minHeight: '1.2rem', 
+            maxWidth: '2.6rem', 
+            maxHeight: '2.6rem', 
+            bottom: '2%', 
+            left: '2%' 
+          }}
         >
-          <Camera size={18} className="text-gray-700" />
-        </button>
+          <button
+            onClick={() => setShowEditor(true)}
+            className={`w-full h-full rounded-[calc(9999px-2px)] flex items-center justify-center cursor-pointer transition-colors ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
+            title="Edit photo"
+          >
+            <Camera style={{ width: '50%', height: '50%' }} className="text-current" />
+          </button>
+        </div>
       )}
 
       {showEditor && (
         <ProfileEditorModal
           userId={userId}
           currentImage={profileImg}
+          currentFocus={user?.profileImageFocus}
           onClose={() => setShowEditor(false)}
           onUploaded={() => {
             setShowEditor(false);
