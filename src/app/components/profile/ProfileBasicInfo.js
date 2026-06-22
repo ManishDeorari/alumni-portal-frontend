@@ -1,22 +1,30 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Copy, Pencil, UserPlus, Check, Award, QrCode, Edit2 } from "lucide-react";
+import { Copy, Pencil, UserPlus, Check, Award, QrCode, Edit2, Download } from "lucide-react";
 import toast from "react-hot-toast";
+import dynamic from 'next/dynamic';
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileBanner from "./ProfileBanner";
 import ProfileStats from "./ProfileStats";
+import ResumePDF from "./ResumePDF";
+import ResumeDownloadBtn from "./ResumeDownloadBtn";
 import EditBasicInfoModal from "./modals/EditBasicInfoModal";
 import QrCodeModal from "./modals/QrCodeModal";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView }) {
+export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView, viewerRole }) {
     const { darkMode } = useTheme();
     const [copied, setCopied] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showQrModal, setShowQrModal] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState(null); // null, 'connected', 'pending', 'none'
     const [loading, setLoading] = useState(false);
+    const shouldHidePrivateFields = isPublicView && viewerRole === 'student';
+
+    const isProfileOwnerStudentOrAlumni = profile.role === 'student' || profile.role === 'alumni';
+    const isViewerPrivileged = viewerRole && ['faculty', 'admin', 'main_admin', 'mainadmin', 'superadmin'].includes(viewerRole.toLowerCase());
+    const canViewResume = isProfileOwnerStudentOrAlumni && (!isPublicView || isViewerPrivileged);
 
     const getMissingFields = () => {
         if (!profile || profile.role !== "alumni" || isPublicView || profile.profileCompletionAwarded) return null;
@@ -164,6 +172,11 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     <div className="flex flex-col items-center w-full mt-2 text-center">
                         <div className="flex items-center justify-center gap-2 w-full">
                             <h2 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
+                            {/* Action Icons - Top Left */}
+                            <div className="absolute top-[8.5rem] sm:top-20 left-2 sm:left-4 z-20 flex items-center gap-2">
+                                {canViewResume && <ResumeDownloadBtn profile={profile} darkMode={darkMode} />}
+                            </div>
+
                             {/* Action Icons - Top Right */}
                             <div className="absolute top-[8.5rem] sm:top-20 right-2 sm:right-4 z-20 flex items-center gap-2">
                                 {/* QR Code Button - Available to everyone */}
