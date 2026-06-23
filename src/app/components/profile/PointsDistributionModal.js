@@ -15,12 +15,13 @@ const CATEGORY_GROUPS = [
         id: "profileCompletion",
         label: "Profile Completion",
         icon: "👤",
+        description: "Earn points by completing your Basic Info, Education, Experience/Internships (with proof image), Skills, and uploading your Resume, Portfolios, and Custom Links."
     },
     {
         id: "studentEngagement",
         label: "Student Engagement",
         icon: "🤝",
-        description: "Earn points by uploading your Resume, GitHub, Portfolio, and connecting with peers."
+        description: "Earn points by connecting with peers, endorsing skills, and networking within the platform."
     },
     {
         id: "contentContribution",
@@ -44,8 +45,8 @@ const CATEGORY_GROUPS = [
         icon: "💡",
     },
     {
-        id: "alumniParticipation",
-        label: "Alumni Participation",
+        id: "studentParticipation",
+        label: "Student Participation",
         icon: "🎓",
         description: "Earn points by participating in events, reposting announcements, and ranking high in competitions."
     },
@@ -65,7 +66,7 @@ export default function PointsDistributionModal({ isOpen, onClose, user }) {
     const [expanded, setExpanded] = React.useState({});
     const { darkMode } = useTheme();
 
-    if (!user || user.role !== "alumni") return null;
+    if (!user || user.role !== "student") return null;
 
     const points = user.points || {};
 
