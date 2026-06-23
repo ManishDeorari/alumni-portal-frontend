@@ -9,8 +9,7 @@ import ProfileSkills from "../components/profile/ProfileSkills";
 import ProfileEducation from "../components/profile/ProfileEducation";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileEventParticipation from "../components/profile/ProfileEventParticipation";
-import ProfileWorkProfile from "../components/profile/ProfileWorkProfile";
-import ProfileJobPreference from "../components/profile/ProfileJobPreference";
+import ProfileResumeAndLinks from "../components/profile/ProfileResumeAndLinks";
 import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
 import ProfileActivityHeatmap from "../components/profile/ProfileActivityHeatmap";
 import ProfileFeatured from "../components/profile/ProfileFeatured";
@@ -75,7 +74,7 @@ function ProfileContent() {
         return;
       }
 
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
       // 1) Define endpoints
       const profileEndpoint = viewingOther
@@ -136,7 +135,7 @@ function ProfileContent() {
   }, [fetchProfile]);
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
+    <GooeyGradientBackground className="min-h-screen text-white flex items-center justify-center p-4" darkMode={true}>
       <div className="flex flex-col items-center gap-6 animate-pulse">
         <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
         <div className="text-center space-y-2">
@@ -144,7 +143,7 @@ function ProfileContent() {
             <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Optimizing profile experience...</p>
         </div>
       </div>
-    </div>
+    </GooeyGradientBackground>
   );
 
   const SidebarComponent = isAdmin ? AdminSidebar : Sidebar;
@@ -192,12 +191,13 @@ function ProfileContent() {
         <ProfileEducation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileSkills profile={profile} setProfile={setProfile} isPublicView={isPublicView} currentUserId={user?._id} />
-        {!isPublicView && <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />}
+        {profile.role === "student" && (
+          <ProfileResumeAndLinks profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        )}
+        <ProfileActivity profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         {(profile.role === "student" || profile.role === "alumni") && (
           <ProfileEventParticipation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         )}
-        <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
-        <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
       </div>
     </GooeyGradientBackground>
   );
@@ -207,14 +207,14 @@ export default function ProfilePage() {
   return (
     <AuthGuard>
       <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white p-4">
+        <GooeyGradientBackground className="min-h-screen text-white flex items-center justify-center p-4" darkMode={true}>
           <div className="flex flex-col items-center gap-6 animate-pulse">
             <div className="w-20 h-20 border-4 border-white/10 border-t-white rounded-full animate-spin shadow-2xl shadow-white/10"></div>
             <div className="text-center space-y-2">
                 <h2 className="font-black tracking-[0.3em] uppercase text-sm">Authenticating Route...</h2>
             </div>
           </div>
-        </div>
+        </GooeyGradientBackground>
       }>
         <ProfileContent />
       </Suspense>
