@@ -1,37 +1,50 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Copy, Pencil, UserPlus, Check, Award, QrCode, Edit2, Download } from "lucide-react";
+import { Copy, Pencil, UserPlus, Check, Award, QrCode, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import dynamic from 'next/dynamic';
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileBanner from "./ProfileBanner";
 import ProfileStats from "./ProfileStats";
-import ResumePDF from "./ResumePDF";
 import ResumeDownloadBtn from "./ResumeDownloadBtn";
 import EditBasicInfoModal from "./modals/EditBasicInfoModal";
 import QrCodeModal from "./modals/QrCodeModal";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView, viewerRole }) {
+export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView }) {
     const { darkMode } = useTheme();
     const [copied, setCopied] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showQrModal, setShowQrModal] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState(null); // null, 'connected', 'pending', 'none'
     const [loading, setLoading] = useState(false);
-    const shouldHidePrivateFields = isPublicView && viewerRole === 'student';
+    const [viewerRole, setViewerRole] = useState(null);
 
+    useEffect(() => {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+            try {
+                const u = JSON.parse(userStr);
+                setViewerRole(u.role);
+            } catch(e){}
+        }
+    }, []);
+
+    const shouldHidePrivateFields = isPublicView && viewerRole === 'student';
+    
     const isProfileOwnerStudentOrAlumni = profile.role === 'student' || profile.role === 'alumni';
     const isViewerPrivileged = viewerRole && ['faculty', 'admin', 'main_admin', 'mainadmin', 'superadmin'].includes(viewerRole.toLowerCase());
     const canViewResume = isProfileOwnerStudentOrAlumni && (!isPublicView || isViewerPrivileged);
 
     const getMissingFields = () => {
-        if (!profile || profile.role !== "alumni" || isPublicView || profile.profileCompletionAwarded) return null;
+        if (!profile || profile.role !== "student" || isPublicView || profile.profileCompletionAwarded) return null;
         
         const missing = [];
         if (!profile.profilePicture || profile.profilePicture.includes("default-profile.jpg")) missing.push("Profile Picture");
         if (!profile.bannerImage || profile.bannerImage.includes("default_banner.jpg")) missing.push("Banner Image");
+        if (!profile.secondaryEmail || profile.secondaryEmail === "") missing.push("Secondary Email");
+        if (!profile.universityRollNumber || profile.universityRollNumber === "") missing.push("University Roll Number");
         if (!profile.phone || profile.phone === "Not provided" || profile.phone === "") missing.push("Phone Number");
         if (!profile.address || profile.address === "Not set" || profile.address === "") missing.push("Address");
         if (!profile.whatsapp || profile.whatsapp === "Not linked" || profile.whatsapp === "") missing.push("WhatsApp");
@@ -115,6 +128,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
     }, [isPublicView, profile._id, fetchConnectionStatus]);
 
     const handleConnect = async () => {
+        if (loading) return;
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
@@ -139,7 +153,9 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
             console.error("Error sending connection request:", err);
             toast.error("Something went wrong");
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
         }
     };
 
@@ -147,9 +163,10 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
         <div className="max-w-4xl mx-auto mt-3 p-[2.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2.5rem] shadow-[0_20px_60px_rgba(37,99,235,0.4)]">
             <div className={`${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'} rounded-[calc(2.5rem-2.5px)] overflow-hidden h-full`}>
                 {/* 🔷 Banner */}
-                <div className={`relative w-full h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+                <div className={`relative w-full h-28 sm:h-40 md:h-48 ${darkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <ProfileBanner
                         image={profile.bannerImage}
+                        focus={profile.bannerImageFocus}
                         onUpload={onRefresh}
                         userId={profile._id}
                         isPublicView={isPublicView}
@@ -157,10 +174,10 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                 </div>
 
                 {/* 🔷 Profile Info Block */}
-                <div className="relative px-6 pb-6 -mt-16 flex flex-col items-center">
-                    {/* Avatar - Centered */}
+                <div className="relative px-4 sm:px-6 pb-4 sm:pb-6 -mt-12 sm:-mt-16 flex flex-col items-center">
                     <div className="relative z-10">
                         <ProfileAvatar
+                            user={profile}
                             image={profile.profilePicture}
                             onUpload={onRefresh}
                             userId={profile._id}
@@ -168,52 +185,53 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         />
                     </div>
 
-                    {/* Name + Edit */}
+                    {/* Action Icons - Top Left */}
+                    <div className="absolute top-[8.5rem] sm:top-20 left-2 sm:left-4 z-20 flex items-center gap-2">
+                        {canViewResume && <ResumeDownloadBtn profile={profile} darkMode={darkMode} />}
+                    </div>
+
+                    {/* Action Icons - Top Right */}
+                    <div className="absolute top-[8.5rem] sm:top-20 right-2 sm:right-4 z-20 flex items-center gap-2">
+                        {/* QR Code Button - Available to everyone */}
+                        <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
+                            <button
+                                onClick={() => setShowQrModal(true)}
+                                className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
+                                title="Show QR Code"
+                            >
+                                <QrCode className="w-5 h-5 sm:w-5 sm:h-5" />
+                            </button>
+                        </div>
+                        
+                        {/* Edit Profile Icon - Only for owner */}
+                        {!isPublicView && (
+                            <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
+                                <button
+                                    onClick={() => setShowEditModal(true)}
+                                    className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
+                                    title="Edit Profile"
+                                >
+                                    <Pencil className="w-5 h-5 sm:w-5 sm:h-5" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Name */}
                     <div className="flex flex-col items-center w-full mt-2 text-center">
                         <div className="flex items-center justify-center gap-2 w-full">
-                            <h2 className={`text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
-                            {/* Action Icons - Top Left */}
-                            <div className="absolute top-[8.5rem] sm:top-20 left-2 sm:left-4 z-20 flex items-center gap-2">
-                                {canViewResume && <ResumeDownloadBtn profile={profile} darkMode={darkMode} />}
-                            </div>
-
-                            {/* Action Icons - Top Right */}
-                            <div className="absolute top-[8.5rem] sm:top-20 right-2 sm:right-4 z-20 flex items-center gap-2">
-                                {/* QR Code Button - Available to everyone */}
-                                <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
-                                    <button
-                                        onClick={() => setShowQrModal(true)}
-                                        className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
-                                        title="Show QR Code"
-                                    >
-                                        <QrCode className="w-5 h-5 sm:w-5 sm:h-5" />
-                                    </button>
-                                </div>
-                                
-                                {/* Edit Profile Icon - Only for owner */}
-                                {!isPublicView && (
-                                    <div className="p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg">
-                                        <button
-                                            onClick={() => setShowEditModal(true)}
-                                            className={`p-3 sm:p-2 rounded-[calc(9999px-2px)] transition-all hover:scale-105 ${darkMode ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-white text-gray-900 hover:bg-gray-50'}`}
-                                            title="Edit Profile"
-                                        >
-                                            <Edit2 className="w-5 h-5 sm:w-5 sm:h-5" />
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+                            <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{profile.name || "Unnamed User"}</h2>
                         </div>
 
                         <p className="mt-1 flex items-center justify-center gap-2 w-full">
                             <span className={`font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded border italic ${darkMode ? 'text-blue-400 bg-blue-900/30 border-blue-900/50' : 'text-blue-600 bg-blue-50 border-blue-100'}`}>
                                 {profile.role || "Member"}
                             </span>
-                            {!(profile.isMainAdmin || profile.email === "admin@alumniportal.com" || profile.email === "manishdeorari377@gmail.com") && (
+                            {!(profile.isMainAdmin || profile.email === "manishdeorari377@gmail.com") && profile.role !== 'student' && profile.role !== 'alumni' && (
                                 <>
                                     <span className={`${darkMode ? 'text-gray-600' : 'text-gray-300'}`}>•</span>
                                     <span className={`font-bold uppercase tracking-widest text-[10px] ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                        {profile.role === 'admin' || profile.role === 'faculty' ? (profile.employeeId || "N/A") : (profile.enrollmentNumber || "N/A")}
+                                        {profile.employeeId || "N/A"}
                                     </span>
                                 </>
                             )}
@@ -235,7 +253,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     </div>
 
                     {/* Profile Completion Tracker Bar */}
-                    {(!isPublicView && profile.role === "alumni" && !profile.profileCompletionAwarded) && (
+                    {(!isPublicView && profile.role === "student" && !profile.profileCompletionAwarded) && (
                         <div className="w-full mt-6 p-[2.5px] bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg hover:scale-[1.01] transition-transform duration-300">
                             <div className={`p-5 rounded-[calc(1rem-2.5px)] ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
                                 <div className="flex items-center justify-between mb-2">
@@ -244,7 +262,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                         Profile Completion
                                     </h3>
                                     <span className={`text-sm font-black ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                        {missingFields ? Math.round(((8 - missingFields.length) / 8) * 100) : 100}%
+                                        {missingFields ? Math.round(((10 - missingFields.length) / 10) * 100) : 100}%
                                     </span>
                                 </div>
                                 
@@ -252,7 +270,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 <div className={`w-full h-3 rounded-full overflow-hidden mt-3 mb-4 shadow-inner ${darkMode ? 'bg-slate-800' : 'bg-gray-200'}`}>
                                     <div 
                                         className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transition-all duration-1000 ease-out relative"
-                                        style={{ width: `${missingFields ? Math.round(((8 - missingFields.length) / 8) * 100) : 100}%` }}
+                                        style={{ width: `${missingFields ? Math.round(((10 - missingFields.length) / 10) * 100) : 100}%` }}
                                     >
                                         <div className="absolute inset-0 bg-white/20 w-full h-full animate-pulse"></div>
                                     </div>
@@ -284,8 +302,8 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                     )}
 
                     {/* Contact row - 2 Rows with Gradient Borders */}
-                    <div className="w-full mt-8 space-y-4">
-                        {/* Level 1: Basics (Email & Address) */}
+                    <div className="w-full mt-5 sm:mt-8 space-y-3 sm:space-y-4">
+                        {/* Level 1: Basics (Emails) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="p-[2.5px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
                                 <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
@@ -298,13 +316,85 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-[2.5px] bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl shadow-lg transition-all duration-300 w-full hover:scale-[1.02] hover:shadow-xl group">
+                            <div className="p-[2.5px] bg-gradient-to-tr from-cyan-500 to-teal-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
                                 <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Resident Address</label>
-                                    <span className={`text-sm font-bold leading-tight ${darkMode ? 'text-white' : 'text-black'}`}>{profile.address || "Not set"}</span>
+                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Secondary Email</label>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-sm font-bold truncate lowercase ${darkMode ? 'text-white' : 'text-black'}`}>{profile.secondaryEmail || "Not set"}</span>
+                                        {profile.secondaryEmail && (
+                                            <button onClick={() => copyToClipboard(profile.secondaryEmail, "secondaryEmail")} className="text-blue-300 hover:text-blue-600">
+                                                {copied === "secondaryEmail" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        
+                        {/* New Level: Role Specific Info */}
+                        {profile.role === 'student' ? (
+                            <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Enrollment Number</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.enrollmentNumber || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-purple-500 to-fuchsia-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>University Roll Number</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.universityRollNumber || "Not set"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-pink-500 to-rose-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Course</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.course || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-rose-500/40 to-orange-500/40 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Branch</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.branch || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Semester</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.semester || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-[2.5px] bg-gradient-to-tr from-amber-500 to-orange-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Section</label>
+                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.section || "N/A"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-[2.5px] bg-gradient-to-tr from-violet-500 to-purple-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                    <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                        <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Position</label>
+                                        <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>
+                                            {profile.isMainAdmin ? "Main Admin" : (profile.position || "N/A")}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="p-[2.5px] bg-gradient-to-tr from-fuchsia-500 to-pink-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                    <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                        <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Department</label>
+                                        <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>
+                                            {profile.isMainAdmin ? "Server" : (profile.department || "N/A")}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Level 2: Connect Icons (Phone, WhatsApp, LinkedIn) */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -313,11 +403,17 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-base font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.phone || "N/A"}</span>
-                                        {profile.phone && (
-                                            <button onClick={() => copyToClipboard(profile.phone, "phone")} className="text-green-300 hover:text-green-600">
-                                                {copied === "phone" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                                            </button>
+                                        {shouldHidePrivateFields ? (
+                                            <span className={`text-sm sm:text-base font-black italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Hidden for privacy</span>
+                                        ) : (
+                                            <>
+                                                <span className={`text-sm sm:text-base font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.phone || "N/A"}</span>
+                                                {profile.phone && (
+                                                    <button onClick={() => copyToClipboard(profile.phone, "phone")} className="text-green-300 hover:text-green-600">
+                                                        {copied === "phone" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                                                    </button>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </div>
@@ -327,7 +423,9 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             <div className="p-[2.5px] bg-gradient-to-tr from-emerald-500 to-green-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
                                 <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                     <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>WhatsApp Direct</label>
-                                    {profile.whatsapp ? (
+                                    {shouldHidePrivateFields ? (
+                                        <span className={`text-base font-bold italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Hidden for privacy</span>
+                                    ) : profile.whatsapp ? (
                                         <a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={`font-black text-base hover:underline ${darkMode ? 'text-emerald-400' : 'text-emerald-500'}`}>{profile.whatsapp}</a>
                                     ) : <span className={`text-base font-bold italic ${darkMode ? 'text-gray-500' : 'text-gray-300'}`}>None</span>}
                                 </div>
@@ -343,9 +441,21 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 </div>
                             </div>
                         </div>
+                        
+                        {/* Level 3: Address */}
+                        <div className="p-[2.5px] bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl shadow-lg transition-all duration-300 w-full hover:scale-[1.02] hover:shadow-xl group">
+                            <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Resident Address</label>
+                                {shouldHidePrivateFields ? (
+                                    <span className={`text-sm font-bold italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Hidden for privacy</span>
+                                ) : (
+                                    <span className={`text-sm font-bold leading-tight ${darkMode ? 'text-white' : 'text-black'}`}>{profile.address || "Not set"}</span>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="w-[calc(100%+3rem)] -mx-6 mt-6 flex flex-col items-center">
+                    <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] -mx-4 sm:-mx-6 mt-4 sm:mt-6 flex flex-col items-center">
                         {/* Gradient Divider */}
                         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent mb-2"></div>
                         
