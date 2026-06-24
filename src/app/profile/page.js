@@ -14,6 +14,8 @@ import ProfileResumeAndLinks from "../components/profile/ProfileResumeAndLinks";
 import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
 import ProfileActivityHeatmap from "../components/profile/ProfileActivityHeatmap";
 import ProfileFeatured from "../components/profile/ProfileFeatured";
+import ProfileWorkProfile from "../components/profile/ProfileWorkProfile";
+import ProfileJobPreference from "../components/profile/ProfileJobPreference";
 
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -200,6 +202,12 @@ function ProfileContent() {
         {(profile.role === "student" || profile.role === "alumni") && (
           <ProfileEventParticipation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         )}
+        {profile.role === "alumni" && (
+          <>
+            <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+            <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+          </>
+        )}
       </div>
     </GooeyGradientBackground>
   );
@@ -223,4 +231,3 @@ export default function ProfilePage() {
     </AuthGuard>
   );
 }
-
