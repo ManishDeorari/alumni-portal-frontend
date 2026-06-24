@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import socket from "@/utils/socket";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import { ShieldAlert, X, MessageSquare, UserPlus, Users, Bell, Award } from "lucide-react";
+import { ShieldAlert, X, MessageSquare, UserPlus, Users, Bell, Award, Eye } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,7 @@ export const useNotifications = () => {
   return context;
 };
 
-export  const NotificationProvider = ({ children }) => {
+export const NotificationProvider = ({ children }) => {
   const { darkMode } = useTheme();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -29,7 +29,7 @@ export  const NotificationProvider = ({ children }) => {
   const [shakeNotification, setShakeNotification] = useState(false);
   const [authTrigger, setAuthTrigger] = useState(0);
   
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const userRef = useRef(null);
   const recentToastsRef = useRef(new Map());
 
@@ -223,15 +223,21 @@ export  const NotificationProvider = ({ children }) => {
           setShakeNotification(true);
           setTimeout(() => setShakeNotification(false), 1000);
 
-          const type = notification.type;
-          
-          const allowedToastTypes = ["feedback", "notice", "admin_notice", "announcement", "points_earned", "points_deducted"];
-          if (!allowedToastTypes.includes(type)) {
-            return; // Skip toast, but still add to notifications list
+          const allowedToastTypes = [
+            "feedback",
+            "admin_notice",
+            "announcement",
+            "notice",
+            "points_earned",
+            "points_deducted"
+          ];
+
+          if (!allowedToastTypes.includes(notification.type)) {
+            return;
           }
 
           // Prevent popup spam for micro point earnings (likes, comments, etc)
-          if (type === "points_earned") {
+          if (notification.type === "points_earned") {
             const msg = notification.message || "";
             if (msg.includes("Like") || msg.includes("Comment") || msg.includes("Reply") || msg.includes("creating a post")) {
               return;
@@ -240,9 +246,10 @@ export  const NotificationProvider = ({ children }) => {
 
           // 🚀 UNIVERSAL PREMIUM TOAST
           toast.custom((t) => {
+            const type = notification.type;
             let theme = {
               gradient: "from-blue-500 via-purple-500 to-indigo-500",
-              icon: <ShieldAlert className="w-3.5 h-3.5" />,
+              icon: <Bell className="w-3.5 h-3.5" />,
               label: "Notification",
               accent: "text-blue-400",
               bgAccent: "bg-blue-500/20"
@@ -268,19 +275,27 @@ export  const NotificationProvider = ({ children }) => {
               theme = {
                 gradient: "from-blue-400 to-blue-600",
                 icon: <UserPlus className="w-3.5 h-3.5 text-blue-400" />,
-                label: "Network",
+                label: "Network Request",
                 accent: "text-blue-400",
                 bgAccent: "bg-blue-500/10"
               };
+            } else if (type === "connect_accept") {
+                theme = {
+                  gradient: "from-green-400 to-emerald-600",
+                  icon: <UserPlus className="w-3.5 h-3.5 text-green-400" />,
+                  label: "Network Connected",
+                  accent: "text-green-400",
+                  bgAccent: "bg-green-500/10"
+                };
             } else if (type === "group_joined" || type === "group_added") {
               theme = {
                 gradient: "from-amber-400 to-orange-500",
                 icon: <Users className="w-3.5 h-3.5" />,
-                label: "Group",
+                label: "Group Update",
                 accent: "text-amber-400",
                 bgAccent: "bg-amber-500/20"
               };
-            } else if (type.includes("post") || type.includes("comment") || type.includes("like")) {
+            } else if (type.includes("post") || type.includes("comment") || type.includes("like") || type.includes("reaction")) {
               theme = {
                 gradient: "from-pink-500 to-rose-600",
                 icon: <MessageSquare className="w-3.5 h-3.5" />,
@@ -304,14 +319,30 @@ export  const NotificationProvider = ({ children }) => {
                 accent: "text-red-400",
                 bgAccent: "bg-red-500/20"
               };
-            } else if (type === "notice" || type === "admin_notice" || type === "announcement") {
-              theme = {
-                gradient: "from-red-500 via-orange-500 to-yellow-500",
-                icon: <Bell className="w-3.5 h-3.5" />,
-                label: "Important Notice",
-                accent: "text-red-400",
-                bgAccent: "bg-red-500/20"
-              };
+            } else if (type === "profile_visit") {
+                theme = {
+                  gradient: "from-purple-400 to-indigo-600",
+                  icon: <Eye className="w-3.5 h-3.5 text-purple-400" />,
+                  label: "Profile Visit",
+                  accent: "text-purple-400",
+                  bgAccent: "bg-purple-500/10"
+                };
+            } else if (type === "admin_notice") {
+                theme = {
+                  gradient: "from-red-500 to-rose-700",
+                  icon: <ShieldAlert className="w-3.5 h-3.5 text-red-100" />,
+                  label: "Admin Notice",
+                  accent: "text-red-400",
+                  bgAccent: "bg-red-500/10"
+                };
+            } else if (type === "academic_update") {
+                theme = {
+                  gradient: "from-blue-600 via-indigo-600 to-blue-600",
+                  icon: <ShieldAlert className="w-3.5 h-3.5 text-white" />,
+                  label: "Academic Update",
+                  accent: "text-blue-400",
+                  bgAccent: "bg-blue-500/10"
+                };
             }
 
             return (
@@ -327,18 +358,24 @@ export  const NotificationProvider = ({ children }) => {
                   <div className="flex items-start z-10">
                     <div className="flex-shrink-0 pt-0.5">
                       <div className={`p-[2.5px] rounded-2xl bg-gradient-to-br ${theme.gradient} shadow-lg`}>
-                        <Image
-                          className="h-11 w-11 rounded-[0.9rem] object-cover"
-                          src={notification.sender?.profilePicture || "/default-profile.jpg"}
-                          alt={notification.sender?.name || "User"}
-                          width={44}
-                          height={44}
-                        />
+                        {notification.type === "academic_update" || notification.type === "admin_notice" || notification.type === "points_earned" ? (
+                          <div className={`h-11 w-11 rounded-[0.9rem] flex items-center justify-center ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
+                            {theme.icon}
+                          </div>
+                        ) : (
+                          <Image
+                            className="h-11 w-11 rounded-[0.9rem] object-cover"
+                            src={notification.sender?.profilePicture || "/default-profile.jpg"}
+                            alt={notification.sender?.name || "User"}
+                            width={44}
+                            height={44}
+                          />
+                        )}
                       </div>
                     </div>
                     <div className="ml-4 flex-1 pr-6">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <div className={`${darkMode ? theme.bgAccent : "bg-gray-100"} p-1.5 rounded-xl`}>
+                        <div className={`${darkMode ? theme.bgAccent : "bg-gray-100 text-black"} p-1.5 rounded-xl`}>
                           {theme.icon}
                         </div>
                         <p className={`text-[10px] font-black ${darkMode ? theme.accent : "text-slate-600"} uppercase tracking-[0.25em]`}>
@@ -346,7 +383,7 @@ export  const NotificationProvider = ({ children }) => {
                         </p>
                       </div>
                       <p className={`text-[15px] font-black ${darkMode ? "text-white" : "text-black"} leading-none mb-1`}>
-                        {notification.sender?.name || "System"}
+                        {notification.sender?.name || (typeof notification.sender === 'string' ? 'User' : 'System')}
                       </p>
                       <p className={`text-xs font-bold ${darkMode ? "text-gray-300" : "text-slate-600"} line-clamp-3 italic leading-relaxed`}>
                         &quot;{notification.message}&quot;
@@ -380,37 +417,6 @@ export  const NotificationProvider = ({ children }) => {
       const handleNewGroupMessage = () => setUnreadGroupMessagesCount(prev => prev + 1);
       const handleNewSignupRequest = (notification) => {
         setAdminSignupRequestsCount(prev => prev + 1);
-        
-        // 🚀 SHOW TOAST FOR NEW SIGNUP (For Admins)
-        toast.custom((t) => (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={`p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-2xl pointer-events-auto`}
-            >
-              <div className={`px-5 py-3 rounded-[calc(1rem-2px)] flex items-center gap-4 ${darkMode ? 'bg-black' : 'bg-white'}`}>
-                <div className={`p-2 rounded-xl bg-blue-500/10 text-blue-500`}>
-                  <UserPlus className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className={`text-[10px] font-black uppercase tracking-widest text-blue-500 mb-0.5`}>New Signup Request</p>
-                  <p className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                    {notification.name || "A new user"} (<span className="capitalize">{notification.role}</span>)
-                  </p>
-                </div>
-                <button 
-                  onClick={() => {
-                    toast.dismiss(t.id);
-                    window.location.href = "/dashboard/admin";
-                  }}
-                  className="p-2 ml-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold text-xs"
-                >
-                  Review
-                </button>
-              </div>
-            </motion.div>
-        ));
       };
 
       const handlePointsUpdated = (data) => {
