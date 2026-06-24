@@ -331,83 +331,26 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                             </div>
                         </div>
                         
-                        {/* New Level: Role Specific Info */}
-                        {profile.role === 'student' || profile.role === 'alumni' ? (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Enrollment Number</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.enrollmentNumber || "N/A"}</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-purple-500 to-fuchsia-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>University Roll Number</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.universityRollNumber || "Not set"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-pink-500 to-rose-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Course</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.course || "N/A"}</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-rose-500/40 to-orange-500/40 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Branch</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.branch || "N/A"}</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Semester</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.semester || "N/A"}</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-[2.5px] bg-gradient-to-tr from-amber-500 to-orange-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                        <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                            <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Section</label>
-                                            <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.section || "N/A"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-[2.5px] bg-gradient-to-tr from-violet-500 to-purple-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                    <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                        <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Position</label>
-                                        <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>
-                                            {profile.isMainAdmin ? "Main Admin" : (profile.position || "N/A")}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="p-[2.5px] bg-gradient-to-tr from-fuchsia-500 to-pink-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
-                                    <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                        <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Department</label>
-                                        <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>
-                                            {profile.isMainAdmin ? "Server" : (profile.department || "N/A")}
-                                        </span>
-                                    </div>
+                        {/* New Level: Alumni - Enrollment + Phone */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Enrollment Number */}
+                            <div className="p-[2.5px] bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
+                                <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Enrollment Number</label>
+                                    <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.enrollmentNumber || "N/A"}</span>
                                 </div>
                             </div>
-                        )}
 
-                        {/* Level 2: Connect Icons (Phone, WhatsApp, LinkedIn) */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {/* Phone */}
-                            <div className="p-[2.5px] bg-gradient-to-tr from-green-500 to-teal-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
-                                <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
-                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
+                            <div className="p-[2.5px] bg-gradient-to-tr from-green-500 to-teal-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+                                <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
+                                    <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Phone Number</label>
                                     <div className="flex items-center gap-2">
                                         {shouldHidePrivateFields ? (
-                                            <span className={`text-sm sm:text-base font-black italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Hidden for privacy</span>
+                                            <span className={`text-sm font-black italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Hidden for privacy</span>
                                         ) : (
                                             <>
-                                                <span className={`text-sm sm:text-base font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.phone || "N/A"}</span>
+                                                <span className={`text-sm font-black ${darkMode ? 'text-white' : 'text-black'}`}>{profile.phone || "N/A"}</span>
                                                 {profile.phone && (
                                                     <button onClick={() => copyToClipboard(profile.phone, "phone")} className="text-green-300 hover:text-green-600">
                                                         {copied === "phone" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
@@ -418,7 +361,10 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
+                        {/* Level 3: WhatsApp + LinkedIn */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {/* WhatsApp */}
                             <div className="p-[2.5px] bg-gradient-to-tr from-emerald-500 to-green-500 rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
                                 <div className={`p-3 sm:p-5 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center transition-all ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
@@ -441,8 +387,8 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                 </div>
                             </div>
                         </div>
-                        
-                        {/* Level 3: Address */}
+
+                        {/* Level 4: Address */}
                         <div className="p-[2.5px] bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl shadow-lg transition-all duration-300 w-full hover:scale-[1.02] hover:shadow-xl group">
                             <div className={`p-4 rounded-[calc(1rem-2.5px)] h-full flex flex-col items-center text-center ${darkMode ? 'bg-slate-800' : 'bg-[#FAFAFA]'}`}>
                                 <label className={`text-[10px] font-black uppercase tracking-widest mb-1.5 ${darkMode ? 'text-white' : 'text-black'}`}>Resident Address</label>
