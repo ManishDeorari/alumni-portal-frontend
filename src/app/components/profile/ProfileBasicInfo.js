@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileBanner from "./ProfileBanner";
 import ProfileStats from "./ProfileStats";
-import ResumeDownloadBtn from "./ResumeDownloadBtn";
 import EditBasicInfoModal from "./modals/EditBasicInfoModal";
 import QrCodeModal from "./modals/QrCodeModal";
 import { useTheme } from "@/context/ThemeContext";
@@ -492,13 +491,6 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                         <div className="w-full px-6">
                             <ProfileStats profile={profile} isPublicView={isPublicView} />
                         </div>
-                        
-                        {/* Auto-Generate Resume Button */}
-                        {canViewResume && (
-                            <div className="w-full px-6 mt-2 mb-4">
-                                <ResumeDownloadBtn profile={profile} darkMode={darkMode} />
-                            </div>
-                        )}
                     </div>
                 </div>
 
