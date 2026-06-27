@@ -362,10 +362,13 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         </div>
 
                                         {/* Identity */}
-                                        <div className="w-40 md:block hidden flex-shrink-0">
-                                            <span className={`text-[10px] font-black ${darkMode ? "text-white bg-white/5 border-white/20" : "text-slate-900 bg-gray-100 border-gray-300"} px-4 py-2 rounded-xl border-2 whitespace-nowrap uppercase tracking-widest`}>
-                                                {u.enrollmentNumber || u.employeeId || u.studentId || "N/A"}
-                                            </span>
+                                        <div className="w-40 md:block hidden shrink-0">
+                                            <div className="p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                <div className={`w-full text-[10px] font-black ${darkMode ? "text-white bg-black" : "text-slate-900 bg-white"} px-4 py-2 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center gap-2`}>
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${u.role === "student" ? "bg-blue-500" : "bg-purple-500"}`}></div>
+                                                    <span className="truncate">{u.enrollmentNumber || u.employeeId || u.studentId || "-"}</span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         {/* Actions */}
