@@ -60,15 +60,15 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                 const uCourse = (u.course || u.department || "").toLowerCase();
                 const eduCourses = (u.education || []).map(e => (e.course || e.degree || e.fieldOfStudy || "").toLowerCase());
                 const targetCourse = filters.course.toLowerCase();
-                const courseMatch = !filters.course || 
-                    uCourse.includes(targetCourse) || 
+                const courseMatch = !filters.course ||
+                    uCourse.includes(targetCourse) ||
                     eduCourses.some(ec => ec.includes(targetCourse));
 
                 // 3. Year Filter (Check root AND education history end years)
                 const uYear = String(u.year || u.graduationYear || u.batch || "");
                 const eduYears = (u.education || []).map(e => String(e.endYear || e.year || ""));
-                const yearMatch = !filters.year || 
-                    uYear === filters.year || 
+                const yearMatch = !filters.year ||
+                    uYear === filters.year ||
                     eduYears.includes(filters.year);
 
                 return textMatch && courseMatch && yearMatch;
@@ -132,9 +132,9 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
             .filter(u => selectedUsers.includes(u._id))
             .map(u => u.name)
             .join(", ");
-        
+
         const displayName = selectedNames.length > 30 ? `${selectedUsers.length} selected users` : selectedNames;
-        
+
         setMessageModal({ userIds: selectedUsers, names: displayName });
         setMessageText("");
     };
@@ -156,7 +156,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Failed to send notice");
-            
+
             toast.success(`Notice sent successfully!`);
             setMessageModal(null);
             setMessageText("");
@@ -195,7 +195,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     <p className={`text-3xl sm:text-5xl ${darkMode ? "text-white" : "text-slate-900"}`}>{displayedUsers.length}</p>
                                 </div>
                             </div>
-                            
+
                             {selectedUsers.length > 0 && (
                                 <div className="flex items-center gap-3 px-6 py-3 bg-blue-500/10 border border-blue-400/20 rounded-2xl animate-in zoom-in-95 duration-300">
                                     <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
@@ -274,177 +274,174 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                 ) : (
                     <div className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2.5rem] shadow-2xl overflow-hidden mb-12">
                         <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(2.5rem-2px)] overflow-hidden`}>
-                        <div className="space-y-4 p-2 sm:p-4">
-                        {/* Header Row — desktop only */}
-                        <div className={`hidden md:flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
-                            <div className="w-12 flex items-center justify-center">
-                                <div 
-                                    onClick={handleSelectAll}
-                                    className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
-                                        isAllSelected 
-                                            ? "bg-blue-500 border-blue-500" 
-                                            : isIndeterminate 
-                                                ? "bg-blue-500/50 border-blue-500" 
-                                                : `${darkMode ? "border-white/20 hover:border-white/40" : "border-gray-300 hover:border-gray-400"}`
-                                    }`}
-                                >
-                                    {isAllSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
-                                    {isIndeterminate && <Minus className="w-4 h-4 text-white stroke-[4]" />}
-                                </div>
-                            </div>
-                            <div className="flex-[0.8]">User Profile</div>
-                            <div className="flex-1">Role & Details</div>
-                            <div className="w-40 md:block hidden">Identity</div>
-                            <div className="w-48 text-right pr-4">Actions</div>
-                        </div>
-
-                        {/* Member Card Rows */}
-                        {displayedUsers.slice(0, displayLimit).map((u) => {
-                            const isSelected = selectedUsers.includes(u._id);
-                            return (
-                                <div 
-                                    key={u._id} 
-                                    className="relative p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
-                                >
-                                    <div 
-                                        onClick={() => toggleSelect(u._id)}
-                                        className={`p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 transition-all duration-300 rounded-[calc(1.5rem-2px)] relative z-10 ${
-                                            isSelected 
-                                                ? darkMode ? "bg-[#111]" : "bg-gray-100"
-                                                : darkMode ? "bg-black hover:bg-[#0a0a0a]" : "bg-white hover:bg-gray-50"
-                                        }`}>
-                                        {/* Checkbox */}
-                                        <div className="w-8 sm:w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                                            <div 
-                                                onClick={() => toggleSelect(u._id)}
-                                                className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
-                                                    isSelected 
-                                                        ? "bg-blue-500 border-blue-500" 
-                                                        : `${darkMode ? "border-white/20 group-hover:border-white/40" : "border-gray-300 group-hover:border-gray-400"}`
+                            <div className="space-y-4 p-2 sm:p-4">
+                                {/* Header Row — desktop only */}
+                                <div className={`hidden md:flex items-center gap-4 px-8 py-4 ${darkMode ? "text-white" : "text-slate-900"} text-[10px] uppercase font-black tracking-[0.3em]`}>
+                                    <div className="w-12 flex items-center justify-center">
+                                        <div
+                                            onClick={handleSelectAll}
+                                            className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${isAllSelected
+                                                    ? "bg-blue-500 border-blue-500"
+                                                    : isIndeterminate
+                                                        ? "bg-blue-500/50 border-blue-500"
+                                                        : `${darkMode ? "border-white/20 hover:border-white/40" : "border-gray-300 hover:border-gray-400"}`
                                                 }`}
-                                            >
-                                                {isSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
-                                            </div>
+                                        >
+                                            {isAllSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
+                                            {isIndeterminate && <Minus className="w-4 h-4 text-white stroke-[4]" />}
                                         </div>
+                                    </div>
+                                    <div className="flex-[0.8]">User Profile</div>
+                                    <div className="flex-1">Role & Details</div>
+                                    <div className="w-40 md:block hidden">Identity</div>
+                                    <div className="w-48 text-right pr-4">Actions</div>
+                                </div>
 
-                                        {/* Profile */}
-                                        <div className="flex-[0.8] flex items-center gap-3 sm:gap-4 min-w-0">
-                                            <div className="relative shrink-0 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 aspect-square">
-                                                <div className={`absolute -inset-1 rounded-full blur-[2px] opacity-20 ${u.isAdmin ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
-                                                {u.profilePicture ? (
-                                                    <UserAvatar
-                                                        user={u}
-                                                        src={u.profilePicture}
-                                                        alt={u.name}
-                                                        width={48}
-                                                        height={48}
-                                                        wrapperClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square"
-                                                        className={`w-full h-full rounded-full object-cover aspect-square border-2 ${darkMode ? "border-white/10" : "border-white"}`}
-                                                        onClick={(e) => { e.stopPropagation(); setViewerImage(u.profilePicture); }}
-                                                    />
-                                                ) : (
-                                                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-sm sm:text-lg`}>
-                                                        <img src="/default-profile.jpg" className="w-full h-full rounded-full object-cover" alt="Default" />
+                                {/* Member Card Rows */}
+                                {displayedUsers.slice(0, displayLimit).map((u) => {
+                                    const isSelected = selectedUsers.includes(u._id);
+                                    return (
+                                        <div
+                                            key={u._id}
+                                            className="relative p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
+                                        >
+                                            <div
+                                                onClick={() => toggleSelect(u._id)}
+                                                className={`p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 transition-all duration-300 rounded-[calc(1.5rem-2px)] relative z-10 ${isSelected
+                                                        ? darkMode ? "bg-[#111]" : "bg-gray-100"
+                                                        : darkMode ? "bg-black hover:bg-[#0a0a0a]" : "bg-white hover:bg-gray-50"
+                                                    }`}>
+                                                {/* Checkbox */}
+                                                <div className="w-8 sm:w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                                                    <div
+                                                        onClick={() => toggleSelect(u._id)}
+                                                        className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${isSelected
+                                                                ? "bg-blue-500 border-blue-500"
+                                                                : `${darkMode ? "border-white/20 group-hover:border-white/40" : "border-gray-300 group-hover:border-gray-400"}`
+                                                            }`}
+                                                    >
+                                                        {isSelected && <Check className="w-4 h-4 text-white stroke-[4]" />}
                                                     </div>
-                                                )}
-                                            </div>
-                                            <div className="min-w-0 relative z-10">
-                                                <p className={`font-black text-sm sm:text-[15px] ${darkMode ? "text-white" : "text-black"} truncate mb-0.5`}>{u.name}</p>
-                                                <p className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${darkMode ? "text-white" : "text-black"} truncate`}>{u.email}</p>
-                                            </div>
-                                        </div>
+                                                </div>
 
-                                        {/* Academic / Staff Info Column */}
-                                        <div className="flex-1 flex flex-wrap items-center gap-2 relative z-10">
-                                            <span className={`text-[9px] px-2 py-1 rounded-lg font-black uppercase tracking-widest border ${u.isAdmin
-                                                ? (darkMode ? "bg-purple-500/10 text-purple-400 border-purple-500/20" : "bg-purple-50 text-purple-700 border-purple-100")
-                                                : (darkMode ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-700 border-blue-100")
-                                                }`}>
-                                                {u.role || (u.isAdmin ? 'Admin' : 'Member')}
-                                            </span>
-                                            
-                                            {u.role !== "student" && u.role !== "alumni" && (
-                                                <>
-                                                    <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-white/5 border ${darkMode ? "border-white/20 text-white" : "border-gray-200 text-black"}`}>
-                                                        {u.position || "NA"}
-                                                    </span>
-                                                    <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-indigo-500/10 border border-indigo-500/20 text-indigo-400`}>
-                                                        {u.department || "NA"}
-                                                    </span>
-                                                </>
-                                            )}
-                                        </div>
+                                                {/* Profile */}
+                                                <div className="flex-[0.8] flex items-center gap-3 sm:gap-4 min-w-0">
+                                                    <div className="relative shrink-0 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 aspect-square">
+                                                        <div className={`absolute -inset-1 rounded-full blur-[2px] opacity-20 ${u.isAdmin ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
+                                                        {u.profilePicture ? (
+                                                            <UserAvatar
+                                                                user={u}
+                                                                src={u.profilePicture}
+                                                                alt={u.name}
+                                                                width={48}
+                                                                height={48}
+                                                                wrapperClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square"
+                                                                className={`w-full h-full rounded-full object-cover aspect-square border-2 ${darkMode ? "border-white/10" : "border-white"}`}
+                                                                onClick={(e) => { e.stopPropagation(); setViewerImage(u.profilePicture); }}
+                                                            />
+                                                        ) : (
+                                                            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-sm sm:text-lg`}>
+                                                                <img src="/default-profile.jpg" className="w-full h-full rounded-full object-cover" alt="Default" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="min-w-0 relative z-10">
+                                                        <p className={`font-black text-sm sm:text-[15px] ${darkMode ? "text-white" : "text-black"} truncate mb-0.5`}>{u.name}</p>
+                                                        <p className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${darkMode ? "text-white" : "text-black"} truncate`}>{u.email}</p>
+                                                    </div>
+                                                </div>
 
-                                        {/* Identity Column */}
-                                        <div className="w-40 md:block hidden shrink-0 relative z-10">
-                                            <div className="p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                <div className={`w-full text-[10px] font-black ${darkMode ? "text-white bg-black" : "text-black bg-white"} px-4 py-2 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center gap-2`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${u.role === "student" || u.role === "alumni" ? "bg-blue-500" : "bg-purple-500"}`}></div>
-                                                    <span className="truncate">{u.enrollmentNumber || u.employeeId || u.studentId || "-"}</span>
+                                                {/* Academic / Staff Info Column */}
+                                                <div className="flex-1 flex flex-wrap items-center gap-2 relative z-10">
+                                                    <span className={`text-[9px] px-2 py-1 rounded-lg font-black uppercase tracking-widest border ${u.isAdmin
+                                                        ? (darkMode ? "bg-purple-500/10 text-purple-400 border-purple-500/20" : "bg-purple-50 text-purple-700 border-purple-100")
+                                                        : (darkMode ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-700 border-blue-100")
+                                                        }`}>
+                                                        {u.role || (u.isAdmin ? 'Admin' : 'Member')}
+                                                    </span>
+
+                                                    {u.role !== "student" && u.role !== "alumni" && (
+                                                        <>
+                                                            <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-white/5 border ${darkMode ? "border-white/20 text-white" : "border-gray-200 text-black"}`}>
+                                                                {u.position || "NA"}
+                                                            </span>
+                                                            <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-indigo-500/10 border border-indigo-500/20 text-indigo-400`}>
+                                                                {u.department || "NA"}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                {/* Identity Column */}
+                                                <div className="w-40 md:block hidden shrink-0 relative z-10">
+                                                    <div className="p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                        <div className={`w-full text-[10px] font-black ${darkMode ? "text-white bg-black" : "text-black bg-white"} px-4 py-2 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center gap-2`}>
+                                                            <div className={`w-1.5 h-1.5 rounded-full ${u.role === "student" || u.role === "alumni" ? "bg-blue-500" : "bg-purple-500"}`}></div>
+                                                            <span className="truncate">{u.enrollmentNumber || u.employeeId || u.studentId || "-"}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Actions */}
+                                                <div className="w-full md:w-48 flex items-center justify-end gap-2 shrink-0 md:ml-auto" onClick={(e) => e.stopPropagation()}>
+                                                    <button
+                                                        onClick={() => setEditUserModal(u)}
+                                                        className={`p-2.5 bg-purple-600/5 hover:bg-purple-600 border border-purple-500 text-purple-500 hover:text-white rounded-xl transition-all active:scale-95`}
+                                                        title="Edit User"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleMessageClick(u)}
+                                                        className={`p-2.5 bg-blue-600/5 hover:bg-blue-600 border border-blue-500 text-blue-500 hover:text-white rounded-xl transition-all active:scale-95`}
+                                                        title="Message User"
+                                                    >
+                                                        <Mail className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteClick(u)}
+                                                        disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
+                                                        className={`p-2.5 bg-red-600/5 hover:bg-red-600 border border-red-500 text-red-500 hover:text-white rounded-xl transition-all active:scale-95 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""}`}
+                                                        title="Delete User"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
+                                    );
+                                })}
 
-                                        {/* Actions */}
-                                        <div className="w-full md:w-48 flex items-center justify-end gap-2 shrink-0 md:ml-auto" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex flex-col items-center justify-center gap-4 py-8">
+                                    {displayedUsers.length > displayLimit ? (
+                                        <button
+                                            onClick={handleShowMore}
+                                            className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
+                                        >
+                                            Show More
+                                        </button>
+                                    ) : displayedUsers.length > 20 ? (
+                                        <>
                                             <button
-                                                onClick={() => setEditUserModal(u)}
-                                                className={`p-2.5 bg-purple-600/5 hover:bg-purple-600 border border-purple-500/20 text-purple-500 hover:text-white rounded-xl transition-all active:scale-95`}
-                                                title="Edit User"
+                                                onClick={handleShowLess}
+                                                className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-red-900/30 hover:bg-red-900/50 border border-red-500/30 text-red-400' : 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600'}`}
                                             >
-                                                <Edit2 className="w-4 h-4" />
+                                                Show Less
                                             </button>
-                                            <button
-                                                onClick={() => handleMessageClick(u)}
-                                                className={`p-2.5 bg-blue-600/5 hover:bg-blue-600 border border-blue-500/20 text-blue-500 hover:text-white rounded-xl transition-all active:scale-95`}
-                                                title="Message User"
-                                            >
-                                                <Mail className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteClick(u)}
-                                                disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
-                                                className={`p-2.5 bg-red-600/5 hover:bg-red-600 border border-red-500/20 text-red-500 hover:text-white rounded-xl transition-all active:scale-95 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""}`}
-                                                title="Delete User"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            <p className="text-center font-bold uppercase tracking-widest text-[10px] italic opacity-50">No more users to show</p>
+                                        </>
+                                    ) : null}
+                                </div>
+
+                                {displayedUsers.length === 0 && (
+                                    <div className="py-20 text-center">
+                                        <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl flex items-center justify-center ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"} border-2 shadow-inner`}>
+                                            <Search className="w-10 h-10 opacity-20" />
                                         </div>
+                                        <p className={`font-black uppercase tracking-[0.3em] text-xs ${darkMode ? "text-white/40" : "text-slate-400"}`}>No matching users found in member database</p>
                                     </div>
-                                </div>
-                            );
-                        })}
-
-                        <div className="flex flex-col items-center justify-center gap-4 py-8">
-                            {displayedUsers.length > displayLimit ? (
-                                <button
-                                    onClick={handleShowMore}
-                                    className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-[#FAFAFA]/10 hover:bg-[#FAFAFA]/20 border border-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800'}`}
-                                >
-                                    Show More
-                                </button>
-                            ) : displayedUsers.length > 20 ? (
-                                <>
-                                    <button
-                                        onClick={handleShowLess}
-                                        className={`px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-md active:scale-95 ${darkMode ? 'bg-red-900/30 hover:bg-red-900/50 border border-red-500/30 text-red-400' : 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600'}`}
-                                    >
-                                        Show Less
-                                    </button>
-                                    <p className="text-center font-bold uppercase tracking-widest text-[10px] italic opacity-50">No more users to show</p>
-                                </>
-                            ) : null}
-                        </div>
-
-                        {displayedUsers.length === 0 && (
-                            <div className="py-20 text-center">
-                                <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl flex items-center justify-center ${darkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"} border-2 shadow-inner`}>
-                                    <Search className="w-10 h-10 opacity-20" />
-                                </div>
-                                <p className={`font-black uppercase tracking-[0.3em] text-xs ${darkMode ? "text-white/40" : "text-slate-400"}`}>No matching users found in member database</p>
+                                )}
                             </div>
-                        )}
-                    </div>
                         </div>
                     </div>
                 )}
@@ -459,7 +456,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         exit={{ y: 100, opacity: 0 }}
                         className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-[50] w-[calc(100%-2rem)] max-w-2xl px-4"
                     >
-                        <div className={`p-1 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 shadow-[0_20px_50px_rgba(0,0,0,0.3)]`}>
+                        <div className={`p-[1px] rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 shadow-[0_20px_50px_rgba(0,0,0,0.3)]`}>
                             <div className={`${darkMode ? "bg-black" : "bg-white"} rounded-[calc(1.5rem+3px)] px-6 py-4 flex items-center justify-between gap-4 backdrop-blur-xl`}>
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/30">
@@ -467,7 +464,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     </div>
                                     <div>
                                         <p className={`font-black text-xs uppercase tracking-widest ${darkMode ? "text-white" : "text-slate-900"}`}>Users Selected</p>
-                                        <button 
+                                        <button
                                             onClick={() => setSelectedUsers([])}
                                             className="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-all uppercase tracking-tighter"
                                         >
@@ -493,7 +490,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     </button>
                                     <button
                                         onClick={() => setSelectedUsers([])}
-                                        className={`p-2.5 rounded-2xl border ${darkMode ? "border-white/10 hover:bg-white/5 text-white/40 hover:text-white" : "border-gray-200 hover:bg-gray-100 text-gray-400 hover:text-gray-900"} transition-all`}
+                                        className={`p-2.5 rounded-2xl border transition-all ${darkMode ? "border-white hover:bg-white/10 text-white" : "border-black hover:bg-gray-100 text-black"}`}
                                     >
                                         <X className="w-5 h-5" />
                                     </button>
@@ -513,81 +510,80 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4"
                     >
-                    <motion.div
-                        initial={{ scale: 0.9, y: 20 }}
-                        animate={{ scale: 1, y: 0 }}
-                        className="relative p-[2px] bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative overflow-hidden"
-                    >
-                        <div className={`relative ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(2.5rem-2px)] p-8 h-full w-full overflow-hidden`}>
-                            <div className="flex items-center justify-between mb-8 relative z-10">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20">
-                                        <Mail className="w-7 h-7 text-blue-500" />
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            className="relative p-[2px] bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative overflow-hidden"
+                        >
+                            <div className={`relative ${darkMode ? "bg-black" : "bg-[#FAFAFA]"} rounded-[calc(2.5rem-2px)] p-8 h-full w-full overflow-hidden`}>
+                                <div className="flex items-center justify-between mb-8 relative z-10">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20">
+                                            <Mail className="w-7 h-7 text-blue-500" />
+                                        </div>
+                                        <div>
+                                            <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Send Notice</h3>
+                                            <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-2 ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+                                                To: {messageModal.names}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} leading-none`}>Send Notice</h3>
-                                        <p className={`text-[10px] font-black uppercase tracking-[0.2em] mt-2 ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
-                                            To: {messageModal.names}
+                                    <button
+                                        onClick={() => setMessageModal(null)}
+                                        className={`p-3 rounded-full hover:bg-gray-100/10 transition-all ${darkMode ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-gray-900"}`}
+                                    >
+                                        <X className="w-6 h-6" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6 relative z-10">
+                                    <div className={`relative p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md`}>
+                                        <div className={`rounded-[calc(1rem-2px)] overflow-hidden ${darkMode ? "bg-black" : "bg-white"}`}>
+                                            <textarea
+                                                value={messageText}
+                                                onChange={(e) => setMessageText(e.target.value)}
+                                                placeholder="Type your official administrative notice here..."
+                                                className={`w-full h-40 p-6 rounded-2xl outline-none resize-none bg-transparent ${darkMode ? "text-white placeholder-white/20" : "text-slate-900 placeholder-slate-400"} font-bold text-sm leading-relaxed`}
+                                            />
+                                            <div className="absolute bottom-6 right-6 flex items-center gap-4">
+                                                <span className={`text-[10px] font-black tracking-widest ${darkMode ? "text-white/20" : "text-gray-400"}`}>
+                                                    {messageText.length} Characters
+                                                </span>
+                                                <EmojiPickerToggle
+                                                    onEmojiSelect={handleEmojiSelect}
+                                                    darkMode={darkMode}
+                                                    iconSize="text-2xl"
+                                                    placement="top"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-4 pt-2">
+                                        <button
+                                            onClick={sendNotice}
+                                            disabled={isSendingMessage || !messageText.trim()}
+                                            className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-[0.3em] transition-all ${!messageText.trim()
+                                                    ? `${darkMode ? "bg-white/5 text-white/20" : "bg-gray-100 text-gray-400"} cursor-not-allowed`
+                                                    : "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_15px_30px_rgba(37,99,235,0.3)] active:scale-95"
+                                                }`}
+                                        >
+                                            {isSendingMessage ? (
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Send className="w-5 h-5" />
+                                                    Send Announcement Notice
+                                                </>
+                                            )}
+                                        </button>
+                                        <p className={`text-[9px] text-center font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"}`}>
+                                            Notice will be delivered to the system notification center
                                         </p>
                                     </div>
                                 </div>
-                                <button 
-                                    onClick={() => setMessageModal(null)}
-                                    className={`p-3 rounded-full hover:bg-gray-100/10 transition-all ${darkMode ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-gray-900"}`}
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
                             </div>
-
-                            <div className="space-y-6 relative z-10">
-                                <div className={`relative p-[2px] rounded-2xl bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-md`}>
-                                    <div className={`rounded-[calc(1rem-2px)] overflow-hidden ${darkMode ? "bg-black" : "bg-white"}`}>
-                                        <textarea
-                                            value={messageText}
-                                            onChange={(e) => setMessageText(e.target.value)}
-                                            placeholder="Type your official administrative notice here..."
-                                            className={`w-full h-40 p-6 rounded-2xl outline-none resize-none bg-transparent ${darkMode ? "text-white placeholder-white/20" : "text-slate-900 placeholder-slate-400"} font-bold text-sm leading-relaxed`}
-                                        />
-                                        <div className="absolute bottom-6 right-6 flex items-center gap-4">
-                                            <span className={`text-[10px] font-black tracking-widest ${darkMode ? "text-white/20" : "text-gray-400"}`}>
-                                                {messageText.length} Characters
-                                            </span>
-                                            <EmojiPickerToggle 
-                                                onEmojiSelect={handleEmojiSelect}
-                                                darkMode={darkMode}
-                                                iconSize="text-2xl"
-                                                placement="top"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-4 pt-2">
-                                    <button
-                                        onClick={sendNotice}
-                                        disabled={isSendingMessage || !messageText.trim()}
-                                        className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-[0.3em] transition-all ${
-                                            !messageText.trim()
-                                            ? `${darkMode ? "bg-white/5 text-white/20" : "bg-gray-100 text-gray-400"} cursor-not-allowed`
-                                            : "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_15px_30px_rgba(37,99,235,0.3)] active:scale-95"
-                                        }`}
-                                    >
-                                        {isSendingMessage ? (
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        ) : (
-                                            <>
-                                                <Send className="w-5 h-5" />
-                                                Send Announcement Notice
-                                            </>
-                                        )}
-                                    </button>
-                                    <p className={`text-[9px] text-center font-black uppercase tracking-[0.2em] ${darkMode ? "text-white" : "text-slate-900"}`}>
-                                        Notice will be delivered to the system notification center
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -615,15 +611,15 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                 <div className="w-14 h-14 bg-red-600/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-red-500/20">
                                     <UserX className="w-7 h-7 text-red-600" />
                                 </div>
-                                
+
                                 <h3 className={`text-2xl font-black ${darkMode ? "text-white" : "text-slate-900"} text-center mb-2 uppercase tracking-tighter leading-tight`}>
                                     {confirmDelete.type === "bulk" ? `Delete ${confirmDelete.data.length} Users?` : "Confirm Deletion"}
                                 </h3>
-                                
+
                                 <div className="relative p-[1.5px] bg-gradient-to-r from-red-500 via-purple-500 to-pink-500 rounded-2xl mb-6">
                                     <div className={`p-4 rounded-[calc(1rem-1.5px)] ${darkMode ? "bg-black" : "bg-white"}`}>
                                         <p className={`text-[11px] font-black uppercase tracking-widest ${darkMode ? "text-white/80" : "text-red-900"} text-center leading-relaxed`}>
-                                            {confirmDelete.type === "bulk" 
+                                            {confirmDelete.type === "bulk"
                                                 ? "IRREVERSIBLE: PURGING ALL SELECTED DATA"
                                                 : `PERMANENTLY DELETE: ${confirmDelete.data.name}`}
                                         </p>
