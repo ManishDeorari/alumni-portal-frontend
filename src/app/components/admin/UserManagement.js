@@ -308,8 +308,11 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                 >
                                     <div 
                                         onClick={() => toggleSelect(u._id)}
-                                        className={`${darkMode ? (isSelected ? "bg-blue-900/20" : "bg-black") : (isSelected ? "bg-blue-50" : "bg-white")} rounded-[calc(1.5rem-2px)] p-3 sm:p-5 flex flex-wrap md:flex-nowrap items-center gap-3 sm:gap-4 cursor-pointer`}
-                                    >
+                                        className={`p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 transition-all duration-300 rounded-[calc(1.5rem-2px)] relative z-10 ${
+                                            isSelected 
+                                                ? darkMode ? "bg-[#111]" : "bg-gray-100"
+                                                : darkMode ? "bg-black hover:bg-[#0a0a0a]" : "bg-white hover:bg-gray-50"
+                                        }`}>
                                         {/* Checkbox */}
                                         <div className="w-8 sm:w-12 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                                             <div 
@@ -325,8 +328,8 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                         </div>
 
                                         {/* Profile */}
-                                        <div className="flex-1 flex items-center gap-3 sm:gap-5 min-w-0">
-                                            <div className="relative shrink-0 flex items-center justify-center w-12 h-12 aspect-square">
+                                        <div className="flex-[0.8] flex items-center gap-3 sm:gap-4 min-w-0">
+                                            <div className="relative shrink-0 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 aspect-square">
                                                 <div className={`absolute -inset-1 rounded-full blur-[2px] opacity-20 ${u.isAdmin ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
                                                 {u.profilePicture ? (
                                                     <UserAvatar
@@ -335,66 +338,76 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                                         alt={u.name}
                                                         width={48}
                                                         height={48}
-                                                        wrapperClassName="w-12 h-12 rounded-full relative z-10 shrink-0 aspect-square"
+                                                        wrapperClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square"
                                                         className={`w-full h-full rounded-full object-cover aspect-square border-2 ${darkMode ? "border-white/10" : "border-white"}`}
                                                         onClick={(e) => { e.stopPropagation(); setViewerImage(u.profilePicture); }}
                                                     />
                                                 ) : (
-                                                    <div className={`w-12 h-12 rounded-full relative z-10 shrink-0 aspect-square ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-lg`}>
+                                                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full relative z-10 shrink-0 aspect-square ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"} border-2 border-blue-400/20 flex items-center justify-center font-black text-sm sm:text-lg`}>
                                                         <img src="/default-profile.jpg" className="w-full h-full rounded-full object-cover" alt="Default" />
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="min-w-0">
-                                                <p className={`font-black text-xs sm:text-base ${darkMode ? "text-white" : "text-slate-900"} truncate`}>{u.name}</p>
-                                                <p className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider sm:tracking-widest ${darkMode ? "text-blue-400" : "text-slate-600"} truncate`}>{u.email}</p>
+                                            <div className="min-w-0 relative z-10">
+                                                <p className={`font-black text-sm sm:text-[15px] ${darkMode ? "text-white" : "text-black"} truncate mb-0.5`}>{u.name}</p>
+                                                <p className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${darkMode ? "text-white" : "text-black"} truncate`}>{u.email}</p>
                                             </div>
                                         </div>
 
-                                        {/* Role */}
-                                        <div className="hidden md:block w-32">
-                                            <span className={`text-[10px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest border-2 ${u.isAdmin
-                                                ? (darkMode ? "bg-purple-500/20 text-purple-400 border-purple-500/30" : "bg-purple-100 text-purple-700 border-purple-200")
-                                                : (darkMode ? "bg-blue-500/20 text-blue-400 border-blue-500/30" : "bg-blue-100 text-blue-700 border-blue-200")
+                                        {/* Academic / Staff Info Column */}
+                                        <div className="flex-1 flex flex-wrap items-center gap-2 relative z-10">
+                                            <span className={`text-[9px] px-2 py-1 rounded-lg font-black uppercase tracking-widest border ${u.isAdmin
+                                                ? (darkMode ? "bg-purple-500/10 text-purple-400 border-purple-500/20" : "bg-purple-50 text-purple-700 border-purple-100")
+                                                : (darkMode ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-700 border-blue-100")
                                                 }`}>
                                                 {u.role || (u.isAdmin ? 'Admin' : 'Member')}
                                             </span>
+                                            
+                                            {u.role !== "student" && u.role !== "alumni" && (
+                                                <>
+                                                    <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-white/5 border ${darkMode ? "border-white/20 text-white" : "border-gray-200 text-black"}`}>
+                                                        {u.position || "NA"}
+                                                    </span>
+                                                    <span className={`text-[9px] px-2 py-1 rounded-lg font-black bg-indigo-500/10 border border-indigo-500/20 text-indigo-400`}>
+                                                        {u.department || "NA"}
+                                                    </span>
+                                                </>
+                                            )}
                                         </div>
 
-                                        {/* Identity */}
-                                        <div className="w-40 md:block hidden shrink-0">
+                                        {/* Identity Column */}
+                                        <div className="w-40 md:block hidden shrink-0 relative z-10">
                                             <div className="p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                <div className={`w-full text-[10px] font-black ${darkMode ? "text-white bg-black" : "text-slate-900 bg-white"} px-4 py-2 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center gap-2`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${u.role === "student" ? "bg-blue-500" : "bg-purple-500"}`}></div>
+                                                <div className={`w-full text-[10px] font-black ${darkMode ? "text-white bg-black" : "text-black bg-white"} px-4 py-2 rounded-[calc(0.75rem-1.5px)] flex items-center justify-center gap-2`}>
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${u.role === "student" || u.role === "alumni" ? "bg-blue-500" : "bg-purple-500"}`}></div>
                                                     <span className="truncate">{u.enrollmentNumber || u.employeeId || u.studentId || "-"}</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="w-full md:w-32 flex items-center justify-end gap-2 sm:gap-3 flex-shrink-0 md:ml-auto mt-2 md:mt-0" onClick={(e) => e.stopPropagation()}>
-                                            <button
-                                                onClick={() => handleMessageClick(u)}
-                                                className={`p-2 sm:p-3 bg-blue-600/10 hover:bg-blue-600 border-2 border-blue-500/20 text-blue-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90`}
-                                                title="Message User"
-                                            >
-                                                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            </button>
+                                        <div className="w-full md:w-48 flex items-center justify-end gap-2 shrink-0 md:ml-auto" onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 onClick={() => setEditUserModal(u)}
-                                                className={`p-2 sm:p-3 bg-green-600/10 hover:bg-green-600 border-2 border-green-500/20 text-green-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90`}
+                                                className={`p-2.5 bg-purple-600/5 hover:bg-purple-600 border border-purple-500/20 text-purple-500 hover:text-white rounded-xl transition-all active:scale-95`}
                                                 title="Edit User"
                                             >
-                                                <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleMessageClick(u)}
+                                                className={`p-2.5 bg-blue-600/5 hover:bg-blue-600 border border-blue-500/20 text-blue-500 hover:text-white rounded-xl transition-all active:scale-95`}
+                                                title="Message User"
+                                            >
+                                                <Mail className="w-4 h-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteClick(u)}
                                                 disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
-                                                className={`p-2 sm:p-3 bg-red-600/10 hover:bg-red-600 border-2 border-red-500/20 text-red-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
-                                                    }`}
+                                                className={`p-2.5 bg-red-600/5 hover:bg-red-600 border border-red-500/20 text-red-500 hover:text-white rounded-xl transition-all active:scale-95 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""}`}
                                                 title="Delete User"
                                             >
-                                                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
