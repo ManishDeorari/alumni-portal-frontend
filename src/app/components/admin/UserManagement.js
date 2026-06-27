@@ -2,8 +2,9 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Trash2, Mail, UserX, Shield, Check, Minus, X, AlertTriangle, Filter, Send } from "lucide-react";
+import { Search, Trash2, Mail, UserX, Shield, Check, Minus, X, AlertTriangle, Filter, Send, Edit2 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import AdminEditUserModal from "./modals/AdminEditUserModal";
 import HybridInput from "../ui/HybridInput";
 import EmojiPickerToggle from "../Post/utils/EmojiPickerToggle";
 import UserAvatar from "../ui/UserAvatar";
@@ -31,6 +32,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
     const [isSendingMessage, setIsSendingMessage] = useState(false);
     const [viewerImage, setViewerImage] = useState(null);
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const [editUserModal, setEditUserModal] = useState(null);
 
     const [displayLimit, setDisplayLimit] = useState(20);
     const handleShowMore = () => setDisplayLimit(prev => prev + 20);
@@ -376,6 +378,13 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                                             </button>
                                             <button
+                                                onClick={() => setEditUserModal(u)}
+                                                className={`p-2 sm:p-3 bg-green-600/10 hover:bg-green-600 border-2 border-green-500/20 text-green-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90`}
+                                                title="Edit User"
+                                            >
+                                                <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            </button>
+                                            <button
                                                 onClick={() => handleDeleteClick(u)}
                                                 disabled={u.isMainAdmin || u.email === "manishdeorari377@gmail.com"}
                                                 className={`p-2 sm:p-3 bg-red-600/10 hover:bg-red-600 border-2 border-red-500/20 text-red-400 hover:text-white rounded-xl sm:rounded-2xl transition-all active:scale-90 ${(u.isMainAdmin || u.email === "manishdeorari377@gmail.com") ? "opacity-20 cursor-not-allowed" : ""
@@ -632,6 +641,15 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                     isRestricted={false}
                 />
             )}
+
+            {/* Admin Edit User Modal */}
+            <AdminEditUserModal
+                isOpen={!!editUserModal}
+                onClose={() => setEditUserModal(null)}
+                user={editUserModal}
+                onUpdate={onRefresh}
+                darkMode={darkMode}
+            />
         </div>
     );
 }
