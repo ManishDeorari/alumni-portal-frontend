@@ -292,10 +292,10 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                                     {isIndeterminate && <Minus className="w-4 h-4 text-white stroke-[4]" />}
                                 </div>
                             </div>
-                            <div className="flex-1">User Profile</div>
-                            <div className="w-32">Role</div>
+                            <div className="flex-[0.8]">User Profile</div>
+                            <div className="flex-1">Role & Details</div>
                             <div className="w-40 md:block hidden">Identity</div>
-                            <div className="w-32 text-right">Actions</div>
+                            <div className="w-48 text-right pr-4">Actions</div>
                         </div>
 
                         {/* Member Card Rows */}
@@ -304,7 +304,7 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                             return (
                                 <div 
                                     key={u._id} 
-                                    className="relative p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
+                                    className="relative p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl transition-all hover:scale-[1.01] hover:shadow-blue-500/20"
                                 >
                                     <div 
                                         onClick={() => toggleSelect(u._id)}
