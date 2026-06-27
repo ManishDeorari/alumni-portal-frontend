@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Trash2, Mail, UserX, Shield, Check, Minus, X, AlertTriangle, Filter, Send, Edit2 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
@@ -32,6 +33,9 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
     const [isSendingMessage, setIsSendingMessage] = useState(false);
     const [viewerImage, setViewerImage] = useState(null);
     const [selectedUsers, setSelectedUsers] = useState([]);
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
     const [editUserModal, setEditUserModal] = useState(null);
 
     const [displayLimit, setDisplayLimit] = useState(20);
@@ -501,9 +505,11 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                 )}
             </AnimatePresence>
 
-            {/* Message Modal */}
-            <AnimatePresence>
-                {messageModal && (
+            {mounted && createPortal(
+                <>
+                    {/* Message Modal */}
+                    <AnimatePresence>
+                        {messageModal && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -645,6 +651,8 @@ export default function UserManagement({ users, loading, onDelete, onBulkDelete,
                     </motion.div>
                 )}
             </AnimatePresence>
+            </>, document.body)}
+
             {/* Image Viewer */}
             {viewerImage && (
                 <ImageViewerModal
