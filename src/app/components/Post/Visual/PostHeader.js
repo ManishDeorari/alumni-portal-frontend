@@ -2,12 +2,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaEllipsisH } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { getOptimizedImageUrl } from "../../../utils/cloudinaryHelper";
+
 import Image from "next/image";
 import UserAvatar from "../../ui/UserAvatar";
 import ImageViewerModal from "../../profile/ImageViewerModal";
 import Link from "next/link";
 import { GamificationBadge } from "../../../../utils/gamification";
+import UserNameWithBadge from "../../ui/UserNameWithBadge";
 
 export default function PostHeader({ post, currentUser, editing, toggleEdit, handleDelete, handlePinPost, handleTipPost, darkMode = false, hideActions = false }) {
   const [showViewer, setShowViewer] = useState(false);
@@ -39,12 +40,11 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
       <div className="relative w-10 h-10 sm:w-12 sm:h-12">
         <UserAvatar
           user={post.user}
-          src={getOptimizedImageUrl(profileImg)}
+          src={profileImg}
           alt="User profile"
           width={48}
           height={48}
           wrapperClassName="w-full h-full"
-          unoptimized={profileImg === "/default-profile.jpg"}
           onContextMenu={(e) => isRestricted && e.preventDefault()}
           onDragStart={(e) => isRestricted && e.preventDefault()}
           className={`rounded-full border-2 ${darkMode ? "border-blue-500" : "border-black"} object-cover w-full h-full cursor-pointer hover:scale-110 transition-transform ${isRestricted ? 'select-none pointer-events-none' : ''}`}
@@ -68,14 +68,16 @@ export default function PostHeader({ post, currentUser, editing, toggleEdit, han
       <div className="flex-1 min-w-0">
         <div className={`font-black text-sm sm:text-base flex items-center gap-1.5 flex-wrap ${darkMode ? "text-white" : "text-gray-900"}`}>
           {isOwn ? (
-            <span className="truncate max-w-[150px]">{post.user?.name || "Unknown"}</span>
+            <UserNameWithBadge 
+              user={post.user} 
+              className="max-w-[150px]" 
+            />
           ) : (
-            <Link
+            <UserNameWithBadge 
+              user={post.user} 
               href={`/profile/${post.user?.publicId || post.user?._id}`}
-              className={`hover:underline truncate max-w-[150px] ${darkMode ? "text-blue-400 decoration-blue-500" : "text-blue-700 decoration-blue-400"} decoration-2 transition-colors cursor-pointer`}
-            >
-              {post.user?.name || "Unknown"}
-            </Link>
+              className={`max-w-[150px] ${darkMode ? "text-blue-400 decoration-blue-500" : "text-blue-700 decoration-blue-400"}`} 
+            />
           )}
           <GamificationBadge points={post.user?.points?.total} />
           {isOwn && (

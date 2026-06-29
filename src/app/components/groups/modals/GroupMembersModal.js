@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import UserAvatar from "../../ui/UserAvatar";
 import { FaTimes, FaSearch, FaUserPlus, FaCheck, FaChevronDown } from "react-icons/fa";
-import { BadgeCheck } from "lucide-react";
+import { X, Search, MoreVertical, Trash2, UserMinus } from "lucide-react";
+import UserNameWithBadge from "../../ui/UserNameWithBadge";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import ImageViewerModal from "../../profile/ImageViewerModal";
@@ -108,7 +109,7 @@ export default function GroupMembersModal({
                                     <div className={`p-4 rounded-[calc(2rem-1.5px)] flex items-center justify-between ${darkMode ? "bg-slate-950" : "bg-white"}`}>
                                         <div className="flex items-center gap-5">
                                             <div 
-                                                className="p-[2px] rounded-full bg-gradient-to-tr from-blue-400 to-pink-500 shadow-md flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
+                                                className="rounded-full shadow-md flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setViewerImage(member.profilePicture || "/default-profile.jpg");
@@ -128,17 +129,11 @@ export default function GroupMembersModal({
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <div className="flex items-center gap-1">
-                                                        <Link 
-                                                            href={`/profile/${member.publicId || member._id}`} 
-                                                            className={`font-black tracking-tight text-[15px] hover:text-blue-500 underline underline-offset-4 decoration-blue-500/0 hover:decoration-blue-500/50 transition-all cursor-pointer ${darkMode ? "text-white" : "text-slate-900"}`}
-                                                        >
-                                                            {member.name}
-                                                        </Link>
-                                                        {member.profileCompletionAwarded && (
-                                                            <BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" />
-                                                        )}
-                                                    </div>
+                                                    <UserNameWithBadge
+                                                        user={member}
+                                                        href={`/profile/${member.publicId || member._id}`} 
+                                                        className={`font-black tracking-tight text-[15px] hover:text-blue-500 underline underline-offset-4 decoration-blue-500/0 hover:decoration-blue-500/50 transition-all cursor-pointer ${darkMode ? "text-white" : "text-slate-900"}`}
+                                                    />
                                                     <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
                                                         role === 'admin' ? 'bg-yellow-500/20 text-yellow-500' : 
                                                         role === 'faculty' ? 'bg-purple-500/20 text-purple-500' : 

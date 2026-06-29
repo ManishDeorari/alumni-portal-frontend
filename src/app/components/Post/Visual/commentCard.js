@@ -10,7 +10,8 @@ import Image from "next/image";
 import UserAvatar from "../../ui/UserAvatar";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "./ConfirmationModal";
-import { getOptimizedImageUrl } from "../../../utils/cloudinaryHelper";
+
+import UserNameWithBadge from "../../ui/UserNameWithBadge";
 import { FaEllipsisH, FaThumbtack } from "react-icons/fa";
 
 export default function CommentCard({
@@ -110,7 +111,9 @@ export default function CommentCard({
   // ✅ Safety check: early return if basic data is missing
   if (!comment || !currentUser || !comment.user) return null;
 
-  const isOwn = currentUser && (currentUser._id === comment.userId?._id || currentUser.id === comment.userId?._id);
+  const commentOwnerId = comment?.user?._id || comment?.userId?._id || comment?.user || comment?.userId;
+  const currentUserId = currentUser?._id || currentUser?.id;
+  const isOwn = Boolean(currentUserId && commentOwnerId && String(currentUserId) === String(commentOwnerId));
   const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
   const isRestricted = !isOwn && !isAdmin;
 
@@ -168,17 +171,17 @@ export default function CommentCard({
         )}
         <div className="flex justify-between items-start">
           <div className="flex gap-3 w-full">
-            <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex-shrink-0 w-8 h-8 shadow-sm relative">
+            <div className="rounded-full flex-shrink-0 w-8 h-8 shadow-sm relative">
               <UserAvatar
                 user={comment.user}
-                src={getOptimizedImageUrl(comment.user?.profilePicture || "/default-profile.jpg")}
+                src={comment.user?.profilePicture}
                 alt="User"
                 width={32}
                 height={32}
                 wrapperClassName="w-full h-full"
                 onContextMenu={(e) => isRestricted && e.preventDefault()}
                 onDragStart={(e) => isRestricted && e.preventDefault()}
-                className={`w-full h-full rounded-full border border-white/5 object-cover ${isRestricted ? "select-none pointer-events-none" : ""}`}
+                className={`w-full h-full rounded-full border-2 ${darkMode ? 'border-blue-500/50' : 'border-blue-400/50'} object-cover ${isRestricted ? "select-none pointer-events-none" : ""}`}
               />
               {isRestricted && (
                 <div 
@@ -190,14 +193,13 @@ export default function CommentCard({
             <div className="w-full">
               <div className={`text-sm font-black flex items-center gap-2 ${darkMode ? "text-white" : "text-slate-900"}`}>
                 {isOwn ? (
-                  <span>{comment.user?.name || "Unknown"}</span>
+                  <UserNameWithBadge user={comment.user} />
                 ) : (
-                  <Link
+                  <UserNameWithBadge 
+                    user={comment.user}
                     href={`/profile/${comment.user?.publicId || comment.user?._id}`}
                     className={`hover:text-blue-500 transition-colors ${darkMode ? "text-blue-400" : "text-blue-700"}`}
-                  >
-                    {comment.user?.name || "Unknown"}
-                  </Link>
+                  />
                 )}
                 {isOwn && (
                   <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest ${darkMode ? "text-blue-300 bg-blue-600/30 border border-blue-500/30" : "text-blue-700 bg-blue-100 border border-blue-200"}`}>

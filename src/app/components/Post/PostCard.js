@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import UserNameWithBadge from "../ui/UserNameWithBadge";
 
 // Subcomponents
 import PostHeader from "./Visual/PostHeader";
@@ -543,17 +544,20 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                           {(entry.type === 'group' ? entry.members : [entry]).map((member, midx) => (
                             <div key={midx} className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors ${darkMode ? "hover:bg-white/5" : "hover:bg-blue-50/50"}`}>
                               <div className="flex items-center gap-4 flex-1 min-w-0">
-                                  <div className="p-[1px] rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 shadow-lg flex-shrink-0 relative">
+                                  <div className="rounded-full shadow-lg flex-shrink-0 relative">
                                     {(() => {
                                       const isAdmin = currentUser?.role === 'admin' || currentUser?.isAdmin || currentUser?.isMainAdmin || currentUser?.email === "manishdeorari377@gmail.com";
                                       const isRestricted = !isAdmin;
                                       return (
                                         <>
-                                          <img
-                                            src={getOptimizedImageUrl(member.profilePicture || member.userId?.profilePicture || "/default-profile.jpg")}
+                                          <UserAvatar
+                                            user={typeof member.userId === 'object' ? member.userId : member}
+                                            src={member.profilePicture || member.userId?.profilePicture}
                                             alt={member.name}
-                                            className={`w-10 h-10 rounded-full object-cover border-2 border-white/10 ${isRestricted ? "select-none pointer-events-none" : ""}`}
-                                            onError={(e) => { e.target.src = "/default-profile.jpg"; }}
+                                            width={40}
+                                            height={40}
+                                            wrapperClassName="w-10 h-10"
+                                            className={`rounded-full object-cover border-2 ${darkMode ? 'border-blue-500/50' : 'border-blue-400/50'} ${isRestricted ? "select-none pointer-events-none" : ""}`}
                                             onContextMenu={(e) => { if (isRestricted) e.preventDefault(); }}
                                             onDragStart={(e) => { if (isRestricted) e.preventDefault(); }}
                                           />
@@ -570,11 +574,16 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                   <div className="flex flex-col min-w-0 w-full mt-1">
                                     <div className="flex items-center gap-2 mb-1">
                                       {member.userId?.publicId ? (
-                                        <Link href={`/profile/${member.userId.publicId}`} className={`font-black text-sm truncate hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}>
-                                          {member.userId?.name || member.name || "User"}
-                                        </Link>
+                                        <UserNameWithBadge 
+                                          user={member.userId}
+                                          href={`/profile/${member.userId.publicId}`} 
+                                          className={`font-black text-sm truncate hover:text-blue-500 transition-colors ${darkMode ? "text-white" : "text-gray-900"}`}
+                                        />
                                       ) : (
-                                        <span className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}>{member.userId?.name || member.name || "User"}</span>
+                                        <UserNameWithBadge 
+                                          user={member.userId || member}
+                                          className={`font-black text-sm truncate ${darkMode ? "text-white" : "text-gray-900"}`}
+                                        />
                                       )}
                                       {member.userId && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">MATCHED</span>}
                                     </div>

@@ -94,27 +94,30 @@ export default function MyPostsPage() {
   };
 
   if (initializing) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+    <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
-        <p className="font-black tracking-widest text-[10px] uppercase opacity-50">Loading your posts...</p>
+        <div className={`w-12 h-12 border-4 ${darkMode ? 'border-white/20 border-t-white' : 'border-blue-500/20 border-t-blue-500'} rounded-full animate-spin`}></div>
+        <p className="font-bold tracking-widest text-xs uppercase">Loading your posts...</p>
       </div>
     </div>
   );
 
   return (
-    <GooeyGradientBackground className="min-h-screen text-white relative" darkMode={darkMode}>
-      <Sidebar />
+    <GooeyGradientBackground className="min-h-screen text-white" darkMode={darkMode}>
+      <div className={`min-h-screen ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+        <Sidebar />
 
       <div className="max-w-4xl mx-auto py-12 px-4">
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-10">
-          <button
-            onClick={() => router.back()}
-            className={`p-3 rounded-full transition-all active:scale-95 shadow-md flex items-center justify-center shrink-0 ${darkMode ? "bg-black hover:bg-gray-900 text-white shadow-white/5 border border-gray-800" : "bg-white hover:bg-gray-50 text-black shadow-black/5 border border-gray-200"}`}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
+          <div className="relative p-[1.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full group transition-all duration-300 hover:shadow-lg shrink-0">
+            <button
+                onClick={() => router.back()}
+                className={`p-3 rounded-full transition-all active:scale-95 shadow-md flex items-center justify-center shrink-0 ${darkMode ? "bg-[#0f172a] hover:bg-black text-white" : "bg-white hover:bg-gray-50 text-slate-900"}`}
+                aria-label="Go back"
+            >
+                <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+          </div>
           <div className="relative p-[2px] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl shadow-2xl overflow-hidden flex-1 w-full">
           <div className={`px-8 py-6 rounded-[calc(1.5rem-1px)] ${darkMode ? 'bg-slate-950' : 'bg-[#FAFAFA]'}`}>
             <div className="flex items-center gap-4">
@@ -181,6 +184,7 @@ export default function MyPostsPage() {
             <p className="text-white/60 mt-3 font-medium">Your future thoughts and shared experiences will appear here.</p>
           </div>
         )}
+      </div>
       </div>
     </GooeyGradientBackground>
   );
