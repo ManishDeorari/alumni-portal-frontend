@@ -67,6 +67,8 @@ function LoginContent() {
       if (!value.startsWith("PV-H")) {
         value = "PV-H" + value.replace(/^PV-?H?/i, "");
       }
+      const digits = value.slice(4).replace(/\D/g, "");
+      value = "PV-H" + digits;
     }
     setSignupForm({ ...signupForm, [name]: value });
   };
@@ -177,7 +179,7 @@ function LoginContent() {
           const seconds = Math.round(delay / 1000);
           console.warn(`⚠️ Server may be waking up. Retry ${retryCount + 1}/${RETRY_DELAYS.length} in ${seconds}s...`);
           setError(`Server is starting up... retrying in ${seconds}s (attempt ${retryCount + 1}/${RETRY_DELAYS.length})`);
-          
+
           // Fire another wake ping during the wait
           wakeServer();
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -294,7 +296,7 @@ function LoginContent() {
           const seconds = Math.round(delay / 1000);
           console.warn(`⚠️ Server may be waking up. Retry ${retryCount + 1}/${RETRY_DELAYS.length} in ${seconds}s...`);
           setError(`Server is starting up... retrying in ${seconds}s (attempt ${retryCount + 1}/${RETRY_DELAYS.length})`);
-          
+
           wakeServer();
           await new Promise(resolve => setTimeout(resolve, delay));
           return attemptSignupReq(retryCount + 1);
@@ -365,300 +367,298 @@ function LoginContent() {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    <TubesBackground 
-      className="min-h-screen text-white" 
+    <TubesBackground
+      className="min-h-screen text-white"
       darkMode={darkMode}
       alwaysDark={true}
       tubeCount={10}
     >
       <div className="min-h-screen flex flex-col lg:flex-row items-center lg:items-start lg:pt-12 justify-center lg:justify-start px-4 sm:px-8 transition-colors duration-500">
-      <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
-      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 z-10">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 max-w-[310px] sm:max-w-[420px] lg:max-w-[420px] lg:ml-12 mt-6 sm:mt-12 lg:mt-0 mb-8 mx-auto lg:mx-0"
-        >
-          <div className="p-[2px] sm:p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl relative">
-            <div className={`${darkMode ? "bg-[#0f172a] text-white" : "bg-[#FAFAFA] text-gray-900"}  rounded-[calc(2rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] py-4 px-5 sm:py-6 sm:px-8 relative overflow-hidden transition-all duration-500 h-[480px] sm:h-[520px] flex flex-col`}>
-              {(view === "LOGIN" || view === "SIGNUP") && (
-                <form onSubmit={handleSubmit} className="flex-1 flex flex-col h-full min-h-0">
-                  <div className="space-y-1 sm:space-y-2 text-center shrink-0 mb-2">
-                    <h2 className={`text-2xl sm:text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Welcome Back</h2>
-                    <p className={`text-xs sm:text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Enter your credentials to access your account</p>
-                  </div>
-
-                  {error && view !== "SIGNUP" && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className={`${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
-                    >
-                      {error}
-                    </motion.div>
-                  )}
-
-                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2 sm:space-y-5 flex flex-col justify-center">
-                    
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center ml-4 mr-2">
-                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
-                        <button
-                          type="button"
-                          onClick={() => setView("FORGOT_EMAIL")}
-                          className="text-[9px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-extrabold transition-colors border-b-2 border-transparent hover:border-blue-400"
-                        >
-                          Forgot?
-                        </button>
-                      </div>
-                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          name="password"
-                          placeholder="••••••••"
-                          value={form.password}
-                          onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
-                        >
-                          {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-                        </button>
-                      </div>
-                      <p className={`text-[10px] ${darkMode ? "text-white/60" : "text-black/60"} mt-1.5 ml-4 font-semibold`}>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+        <LoadingOverlay isVisible={loading} message={view === "LOGIN" ? "Authenticating..." : "Processing..."} />
+        <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 z-10">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full lg:w-1/2 max-w-[310px] sm:max-w-[420px] lg:max-w-[420px] lg:ml-12 mt-6 sm:mt-12 lg:mt-0 mb-8 mx-auto lg:mx-0"
+          >
+            <div className="p-[2px] sm:p-[2.5px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl relative">
+              <div className={`${darkMode ? "bg-[#0f172a] text-white" : "bg-[#FAFAFA] text-gray-900"}  rounded-[calc(2rem-2px)] sm:rounded-[calc(2.5rem-2.5px)] py-4 px-5 sm:py-6 sm:px-8 relative overflow-hidden transition-all duration-500 h-[480px] sm:h-[520px] flex flex-col`}>
+                {(view === "LOGIN" || view === "SIGNUP") && (
+                  <form onSubmit={handleSubmit} className="flex-1 flex flex-col h-full min-h-0">
+                    <div className="space-y-1 sm:space-y-2 text-center shrink-0 mb-2">
+                      <h2 className={`text-2xl sm:text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Welcome Back</h2>
+                      <p className={`text-xs sm:text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Enter your credentials to access your account</p>
                     </div>
-                  </div>
 
-                  <div className="shrink-0 space-y-2 pt-2">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                    >
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
-                      <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
-                        {loading ? "Authenticating..." : "Login"}
-                      </span>
-                    </div>
-                  </button>
-
-                    
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className="relative flex items-center">
-                        <div className={`flex-grow border-t ${darkMode ? "border-white/10" : "border-gray-300"}`}></div>
-                        <span className="flex-shrink-0 mx-4 text-[10px] uppercase tracking-widest text-gray-400 font-black">Or</span>
-                        <div className={`flex-grow border-t ${darkMode ? "border-white/10" : "border-gray-300"}`}></div>
-                      </div>
-                      
-                      <button 
-                        type="button" 
-                        onClick={() => setView("SIGNUP")} 
-                        className={`w-full py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 font-black text-xs uppercase tracking-widest hover:shadow-lg ${darkMode ? "border-white/20 text-white hover:border-blue-500 hover:bg-blue-500/10" : "border-gray-300 text-black hover:border-blue-600 hover:bg-blue-50"}`}
+                    {error && view !== "SIGNUP" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={`${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
                       >
-                        Create a New Account
+                        {error}
+                      </motion.div>
+                    )}
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2 sm:space-y-5 flex flex-col justify-center">
+
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center ml-4 mr-2">
+                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
+                          <button
+                            type="button"
+                            onClick={() => setView("FORGOT_EMAIL")}
+                            className="text-[9px] uppercase tracking-widest text-blue-500 hover:text-blue-400 font-extrabold transition-colors border-b-2 border-transparent hover:border-blue-400"
+                          >
+                            Forgot?
+                          </button>
+                        </div>
+                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="••••••••"
+                            value={form.password}
+                            onChange={handleChange}
+                            className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                          >
+                            {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                          </button>
+                        </div>
+                        <p className={`text-[10px] ${darkMode ? "text-white/60" : "text-black/60"} mt-1.5 ml-4 font-semibold`}>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+                      </div>
+                    </div>
+
+                    <div className="shrink-0 space-y-2 pt-2">
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                      >
+                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                          <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                            {loading ? "Authenticating..." : "Login"}
+                          </span>
+                        </div>
                       </button>
-                    </div>
-                  </div>
-                </form>
-              )}
 
-              
-              {view === "FORGOT_EMAIL" && (
-                <form onSubmit={handleForgotPassword} className="space-y-6">
-                  <div className="space-y-2 text-center">
-                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Reset Access</h2>
-                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>We&apos;ll send a code to your registered email</p>
-                  </div>
+                      <div className="flex flex-col gap-4 mt-2">
+                        <div className="relative flex items-center">
+                          <div className={`flex-grow border-t ${darkMode ? "border-white/10" : "border-gray-300"}`}></div>
+                          <span className="flex-shrink-0 mx-4 text-[10px] uppercase tracking-widest text-gray-400 font-black">Or</span>
+                          <div className={`flex-grow border-t ${darkMode ? "border-white/10" : "border-gray-300"}`}></div>
+                        </div>
 
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
-                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
-                        <input
-                          type="email"
-                          placeholder="Enter your email"
-                          value={resetEmail}
-                          onChange={(e) => setResetEmail(e.target.value)}
-                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                    >
-                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
-                        <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
-                          {loading ? "Sending..." : "Send Verification Code"}
-                        </span>
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setView("LOGIN")}
-                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
-                    >
-                      Return to Login
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {view === "FORGOT_OTP" && (
-                <form onSubmit={handleResetPassword} className="space-y-6">
-                  <div className="space-y-2 text-center">
-                    <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Security Check</h2>
-                    <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Verification code sent to your inbox</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
-                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
-                        <input
-                          type="text"
-                          placeholder="6-digit code"
-                          value={otp}
-                          onChange={(e) => setOtp(e.target.value)}
-                          className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none text-center tracking-[0.5em] font-black ${darkMode ? "bg-black text-white" : "bg-white text-black"} font-bold`}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>New Password</label>
-                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
-                        <input
-                          type={showNewPassword ? "text" : "password"}
-                          placeholder="Enter new password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className={`w-full px-6 pr-12 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
-                          required
-                        />
                         <button
                           type="button"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                          className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                          onClick={() => setView("SIGNUP")}
+                          className={`w-full py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 font-black text-xs uppercase tracking-widest hover:shadow-lg ${darkMode ? "border-white/20 text-white hover:border-blue-500 hover:bg-blue-500/10" : "border-gray-300 text-black hover:border-blue-600 hover:bg-blue-50"}`}
                         >
-                          {showNewPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                          Create a New Account
                         </button>
                       </div>
-                      <p className={`text-[10px] ${darkMode ? "text-white/60" : "text-black/60"} mt-1.5 ml-4 font-semibold`}>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
                     </div>
-                  </div>
+                  </form>
+                )}
 
-                  <div className="text-center">
-                    {timer > 0 ? (
-                      <p className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Code expires in <span className="text-blue-500">{timer}s</span></p>
-                    ) : (
+                {view === "FORGOT_EMAIL" && (
+                  <form onSubmit={handleForgotPassword} className="space-y-6">
+                    <div className="space-y-2 text-center">
+                      <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Reset Access</h2>
+                      <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>We&apos;ll send a code to your registered email</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
+                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                          <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                      >
+                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                          <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                            {loading ? "Sending..." : "Send Verification Code"}
+                          </span>
+                        </div>
+                      </button>
                       <button
                         type="button"
-                        onClick={handleForgotPassword}
-                        className="text-[9px] uppercase tracking-widest text-red-500 font-black hover:underline underline-offset-4"
+                        onClick={() => setView("LOGIN")}
+                        className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
                       >
-                        Code Expired. Resend?
+                        Return to Login
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  </form>
+                )}
 
-                  <div className="space-y-2">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full relative group p-[2px] bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                    >
-                      <div className="bg-gradient-to-r from-green-600 to-emerald-600 group-hover:from-green-500 group-hover:to-emerald-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
-                        <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
-                          {loading ? "Updating..." : "Verify & Reset"}
-                        </span>
+                {view === "FORGOT_OTP" && (
+                  <form onSubmit={handleResetPassword} className="space-y-6">
+                    <div className="space-y-2 text-center">
+                      <h2 className={`text-3xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Security Check</h2>
+                      <p className={`text-sm ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Verification code sent to your inbox</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
+                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                          <input
+                            type="text"
+                            placeholder="6-digit code"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none text-center tracking-[0.5em] font-black ${darkMode ? "bg-black text-white" : "bg-white text-black"} font-bold`}
+                            required
+                          />
+                        </div>
                       </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setView("LOGIN")}
-                      className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
 
-              {/* Back to Home Inside the Div */}
-              <div className="pt-4 border-t border-white/5 text-center shrink-0 mt-auto">
-                <div className="p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full inline-block group transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] shadow-lg">
-                  <Link
-                    href="/"
-                    className={`flex items-center gap-2.5 px-8 py-2.5 rounded-full transition-all duration-300 font-black ${darkMode
-                      ? "bg-[#0f172a] text-white hover:bg-black"
-                      : "bg-white text-slate-900 hover:bg-gray-50"
-                      }`}
-                  >
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-blue-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      whileHover={{ x: -4 }}
+                      <div className="space-y-1">
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>New Password</label>
+                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
+                          <input
+                            type={showNewPassword ? "text" : "password"}
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className={`w-full px-6 pr-12 py-4 rounded-[calc(1rem-1.5px)] outline-none ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                          >
+                            {showNewPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                          </button>
+                        </div>
+                        <p className={`text-[10px] ${darkMode ? "text-white/60" : "text-black/60"} mt-1.5 ml-4 font-semibold`}>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
+                      </div>
+                    </div>
+
+                    <div className="text-center">
+                      {timer > 0 ? (
+                        <p className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Code expires in <span className="text-blue-500">{timer}s</span></p>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleForgotPassword}
+                          className="text-[9px] uppercase tracking-widest text-red-500 font-black hover:underline underline-offset-4"
+                        >
+                          Code Expired. Resend?
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full relative group p-[2px] bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                      >
+                        <div className="bg-gradient-to-r from-green-600 to-emerald-600 group-hover:from-green-500 group-hover:to-emerald-500 py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                          <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
+                            {loading ? "Updating..." : "Verify & Reset"}
+                          </span>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setView("LOGIN")}
+                        className={`w-full ${darkMode ? "text-white hover:text-blue-400" : "text-black hover:text-blue-600"} text-[9px] uppercase tracking-widest font-black transition-colors`}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Back to Home Inside the Div */}
+                <div className="pt-4 border-t border-white/5 text-center shrink-0 mt-auto">
+                  <div className="p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full inline-block group transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] shadow-lg">
+                    <Link
+                      href="/"
+                      className={`flex items-center gap-2.5 px-8 py-2.5 rounded-full transition-all duration-300 font-black ${darkMode
+                        ? "bg-[#0f172a] text-white hover:bg-black"
+                        : "bg-white text-slate-900 hover:bg-gray-50"
+                        }`}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </motion.svg>
-                    <span className="text-[10px] uppercase tracking-[0.25em] italic">
-                      Return to Home
-                    </span>
-                  </Link>
+                      <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-blue-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        whileHover={{ x: -4 }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                      </motion.svg>
+                      <span className="text-[10px] uppercase tracking-[0.25em] italic">
+                        Return to Home
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Header Content on the Right */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="w-full lg:w-1/2 text-center lg:text-right hidden lg:block lg:pt-20"
-        >
-          <h1 className="text-9xl xl:text-[10rem] font-black text-white tracking-tighter drop-shadow-2xl leading-[0.85] opacity-90">
-            Alumni Portal
-          </h1>
-          <p className="text-white/80 mt-6 font-medium text-xl xl:text-2xl max-w-[600px] ml-auto">
-            Build lifelong connections, share opportunities, and keep the university spirit alive.
-          </p>
-          <div className="mt-8 flex justify-end gap-4">
-            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
-            <div className="w-12 h-1.5 bg-blue-400 rounded-full"></div>
-            <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
-          </div>
-        </motion.div>
+          {/* Header Content on the Right */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full lg:w-1/2 text-center lg:text-right hidden lg:block lg:pt-20"
+          >
+            <h1 className="text-9xl xl:text-[10rem] font-black text-white tracking-tighter drop-shadow-2xl leading-[0.85] opacity-90">
+              Alumni Portal
+            </h1>
+            <p className="text-white/80 mt-6 font-medium text-xl xl:text-2xl max-w-[600px] ml-auto">
+              Build lifelong connections, share opportunities, and keep the university spirit alive.
+            </p>
+            <div className="mt-8 flex justify-end gap-4">
+              <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
+              <div className="w-12 h-1.5 bg-blue-400 rounded-full"></div>
+              <div className="w-12 h-1.5 bg-[#FAFAFA] rounded-full opacity-20"></div>
+            </div>
+          </motion.div>
 
-        {/* Mobile Header (Shows above form on small screens) */}
-        <div className="lg:hidden text-center mb-4 order-first pt-10 sm:pt-14">
-          <h1 className="text-5xl font-black text-white tracking-tight drop-shadow-lg">
-            Alumni Portal
-          </h1>
-          <p className="text-white/70 mt-2 font-medium text-sm">Reconnect. Network. Grow.</p>
+          {/* Mobile Header (Shows above form on small screens) */}
+          <div className="lg:hidden text-center mb-4 order-first pt-10 sm:pt-14">
+            <h1 className="text-5xl font-black text-white tracking-tight drop-shadow-lg">
+              Alumni Portal
+            </h1>
+            <p className="text-white/70 mt-2 font-medium text-sm">Reconnect. Network. Grow.</p>
+          </div>
         </div>
-      </div>
       </div>
 
       <ThemeToggle />
-    
+
       <AnimatePresence>
         {showSignupSuccess && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
@@ -672,7 +672,7 @@ function LoginContent() {
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-4xl shadow-xl shadow-blue-500/20">
                   🎉
                 </div>
-                
+
                 <div className="space-y-3">
                   <h3 className={`text-3xl font-black tracking-tight ${darkMode ? "text-white" : "text-black"}`}>
                     Sign up Successful!
@@ -697,64 +697,64 @@ function LoginContent() {
           </div>
         )}
       </AnimatePresence>
-    
-        <AnimatePresence>
-          {view === "SIGNUP" && (
+
+      <AnimatePresence>
+        {view === "SIGNUP" && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
             <motion.div
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-               onClick={() => setView("LOGIN")}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setView("LOGIN")}
             />
             <motion.div
-               initial={{ opacity: 0, scale: 0.95, y: 20 }}
-               animate={{ opacity: 1, scale: 1, y: 0 }}
-               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-               transition={{ type: "spring", duration: 0.5, bounce: 0 }}
-               className={`relative w-full max-w-2xl ${darkMode ? "bg-black/80 border-white/10" : "bg-white border-gray-200"} border-2 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0 }}
+              className={`relative w-full max-w-2xl ${darkMode ? "bg-black/80 border-white/10" : "bg-white border-gray-200"} border-2 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}
             >
-               <button
-                  type="button"
-                  onClick={() => setView("LOGIN")}
-                  className={`absolute top-4 right-4 z-10 p-2 rounded-full border-2 border-gray-500 ${darkMode ? "text-gray-400 hover:text-white hover:bg-white/10" : "text-gray-500 hover:text-black hover:bg-gray-100"} transition-colors`}
-               >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-               </button>
+              <button
+                type="button"
+                onClick={() => setView("LOGIN")}
+                className={`absolute top-4 right-4 z-10 p-2 rounded-full border-2 border-gray-500 ${darkMode ? "text-gray-400 hover:text-white hover:bg-white/10" : "text-gray-500 hover:text-black hover:bg-gray-100"} transition-colors`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
 
-               <div className="p-6 sm:p-8 flex flex-col h-full overflow-hidden">
-                 <div className="space-y-1 sm:space-y-2 text-center shrink-0 mb-6">
-                   <h2 className={`text-3xl sm:text-4xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Complete Profile</h2>
-                   <p className={`text-sm sm:text-base ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Join our exclusive alumni network today</p>
-                 </div>
+              <div className="p-6 sm:p-8 flex flex-col h-full overflow-hidden">
+                <div className="space-y-1 sm:space-y-2 text-center shrink-0 mb-6">
+                  <h2 className={`text-3xl sm:text-4xl font-black ${darkMode ? "text-white" : "text-black"} tracking-tight`}>Complete Profile</h2>
+                  <p className={`text-sm sm:text-base ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Join our exclusive alumni network today</p>
+                </div>
 
-                 {error && (
-                   <motion.div
-                     initial={{ opacity: 0, y: -10 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     className={`mb-4 ${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
-                   >
-                     {error}
-                   </motion.div>
-                 )}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`mb-4 ${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
+                  >
+                    {error}
+                  </motion.div>
+                )}
 
-                 <div className="flex-1 overflow-y-auto drawer-scrollbar pr-2 sm:pr-4 min-h-0 flex flex-col">
+                <div className="flex-1 overflow-y-auto drawer-scrollbar pr-2 sm:pr-4 min-h-0 flex flex-col">
                   <div className="space-y-4 sm:space-y-6 flex-1">
                     <div className="flex justify-center mb-2">
                       <div className={`inline-flex p-1 rounded-2xl ${darkMode ? "bg-white/5" : "bg-gray-100"}`}>
                         <button
                           type="button"
-                          onClick={() => handleSignupChange({ target: { name: 'role', value: 'alumni' }})}
+                          onClick={() => handleSignupChange({ target: { name: 'role', value: 'alumni' } })}
                           className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${signupForm.role === 'alumni' ? 'bg-blue-500 text-white shadow-lg' : darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-black'}`}
                         >
                           Alumni
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleSignupChange({ target: { name: 'role', value: 'faculty' }})}
+                          onClick={() => handleSignupChange({ target: { name: 'role', value: 'faculty' } })}
                           className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${signupForm.role === 'faculty' ? 'bg-purple-500 text-white shadow-lg' : darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-black'}`}
                         >
                           Faculty
@@ -762,41 +762,24 @@ function LoginContent() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                      <div className="space-y-1">
-                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
-                        <div className={`p-[1.5px] ${error?.toLowerCase().includes("email") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
-                          <input
-                            type="email"
-                            name="email"
-                            placeholder="example@gehu.ac.in"
-                            value={signupForm.email}
-                            onChange={handleSignupChange}
-                            className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      
-                    </div>
-
                     <div className="space-y-1">
                       <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
-                      <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                      <div className={`p-[1.5px] ${error?.toLowerCase().includes("email") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                         <input
-                          type="text"
-                          name="identifier"
+                          type="email"
+                          name="email"
                           placeholder="example@gehu.ac.in"
-                          value={form.identifier}
-                          onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          value={signupForm.email}
+                          onChange={handleSignupChange}
+                          className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                       </div>
                     </div>
 
-<div className="space-y-1">
+
+
+                    <div className="space-y-1">
                       <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name <span className="text-red-500 ml-1">*</span></label>
                       <div className={`p-[1.5px] ${error?.toLowerCase().includes("name") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                         <input
@@ -863,69 +846,68 @@ function LoginContent() {
                   )}
 
                   <div className="space-y-1">
-                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
-                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
-                          <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="••••••••"
-                            value={signupForm.password}
-                            onChange={handleSignupChange}
-                            className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
-                            required
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
-                          >
-                            {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-                          </button>
-                        </div>
-                        <div className="flex justify-between items-center px-2 mt-1">
-                          <p className={`text-[10px] ${darkMode ? "text-white" : "text-black"} font-black`}>
-                            Requires: 8+ chars, 1 uppercase, 1 number, 1 symbol.
-                          </p>
-                          <span className={`text-[9px] font-black uppercase tracking-wider ${
-                            signupForm.password.length === 0 ? "text-gray-400" :
-                            (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password)) ? "text-green-500" : "text-yellow-500"
-                          }`}>
-                            {signupForm.password.length === 0 ? "" : 
-                            (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password) ? "Strong" : "Weak")}
-                          </span>
-                        </div>
-                      </div>
-
-<div className="flex gap-3 sm:gap-4 mt-6 shrink-0 pt-2">
-                     <button
-                       type="button"
-                       onClick={() => setView("LOGIN")}
-                       className={`flex-1 py-3 sm:py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all border-2 border-gray-500 ${darkMode ? "bg-transparent hover:bg-white/10 text-white" : "bg-transparent hover:bg-gray-100 text-gray-800"}`}
-                     >
-                       Cancel
-                     </button>
-                     <button
-                       type="button"
-                       onClick={handleSignupSubmit}
-                       disabled={loading}
-                       className="flex-[2] relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                     >
-                       <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
-                         <span className="text-white font-black text-sm uppercase tracking-widest leading-none">
-                           {loading ? "Creating..." : "Create Account"}
-                         </span>
-                       </div>
-                     </button>
+                    <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
+                    <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="••••••••"
+                        value={signupForm.password}
+                        onChange={handleSignupChange}
+                        className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
+                      >
+                        {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                      </button>
+                    </div>
+                    <div className="flex justify-between items-center px-2 mt-1">
+                      <p className={`text-[10px] ${darkMode ? "text-white" : "text-black"} font-black`}>
+                        Requires: 8+ chars, 1 uppercase, 1 number, 1 symbol.
+                      </p>
+                      <span className={`text-[9px] font-black uppercase tracking-wider ${signupForm.password.length === 0 ? "text-gray-400" :
+                        (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password)) ? "text-green-500" : "text-yellow-500"
+                        }`}>
+                        {signupForm.password.length === 0 ? "" :
+                          (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password) ? "Strong" : "Weak")}
+                      </span>
+                    </div>
                   </div>
-                 </div>
-               </div>
+
+                  <div className="flex gap-3 sm:gap-4 mt-6 shrink-0 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setView("LOGIN")}
+                      className={`flex-1 py-3 sm:py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all border-2 border-gray-500 ${darkMode ? "bg-transparent hover:bg-white/10 text-white" : "bg-transparent hover:bg-gray-100 text-gray-800"}`}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSignupSubmit}
+                      disabled={loading}
+                      className="flex-[2] relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                    >
+                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                        <span className="text-white font-black text-sm uppercase tracking-widest leading-none">
+                          {loading ? "Creating..." : "Create Account"}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}
 
       </AnimatePresence>
 
-      </TubesBackground>
+    </TubesBackground>
 
   );
 }
