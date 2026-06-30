@@ -385,7 +385,7 @@ function LoginContent() {
                           placeholder="example@gehu.ac.in"
                           value={form.identifier}
                           onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 py-2 sm:py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                       </div>
@@ -409,7 +409,7 @@ function LoginContent() {
                           placeholder="••••••••"
                           value={form.password}
                           onChange={handleChange}
-                          className={`w-full px-4 sm:px-6 pr-12 py-2 sm:py-2.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                          className={`w-full px-4 sm:px-6 pr-12 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                           required
                         />
                         <button
@@ -430,7 +430,7 @@ function LoginContent() {
                       disabled={loading}
                       className="w-full relative group p-[2px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden transition-all shadow-xl active:scale-95 disabled:opacity-50"
                     >
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-2.5 sm:py-3 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-500 py-3 sm:py-4 w-full h-full rounded-[calc(1rem-2px)] flex items-center justify-center transition-all">
                       <span className="text-white font-black text-xs uppercase tracking-widest leading-none">
                         {loading ? "Authenticating..." : "Login"}
                       </span>
