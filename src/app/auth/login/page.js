@@ -847,12 +847,21 @@ function LoginContent() {
                           <input
                             type="text"
                             name="position"
+                            list="positionList"
                             placeholder="Ex: Assistant Professor"
                             value={signupForm.position || ""}
                             onChange={handleSignupChange}
                             className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                             required
                           />
+                          <datalist id="positionList">
+                            <option value="Assistant Professor" />
+                            <option value="Associate Professor" />
+                            <option value="Professor" />
+                            <option value="HOD" />
+                            <option value="Dean" />
+                            <option value="Lab Assistant" />
+                          </datalist>
                         </div>
                       </div>
                       <div className="space-y-1">
@@ -861,12 +870,22 @@ function LoginContent() {
                           <input
                             type="text"
                             name="department"
-                            placeholder="Ex: Computer Science"
+                            list="departmentList"
+                            placeholder="Ex: CS"
                             value={signupForm.department || ""}
                             onChange={handleSignupChange}
                             className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 rounded-[calc(1rem-1.5px)] outline-none text-sm sm:text-base ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
                             required
                           />
+                          <datalist id="departmentList">
+                            <option value="CS" />
+                            <option value="IT" />
+                            <option value="ME" />
+                            <option value="CE" />
+                            <option value="EE" />
+                            <option value="ECE" />
+                            <option value="MBA" />
+                          </datalist>
                         </div>
                       </div>
                     </div>
