@@ -405,6 +405,21 @@ function LoginContent() {
 
 
                       <div className="space-y-1">
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
+                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
+                          <input
+                            type="text"
+                            name="identifier"
+                            placeholder="example@gehu.ac.in"
+                            value={form.identifier}
+                            onChange={handleChange}
+                            className={`w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[calc(1rem-1.5px)] outline-none text-base sm:text-lg ${darkMode ? "bg-black text-white placeholder-white/40" : "bg-white text-black placeholder-gray-400"} font-bold`}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
                         <div className="flex justify-between items-center ml-4 mr-2">
                           <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
                           <button
@@ -713,7 +728,7 @@ function LoginContent() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.5, bounce: 0 }}
-              className={`relative w-full max-w-2xl ${darkMode ? "bg-black/80 border-white/10" : "bg-white border-gray-200"} border-2 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}
+              className={`relative w-full max-w-2xl ${darkMode ? "bg-[#0f172a] border-white/10" : "bg-white border-gray-200"} border-2 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}
             >
               <button
                 type="button"
