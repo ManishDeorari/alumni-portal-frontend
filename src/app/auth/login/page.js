@@ -22,7 +22,7 @@ export default function LoginPage() {
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialView = searchParams.get("view") === "SIGNUP" ? "SIGNUP" : "LOGIN";
+  const initialView = "LOGIN";
   const [view, setView] = useState(initialView); // LOGIN | FORGOT_EMAIL | FORGOT_OTP | SIGNUP
   const [form, setForm] = useState({ identifier: "", password: "" });
 
