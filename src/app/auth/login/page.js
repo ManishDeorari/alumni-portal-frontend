@@ -470,7 +470,17 @@ function LoginContent() {
                             onClick={() => setShowPassword(!showPassword)}
                             className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${darkMode ? "text-white/40 hover:text-white" : "text-slate-400 hover:text-slate-600"}`}
                           >
-                            {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                            <AnimatePresence mode="wait">
+                              <motion.div
+                                key={showPassword ? "hide" : "show"}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.15 }}
+                              >
+                                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                              </motion.div>
+                            </AnimatePresence>
                           </button>
                         </div>
                         <p className={`text-[10px] ${darkMode ? "text-white/60" : "text-black/60"} mt-1.5 ml-4 font-semibold`}>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.</p>
@@ -565,15 +575,32 @@ function LoginContent() {
                     <div className="space-y-3">
                       <div className="space-y-1">
                         <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Verification Code</label>
-                        <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
-                          <input
-                            type="text"
-                            placeholder="6-digit code"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            className={`w-full px-6 py-4 rounded-[calc(1rem-1.5px)] outline-none text-center tracking-[0.5em] font-black ${darkMode ? "bg-black text-white" : "bg-white text-black"} font-bold`}
-                            required
-                          />
+                        <div className="flex justify-center gap-2 sm:gap-4">
+                          {[0, 1, 2, 3, 4, 5].map((index) => (
+                            <div key={index} className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm flex-1 max-w-[48px]">
+                              <input
+                                id={`otp-${index}`}
+                                type="text"
+                                maxLength={1}
+                                value={otp[index] || ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  if (!/^[0-9]*$/.test(val)) return;
+                                  const newOtp = otp.split('');
+                                  newOtp[index] = val;
+                                  setOtp(newOtp.join(''));
+                                  if (val && index < 5) document.getElementById(`otp-${index + 1}`).focus();
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Backspace" && !otp[index] && index > 0) {
+                                    document.getElementById(`otp-${index - 1}`).focus();
+                                  }
+                                }}
+                                className={`w-full px-1 py-4 rounded-[calc(1rem-1.5px)] outline-none text-center font-black ${darkMode ? "bg-black text-white" : "bg-white text-black"} font-bold`}
+                                required={index === 0}
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
 
@@ -818,7 +845,7 @@ function LoginContent() {
                           required
                         />
                         {signupForm.email.endsWith("@gehu.ac.in") && signupForm.email.length > 13 && (
-                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</div>
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</motion.div>
                         )}
                       </div>
                     </div>
@@ -838,7 +865,7 @@ function LoginContent() {
                           required
                         />
                         {signupForm.name.length >= 3 && (
-                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</div>
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</motion.div>
                         )}
                       </div>
                     </div>
@@ -858,7 +885,7 @@ function LoginContent() {
                           required
                         />
                         {signupForm.enrollmentNumber.length > 5 && (
-                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</div>
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none font-black text-sm">✓</motion.div>
                         )}
                       </div>
                     </div>
