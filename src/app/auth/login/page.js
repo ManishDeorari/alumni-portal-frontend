@@ -36,6 +36,9 @@ function LoginContent() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [signupError, setSignupError] = useState("");
+  const [missingFields, setMissingFields] = useState([]);
+  const [hasSignupAttempted, setHasSignupAttempted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -203,24 +206,38 @@ function LoginContent() {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setSignupError("");
+    setMissingFields([]);
     setLoading(true);
 
-    if (!signupForm.name || !signupForm.email || !signupForm.password || !signupForm.enrollmentNumber) {
-      setError("Please fill all mandatory fields.");
-      setLoading(false);
-      return;
+    let missing = [];
+    if (!signupForm.name) missing.push("name");
+    if (!signupForm.email) missing.push("email");
+    if (!signupForm.password) missing.push("password");
+    
+    if (signupForm.role === "alumni" && !signupForm.enrollmentNumber) missing.push("enrollmentNumber");
+    if (signupForm.role === "faculty" && !signupForm.employeeId && !signupForm.enrollmentNumber) missing.push("employeeId");
+
+    if (signupForm.role === "faculty") {
+      if (!signupForm.position) missing.push("position");
+      if (!signupForm.department) missing.push("department");
     }
 
-    if (signupForm.role === "faculty" && (!signupForm.position || !signupForm.department)) {
-      setError("Please provide Position and Department.");
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      if (signupForm.role === "faculty" && missing.some(f => ["position", "department"].includes(f))) {
+         setSignupError("Please provide Position and Department.");
+      } else {
+         setSignupError("Please fill all mandatory fields.");
+      }
       setLoading(false);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signupForm.email)) {
-      setError("Please enter a valid email address.");
+      setMissingFields(["email"]);
+      setSignupError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
@@ -229,12 +246,14 @@ function LoginContent() {
     if (signupForm.role === "alumni") {
       const enRegex = /^PV-H\d+$/;
       if (!enRegex.test(signupForm.enrollmentNumber)) {
-        setError("Invalid enrollment number format. It must start with 'PV-H' followed by digits only (e.g. PV-H209001).");
+        setMissingFields(["enrollmentNumber"]);
+        setSignupError("Invalid enrollment number format. It must start with 'PV-H' followed by digits only (e.g. PV-H209001).");
         setLoading(false);
         return;
       }
       if (signupForm.enrollmentNumber.length > 15) {
-        setError("Enrollment number is too long. Use format PV-H followed by up to 10 digits (e.g. PV-H209001).");
+        setMissingFields(["enrollmentNumber"]);
+        setSignupError("Enrollment number is too long. Use format PV-H followed by up to 10 digits (e.g. PV-H209001).");
         setLoading(false);
         return;
       }
@@ -295,7 +314,7 @@ function LoginContent() {
           const delay = RETRY_DELAYS[retryCount];
           const seconds = Math.round(delay / 1000);
           console.warn(`⚠️ Server may be waking up. Retry ${retryCount + 1}/${RETRY_DELAYS.length} in ${seconds}s...`);
-          setError(`Server is starting up... retrying in ${seconds}s (attempt ${retryCount + 1}/${RETRY_DELAYS.length})`);
+          setSignupError(`Server is starting up... retrying in ${seconds}s (attempt ${retryCount + 1}/${RETRY_DELAYS.length})`);
 
           wakeServer();
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -305,7 +324,7 @@ function LoginContent() {
         const userMessage = isNetworkError
           ? "Server is currently unavailable. Please try again in a minute."
           : (err.message || "Something went wrong");
-        setError(userMessage);
+        setSignupError(userMessage);
         setLoading(false);
       }
     };
@@ -747,13 +766,13 @@ function LoginContent() {
                   <p className={`text-sm sm:text-base ${darkMode ? "text-white" : "text-black"} font-bold opacity-70`}>Join our exclusive alumni network today</p>
                 </div>
 
-                {error && (
+                {signupError && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`mb-4 ${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-xs py-3 px-4 rounded-xl text-center font-black`}
                   >
-                    {error}
+                    {signupError}
                   </motion.div>
                 )}
 
@@ -782,7 +801,7 @@ function LoginContent() {
 
                     <div className="space-y-1">
                       <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
-                      <div className={`p-[1.5px] ${error?.toLowerCase().includes("email") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
+                      <div className={`p-[1.5px] ${missingFields.includes("email") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                         <input
                           type="email"
                           name="email"
@@ -802,7 +821,7 @@ function LoginContent() {
 
                     <div className="space-y-1">
                       <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name <span className="text-red-500 ml-1">*</span></label>
-                      <div className={`p-[1.5px] ${error?.toLowerCase().includes("name") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
+                      <div className={`p-[1.5px] ${missingFields.includes("name") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                         <input
                           type="text"
                           name="name"
@@ -822,7 +841,7 @@ function LoginContent() {
                       <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>
                         {signupForm.role === "faculty" ? "Employee ID" : "Enrollment No."} <span className="text-red-500 ml-1">*</span>
                       </label>
-                      <div className={`p-[1.5px] ${error?.toLowerCase().includes("enrollment number") || error?.toLowerCase().includes("employee id") || error?.toLowerCase().includes("pv-h") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
+                      <div className={`p-[1.5px] ${missingFields.includes("enrollmentNumber") || missingFields.includes("employeeId") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                         <input
                           type="text"
                           name="enrollmentNumber"
@@ -843,7 +862,7 @@ function LoginContent() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4">
                       <div className="space-y-1">
                         <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Position <span className="text-red-500 ml-1">*</span></label>
-                        <div className={`p-[1.5px] ${error?.toLowerCase().includes("position") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
+                        <div className={`p-[1.5px] ${missingFields.includes("position") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                           <input
                             type="text"
                             name="position"
@@ -866,7 +885,7 @@ function LoginContent() {
                       </div>
                       <div className="space-y-1">
                         <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Department <span className="text-red-500 ml-1">*</span></label>
-                        <div className={`p-[1.5px] ${error?.toLowerCase().includes("department") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
+                        <div className={`p-[1.5px] ${missingFields.includes("department") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                           <input
                             type="text"
                             name="department"
@@ -893,7 +912,7 @@ function LoginContent() {
 
                   <div className="space-y-1 mt-4">
                     <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
-                    <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
+                    <div className={`p-[1.5px] ${missingFields.includes("password") ? "bg-red-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} rounded-2xl shadow-sm relative`}>
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
