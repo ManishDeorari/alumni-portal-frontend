@@ -33,6 +33,7 @@ function LoginContent() {
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -377,7 +378,7 @@ function LoginContent() {
 
                   <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2 sm:space-y-5 flex flex-col justify-center">
                     <div className="space-y-1">
-                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                         <input
                           type="text"
@@ -393,7 +394,7 @@ function LoginContent() {
 
                     <div className="space-y-1">
                       <div className="flex justify-between items-center ml-4 mr-2">
-                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password</label>
+                        <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
                         <button
                           type="button"
                           onClick={() => setView("FORGOT_EMAIL")}
@@ -455,7 +456,7 @@ function LoginContent() {
 
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                      <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
                       <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                         <input
                           type="email"
@@ -705,7 +706,7 @@ function LoginContent() {
                       </p>
                     </div>
 
-                    <form onSubmit={handleSignupSubmit} className="flex-1 flex flex-col min-h-0">
+                    <form onSubmit={handleSignupSubmit} className={`flex-1 flex flex-col min-h-0 ${hasSubmitted ? "submitted-form" : ""}`}>
                       
                       {error && (
                         <div className={`${darkMode ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-red-50 border-red-100 text-red-600"} border text-[10px] py-2 px-4 rounded-xl text-center font-black mb-4 shrink-0`}>
@@ -739,7 +740,7 @@ function LoginContent() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address</label>
+                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Email Address <span className="text-red-500 ml-1">*</span></label>
                           <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                             <input
                               type="email"
@@ -754,7 +755,7 @@ function LoginContent() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password</label>
+                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Password <span className="text-red-500 ml-1">*</span></label>
                           <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm relative">
                             <input
                               type={showPassword ? "text" : "password"}
@@ -774,9 +775,25 @@ function LoginContent() {
                             </button>
                           </div>
                         </div>
+                          <div className="mt-2 space-y-1">
+                            <div className="flex justify-between items-center text-[8px] sm:text-[9px] uppercase tracking-widest font-black">
+                              <span className={signupForm.password.length === 0 ? (darkMode ? "text-white/40" : "text-black/40") : (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password) ? "text-green-500" : "text-yellow-500")}>
+                                {signupForm.password.length === 0 ? "Password Strength" : (signupForm.password.length >= 8 && /[A-Z]/.test(signupForm.password) && /[0-9]/.test(signupForm.password) && /[^A-Za-z0-9]/.test(signupForm.password) ? "Strong Password!" : "Weak Password")}
+                              </span>
+                            </div>
+                            <div className="flex gap-1 h-1">
+                              <div className={`flex-1 rounded-full transition-colors ${signupForm.password.length > 0 ? (signupForm.password.length >= 8 ? "bg-green-500" : "bg-red-500") : (darkMode ? "bg-white/10" : "bg-gray-200")}`}></div>
+                              <div className={`flex-1 rounded-full transition-colors ${signupForm.password.length > 0 ? (/[A-Z]/.test(signupForm.password) ? "bg-green-500" : "bg-red-500") : (darkMode ? "bg-white/10" : "bg-gray-200")}`}></div>
+                              <div className={`flex-1 rounded-full transition-colors ${signupForm.password.length > 0 ? (/[0-9]/.test(signupForm.password) ? "bg-green-500" : "bg-red-500") : (darkMode ? "bg-white/10" : "bg-gray-200")}`}></div>
+                              <div className={`flex-1 rounded-full transition-colors ${signupForm.password.length > 0 ? (/[^A-Za-z0-9]/.test(signupForm.password) ? "bg-green-500" : "bg-red-500") : (darkMode ? "bg-white/10" : "bg-gray-200")}`}></div>
+                            </div>
+                            <p className={`text-[9px] ${darkMode ? "text-white/60" : "text-black/60"} font-semibold`}>
+                              Requires: 8+ chars, 1 uppercase, 1 number, 1 symbol
+                            </p>
+                          </div>
 
                         <div className="space-y-1">
-                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name</label>
+                          <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Full Name <span className="text-red-500 ml-1">*</span></label>
                           <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                             <input
                               type="text"
@@ -793,7 +810,7 @@ function LoginContent() {
                         <div className="grid grid-cols-2 gap-3 sm:gap-4">
                           <div className="space-y-1">
                             <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>
-                              {signupForm.role === "faculty" ? "Employee ID" : "Enrollment No."}
+                              {signupForm.role === "faculty" ? "Employee ID" : "Enrollment No."} <span className="text-red-500 ml-1">*</span>
                             </label>
                             <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                               <input
@@ -809,7 +826,7 @@ function LoginContent() {
                           </div>
                           <div className="space-y-1">
                             <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>
-                              {signupForm.role === "faculty" ? "Position" : "Passout Year"}
+                              {signupForm.role === "faculty" ? "Position" : "Passout Year"} <span className="text-red-500 ml-1">*</span>
                             </label>
                             <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                               <input
@@ -827,7 +844,7 @@ function LoginContent() {
 
                         <div className="grid grid-cols-2 gap-3 sm:gap-4">
                           <div className="space-y-1">
-                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Course</label>
+                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Course <span className="text-red-500 ml-1">*</span></label>
                             <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                               <input
                                 type="text"
@@ -841,7 +858,7 @@ function LoginContent() {
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Branch</label>
+                            <label className={`text-[9px] uppercase tracking-widest ${darkMode ? "text-white" : "text-black"} ml-4 font-black`}>Branch <span className="text-red-500 ml-1">*</span></label>
                             <div className="p-[1.5px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm">
                               <input
                                 type="text"
