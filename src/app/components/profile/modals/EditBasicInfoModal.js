@@ -179,22 +179,14 @@ export default function EditBasicInfoModal({ isOpen, onClose, currentProfile, on
                         <User className="w-5 h-5" /> Edit Personal Details
                     </h2>
                     
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={handleSave}
-                            disabled={loading}
-                            className="flex items-center gap-2 px-8 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
-                        >
-                            <Save className="w-4 h-4" />
-                            {loading ? "Saving..." : "Save Changes"}
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="text-white hover:bg-white/20 p-1 border-2 border-white rounded-xl transition ml-3"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-8 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                    >
+                        <Save className="w-4 h-4" />
+                        {loading ? "Saving..." : "Save Changes"}
+                    </button>
                 </div>
             </div>
 
