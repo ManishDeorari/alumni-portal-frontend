@@ -49,12 +49,21 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
     if (!isOpen) return null;
 
     const handleChange = (field, value) => {
-        setPreferences(prev => ({ ...prev, [field]: value }));
+        let processedValue = value;
+        if (field === "functionalArea") {
+            processedValue = processedValue.replace(/[^a-zA-Z0-9\s\.\-]/g, '');
+        } else if (field === "salary") {
+            processedValue = processedValue.replace(/[^0-9\,\.\s[a-zA-Z]/g, '');
+        } else if (field === "resumeLink" || field === "portfolioLink") {
+            processedValue = processedValue.replace(/\s/g, '');
+        }
+        setPreferences(prev => ({ ...prev, [field]: processedValue }));
     };
 
     const handleLocationsChange = (value) => {
-        setLocationsInput(value);
-        const locations = value.split(",").map(lang => lang.trim()).filter(Boolean);
+        let processedValue = value.replace(/[^a-zA-Z\s\-,]/g, '');
+        setLocationsInput(processedValue);
+        const locations = processedValue.split(",").map(lang => lang.trim()).filter(Boolean);
         setPreferences(prev => ({ ...prev, preferredLocations: locations }));
     };
 
@@ -113,129 +122,9 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                     <h2 className="text-lg font-bold flex items-center gap-2">
                         <Heart className="w-5 h-5" /> Job Preferences
                     </h2>
-                    <button onClick={onClose} className="text-white/80 hover:text-white hover:bg-[#FAFAFA]/20 p-1 rounded-full transition">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-
-                <div className={`p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow ${darkMode ? 'bg-[#121213]' : 'bg-[#FAFAFA]'}`}>
-                    <datalist id="pref-area-suggestions">
-                        {FUNCTIONAL_AREAS.map(a => <option key={a} value={a} />)}
-                    </datalist>
-                    <datalist id="notice-suggestions">
-                        {NOTICE_PERIODS.map(n => <option key={n} value={n} />)}
-                    </datalist>
-                    <datalist id="salary-suggestions">
-                        {SALARY_RANGES.map(s => <option key={s} value={s} />)}
-                    </datalist>
-
-                    <div className="space-y-4">
-                        <div className="space-y-1.5">
-                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                <Heart className="w-3.5 h-3.5" /> Preferred Functional Area
-                            </label>
-                            <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
-                                <input
-                                    type="text"
-                                    list="pref-area-suggestions"
-                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                    value={preferences.functionalArea}
-                                    onChange={(e) => handleChange("functionalArea", e.target.value)}
-                                    placeholder="Ex: Full Stack Development"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                <MapPin className="w-3.5 h-3.5" /> Preferred Locations
-                            </label>
-                            <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
-                                <input
-                                    type="text"
-                                    className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                    value={locationsInput}
-                                    onChange={(e) => handleLocationsChange(e.target.value)}
-                                    placeholder="Ex: Dehradun, Delhi, Bangalore"
-                                />
-                            </div>
-                            <p className={`text-[10px] font-black tracking-widest mt-1 ml-1 ${darkMode ? 'text-slate-500' : 'text-gray-400'}`}>SEPARATE WITH COMMAS (,)</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                    <Clock className="w-3.5 h-3.5" /> Notice Period
-                                </label>
-                                <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
-                                    <input
-                                        type="text"
-                                        list="notice-suggestions"
-                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                        value={preferences.noticePeriod}
-                                        onChange={(e) => handleChange("noticePeriod", e.target.value)}
-                                        placeholder="Ex: 30 Days"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                    <DollarSign className="w-3.5 h-3.5" /> Expected Salary
-                                </label>
-                                <div className="p-[2px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl shadow-sm">
-                                    <input
-                                        type="text"
-                                        list="salary-suggestions"
-                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                        value={preferences.salary}
-                                        onChange={(e) => handleChange("salary", e.target.value)}
-                                        placeholder="Ex: 6-10 LPA"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                    <FileText className="w-3.5 h-3.5" /> Resume Link
-                                </label>
-                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
-                                    <input
-                                        type="url"
-                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                        value={preferences.resumeLink}
-                                        onChange={(e) => handleChange("resumeLink", e.target.value)}
-                                        placeholder="https://drive.google.com/..."
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${darkMode ? 'text-sky-400' : 'text-sky-600'}`}>
-                                    <Globe className="w-3.5 h-3.5" /> Portfolio Link
-                                </label>
-                                <div className="p-[2px] bg-gradient-to-tr from-blue-600/50 to-purple-600/50 rounded-xl shadow-sm focus-within:from-blue-600 focus-within:to-purple-600 transition-all">
-                                    <input
-                                        type="url"
-                                        className={`w-full p-2.5 rounded-[calc(0.75rem-2px)] text-sm outline-none transition ${darkMode ? 'bg-[#121213] text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'}`}
-                                        value={preferences.portfolioLink}
-                                        onChange={(e) => handleChange("portfolioLink", e.target.value)}
-                                        placeholder="https://myportfolio.com"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={`p-4 flex justify-end gap-3 border-t flex-shrink-0 transition-all ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <button 
-                        onClick={onClose} 
-                        className={`px-6 py-2.5 border-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm ${darkMode ? "border-white text-white hover:bg-white/10" : "border-black text-black hover:bg-gray-100"}`}
-                    >
-                        Cancel
-                    </button>
-                    <button
+                    
+                    <div className="flex items-center">
+<button
                         onClick={handleSave}
                         disabled={loading}
                         className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
@@ -243,6 +132,13 @@ export default function EditJobPreferenceModal({ isOpen, onClose, currentPrefere
                         <Save className="w-4 h-4" />
                         {loading ? "Saving..." : "Save Changes"}
                     </button>
+<button
+                        onClick={onClose}
+                        className="text-white hover:bg-white/20 p-1 border-2 border-white rounded-xl transition ml-3"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+</div>
                 </div>
             </div>
 
