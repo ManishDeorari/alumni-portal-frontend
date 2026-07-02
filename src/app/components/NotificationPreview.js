@@ -25,6 +25,7 @@ const getNotificationIcon = (type, darkMode) => {
         case "profile_visit":
             return <Eye className={`${iconClass} ${darkMode ? "text-purple-400" : "text-purple-600"}`} />;
         case "admin_notice":
+        case "academic_update":
             return <ShieldAlert className={`${iconClass} ${darkMode ? "text-red-400" : "text-red-600"}`} />;
         case "points_earned":
             return <Award className={`${iconClass} ${darkMode ? "text-yellow-400" : "text-yellow-600"}`} />;
@@ -60,6 +61,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
             className="absolute top-full right-0 mt-2 w-[19.25rem] p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[1.75rem] shadow-2xl z-[200]"
         >
             <div className={`w-full rounded-[calc(1.75rem-2px)] overflow-hidden ${darkMode ? "bg-black" : "bg-white"} flex flex-col`}>
+
 
                 <div className={`px-5 py-3 border-b flex items-center justify-between ${darkMode ? "border-white/10 bg-white/5" : "border-gray-100 bg-gray-50"}`}>
                     <h3 className={`text-[10px] font-black uppercase tracking-[0.25em] ${darkMode ? "text-white" : "text-slate-900"}`}>
@@ -98,13 +100,19 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                     ? (isPenalty ? "border-red-500 shadow-lg shadow-red-500/40" : "border-blue-500 shadow-lg shadow-blue-500/40")
                                                     : "border-transparent opacity-80"
                                                     }`}>
-                                                    <Image
-                                                        src={note.sender?.profilePicture || "/default-profile.jpg"}
-                                                        alt={note.sender?.name || "User"}
-                                                        width={32}
-                                                        height={32}
-                                                        className="w-8 h-8 rounded-[0.5rem] object-cover"
-                                                    />
+                                                    {(note.type === "points_earned" || note.type === "silent_points_deducted") ? (
+                                                        <div className={`w-8 h-8 rounded-[0.7rem] flex items-center justify-center ${darkMode ? 'bg-white/10' : 'bg-black/5'}`}>
+                                                            <Award className={`w-4 h-4 ${darkMode ? 'text-white' : 'text-slate-900'}`} />
+                                                        </div>
+                                                    ) : (
+                                                        <Image
+                                                            src={note.sender?.profilePicture || "/default-profile.jpg"}
+                                                            alt={note.sender?.name || "User"}
+                                                            width={32}
+                                                            height={32}
+                                                            className="w-8 h-8 rounded-[0.5rem] object-cover"
+                                                        />
+                                                    )}
                                                 </div>
                                                 <div className={`absolute -bottom-1 -right-1 p-1 rounded-full border-2 ${darkMode ? "bg-slate-900 border-slate-950" : "bg-white border-gray-100"} shadow-md`}>
                                                     {isPenalty ? <ShieldAlert className={`w-3 h-3 ${darkMode ? "text-red-400" : "text-red-600"}`} /> : getNotificationIcon(note.type, darkMode)}
@@ -112,7 +120,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className={`text-[11px] leading-[1.4] ${darkMode ? "text-white" : "text-slate-900"}`}>
-                                                    <span className="font-black text-sm tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent truncate max-w-[120px]">
+                                                    <span className={`font-black uppercase tracking-tight ${unread && !darkMode ? (isPenalty ? "text-red-600" : "text-blue-600") : ""}`}>
                                                         {(note.type === "points_earned" || note.type === "silent_points_deducted") ? (isPenalty ? "Moderator" : "System") : (note.sender?.name || (typeof note.sender === "string" ? "User" : "System"))}
                                                     </span>{" "}
                                                     <span className={`font-medium ${unread ? "opacity-100" : "opacity-60"}`}>
@@ -120,7 +128,6 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                             const parts = note.message.split("::");
                                                             const msg = parts[1] || "Points Awarded";
                                                             const pts = parts[3] || "0";
-                                                            const cat = (parts[2] || "Other").replace(/([A-Z])/g, ' $1').trim();
                                                             return `${msg} +${pts} PTS`;
                                                         })() : note.message?.startsWith("MANUAL_PENALTY::") ? (() => {
                                                             const parts = note.message.split("::");
@@ -130,7 +137,7 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
                                                         })() : (note.type === "points_earned" || note.type === "silent_points_deducted") ? (() => {
                                                             let msg = note.message;
                                                             let pts = "0";
-                                                            const match = note.message?.match(/\+?(\d+)\s*(?:PTS|pts|points|Points)/i);
+                                                            const match = note.message?.match(/\+?(\d+)\s*(?:PTS|points?|point\(s\))/i);
                                                             if (match) {
                                                                 pts = match[1];
                                                                 msg = note.message.replace(match[0], '').trim() || "Points Update";
@@ -195,3 +202,4 @@ export default function NotificationPreview({ notifications = [], darkMode }) {
         </motion.div>
     );
 }
+
