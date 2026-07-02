@@ -18,9 +18,12 @@ export default function EditProjectsModal({ isOpen, onClose, currentProjects, on
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [expandedIndex, setExpandedIndex] = useState(0);
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   useEffect(() => {
+    if (isOpen) {
+      setExpandedIndex(null);
+    }
     if (currentProjects && isOpen) {
       const transformed = currentProjects.map((p) => {
         const parseDate = (dateStr) => {
