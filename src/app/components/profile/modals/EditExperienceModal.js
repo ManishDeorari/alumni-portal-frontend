@@ -395,7 +395,7 @@ export default function EditExperienceModal({
             </div>
 
             {/* Body */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
               
               {/* Guide Text */}
               <div className="p-[2px] bg-gradient-to-tr from-blue-500 via-indigo-500 to-purple-500 rounded-xl mb-6">
@@ -418,9 +418,6 @@ export default function EditExperienceModal({
                 <option key={c} value={c} />
               ))}
             </datalist>
-
-            {/* Body */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
               {experiences.map((exp, idx) => (
                 <div key={idx} className="p-[2px] rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 mb-4 transition-all">
                   <div className={`p-4 rounded-[calc(1rem-2px)] h-full ${darkMode ? 'bg-[#121213]' : 'bg-white'}`}>
