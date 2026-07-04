@@ -46,19 +46,28 @@ export default function NotificationsPage() {
     markAsRead,
     markAllAsRead,
     clearReadNotifications,
+    deleteNotification,
+    loadMoreNotifications,
     refreshNotifications
   } = useNotifications();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ALL");
+  const [readFilter, setReadFilter] = useState("ALL");
+  const [page, setPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showPostModal, setShowPostModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [notFoundError, setNotFoundError] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ⚡ OPTIMISTIC HYDRATION
   useEffect(() => {
@@ -108,7 +117,7 @@ export default function NotificationsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleNotificationClick = async (note) => {
+  const handleNavigate = async (note) => {
     if (!note.isRead) {
       markAsRead(note._id);
     }
@@ -163,6 +172,10 @@ export default function NotificationsPage() {
   // Logic to filter and group notifications
   const filteredAndGroupedNotifications = useMemo(() => {
     let filtered = notifications;
+
+    if (activeTab === "UNREAD") {
+      filtered = filtered.filter(n => !n.isRead);
+    }
 
     // 1. Filter by Tab
     if (activeTab === "FEEDBACK") {
@@ -351,13 +364,13 @@ export default function NotificationsPage() {
                         initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.98 }}
-                        onClick={() => handleNotificationClick(note)}
+                        onClick={() => { if(!note.isRead) markAsRead(note._id); }}
                         className={`relative p-[2px] bg-gradient-to-r ${(note.type === 'points_earned' || note.type === 'silent_points_deducted') ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
                         <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${!note.isRead
                           ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                           : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
-                          } ${!note.isRead ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}>
+                          }`}>
                           <div className="relative shrink-0">
                             <div className={`p-[2px] rounded-2xl bg-gradient-to-br ${(note.type === 'points_earned' || note.type === 'silent_points_deducted') ? 'from-purple-500 to-blue-500' : 'from-blue-500 to-purple-500'} shadow-[0_0_10px_rgba(255,255,255,0.1)] ${!note.isRead ? 'opacity-100' : 'opacity-80 grayscale-[20%]'}`}>
                               {(note.type === "points_earned" || note.type === "silent_points_deducted") ? (
@@ -423,7 +436,6 @@ export default function NotificationsPage() {
                                           }
                                         }
 
-                                        // Apply categorical fallback
                                         if ((cat === "Reward" || !cat) && !isPenalty) {
                                           const lowerMsg = msg?.toLowerCase() || note.message?.toLowerCase() || "";
                                           if (lowerMsg.includes("post")) cat = "Post";
@@ -510,12 +522,33 @@ export default function NotificationsPage() {
                                   </span>
                                   <span className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#FAFAFA]/10 text-white/90' : 'bg-gray-200/50 text-slate-700'}`}>
                                     <Calendar className="w-3 h-3" />
-                                    {new Date(note.createdAt).toLocaleDateString()}
+                                    {mounted ? new Date(note.createdAt).toLocaleDateString() : "Date"}
                                   </span>
                                 </div>
                               </div>
-                              <ChevronRight className={`w-5 h-5 transition-all ${!note.isRead ? (darkMode ? 'text-white/20 group-hover:text-white' : 'text-slate-300 group-hover:text-blue-500') : 'opacity-0'} group-hover:translate-x-1`} />
                             </div>
+                          </div>
+
+                          <div className="absolute -top-3 -right-2 flex items-center gap-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            {[
+                              "connect_request", "connect_accept", "profile_visit",
+                              "group_joined", "group_added", "post_like", "post_comment",
+                              "comment_like", "comment_reply", "reply_like", "comment_reaction",
+                              "reply_reaction", "points_earned", "silent_points_deducted"
+                            ].includes(note.type) && (
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); handleNavigate(note); }}
+                                className={`p-2 rounded-full shadow-lg ${darkMode ? 'bg-slate-800 text-blue-400 hover:bg-slate-700' : 'bg-white text-blue-600 hover:bg-gray-100'} transition-transform active:scale-95`}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                            )}
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); deleteNotification(note._id); }}
+                              className={`p-2 rounded-full shadow-lg ${darkMode ? 'bg-slate-800 text-red-400 hover:bg-slate-700' : 'bg-white text-red-500 hover:bg-gray-100'} transition-transform active:scale-95`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
 
                           {!note.isRead && (
@@ -528,6 +561,22 @@ export default function NotificationsPage() {
                 </div>
               </div>
             ))}
+
+            {/* Load More Button */}
+            {notifications.length > 0 && notifications.length % 50 === 0 && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => {
+                    const nextPage = page + 1;
+                    setPage(nextPage);
+                    loadMoreNotifications(nextPage);
+                  }}
+                  className={`px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-md active:scale-95 ${darkMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-blue-600 border border-blue-100 hover:bg-blue-50'}`}
+                >
+                  Load Older Notifications
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
