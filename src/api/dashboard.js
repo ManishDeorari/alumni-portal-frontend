@@ -1,5 +1,57 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL + "/api";
 
+// ================== EVENT REPOSTS ==================
+export const fetchEventReposts = async (eventId) => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE}/events/${eventId}/reposts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch event reposts');
+  return res.json();
+};
+
+export const downloadEventRepostsCSV = async (eventId, title) => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE}/events/${eventId}/reposts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch event reposts');
+  
+  const data = await res.json();
+  const reposts = data.reposts || [];
+  
+  if (reposts.length === 0) {
+    throw new Error('No reposts found for this event');
+  }
+
+  // Define CSV headers
+  const headers = ['Name', 'Enrollment Number', 'Email', 'Phone Number'];
+  
+  // Create CSV rows
+  const csvRows = [
+    headers.join(','),
+    ...reposts.map(r => {
+      const u = r.user || {};
+      return [
+        `"${u.name || ''}"`,
+        `"${u.enrollmentNumber || ''}"`,
+        `"${u.email || ''}"`,
+        `"${u.phoneNumber || ''}"`
+      ].join(',');
+    })
+  ];
+  
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Reposts_${title.replace(/[^a-z0-9]/gi, '_')}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 // ================== FETCH POSTS ==================
 export const fetchPosts = async (page = 1, limit = 10, type = "Regular") => {
   const res = await fetch(`${BASE}/posts?page=${page}&limit=${limit}&type=${type}`);

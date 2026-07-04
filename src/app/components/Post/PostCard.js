@@ -17,6 +17,7 @@ import CommentInput from "./Visual/CommentInput";
 const CommentCard = dynamic(() => import("./Visual/commentCard"), { ssr: false });
 import EventRegistrationModal from "./EventRegistrationModal";
 import AdminRegistrationsModal from "./AdminRegistrationsModal";
+import AdminRepostsModal from "./AdminRepostsModal";
 import CreateEventRepostModal from "./CreateEventRepostModal";
 import ReactionModal from "./Visual/ReactionModal";
 import FullImageViewer from "./utils/FullImageViewer";
@@ -56,7 +57,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   // Event specific states
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showAdminRepostsModal, setShowAdminRepostsModal] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
+  const [showMyRepostModal, setShowMyRepostModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const textareaRef = useRef(null);
@@ -404,38 +407,91 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 pt-2 items-start sm:items-center justify-between border-t border-white/5 pt-6">
                   <div className="flex items-center gap-4">
                     {(currentUser?.isAdmin || currentUser?.role === 'faculty' || post.user?._id === currentUser?._id) ? (
-                      post.eventType !== "no_registration" && (
                       <>
-                        <button
-                          onClick={() => setShowAdminModal(true)}
-                          className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all hover:scale-105"
-                        >
-                          View Registrations
-                        </button>
-                        {post.showRegistrationInsights && (
-                          <div className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-300 ${darkMode ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]" : "bg-blue-50 border-blue-100 shadow-sm"}`}>
-                            <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-600 text-xs shadow-lg transform -rotate-3">
-                              👥
+                          {post.eventType !== "no_registration" && (
+                            <button
+                              onClick={() => setShowAdminModal(true)}
+                              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all hover:scale-105"
+                            >
+                              View Registrations
+                            </button>
+                          )}
+                          {post.eventType === "no_registration" && (
+                            <button
+                              onClick={() => setShowAdminRepostsModal(true)}
+                              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all hover:scale-105"
+                            >
+                              View Reposts
+                            </button>
+                          )}
+                          {post.showRegistrationInsights && (
+                            <div className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-300 ${darkMode ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]" : "bg-blue-50 border-blue-100 shadow-sm"}`}>
+                              <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-600 text-xs shadow-lg transform -rotate-3">
+                                👥
+                              </div>
+                              <div className="flex flex-col">
+                                <span className={`text-[8px] font-black uppercase tracking-[0.3em] leading-tight ${darkMode ? "text-blue-400" : "text-blue-600"} opacity-70`}>Live Insight</span>
+                                <span className={`text-[11px] font-black uppercase tracking-widest leading-tight ${darkMode ? "text-white" : "text-slate-900"}`}>
+                                  Registered: <span className={darkMode ? "text-blue-400" : "text-blue-600"}>{post.registrationCount || 0}</span>
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex flex-col">
-                              <span className={`text-[8px] font-black uppercase tracking-[0.3em] leading-tight ${darkMode ? "text-blue-400" : "text-blue-600"} opacity-70`}>Live Insight</span>
-                              <span className={`text-[11px] font-black uppercase tracking-widest leading-tight ${darkMode ? "text-white" : "text-slate-900"}`}>
-                                Registered: <span className={darkMode ? "text-blue-400" : "text-blue-600"}>{post.registrationCount || 0}</span>
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                      )
+                          )}
+                        </>
                     ) : (
                       currentUser?.role === 'alumni' && (
                         post.eventType === "no_registration" ? (
-                          <button
-                            onClick={() => setShowRepostModal(true)}
-                            className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:shadow-green-500/25 active:scale-95 transition-all hover:-translate-y-0.5 flex items-center gap-2"
-                          >
-                            <span className="text-sm">🏆</span> Claim Event Points
-                          </button>
+                          (() => {
+                            const deadlinePassed = Date.now() > new Date(post.registrationCloseDate).getTime();
+                            const alreadyClaimed = currentUser?.eventPointsAwarded?.includes(post._id);
+
+                            if (alreadyClaimed || post.myRepostId) {
+                              return (
+                                <div className="flex flex-col items-center gap-2">
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-green-500 italic bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20">
+                                    Already Reposted
+                                  </span>
+                                  {post.myRepostId && (
+                                    <>
+                                      <button 
+                                        onClick={(e) => { e.stopPropagation(); setShowMyRepostModal(true); }} 
+                                        className="text-[10px] font-bold text-blue-500 hover:underline cursor-pointer bg-transparent border-none p-0 z-50 relative"
+                                        style={{ pointerEvents: 'auto' }}
+                                      >
+                                        View your repost
+                                      </button>
+                                      {showMyRepostModal && (
+                                        <div onClick={(e) => e.stopPropagation()}>
+                                          <SmartPostModal
+                                            post={{ _id: post.myRepostId, type: "EventRepost" }}
+                                            currentUser={currentUser}
+                                            showModal={showMyRepostModal}
+                                            setShowModal={setShowMyRepostModal}
+                                            darkMode={darkMode}
+                                          />
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            } else if (deadlinePassed) {
+                              return (
+                                <span className="text-[10px] font-black uppercase tracking-widest text-red-500 italic bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20">
+                                  Deadline Passed (48h)
+                                </span>
+                              );
+                            } else {
+                              return (
+                                <button
+                                  onClick={() => setShowRepostModal(true)}
+                                  className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:scale-105`}
+                                >
+                                  Repost & Claim Points
+                                </button>
+                              );
+                            }
+                          })()
                         ) : Date.now() < new Date(post.registrationCloseDate) ? (
                           <button
                             onClick={() => setShowRegistrationModal(true)}
@@ -829,6 +885,14 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               event={post}
               isOpen={showAdminModal}
               onClose={() => setShowAdminModal(false)}
+              darkMode={darkMode}
+            />
+          )}
+          {showAdminRepostsModal && (
+            <AdminRepostsModal
+              event={post}
+              isOpen={showAdminRepostsModal}
+              onClose={() => setShowAdminRepostsModal(false)}
               darkMode={darkMode}
             />
           )}
