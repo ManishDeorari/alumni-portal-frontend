@@ -530,12 +530,10 @@ export default function NotificationsPage() {
                           </div>
 
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
-                            {[
-                              "connect_request", "connect_accept", "profile_visit",
-                              "group_joined", "group_added", "post_like", "post_comment",
-                              "comment_like", "comment_reply", "reply_like", "comment_reaction",
-                              "reply_reaction", "points_earned", "silent_points_deducted"
-                            ].includes(note.type) && (
+                            {(
+                              ["connect_request", "connect_accept", "profile_visit", "group_joined", "group_added", "feedback"].includes(note.type) || 
+                              note.postId
+                            ) && (
                               <button 
                                 onClick={(e) => { e.stopPropagation(); handleNavigate(note); }}
                                 className={`p-2 rounded-full shadow-lg ${darkMode ? 'bg-slate-800 text-blue-400 hover:bg-slate-700' : 'bg-white text-blue-600 hover:bg-gray-100'} transition-transform active:scale-95`}
