@@ -367,7 +367,7 @@ export default function NotificationsPage() {
                         onClick={() => { if(!note.isRead) markAsRead(note._id); }}
                         className={`relative p-[2px] bg-gradient-to-r ${(note.type === 'points_earned' || note.type === 'silent_points_deducted') ? 'from-amber-400 via-yellow-500 to-amber-500' : 'from-blue-500 via-purple-500 to-pink-500'} rounded-2xl transition-all duration-300 group shadow-md`}
                       >
-                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 rounded-[calc(1rem-2px)] transition-all ${!note.isRead
+                        <div className={`relative flex items-start gap-2.5 sm:gap-4 p-2.5 sm:py-3 sm:px-5 pr-14 sm:pr-20 rounded-[calc(1rem-2px)] transition-all ${!note.isRead
                           ? (darkMode ? "bg-black/90 hover:bg-black" : "bg-[#FAFAFA] hover:bg-white shadow-md")
                           : (darkMode ? "bg-black/80 shadow-inner" : "bg-gray-50 shadow-inner")
                           }`}>
@@ -529,7 +529,7 @@ export default function NotificationsPage() {
                             </div>
                           </div>
 
-                          <div className="absolute -top-3 -right-2 flex items-center gap-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
                             {[
                               "connect_request", "connect_accept", "profile_visit",
                               "group_joined", "group_added", "post_like", "post_comment",
