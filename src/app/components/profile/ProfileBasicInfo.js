@@ -14,6 +14,7 @@ import ResumeDownloadBtn from "./ResumeDownloadBtn";
 import EditBasicInfoModal from "./modals/EditBasicInfoModal";
 import QrCodeModal from "./modals/QrCodeModal";
 import { useTheme } from "@/context/ThemeContext";
+import { getImageUrl } from "../../../utils/media";
 
 export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPublicView }) {
     const router = useRouter();
@@ -484,7 +485,7 @@ export default function ProfileBasicInfo({ profile, setProfile, onRefresh, isPub
                                             <div className="flex -space-x-3">
                                                 {profile.mutualConnections.slice(0, 3).map((conn, idx) => (
                                                     <div key={conn._id} className={`w-10 h-10 rounded-full border-2 ${darkMode ? 'border-[#121213] bg-slate-700' : 'border-[#FAFAFA] bg-gray-200'} overflow-hidden relative z-[${3 - idx}]`}>
-                                                        <img src={conn.profilePicture || "/default-profile.jpg"} alt={conn.name} className="w-full h-full object-cover" />
+                                                        <img src={getImageUrl(conn.profilePicture)} alt={conn.name} className="w-full h-full object-cover" />
                                                     </div>
                                                 ))}
                                                 {profile.mutualConnections.length > 3 && (

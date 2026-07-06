@@ -1,4 +1,5 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL + "/api";
+import imageCompression from "browser-image-compression";
 
 // ================== EVENT REPOSTS ==================
 export const fetchEventReposts = async (eventId) => {
@@ -16,17 +17,17 @@ export const downloadEventRepostsCSV = async (eventId, title) => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error('Failed to fetch event reposts');
-  
+
   const data = await res.json();
   const reposts = data.reposts || [];
-  
+
   if (reposts.length === 0) {
     throw new Error('No reposts found for this event');
   }
 
   // Define CSV headers
   const headers = ['Name', 'Enrollment Number', 'Email', 'Phone Number'];
-  
+
   // Create CSV rows
   const csvRows = [
     headers.join(','),
@@ -40,7 +41,7 @@ export const downloadEventRepostsCSV = async (eventId, title) => {
       ].join(',');
     })
   ];
-  
+
   const csvContent = csvRows.join('\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -78,8 +79,17 @@ export const createPost = async (contentOrData, image, video, type = "Regular", 
   if (image && image.length > 0) {
     console.group("📤 Uploading Images to Cloudinary");
     for (let img of image) {
+      let fileToUpload = img;
+      if (img.type && img.type.startsWith("image/") && !img.type.includes("gif")) {
+        try {
+          const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+          fileToUpload = await imageCompression(img, options);
+        } catch (error) {
+          console.error("Image compression error:", error);
+        }
+      }
       const imageData = new FormData();
-      imageData.append("file", img);
+      imageData.append("file", fileToUpload);
       imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
       imageData.append("folder", "alumni/images"); // Optional folder for better management
 
@@ -90,11 +100,12 @@ export const createPost = async (contentOrData, image, video, type = "Regular", 
 
       const uploadJson = await uploadRes.json();
       if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
+        const shortFileName = `${uploadJson.public_id}.${uploadJson.format}`;
         imageObjects.push({
-          url: uploadJson.secure_url,
+          url: shortFileName, // Sending short filename for R2 migration
           public_id: uploadJson.public_id,
         });
-        console.log("✅ Image uploaded:", uploadJson.secure_url);
+        console.log("✅ Image uploaded (short name):", shortFileName);
       } else {
         console.error("❌ Image upload failed:", uploadJson);
       }
@@ -117,11 +128,12 @@ export const createPost = async (contentOrData, image, video, type = "Regular", 
 
     const uploadJson = await uploadRes.json();
     if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
+      const shortFileName = `${uploadJson.public_id}.${uploadJson.format}`;
       videoObject = {
-        url: uploadJson.secure_url,
+        url: shortFileName, // Sending short filename for R2 migration
         public_id: uploadJson.public_id,
       };
-      console.log("✅ Video uploaded:", uploadJson.secure_url);
+      console.log("✅ Video uploaded (short name):", shortFileName);
     } else {
       console.error("❌ Video upload failed:", uploadJson);
     }
@@ -144,13 +156,15 @@ export const createPost = async (contentOrData, image, video, type = "Regular", 
 
       const uploadJson = await uploadRes.json();
       if (uploadRes.ok && uploadJson.secure_url && uploadJson.public_id) {
+        const docFormat = doc.name.split('.').pop();
+        const shortFileName = `${uploadJson.public_id}.${docFormat}`;
         documentObjects.push({
-          url: uploadJson.secure_url,
+          url: shortFileName, // Sending short filename for R2 migration
           public_id: uploadJson.public_id,
           original_filename: doc.name,
-          format: doc.name.split('.').pop(),
+          format: docFormat,
         });
-        console.log("✅ Document uploaded:", uploadJson.secure_url);
+        console.log("✅ Document uploaded (short name):", shortFileName);
       } else {
         console.error("❌ Document upload failed:", uploadJson);
       }
@@ -188,8 +202,17 @@ export const createAnnouncement = async (announcementData, images = [], video = 
   // 1. Upload Images
   if (images && images.length > 0) {
     for (let img of images) {
+      let fileToUpload = img;
+      if (img.type && img.type.startsWith("image/") && !img.type.includes("gif")) {
+        try {
+          const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+          fileToUpload = await imageCompression(img, options);
+        } catch (error) {
+          console.error("Image compression error:", error);
+        }
+      }
       const imageData = new FormData();
-      imageData.append("file", img);
+      imageData.append("file", fileToUpload);
       imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
       imageData.append("folder", "student/announcements/images");
 
@@ -250,12 +273,12 @@ export const createAnnouncement = async (announcementData, images = [], video = 
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({ 
-      ...announcementData, 
-      images: imageObjects, 
+    body: JSON.stringify({
+      ...announcementData,
+      images: imageObjects,
       video: videoObject,
       documents: documentObjects,
-      type: "Announcement" 
+      type: "Announcement"
     }),
   });
   return res.json();
@@ -423,8 +446,17 @@ export const createEvent = async (eventData, images = [], video = null, document
   // 1. Upload Images
   if (images && images.length > 0) {
     for (let img of images) {
+      let fileToUpload = img;
+      if (img.type && img.type.startsWith("image/") && !img.type.includes("gif")) {
+        try {
+          const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+          fileToUpload = await imageCompression(img, options);
+        } catch (error) {
+          console.error("Image compression error:", error);
+        }
+      }
       const imageData = new FormData();
-      imageData.append("file", img);
+      imageData.append("file", fileToUpload);
       imageData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
       imageData.append("folder", "alumni/events/images");
 
@@ -469,8 +501,8 @@ export const createEvent = async (eventData, images = [], video = null, document
       });
       const uploadJson = await uploadRes.json();
       if (uploadRes.ok) {
-        documentObjects.push({ 
-          url: uploadJson.secure_url, 
+        documentObjects.push({
+          url: uploadJson.secure_url,
           public_id: uploadJson.public_id,
           original_filename: uploadJson.original_filename || doc.name,
           format: uploadJson.format || doc.name.split('.').pop()
@@ -527,7 +559,7 @@ export const downloadEventCSV = async (eventId, eventTitle) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
-  
+
   if (res.ok) {
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
