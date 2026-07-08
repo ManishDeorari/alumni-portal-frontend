@@ -209,7 +209,7 @@ export default function CommentCard({
               </div>
 
               {editing ? (
-                <div className="flex gap-2 mt-1.5 items-start relative bg-black/5 p-1.5 rounded-lg">
+                <div className={`flex gap-2 mt-1.5 items-start relative p-1.5 rounded-lg border ${darkMode ? 'border-white bg-black/20' : 'border-black bg-black/5'}`}>
                   <input
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
@@ -227,7 +227,7 @@ export default function CommentCard({
               )}
 
               <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-[9px] font-black uppercase tracking-widest opacity-40">
+                <span className={`text-[9px] font-black uppercase tracking-widest opacity-100 ${darkMode ? "text-white" : "text-black"}`}>
                   {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
                 {comment.editedAt && (
@@ -238,13 +238,15 @@ export default function CommentCard({
 
             <div className="flex items-center gap-2 ml-2">
               {(isOwn || currentUser?.role === 'admin' || currentUser?.isMainAdmin || isPostOwner) && (
-                <div className="relative" ref={optionsRef}>
-                  <button
-                    onClick={() => setShowOptions(!showOptions)}
-                    className={`p-1.5 rounded-full transition-colors flex items-center justify-center opacity-100 ${darkMode ? "text-gray-100 bg-white/10 hover:bg-white/20" : "text-gray-800 bg-gray-200/80 hover:bg-gray-300"}`}
-                  >
-                    <FaEllipsisH className="w-3.5 h-3.5" />
-                  </button>
+                <div className="relative flex items-center" ref={optionsRef}>
+                  <div className="p-[1.5px] rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 shadow-md transition-all hover:scale-110 active:scale-95 flex items-center justify-center">
+                    <button
+                      onClick={() => setShowOptions(!showOptions)}
+                      className={`p-1.5 rounded-full flex items-center justify-center opacity-100 ${darkMode ? "text-gray-100 bg-slate-900 hover:bg-slate-800" : "text-gray-800 bg-white hover:bg-gray-100"}`}
+                    >
+                      <FaEllipsisH className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                   
                   <AnimatePresence>
                     {showOptions && (
@@ -268,7 +270,7 @@ export default function CommentCard({
                                 setShowEmoji(false);
                                 setShowOptions(false);
                               }}
-                              className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-blue-400 hover:bg-white/5" : "text-blue-600 hover:bg-gray-50"}`}
+                              className={`w-full text-center px-4 py-1.5 my-1 text-[10px] font-black uppercase tracking-widest transition-colors border rounded-md ${darkMode ? "border-white text-white hover:bg-white/10" : "border-black text-black hover:bg-black/10"}`}
                             >
                               Save
                             </button>
@@ -279,7 +281,7 @@ export default function CommentCard({
                                 setShowEmoji(false);
                                 setShowOptions(false);
                               }}
-                              className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${darkMode ? "text-gray-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-50"}`}
+                              className={`w-full text-center px-4 py-1.5 mb-1 text-[10px] font-black uppercase tracking-widest transition-colors border rounded-md ${darkMode ? "border-gray-400 text-gray-300 hover:bg-white/10" : "border-gray-600 text-gray-700 hover:bg-black/10"}`}
                             >
                               Cancel
                             </button>
