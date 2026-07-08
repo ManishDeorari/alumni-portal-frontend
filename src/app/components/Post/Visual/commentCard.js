@@ -281,7 +281,7 @@ export default function CommentCard({
                                 setShowEmoji(false);
                                 setShowOptions(false);
                               }}
-                              className={`w-full text-center px-4 py-1.5 mb-1 text-[10px] font-black uppercase tracking-widest transition-colors border rounded-md ${darkMode ? "border-gray-400 text-gray-300 hover:bg-white/10" : "border-gray-600 text-gray-700 hover:bg-black/10"}`}
+                              className={`w-full text-center px-4 py-1.5 mb-1 text-[10px] font-black uppercase tracking-widest transition-colors border rounded-md ${darkMode ? "border-white text-white hover:bg-white/10" : "border-black text-black hover:bg-black/10"}`}
                             >
                               Cancel
                             </button>
