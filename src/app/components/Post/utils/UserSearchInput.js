@@ -114,7 +114,7 @@ const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = fa
               </div>
 
               {/* Results Area */}
-              <div className="flex-1 overflow-y-auto p-2 sm:p-4 min-h-[250px] custom-scrollbar">
+              <div className="flex-1 overflow-y-auto p-2 sm:p-4 min-h-[200px] max-h-[300px] sm:max-h-[350px] custom-scrollbar">
                 {query.length < 2 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center opacity-50 p-8">
                     <FaSearch className="text-4xl mb-4" />
@@ -126,39 +126,39 @@ const UserSearchInput = ({ value, onChange, placeholder, onSelect, darkMode = fa
                     <p className={`font-black text-sm uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>No users found</p>
                   </div>
                 ) : (
-                    <div className="space-y-2">
-                      {results.map((user) => (
-                        <div key={user._id} className="p-[1.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300">
-                          <div
-                            onClick={() => handleSelect(user)}
-                            className={`flex items-center justify-between gap-4 p-3 sm:p-4 rounded-[calc(1rem-1.5px)] cursor-pointer transition-all group ${
-                              darkMode ? "bg-[#121213]" : "bg-white"
-                            }`}
-                          >
-                            <div className="flex items-center gap-4 overflow-hidden">
-                              <div className="w-12 h-12 p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full relative shrink-0 flex items-center justify-center">
-                                <div className={`w-full h-full rounded-full overflow-hidden relative ${darkMode ? "bg-slate-800" : "bg-gray-200"}`}>
-                                  <Image 
-                                    src={user.profilePicture || "/default-profile.jpg"} 
-                                    alt={user.name} 
-                                    fill 
-                                    className="object-cover" 
-                                  />
-                                </div>
+                  <div className="space-y-2">
+                    {results.map((user) => (
+                      <div key={user._id} className="p-[1.5px] bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300">
+                        <div
+                          onClick={() => handleSelect(user)}
+                          className={`flex items-center justify-between gap-4 p-3 sm:p-4 rounded-[calc(1rem-1.5px)] cursor-pointer transition-all group ${
+                            darkMode ? "bg-[#121213]" : "bg-white"
+                          }`}
+                        >
+                          <div className="flex items-center gap-4 overflow-hidden">
+                            <div className="w-12 h-12 p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full relative shrink-0 flex items-center justify-center">
+                              <div className={`w-full h-full rounded-full overflow-hidden relative ${darkMode ? "bg-slate-800" : "bg-gray-200"}`}>
+                                <Image 
+                                  src={user.profilePicture || "/default-profile.jpg"} 
+                                  alt={user.name} 
+                                  fill 
+                                  className="object-cover" 
+                                />
                               </div>
-                              <div className="min-w-0">
-                                <p className={`font-bold truncate text-base sm:text-[17px] ${darkMode ? "text-white" : "text-gray-900"}`}>
-                                  {user.name}
-                                </p>
-                                <p className={`text-[10px] sm:text-xs font-medium uppercase tracking-wider truncate mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                  {user.enrollmentNumber} {user.role === 'alumni' ? '(Alumni)' : ''}
-                                </p>
-                              </div>
+                            </div>
+                            <div className="min-w-0">
+                              <p className={`font-bold truncate text-base sm:text-[17px] ${darkMode ? "text-white" : "text-gray-900"}`}>
+                                {user.name}
+                              </p>
+                              <p className={`text-[10px] sm:text-xs font-medium uppercase tracking-wider truncate mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                                {user.enrollmentNumber} {user.role === 'alumni' ? '(Alumni)' : ''}
+                              </p>
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
