@@ -249,10 +249,10 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
   return (
     <div
       ref={postRef}
-      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-1.5 sm:p-2"} rounded-2xl sm:rounded-[2.5rem] transition-all duration-500`}
+      className={`relative ${transparentBackground ? "" : (darkMode ? "bg-[#121213] shadow-none" : "bg-[#FAFAFA] shadow-[0_20px_60px_rgba(37,99,235,0.2)]")} ${transparentBackground ? "p-0" : "p-1 sm:p-1.5"} rounded-2xl sm:rounded-[2.5rem] transition-all duration-500`}
     >
       <div className={`p-[1.5px] sm:p-[2px] ${darkMode ? "bg-gradient-to-tr from-blue-900 to-purple-900" : "bg-gradient-to-tr from-blue-600 to-purple-700"} rounded-[calc(1rem)] sm:rounded-[2.4rem]`}>
-        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.3rem] p-2 sm:p-4 space-y-1 sm:space-y-3 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
+        <div className={`relative rounded-[calc(1rem-2px)] sm:rounded-[2.3rem] p-2 sm:p-3 space-y-1 sm:space-y-2 transition-all duration-500 ${isMyPost ? (darkMode ? "bg-slate-800/50" : "bg-gradient-to-tr from-blue-50/50 to-white") : (darkMode ? "bg-[#121213]" : "bg-[#FAFAFA]")} ${darkMode ? "text-white" : "text-gray-900"}`}>
           {post.isPinned && (
             <div className={`inline-flex items-center gap-1.5 mb-2 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gradient-to-r ${darkMode ? "from-orange-500/20 via-pink-500/20 to-purple-500/20 text-pink-300 border border-pink-500/30" : "from-orange-100 via-pink-100 to-purple-100 text-pink-600 border border-pink-200"} shadow-sm`}>
               <span className="animate-bounce">📌</span> Pinned by Admin
@@ -321,8 +321,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "EventRepost" && post.eventRepostDetails && (
-            <div className={`mt-1 sm:mt-2 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-green-500/80 to-emerald-600/80" : "from-green-400 to-emerald-500"} shadow-xl overflow-hidden relative group/repost`}>
-              <div className={`p-2 sm:p-3 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-2`}>
+            <div className={`mt-1 sm:mt-1 p-[1px] sm:p-[1.5px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr ${darkMode ? "from-green-500/80 to-emerald-600/80" : "from-green-400 to-emerald-500"} shadow-xl overflow-hidden relative group/repost`}>
+              <div className={`p-1.5 sm:p-2 rounded-[calc(0.75rem-1px)] sm:rounded-[calc(2rem-1.5px)] ${darkMode ? "bg-slate-900/90 backdrop-blur-md" : "bg-white"} flex flex-col space-y-1`}>
                 <div className="flex justify-between items-start border-b border-dashed border-gray-200 dark:border-white/10 pb-2">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${darkMode ? "text-green-400/80" : "text-green-600/80"} flex items-center gap-2`}>
@@ -383,8 +383,8 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Event" && (
-            <div className="mt-1 sm:mt-2 p-[1.5px] sm:p-[2px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
-              <div className={`p-2 sm:p-3 rounded-[calc(0.75rem-1.5px)] sm:rounded-[calc(2rem-2px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-1.5 sm:space-y-2`}>
+            <div className="mt-1 sm:mt-1 p-[1px] sm:p-[1.5px] rounded-xl sm:rounded-[2rem] bg-gradient-to-tr from-blue-500 to-purple-600 shadow-xl overflow-hidden">
+              <div className={`p-1.5 sm:p-2 rounded-[calc(0.75rem-1px)] sm:rounded-[calc(2rem-1.5px)] ${darkMode ? "bg-slate-900/90" : "bg-white"} space-y-1 sm:space-y-1.5`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   <div className="flex flex-col">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 ${darkMode ? "text-blue-400/60" : "text-blue-600/60"}`}>Start</span>
@@ -551,7 +551,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
           )}
 
           {post.type === "Announcement" && post.announcementDetails?.isWinnerAnnouncement && (
-            <div className={`mt-2 p-3 rounded-[2rem] border ${darkMode ? "bg-blue-500/5 border-blue-500/20" : "bg-blue-50 border-blue-100"}`}>
+            <div className={`mt-1 p-2 rounded-2xl border ${darkMode ? "bg-blue-500/5 border-blue-500/20" : "bg-blue-50 border-blue-100"}`}>
               <h3 className={`text-base font-black mb-2 flex items-center gap-2 ${darkMode ? "text-blue-300" : "text-blue-700"}`}>
                 <span>🏆</span> Event Winners
               </h3>
