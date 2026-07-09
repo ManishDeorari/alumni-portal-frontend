@@ -354,7 +354,8 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
 
       {isMainModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-          <div className={`w-full max-w-3xl rounded-3xl overflow-hidden shadow-2xl transition-all ${darkMode ? "bg-[#1a1a1c]" : "bg-white"}`}>
+          <div className="w-full max-w-3xl p-[2px] rounded-3xl bg-gradient-to-tr from-blue-500 to-purple-600 shadow-2xl">
+            <div className={`w-full h-full rounded-[calc(1.5rem-2px)] overflow-hidden transition-all ${darkMode ? "bg-[#1a1a1c]" : "bg-white"}`}>
             {/* Modal Header & Tabs */}
             <div className={`p-4 sm:p-6 border-b ${darkMode ? "border-white/10" : "border-gray-200"}`}>
               <div className="flex items-center justify-between mb-4">
@@ -392,6 +393,7 @@ const CreatePost = ({ setPosts, currentUser, darkMode = false }) => {
               {renderTabContent()}
             </div>
           </div>
+        </div>
         </div>
       )}
 

@@ -504,7 +504,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                               </div>
                                               <div className={`flex-1 flex items-center h-10 border rounded-xl ${errors.includes(`winner-name-${member.originalIdx}`) ? "border-red-500 animate-pulse bg-red-50" : (darkMode ? "border-white/10" : "border-gray-200")}`}>
                                                 <UserSearchInput 
-                                                  darkMode={darkMode} role="student" placeholder="Search member name..." value={member.name}
+                                                  darkMode={darkMode}  placeholder="Search member name..." value={member.name}
                                                   className={`!bg-transparent !border-none !shadow-none font-black !py-2 !text-[12px] h-full w-full ${darkMode ? "!text-white" : "!text-black"}`}
                                                   onChange={(val) => {
                                                      handleWinnerChange(member.originalIdx, "name", val);
@@ -528,7 +528,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                                   <div key={lIdx} className={`p-[1.5px] rounded-xl bg-gradient-to-r from-orange-500 to-red-600`}>
                                                     <div className={`w-full h-full p-2 flex flex-col items-center justify-center rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>
                                                       <span className="text-[9px] font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">{label}</span>
-                                                      <span className="text-[11px] font-black text-white truncate w-full text-center mt-0.5">{val || "-"}</span>
+                                                      <span className={`text-[11px] font-black truncate w-full text-center mt-0.5 ${darkMode ? "text-white" : "text-black"}`}>{val || "-"}</span>
                                                     </div>
                                                   </div>
                                                 );
@@ -599,7 +599,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                       </div>
                                       <div className={`flex-1 flex items-center h-10 border rounded-xl ${errors.includes(`winner-name-${idx}`) ? "border-red-500 animate-pulse bg-red-50" : (darkMode ? "border-white/10" : "border-gray-200")}`}>
                                         <UserSearchInput 
-                                          darkMode={darkMode} role="student" placeholder="Search student name..." value={member.name}
+                                          darkMode={darkMode}  placeholder="Search student name..." value={member.name}
                                           className={`!bg-transparent !border-none !shadow-none font-black !py-2 !text-[12px] h-full w-full ${darkMode ? "!text-white" : "!text-black"}`}
                                           onChange={(val) => {
                                              handleWinnerChange(idx, "name", val);
@@ -623,7 +623,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                           <div key={lIdx} className={`p-[1.5px] rounded-xl bg-gradient-to-r from-orange-500 to-red-600`}>
                                             <div className={`w-full h-full p-2 flex flex-col items-center justify-center rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>
                                               <span className="text-[9px] font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">{label}</span>
-                                              <span className="text-[11px] font-black text-white truncate w-full text-center mt-0.5">{val || "-"}</span>
+                                              <span className={`text-[11px] font-black truncate w-full text-center mt-0.5 ${darkMode ? "text-white" : "text-black"}`}>{val || "-"}</span>
                                             </div>
                                           </div>
                                         );
