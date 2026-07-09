@@ -521,9 +521,9 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                                 />
                                               </div>
                                             </div>
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
-                                              {["ENR", "CRS", "BRN", "SEM"].map((label, lIdx) => {
-                                                const val = label === "ENR" ? member.enrollmentNumber : label === "CRS" ? member.course : label === "BRN" ? member.branch : member.semester;
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                                              {["ENR"].map((label, lIdx) => {
+                                                const val = member.enrollmentNumber;
                                                 return (
                                                   <div key={lIdx} className={`p-[1.5px] rounded-xl bg-gradient-to-r from-orange-500 to-red-600`}>
                                                     <div className={`w-full h-full p-2 flex flex-col items-center justify-center rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>
@@ -616,9 +616,9 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                                         />
                                       </div>
                                     </div>
-                                    <div className="grid grid-cols-4 gap-2 w-full">
-                                      {["ENR", "CRS", "BRN", "SEM"].map((label, lIdx) => {
-                                        const val = label === "ENR" ? member.enrollmentNumber : label === "CRS" ? member.course : label === "BRN" ? member.branch : member.semester;
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                                      {["ENR"].map((label, lIdx) => {
+                                        const val = member.enrollmentNumber;
                                         return (
                                           <div key={lIdx} className={`p-[1.5px] rounded-xl bg-gradient-to-r from-orange-500 to-red-600`}>
                                             <div className={`w-full h-full p-2 flex flex-col items-center justify-center rounded-[calc(0.75rem-1.5px)] ${darkMode ? "bg-slate-900 text-white" : "bg-white text-black"}`}>
