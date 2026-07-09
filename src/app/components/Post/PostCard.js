@@ -747,7 +747,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
               />
 
               {someoneTyping && (
-                <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-400"} mt-1 ml-2 italic`}>
+                <p className={`text-xs ${darkMode ? "text-white" : "text-white"} mt-1 ml-2 italic`}>
                   Someone is typing...
                 </p>
               )}

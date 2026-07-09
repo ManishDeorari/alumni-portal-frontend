@@ -175,7 +175,7 @@ export default function PostModal(props) {
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shrink-0 ${darkMode ? "bg-white/10 text-gray-400" : "bg-gray-100 text-gray-600"}`}>
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shrink-0 ${darkMode ? "bg-white/10 text-white" : "bg-gray-100 text-gray-600"}`}>
                               {doc.format || "FILE"}
                             </span>
                             <div className="w-6 h-6 rounded-full flex items-center justify-center bg-blue-500/10 text-blue-500">
