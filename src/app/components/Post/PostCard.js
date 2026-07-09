@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import UserNameWithBadge from "../ui/UserNameWithBadge";
+import UserAvatar from "../ui/UserAvatar";
 
 // Subcomponents
 import PostHeader from "./Visual/PostHeader";
@@ -589,7 +590,12 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"}`}>
+                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${
+                                 entry.rank == 1 ? "bg-gradient-to-r from-yellow-300 to-yellow-600 text-black shadow-[0_0_15px_rgba(253,224,71,0.6)] animate-pulse" :
+                                 entry.rank == 2 ? "bg-gradient-to-r from-gray-300 to-gray-400 text-black shadow-[0_0_15px_rgba(209,213,219,0.5)]" :
+                                 entry.rank == 3 ? "bg-gradient-to-r from-orange-400 to-orange-700 text-white shadow-[0_0_15px_rgba(251,146,60,0.5)]" :
+                                 (darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700")
+                               }`}>
                                 Rank: {entry.rank}
                               </span>
                               <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>
@@ -608,7 +614,12 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"}`}>
+                              <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${
+                                 entry.rank == 1 ? "bg-gradient-to-r from-yellow-300 to-yellow-600 text-black shadow-[0_0_15px_rgba(253,224,71,0.6)] animate-pulse" :
+                                 entry.rank == 2 ? "bg-gradient-to-r from-gray-300 to-gray-400 text-black shadow-[0_0_15px_rgba(209,213,219,0.5)]" :
+                                 entry.rank == 3 ? "bg-gradient-to-r from-orange-400 to-orange-700 text-white shadow-[0_0_15px_rgba(251,146,60,0.5)]" :
+                                 (darkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700")
+                               }`}>
                                 Rank: {entry.rank}
                               </span>
                               <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${darkMode ? "bg-green-500/20 text-green-300" : "bg-green-100 text-green-700"}`}>
@@ -668,7 +679,7 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                       )}
                                       {member.userId && <span className="text-[9px] bg-green-500 text-white px-2 py-0.5 rounded-full font-black flex-shrink-0 tracking-widest shadow-sm">MATCHED</span>}
                                     </div>
-                                    <div className="flex flex-wrap items-center gap-4 text-left">
+                                    <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4 text-left">
                                       <div className="flex flex-col">
                                         <span className={`text-[9px] font-black uppercase tracking-[0.2em] text-orange-500`}>Enrollment No.</span>
                                         <span className={`text-[11px] font-black tracking-tighter ${darkMode ? "text-white" : "text-black"}`}>
