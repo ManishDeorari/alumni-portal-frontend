@@ -675,30 +675,9 @@ export default function PostCard({ post, currentUser, setPosts, initialShowComme
                                           {member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}
                                         </span>
                                       </div>
-                                      {(member.userId?.course || member.course) && (
-                                        <div className="flex flex-col">
-                                          <span className={`text-[9px] font-black uppercase tracking-[0.2em] text-orange-500`}>Course</span>
-                                          <span className={`text-[11px] font-black tracking-tighter ${darkMode ? "text-white" : "text-black"}`}>
-                                            {member.userId?.course || member.course}
-                                          </span>
-                                        </div>
-                                      )}
-                                      {(member.userId?.branch || member.branch) && (
-                                        <div className="flex flex-col">
-                                          <span className={`text-[9px] font-black uppercase tracking-[0.2em] text-orange-500`}>Branch</span>
-                                          <span className={`text-[11px] font-black tracking-tighter ${darkMode ? "text-white" : "text-black"}`}>
-                                            {member.userId?.branch || member.branch}
-                                          </span>
-                                        </div>
-                                      )}
-                                      {(member.userId?.semester || member.semester) && (
-                                        <div className="flex flex-col">
-                                          <span className={`text-[9px] font-black uppercase tracking-[0.2em] text-orange-500`}>Semester</span>
-                                          <span className={`text-[11px] font-black tracking-tighter ${darkMode ? "text-white" : "text-black"}`}>
-                                            {member.userId?.semester || member.semester}
-                                          </span>
-                                        </div>
-                                      )}
+                                      
+                                      
+                                      
                                     </div>
                                   </div>
                                 </div>
