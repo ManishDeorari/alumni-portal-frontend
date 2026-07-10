@@ -532,24 +532,7 @@ export default function PostModal(props) {
                                     </div>
                                     <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] font-black ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
                                       <span className="flex items-baseline gap-1"><span className="text-orange-500 uppercase tracking-widest text-[9px]">ENR:</span> <span>{member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}</span></span>
-                                      {(member.userId?.course || member.course) && (
-                                        <span className="flex items-baseline gap-2">
-                                          <span className="text-gray-400/50 text-[10px]">•</span>
-                                          <span className="flex items-baseline gap-1"><span className="text-orange-500 uppercase tracking-widest text-[9px]">CRS:</span> <span>{member.userId?.course || member.course}</span></span>
-                                        </span>
-                                      )}
-                                      {(member.userId?.branch || member.branch) && (
-                                        <span className="flex items-baseline gap-2">
-                                          <span className="text-gray-400/50 text-[10px]">•</span>
-                                          <span className="flex items-baseline gap-1"><span className="text-orange-500 uppercase tracking-widest text-[9px]">BRN:</span> <span>{member.userId?.branch || member.branch}</span></span>
-                                        </span>
-                                      )}
-                                      {(member.userId?.semester || member.semester) && (
-                                        <span className="flex items-baseline gap-2">
-                                          <span className="text-gray-400/50 text-[10px]">•</span>
-                                          <span className="flex items-baseline gap-1"><span className="text-orange-500 uppercase tracking-widest text-[9px]">SEM:</span> <span>{member.userId?.semester || member.semester}</span></span>
-                                        </span>
-                                      )}
+                                      
                                     </div>
                                   </div>
                                 </div>
@@ -583,7 +566,7 @@ export default function PostModal(props) {
               
               {post.announcementDetails.eventName && (
                 <div className={`mb-3 p-3 rounded-xl border ${darkMode ? "bg-slate-800 border-white/10" : "bg-white border-emerald-100"}`}>
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Organization / Event</span>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${darkMode ? "text-emerald-400" : "text-emerald-600"}`}>Organization / Event</span>
                   <p className={`text-sm font-bold ${darkMode ? "text-white" : "text-black"}`}>{post.announcementDetails.eventName}</p>
                 </div>
               )}
@@ -660,24 +643,7 @@ export default function PostModal(props) {
                               </div>
                               <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] font-black ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
                                 <span className="flex items-baseline gap-1"><span className="text-emerald-500 uppercase tracking-widest text-[9px]">ENR:</span> <span>{member.userId?.enrollmentNumber || member.enrollmentNumber || "-"}</span></span>
-                                {(member.userId?.course || member.course) && (
-                                  <span className="flex items-baseline gap-2">
-                                    <span className="text-gray-400/50 text-[10px]">•</span>
-                                    <span className="flex items-baseline gap-1"><span className="text-emerald-500 uppercase tracking-widest text-[9px]">CRS:</span> <span>{member.userId?.course || member.course}</span></span>
-                                  </span>
-                                )}
-                                {(member.userId?.branch || member.branch) && (
-                                  <span className="flex items-baseline gap-2">
-                                    <span className="text-gray-400/50 text-[10px]">•</span>
-                                    <span className="flex items-baseline gap-1"><span className="text-emerald-500 uppercase tracking-widest text-[9px]">BRN:</span> <span>{member.userId?.branch || member.branch}</span></span>
-                                  </span>
-                                )}
-                                {(member.userId?.semester || member.semester) && (
-                                  <span className="flex items-baseline gap-2">
-                                    <span className="text-gray-400/50 text-[10px]">•</span>
-                                    <span className="flex items-baseline gap-1"><span className="text-emerald-500 uppercase tracking-widest text-[9px]">SEM:</span> <span>{member.userId?.semester || member.semester}</span></span>
-                                  </span>
-                                )}
+                                
                               </div>
                             </div>
                           </div>
