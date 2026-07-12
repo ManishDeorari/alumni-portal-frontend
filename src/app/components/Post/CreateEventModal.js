@@ -32,11 +32,13 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
   // Registration Form Builder State
   const [registrationFields, setRegistrationFields] = useState({
     name: true,
-    profileLink: true,
     enrollmentNumber: true,
     email: true,
     phoneNumber: true,
+    course: true,
     branchName: true,
+    session: true,
+    jobTitle: true,
     currentCompany: true,
     currentCity: true,
   });
@@ -385,7 +387,7 @@ const CreateEventModal = ({ isOpen, onClose, currentUser, darkMode = false, setP
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {Object.keys(registrationFields).map((field) => {
-                const isMandatory = ['name', 'email', 'enrollmentNumber'].includes(field);
+                const isMandatory = ['name', 'email', 'enrollmentNumber', 'phoneNumber'].includes(field);
                 return (
                   <label key={field} className={`flex items-center gap-3 ${isMandatory ? 'cursor-not-allowed' : 'cursor-pointer group'}`}>
                     <input 
