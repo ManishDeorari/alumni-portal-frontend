@@ -371,7 +371,7 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
             {/* Announcement Type Selector */}
             <div className="space-y-3">
               <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-white" : "text-black"}`}>Announcement Type</label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Regular */}
                 <label className={`cursor-pointer p-[2px] rounded-2xl transition-all ${formData.announcementType === "regular" ? "bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg scale-[1.02]" : "bg-transparent border border-gray-200 dark:border-white/10 hover:border-blue-400"}`}>
                   <div className={`p-4 rounded-[calc(1rem-2px)] flex items-center gap-3 h-full ${formData.announcementType === "regular" ? (darkMode ? "bg-slate-800" : "bg-white") : (darkMode ? "bg-[#18181b]" : "bg-[#FAFAFA]")}`}>
@@ -395,84 +395,37 @@ const CreateAnnouncementModal = ({ isOpen, onClose, currentUser, darkMode = fals
                     </div>
                   </div>
                 </label>
-
-                {/* Achievement */}
-                <label className={`cursor-pointer p-[2px] rounded-2xl transition-all ${formData.announcementType === "achievement" ? "bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg scale-[1.02]" : "bg-transparent border border-gray-200 dark:border-white/10 hover:border-emerald-400"}`}>
-                  <div className={`p-4 rounded-[calc(1rem-2px)] flex items-center gap-3 h-full ${formData.announcementType === "achievement" ? (darkMode ? "bg-slate-800" : "bg-white") : (darkMode ? "bg-[#18181b]" : "bg-[#FAFAFA]")}`}>
-                    <input type="radio" name="announcementType" value="achievement" checked={formData.announcementType === "achievement"} onChange={handleInputChange} className="hidden" />
-                    <span className="text-2xl">🎓</span>
-                    <div>
-                      <span className={`block text-sm font-black ${darkMode ? "text-white" : "text-black"}`}>Achievement</span>
-                      <span className={`block text-[9px] uppercase tracking-wider ${darkMode ? "text-slate-400" : "text-gray-500"}`}>Placements, etc.</span>
-                    </div>
-                  </div>
-                </label>
               </div>
             </div>
 
             <div className="space-y-4">
-              {(formData.announcementType === "winner" || formData.announcementType === "achievement") && (
-                <div className={`p-[2px] rounded-[3rem] ${formData.announcementType === "winner" ? "bg-gradient-to-br from-orange-500 to-red-600" : "bg-gradient-to-br from-emerald-500 to-teal-600"}`}>
+              {(formData.announcementType === "winner") && (
+                <div className="p-[2px] rounded-[3rem] bg-gradient-to-br from-orange-500 to-red-600">
                   <div className={`space-y-6 sm:space-y-8 p-4 sm:p-8 rounded-[calc(3rem-2px)] ${darkMode ? "bg-[#121213]" : "bg-white"} shadow-2xl`}>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-between">
-                         <h3 className={`text-sm font-black uppercase tracking-[0.2em] ${formData.announcementType === "winner" ? (darkMode ? "text-orange-400" : "text-orange-600") : (darkMode ? "text-emerald-400" : "text-emerald-600")}`}>
-                           {formData.announcementType === "winner" ? "Winner List / Ranking Configuration" : "Student Achievement Details"}
+                         <h3 className={`text-sm font-black uppercase tracking-[0.2em] ${darkMode ? "text-orange-400" : "text-orange-600"}`}>
+                           Winner List / Ranking Configuration
                          </h3>
                       </div>
 
-                      {formData.announcementType === "achievement" && (
-                        <div className="space-y-2">
-                           <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-white" : "text-black"}`}>Achievement Category</label>
-                           <div className={`p-[2px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 ${errors.includes("achievementCategory") ? "from-red-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.3)]" : "shadow-sm"}`}>
-                             <select 
-                               name="achievementCategory" 
-                               value={formData.achievementCategory} 
-                               onChange={handleInputChange}
-                               className={`w-full p-4 h-[52px] text-sm font-black rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-800 text-white" : "bg-white text-black"} outline-none border-none shadow-inner`}
-                             >
-                               <option value="Placement">💼 Placement</option>
-                               <option value="Internship">🚀 Internship</option>
-                               <option value="Research Paper">📄 Research Paper</option>
-                               <option value="Certification">📜 Certification</option>
-                               <option value="Other">🌟 Other</option>
-                             </select>
-                           </div>
-                        </div>
-                      )}
-
                       <div className="space-y-2">
                          <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-white" : "text-black"}`}>
-                           {formData.announcementType === "winner" ? "Event Name" : "Organization / Company / Event Name"}
+                           Event Name
                          </label>
-                         <div className={`p-[2px] rounded-2xl bg-gradient-to-r ${formData.announcementType === "winner" ? "from-orange-500 to-red-600" : "from-emerald-500 to-teal-600"} ${errors.includes("eventName") ? "from-red-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.3)]" : "shadow-sm"}`}>
-                           {formData.announcementType === "winner" ? (
+                         <div className={`p-[2px] rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 ${errors.includes("eventName") ? "shadow-[0_0_15px_rgba(239,68,68,0.3)]" : "shadow-sm"}`}>
                              <EventSearchInput 
                                value={formData.eventName}
                                onChange={(val) => setFormData(prev => ({ ...prev, eventName: val, originalEventId: null }))}
-                               onSelect={(eventPost) => setFormData(prev => ({ 
-                                 ...prev, 
-                                 eventName: eventPost.title, 
-                                 originalEventId: eventPost._id 
-                               }))}
-                               placeholder="e.g. Annual Sports Meet 2024"
+                               onEventSelect={(evt) => setFormData(prev => ({ ...prev, eventName: evt.title, originalEventId: evt._id }))}
+                               placeholder="Search or type event name..."
                                darkMode={darkMode}
-                               className={`!w-full !p-4 !h-[52px] !text-sm !font-black !rounded-[calc(1rem-2px)] ${darkMode ? "!bg-slate-800 !text-white !placeholder-gray-500" : "!bg-white !text-black !placeholder-gray-400"} !outline-none !border-none !shadow-inner`}
                              />
-                           ) : (
-                             <input 
-                               type="text"
-                               name="eventName"
-                               value={formData.eventName}
-                               onChange={handleInputChange}
-                               placeholder="e.g. Google, IEEE, Microsoft"
-                               className={`w-full p-4 h-[52px] text-sm font-black rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-800 text-white placeholder-gray-500" : "bg-white text-black placeholder-gray-400"} outline-none border-none shadow-inner`}
-                             />
-                           )}
                          </div>
                       </div>
+
                       <div className="space-y-4">
-                        <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-white" : "text-black"}`}>Select Achievement Type</label>
+                        <label className={`text-[10px] font-black uppercase tracking-widest px-1 ${darkMode ? "text-white" : "text-black"}`}>Add Winners</label>
                         <div className={`p-[2px] rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl h-[52px] sm:h-[68px] w-full`}>
                            <div className={`flex items-center justify-between h-full px-3 sm:px-6 py-2 rounded-[calc(1rem-2px)] ${darkMode ? "bg-slate-800" : "bg-white"}`}>
                              <div className="flex items-center gap-2 sm:gap-3">

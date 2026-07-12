@@ -17,8 +17,9 @@ import ProfileEventParticipation from "../components/profile/ProfileEventPartici
 import ProfileResumeAndLinks from "../components/profile/ProfileResumeAndLinks";
 import ProfileBasicInfo from "../components/profile/ProfileBasicInfo";
 import ProfileActivityHeatmap from "../components/profile/ProfileActivityHeatmap";
+import ProfileJobPreference from "../components/profile/ProfileJobPreference";
+import ProfileWorkProfile from "../components/profile/ProfileWorkProfile";
 import ProfileFeatured from "../components/profile/ProfileFeatured";
-import ProfileSpotlights from "../components/profile/ProfileSpotlights";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
@@ -182,12 +183,12 @@ function ProfileContent() {
 
       {/* 🔽 Rest Sections */}
       <div className="max-w-4xl mx-auto px-1 sm:px-4 lg:px-8 mt-6 sm:mt-10 mb-20 space-y-8 pb-32">
-        {(profile.role === "student" || profile.role === "alumni") && (
-          <ProfileSpotlights userId={profile._id} currentUser={user} darkMode={darkMode} />
-        )}
+
         <ProfileAbout profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileEducation profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileExperience profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        <ProfileWorkProfile profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
+        <ProfileJobPreference profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileCertificates profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfileProjects profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
         <ProfilePapers profile={profile} setProfile={setProfile} isPublicView={isPublicView} />
