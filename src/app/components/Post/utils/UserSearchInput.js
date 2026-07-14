@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSearch, FaTimes, FaUser } from "react-icons/fa";
 
-const UserSearchInput = ({ value, onChange, onSelect, placeholder = "Search for a user...", darkMode = false, className = "" }) => {
+const UserSearchInput = ({ value, onChange, onSelect, placeholder = "Search for a user...", darkMode = false, className = "", roleFilter }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,11 @@ const UserSearchInput = ({ value, onChange, onSelect, placeholder = "Search for 
         return;
       }
       const token = localStorage.getItem("token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/search?q=${searchQuery}`, {
+      const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/search`);
+      url.searchParams.append("q", searchQuery);
+      if (roleFilter) url.searchParams.append("role", roleFilter);
+
+      const res = await fetch(url.toString(), {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -132,17 +136,17 @@ const UserSearchInput = ({ value, onChange, onSelect, placeholder = "Search for 
                         }`}
                       >
                         <div className="flex items-center gap-4 overflow-hidden w-full">
-                          <div className="w-12 h-12 p-[1.5px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-lg relative shrink-0 flex items-center justify-center">
-                            <div className={`w-full h-full rounded-[calc(0.5rem-1px)] overflow-hidden relative ${darkMode ? "bg-slate-800" : "bg-gray-200"} flex items-center justify-center text-2xl`}>
-                              {user.avatar ? (
+                          <div className="w-12 h-12 p-[2px] bg-gradient-to-tr from-orange-500 to-red-600 rounded-full relative shrink-0 flex items-center justify-center shadow-md">
+                            <div className={`w-full h-full rounded-full overflow-hidden relative ${darkMode ? "bg-slate-800" : "bg-gray-200"} flex items-center justify-center text-2xl`}>
+                              {user.profilePicture ? (
                                 <Image 
-                                  src={user.avatar} 
+                                  src={user.profilePicture} 
                                   alt={user.name} 
                                   fill 
                                   className="object-cover" 
                                 />
                               ) : (
-                                <span className="text-lg font-bold">{user.name?.charAt(0)}</span>
+                                <span className={`text-lg font-bold uppercase ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{user.name?.charAt(0)}</span>
                               )}
                             </div>
                           </div>
